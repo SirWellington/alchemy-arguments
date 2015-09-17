@@ -21,8 +21,8 @@ package sir.wellington.commons.arguments;
  * <pre>
  * 
  * {@code
- * checkThat(string)
- *      .withException(ex -> new BadRequestException())
+ * checkThat(password)
+ *      .withException(ex -> new BadRequestException("Bad Password", ex))
  *      .is(notNull())
  *      .is(nonEmptyString())
  *      .is(stringIsAtLeastOfLength(10));
@@ -34,7 +34,7 @@ package sir.wellington.commons.arguments;
  * <pre>
  *
  * {@code
- * checkThat(string)
+ * checkThat(password)
  *      .withException(BadRequestException.class)
  *      .is(notNull())
  *      .is(nonEmptyString())
