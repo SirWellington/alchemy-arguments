@@ -16,7 +16,9 @@
 package sir.wellington.commons.arguments;
 
 import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 import static org.hamcrest.Matchers.notNullValue;
 import org.junit.Before;
 import org.junit.Test;
@@ -29,6 +31,8 @@ import static sir.wellington.commons.arguments.Assertions.stringWithNoWhitespace
 import static sir.wellington.commons.arguments.Assertions.nonEmptyString;
 import static sir.wellington.commons.arguments.Assertions.intIsAtLeast;
 import static sir.wellington.commons.arguments.Assertions.nonEmptyCollection;
+import static sir.wellington.commons.arguments.Assertions.nonEmptyList;
+import static sir.wellington.commons.arguments.Assertions.nonEmptyMap;
 import static sir.wellington.commons.arguments.Assertions.notNull;
 import static sir.wellington.commons.arguments.Assertions.numberBetween;
 import static sir.wellington.commons.arguments.Assertions.positiveInteger;
@@ -41,6 +45,8 @@ import static sir.wellington.commons.test.DataGenerator.hexadecimalString;
 import static sir.wellington.commons.test.DataGenerator.integers;
 import static sir.wellington.commons.test.DataGenerator.listOf;
 import static sir.wellington.commons.test.DataGenerator.longs;
+import static sir.wellington.commons.test.DataGenerator.mapOf;
+import static sir.wellington.commons.test.DataGenerator.negativeIntegers;
 import static sir.wellington.commons.test.DataGenerator.oneOf;
 import static sir.wellington.commons.test.DataGenerator.positiveIntegers;
 import static sir.wellington.commons.test.DataGenerator.positiveLongs;
@@ -51,7 +57,7 @@ import static sir.wellington.commons.test.junit.ThrowableAssertion.assertThrows;
 
 /**
  *
- * @author Wellington
+ * @author SirWellington
  */
 @RunWith(MockitoJUnitRunner.class)
 public class AssertionsTest
@@ -167,6 +173,20 @@ public class AssertionsTest
     }
 
     @Test
+    public void testStringIsAtLeastOfLengthWithBadArgs() throws Exception
+    {
+        System.out.println("testStringIsAtLeastOfLengthWithBadArgs");
+
+        doInLoop(() ->
+        {
+            int negativeNumber = oneOf(negativeIntegers());
+
+            assertThrows(() -> stringIsAtLeastOfLength(negativeNumber))
+                    .isInstanceOf(IllegalArgumentException.class);
+        });
+    }
+
+    @Test
     public void testStringIsAtLeastOfLength() throws Exception
     {
         System.out.println("stringIsAtLeastOfLength");
@@ -194,9 +214,20 @@ public class AssertionsTest
 
     }
 
-    /**
-     * Test of stringIsAtMostOfLength method, of class
-     */
+    @Test
+    public void testStringIsAtMostOfLengthWithBadArgs() throws Exception
+    {
+        System.out.println("testStringIsAtMostOfLengthWithBadArgs");
+
+        doInLoop(() ->
+        {
+            int negativeNumber = oneOf(negativeIntegers());
+
+            assertThrows(() -> stringIsAtMostOfLength(negativeNumber))
+                    .isInstanceOf(IllegalArgumentException.class);
+        });
+    }
+
     @Test
     public void testStringIsAtMostOfLength() throws Exception
     {
@@ -239,6 +270,23 @@ public class AssertionsTest
                     .isInstanceOf(FailedAssertionException.class);
         });
 
+    }
+
+    @Test
+    public void testStringLengthBetweenWithBadArgs() throws Exception
+    {
+        System.out.println("testStringLengthBetweenWithBadArgs");
+        int goodMin = oneOf(positiveIntegers());
+        int goodMax = goodMin + oneOf(positiveIntegers());
+
+        int badMin = oneOf(negativeIntegers());
+        int badMax = goodMin - oneOf(positiveIntegers());
+
+        assertThrows(() -> stringLengthBetween(badMin, goodMax))
+                .isInstanceOf(IllegalArgumentException.class);
+
+        assertThrows(() -> stringLengthBetween(goodMin, badMax))
+                .isInstanceOf(IllegalArgumentException.class);
     }
 
     @Test
@@ -387,22 +435,64 @@ public class AssertionsTest
         Assertion<Collection<String>> instance = nonEmptyCollection();
         assertThat(instance, notNullValue());
 
-        List<String> strings = listOf(alphabeticString());
-        instance.check(strings);
+        doInLoop(() ->
+        {
+            List<String> strings = listOf(alphabeticString());
+            instance.check(strings);
 
-        strings = listOf(alphabeticString(), 10);
-        instance.check(strings);
+            assertThrows(() -> instance.check(null))
+                    .isInstanceOf(FailedAssertionException.class);
+
+            assertThrows(() -> instance.check(Collections.emptySet()))
+                    .isInstanceOf(FailedAssertionException.class);
+        });
 
     }
 
     @Test
     public void testNonEmptyList()
     {
+        System.out.println("testNonEmptyList");
+
+        Assertion<List<String>> instance = nonEmptyList();
+        assertThat(instance, notNullValue());
+
+        doInLoop(() ->
+        {
+            List<String> strings = listOf(alphabeticString());
+            instance.check(strings);
+
+            assertThrows(() -> instance.check(null))
+                    .isInstanceOf(FailedAssertionException.class);
+
+            assertThrows(() -> instance.check(Collections.emptyList()))
+                    .isInstanceOf(FailedAssertionException.class);
+        });
     }
 
     @Test
     public void testNonEmptyMap()
     {
+        System.out.println("testNonEmptyMap");
+
+        Assertion<Map<String, Integer>> instance = nonEmptyMap();
+
+        doInLoop(() ->
+        {
+            Map<String, Integer> map = mapOf(alphabeticString(),
+                                             positiveIntegers(),
+                                             40);
+
+            instance.check(map);
+
+            assertThrows(() -> instance.check(Collections.emptyMap()))
+                    .isInstanceOf(FailedAssertionException.class);
+
+            assertThrows(() -> instance.check(null))
+                    .isInstanceOf(FailedAssertionException.class);
+
+        });
+
     }
 
 }

@@ -33,12 +33,6 @@ final class AssertionBuilderImpl<Argument, Ex extends Throwable> implements Asse
     private final ExceptionMapper<Ex> exceptionMapper;
     private final Argument argument;
 
-    private AssertionBuilderImpl()
-    {
-        assertion = null;
-        exceptionMapper = null;
-        argument = null;
-    }
 
     private AssertionBuilderImpl(Assertion<Argument> assertion, ExceptionMapper<Ex> exceptionMapper, Argument argument)
     {
@@ -78,23 +72,55 @@ final class AssertionBuilderImpl<Argument, Ex extends Throwable> implements Asse
         Preconditions.checkState(assertion != null, "no assertion found");
         Preconditions.checkState(exceptionMapper != null, "no exceptionMapper found");
 
+        FailedAssertionException caught = null;
+
         try
         {
             assertion.check(argument);
         }
         catch (FailedAssertionException ex)
         {
-            Ex mappedEx = exceptionMapper.apply(ex);
+            caught = ex;
+        }
+        catch (RuntimeException ex)
+        {
+            handleUnexpectedException(ex);
+        }
 
-            if (mappedEx != null)
-            {
-                throw mappedEx;
-            }
-            else
-            {
-                LOG.warn("Exception Mapper did not return a throwable. Swallowing exception", ex);
-            }
+        if(exceptionOccured(caught))
+        {
+            handleFailedAssertion(caught);
+        }
 
+    }
+
+    private boolean exceptionOccured(FailedAssertionException caught)
+    {
+        return caught != null;
+    }
+
+    private void handleUnexpectedException(RuntimeException ex) throws Ex
+    {
+        LOG.warn("Assertion {} threw an unexpected exception. Only {} Exceptions are acceptable for Assertions.",
+                 assertion,
+                 FailedAssertionException.class.getSimpleName(),
+                 ex);
+
+        FailedAssertionException wrappedException = new FailedAssertionException("wrapping unexpected exception", ex);
+        handleFailedAssertion(wrappedException);
+    }
+
+    private void handleFailedAssertion(FailedAssertionException caught) throws Ex
+    {
+        Ex mappedEx = exceptionMapper.apply(caught);
+
+        if (mappedEx != null)
+        {
+            throw mappedEx;
+        }
+        else
+        {
+            LOG.warn("Exception Mapper did not return a throwable. Swallowing exception", caught);
         }
     }
 

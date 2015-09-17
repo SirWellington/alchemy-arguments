@@ -23,84 +23,154 @@ import org.slf4j.LoggerFactory;
 
 /**
  *
- * @author Wellington
+ * @author SirWellington
  */
 final class DynamicExceptionSupplier<Ex extends Throwable> implements ExceptionMapper<Ex>
 {
-
+    
     private static final Logger LOG = LoggerFactory.getLogger(DynamicExceptionSupplier.class);
-
+    
     private final Class<Ex> exceptionClass;
     private final String message;
-
+    
     DynamicExceptionSupplier(Class<Ex> exceptionClass, String message)
     {
         Preconditions.checkNotNull(exceptionClass, "missing exceptionClass");
         this.exceptionClass = exceptionClass;
         this.message = message;
     }
-
+    
     @Override
     public Ex apply(FailedAssertionException cause)
     {
         Ex instance = tryToCreateInstance(cause);
-
+        
         return instance;
     }
-
+    
     private Ex tryToCreateInstance(FailedAssertionException cause)
     {
         try
         {
-            if (Strings.isNullOrEmpty(message))
+            if (haveBothAMessageAndACause(message, cause))
             {
-                if (cause == null)
+                if (hasMessageAndCauseConstructor())
                 {
-                    return exceptionClass.newInstance();
+                    return exceptionClass.getConstructor(String.class, Throwable.class)
+                            .newInstance(message, cause);
                 }
-                else
+                else if (hasCauseConstructor())
                 {
-
-                    Constructor<Ex> constructor = exceptionClass.getConstructor(Throwable.class);
-                    if (constructor != null)
-                    {
-                        return constructor.newInstance(cause);
-                    }
+                    return exceptionClass.getConstructor(Throwable.class)
+                            .newInstance(cause);
+                }
+                else if (hasMessageConstructor())
+                {
+                    return exceptionClass.getConstructor(String.class)
+                            .newInstance(message);
+                }
+                
+            }
+            
+            if (haveOnlyACause(message, cause))
+            {
+                if (hasCauseConstructor())
+                {
+                    return exceptionClass.getConstructor(Throwable.class).newInstance(cause);
                 }
             }
-            else
+            
+            if (haveOnlyAMessage(message, cause))
             {
-                if (cause == null)
+                if (hasMessageConstructor())
                 {
-                    Constructor<Ex> constructor = exceptionClass.getConstructor(String.class);
-
-                    if (constructor != null)
-                    {
-                        return constructor.newInstance(message);
-                    }
-                }
-                else
-                {
-                    Constructor<Ex> constructor = exceptionClass.getConstructor(String.class, Throwable.class);
-                    if (constructor != null)
-                    {
-                        return constructor.newInstance(message, cause);
-                    }
+                    return exceptionClass.getConstructor(String.class).newInstance(message);
                 }
             }
+            
         }
         catch (Exception ex)
         {
             LOG.error("Failed to initialize instance of Exception type {}", exceptionClass, ex);
         }
-
+        
+        try
+        {
+            if (hasDefaultConstructor())
+            {
+                return exceptionClass.newInstance();
+            }
+        }
+        catch (Exception ex)
+        {
+            LOG.warn("Failed to create instance of {} using default constructor", exceptionClass.getName());
+        }
+        
         return null;
     }
-
+    
     @Override
     public String toString()
     {
         return "DynamicExceptionSupplier{" + "exceptionClass=" + exceptionClass + ", message=" + message + '}';
     }
-
+    
+    private boolean hasMessageToInclude()
+    {
+        return !Strings.isNullOrEmpty(message);
+    }
+    
+    private boolean hasConstructorWithArguments(Class<?>... classes) throws NoSuchMethodException, SecurityException
+    {
+        try
+        {
+            Constructor<Ex> constructor = exceptionClass.getConstructor(classes);
+            return constructor != null;
+        }
+        catch (NoSuchMethodException ex)
+        {
+            return false;
+        }
+    }
+    
+    private boolean hasDefaultConstructor() throws NoSuchMethodException, SecurityException
+    {
+        return hasConstructorWithArguments();
+    }
+    
+    private boolean hasCauseConstructor() throws NoSuchMethodException, SecurityException
+    {
+        return hasConstructorWithArguments(Throwable.class);
+    }
+    
+    private boolean hasMessageConstructor() throws NoSuchMethodException, SecurityException
+    {
+        return hasConstructorWithArguments(String.class);
+    }
+    
+    private boolean hasMessageAndCauseConstructor() throws NoSuchMethodException, SecurityException
+    {
+        return hasConstructorWithArguments(String.class, Throwable.class);
+    }
+    
+    private boolean hasNeitherAMessageOrACause(String message, FailedAssertionException cause)
+    {
+        return cause == null && Strings.isNullOrEmpty(message);
+    }
+    
+    private boolean haveOnlyAMessage(String message, FailedAssertionException cause)
+    {
+        return !Strings.isNullOrEmpty(message) && cause == null;
+    }
+    
+    private boolean haveOnlyACause(String message, FailedAssertionException cause)
+    {
+        return cause != null && Strings.isNullOrEmpty(message);
+    }
+    
+    private boolean haveBothAMessageAndACause(String message, FailedAssertionException cause)
+    {
+        return cause != null && !Strings.isNullOrEmpty(message);
+    }
+    
 }
