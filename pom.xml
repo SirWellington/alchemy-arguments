@@ -7,6 +7,13 @@
     
     <packaging>jar</packaging>
 
+    <name>${project.groupId}:${project.artifactId}</name>
+    <url>https://github.com/SirWellington/commons-arguments</url>
+    <description>
+        The purpose of this library is to make it easier to add argument checking
+        logic to your Services, Libraries, and Scripts.
+    </description>
+    
     <developers>
         <developer>
             <name>Juan Wellington Moreno</name>
@@ -113,6 +120,43 @@
                         <goals>
                             <goal>jar-no-fork</goal>
                         </goals>
+                    </execution>
+                </executions>
+            </plugin>
+            
+            <!--Code Coverage-->
+            <plugin>
+                <groupId>org.jacoco</groupId>
+                <artifactId>jacoco-maven-plugin</artifactId>
+                <version>0.7.5.201505241946</version>
+                
+                <executions>
+                    
+                    <execution>
+                        <id>default-prepare-agent</id>
+                        <goals>
+                            <goal>prepare-agent</goal>
+                        </goals>
+                    </execution>
+                    
+                    <execution>
+                        <id>default-report</id>
+                        <phase>prepare-package</phase>
+                        <goals>
+                            <goal>report</goal>
+                        </goals>
+                    </execution>
+                    
+                    <execution>
+                        <id>default-check</id>
+                        <goals>
+                            <goal>check</goal>
+                        </goals>
+                        
+                        <configuration>
+                            <rules>
+                            </rules>
+                        </configuration>
                     </execution>
                 </executions>
             </plugin>
