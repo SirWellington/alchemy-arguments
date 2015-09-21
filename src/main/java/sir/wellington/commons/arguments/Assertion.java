@@ -15,6 +15,8 @@
  */
 package sir.wellington.commons.arguments;
 
+import com.google.common.base.Preconditions;
+
 /**
  * Assertions analyze input arguments for validity. You can always supply your own.
  *
@@ -38,5 +40,48 @@ public interface Assertion<A>
      *                                  {@link FailedAssertionException}.
      */
     void check(A argument) throws FailedAssertionException;
+
+    /**
+     * Allows you to create a single {@link Assertion} that is composed of multiple Assertions.
+     *
+     * For example, a {@code validAge} assertion could be constructed dynamically using:
+     *
+     * <pre>
+     *
+     * {@code
+     *  Assertion<Integer> validAge = Assertion.multipleAssertions(
+     *     nonNull(),
+     *     greaterThanOrEqualTo(1),
+     *     lessThanOrEqualTo(120)
+     *  );
+     *
+     * checkThat(age)
+     *      .is(validAge);
+     * }
+     *
+     * </pre>
+     *
+     * This allows you to save and store Assertions that are commonly used together to perform
+     * argument checks, and to do so at runtime.
+     *
+     * @param <T>
+     *
+     * @param assertions
+     *
+     * @return
+     */
+    static <T> Assertion<T> multipleAssertions(Assertion<T>... assertions)
+    {
+        Preconditions.checkArgument(assertions != null, "no assertions");
+        Preconditions.checkArgument(assertions.length > 0, "no assertions");
+
+        return (argument) ->
+        {
+            for (Assertion<T> assertion : assertions)
+            {
+                assertion.check(argument);
+            }
+        };
+    }
 
 }

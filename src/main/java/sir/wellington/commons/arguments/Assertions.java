@@ -22,6 +22,7 @@ import static java.lang.String.format;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
+import java.util.regex.Pattern;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -32,9 +33,9 @@ import org.slf4j.LoggerFactory;
  */
 public final class Assertions
 {
-    
+
     private final static Logger LOG = LoggerFactory.getLogger(Assertions.class);
-    
+
     private Assertions()
     {
     }
@@ -57,6 +58,7 @@ public final class Assertions
         };
     }
 
+    //==========================Number Assertions====================================
     /**
      * Asserts that an integer is positive, or {@code > 0}
      *
@@ -67,7 +69,7 @@ public final class Assertions
         return (number) ->
         {
             notNull().check(number);
-            
+
             if (number <= 0)
             {
                 throw new FailedAssertionException("Expected positive integer: " + number);
@@ -76,23 +78,42 @@ public final class Assertions
     }
 
     /**
+     * Asserts that a long is positive, or {@code > 0}
+     *
+     * @return
+     */
+    public static Assertion<Long> positiveLong()
+    {
+        return (number) ->
+        {
+            notNull().check(number);
+
+            if (number <= 0)
+            {
+                throw new FailedAssertionException("Expected positive long: " + number);
+            }
+        };
+    }
+
+    /**
      * Asserts that an integer argument is in the specified (inclusive) range.
      *
-     * @param min The argument must be {@code >= min && <= max}
-     * @param max
+     * @param min The lower bound for the range, inclusive
+     * @param max The upper bound for the range, inclusive
      *
      * @return
      */
     public static Assertion<Integer> numberBetween(int min, int max)
     {
         Preconditions.checkArgument(min < max, "Minimum must be less than Max.");
+
         return (Integer number) ->
         {
             notNull().check(number);
-            
+
             if (number < min || number > max)
             {
-                String message = format("argument %d must be between %d and %d", number, min, max);
+                String message = format("Expected a number between %d and %d but got %d instead", min, max, number);
                 throw new FailedAssertionException(message);
             }
         };
@@ -101,27 +122,194 @@ public final class Assertions
     /**
      * Asserts that a long argument is in the specified (inclusive) range.
      *
-     * @param min
-     * @param max
+     * @param min The lower bound for the range, inclusive
+     * @param max The upper bound for the range, inclusive
      *
      * @return
      */
     public static Assertion<Long> numberBetween(long min, long max)
     {
         Preconditions.checkArgument(min < max, "Minimum must be less than Max.");
-        
+
         return (number) ->
         {
             notNull().check(number);
-            
+
             if (number < min || number > max)
             {
-                String message = format("argument %d must be between %d and %d", number, min, max);
+                String message = format("Expected a number between %d and %d but got %d instead", min, max, number);
                 throw new FailedAssertionException(message);
             }
         };
     }
 
+    /**
+     * Asserts than an integer is {@code >} the supplied value.
+     *
+     * @param exclusiveLowerBound The argument must be {@code > exclusiveLowerBound}.
+     *
+     * @return
+     */
+    public static Assertion<Integer> greaterThan(int exclusiveLowerBound)
+    {
+        Preconditions.checkArgument(exclusiveLowerBound != Integer.MAX_VALUE, "Integers cannot exceed " + Integer.MAX_VALUE);
+
+        return (integer) ->
+        {
+            notNull().check(integer);
+            if (integer <= exclusiveLowerBound)
+            {
+                throw new FailedAssertionException("Number must be > " + exclusiveLowerBound);
+            }
+        };
+    }
+
+    /**
+     * Asserts than a long is {@code >} the supplied value.
+     *
+     * @param exclusiveLowerBound The argument must be {@code > exclusiveLowerBound}.
+     *
+     * @return
+     */
+    public static Assertion<Long> greaterThan(long exclusiveLowerBound)
+    {
+        Preconditions.checkArgument(exclusiveLowerBound != Long.MAX_VALUE, "Longs cannot exceed " + Long.MAX_VALUE);
+
+        return (number) ->
+        {
+            notNull().check(number);
+            if (number <= exclusiveLowerBound)
+            {
+                throw new FailedAssertionException("Number must be > " + exclusiveLowerBound);
+            }
+        };
+    }
+
+    /**
+     * Asserts that an integer is {@code >=} the supplied value.
+     *
+     * @param inclusiveLowerBound The argument integer must be {@code >= inclusiveLowerBound}
+     *
+     * @return
+     */
+    public static Assertion<Integer> greaterThanOrEqualTo(int inclusiveLowerBound)
+    {
+        return (number) ->
+        {
+            notNull().check(number);
+
+            if (number < inclusiveLowerBound)
+            {
+                throw new FailedAssertionException("Number must be greater than or equal to " + inclusiveLowerBound);
+            }
+        };
+    }
+
+    /**
+     * Asserts that a long is {@code >=} the supplied value.
+     *
+     * @param inclusiveLowerBound The argument integer must be {@code >= inclusiveUpperBound}
+     *
+     * @return
+     */
+    public static Assertion<Long> greaterThanOrEqualTo(long inclusiveLowerBound)
+    {
+        return (number) ->
+        {
+            notNull().check(number);
+
+            if (number < inclusiveLowerBound)
+            {
+                throw new FailedAssertionException("Number must be greater than or equal to " + inclusiveLowerBound);
+            }
+        };
+    }
+
+    /**
+     * Asserts than an integer is {@code <} the supplied value.
+     *
+     * @param exclusiveUpperBound The argument must be {@code < exclusiveUpperBound}.
+     *
+     * @return
+     */
+    public static Assertion<Integer> lessThan(int exclusiveUpperBound)
+    {
+        Preconditions.checkArgument(exclusiveUpperBound != Integer.MIN_VALUE, "Ints cannot be less than " + Integer.MIN_VALUE);
+
+        return (number) ->
+        {
+            notNull().check(number);
+
+            if (number >= exclusiveUpperBound)
+            {
+                throw new FailedAssertionException("Number must be < " + exclusiveUpperBound);
+            }
+        };
+    }
+
+    /**
+     * Asserts than a long is {@code <} the supplied value.
+     *
+     * @param exclusiveUpperBound The argument must be {@code < exclusiveUpperBound}.
+     *
+     * @return
+     */
+    public static Assertion<Long> lessThan(long exclusiveUpperBound)
+    {
+        Preconditions.checkArgument(exclusiveUpperBound != Long.MIN_VALUE, "Longs cannot be less than " + Long.MIN_VALUE);
+
+        return (number) ->
+        {
+            notNull().check(number);
+
+            if (number >= exclusiveUpperBound)
+            {
+                throw new FailedAssertionException("Number must be < " + exclusiveUpperBound);
+            }
+        };
+    }
+
+    /**
+     * Asserts that an integer is {@code <=} the supplied value.
+     *
+     * @param inclusiveUpperBound The argument must be {@code <= inclusiveUpperBound}.
+     *
+     * @return
+     */
+    public static Assertion<Integer> lessThanOrEqualTo(int inclusiveUpperBound)
+    {
+        return (number) ->
+        {
+            notNull().check(number);
+
+            if (number > inclusiveUpperBound)
+            {
+                throw new FailedAssertionException("Number must be less than or equal to " + inclusiveUpperBound);
+            }
+        };
+    }
+
+    /**
+     * Asserts that a long is {@code <=} the supplied value.
+     *
+     * @param inclusiveUpperBound The argument must be {@code <= inclusiveUpperBound}.
+     *
+     * @return
+     */
+    public static Assertion<Long> lessThanOrEqualTo(long inclusiveUpperBound)
+    {
+        return (number) ->
+        {
+            notNull().check(number);
+
+            if (number > inclusiveUpperBound)
+            {
+                throw new FailedAssertionException("Number must be less than or equal to " + inclusiveUpperBound);
+            }
+        };
+    }
+
+    //==========================String Assertions====================================
     /**
      * Asserts that a given string is not empty (neither null nor completely empty).
      *
@@ -133,7 +321,23 @@ public final class Assertions
         {
             if (Strings.isNullOrEmpty(string))
             {
-                throw new FailedAssertionException("string argument is empty");
+                throw new FailedAssertionException("String argument is empty");
+            }
+        };
+    }
+
+    /**
+     * Asserts that a given string is empty (that it has no value).
+     *
+     * @return
+     */
+    public static Assertion<String> emptyString()
+    {
+        return (string) ->
+        {
+            if (!Strings.isNullOrEmpty(string))
+            {
+                throw new FailedAssertionException("Expected empty string but got: " + string);
             }
         };
     }
@@ -145,37 +349,82 @@ public final class Assertions
      *
      * @return
      */
-    public static Assertion<String> stringIsOExactfLength(int expectedLength)
+    public static Assertion<String> stringWithLength(int expectedLength)
     {
-        Preconditions.checkArgument(expectedLength >= 0);
+        Preconditions.checkArgument(expectedLength >= 0, "expectedLength must be >= 0");
+
         return (string) ->
         {
             notNull().check(string);
-            
+
             if (string.length() != expectedLength)
             {
-                throw new FailedAssertionException("Argument is not of length " + expectedLength);
+                throw new FailedAssertionException("Expecting a String with length " + expectedLength);
             }
         };
     }
 
     /**
-     * Asserts that the argument string has a length of at least {@code minimumLength}.
+     * Asserts that the argument string has a length {@code > minimumLength}
+     *
+     * @param minimumLength The exclusive lower bound for the size of the argument string.
+     *
+     * @return
+     */
+    public static Assertion<String> stringWithLengthGreaterThan(int minimumLength)
+    {
+        Preconditions.checkArgument(minimumLength > 0, "minimumLength must be > 0");
+
+        return (string) ->
+        {
+            nonEmptyString().check(string);
+
+            if (string.length() <= minimumLength)
+            {
+                throw new FailedAssertionException("Expected a String with length > " + minimumLength);
+            }
+        };
+    }
+
+    /**
+     * Asserts that the argument string has a length {@code >= minimumLength}.
      *
      * @param minimumLength The length of the argument string must {@code >= minimumLength}
      *
      * @return
      */
-    public static Assertion<String> stringIsAtLeastOfLength(int minimumLength)
+    public static Assertion<String> stringWithLengthGreaterThanOrEqualTo(int minimumLength)
     {
         Preconditions.checkArgument(minimumLength >= 0);
         return (string) ->
         {
             notNull().check(string);
-            
-            if (string == null || string.length() < minimumLength)
+
+            if (string.length() < minimumLength)
             {
-                throw new FailedAssertionException("Argument does not have the mininum string length of: " + minimumLength);
+                throw new FailedAssertionException("Expecting a String with length >= " + minimumLength);
+            }
+        };
+    }
+
+    /**
+     * Asserts that the length of the argument string is less than the specified upper bound.
+     *
+     * @param upperBound The length of the string must be {@code <upperBound}
+     *
+     * @return
+     */
+    public static Assertion<String> stringWithLengthLessThan(int upperBound)
+    {
+        Preconditions.checkArgument(upperBound > 0, "upperBound must be > 0");
+
+        return (string) ->
+        {
+            nonEmptyString().check(string);
+
+            if (string.length() >= upperBound)
+            {
+                throw new FailedAssertionException("Expecting a String with length < " + upperBound);
             }
         };
     }
@@ -187,13 +436,13 @@ public final class Assertions
      *
      * @return
      */
-    public static Assertion<String> stringIsAtMostOfLength(int maximumLength)
+    public static Assertion<String> stringWithLengthLessThanOrEqualTo(int maximumLength)
     {
         Preconditions.checkArgument(maximumLength >= 0);
         return (string) ->
         {
             notNull().check(string);
-            
+
             if (string == null || string.length() > maximumLength)
             {
                 throw new FailedAssertionException("Argument exceeds the maximum string length of: " + maximumLength);
@@ -209,15 +458,15 @@ public final class Assertions
      *
      * @return
      */
-    public static Assertion<String> stringLengthBetween(int minimumLength, int maximumLength)
+    public static Assertion<String> stringWithLengthBetween(int minimumLength, int maximumLength)
     {
         Preconditions.checkArgument(minimumLength >= 0, "Minimum length must be at least 0");
         Preconditions.checkArgument(minimumLength < maximumLength, "Minimum length must be > maximum length.");
-        
+
         return (string) ->
         {
             notNull().check(string);
-            
+
             if (string.length() < minimumLength ||
                 string.length() > maximumLength)
             {
@@ -239,73 +488,97 @@ public final class Assertions
         return (string) ->
         {
             notNull().check(string);
-            
+
             if (CharMatcher.WHITESPACE.matchesAnyOf(string))
             {
                 throw new FailedAssertionException("Argument should not have whitespace.");
             }
         };
-        
+
     }
 
     /**
-     * Asserts that an integer is at least as great as the supplied value.
+     * Asserts that the argument String matches the specified pattern.
      *
-     * @param atLeastThisMuch The argument integer must be {@code >= atLeastThisMuch}
+     * @param pattern The pattern to match against.
      *
      * @return
      */
-    public static Assertion<Integer> intIsAtLeast(int atLeastThisMuch)
+    public static Assertion<String> stringThatMatches(Pattern pattern)
     {
+        Preconditions.checkNotNull(pattern, "missing pattern");
+
         return (string) ->
         {
-            notNull().check(string);
-            
-            if (string < atLeastThisMuch)
+            if (!pattern.matcher(string).matches())
             {
-                throw new FailedAssertionException("Argument must be at least " + atLeastThisMuch);
+                throw new FailedAssertionException("Expected String to match pattern: " + pattern);
             }
         };
     }
-    
+
+    //==========================Collection Assertions====================================
+    /**
+     * Asserts that the collection is not null and not empty.
+     *
+     * @param <T>
+     *
+     * @return
+     */
     public static <T> Assertion<Collection<T>> nonEmptyCollection()
     {
         return (collection) ->
         {
             notNull().check(collection);
-            
+
             if (collection.isEmpty())
             {
                 throw new FailedAssertionException("Collection is empty");
             }
         };
     }
-    
+
+    /**
+     * Asserts that the List is not null and not empty
+     *
+     * @param <T>
+     *
+     * @return
+     */
     public static <T> Assertion<List<T>> nonEmptyList()
     {
         return (list) ->
         {
             notNull().check(list);
-            
+
             if (list.isEmpty())
             {
                 throw new FailedAssertionException("List is empty");
             }
         };
-        
+
     }
-    
+
+    /**
+     * Asserts that the Map is not null and not empty
+     *
+     * @param <K>
+     * @param <V>
+     *
+     * @return
+     */
     public static <K, V> Assertion<Map<K, V>> nonEmptyMap()
     {
         return (map) ->
         {
             notNull().check(map);
-            
+
             if (map.isEmpty())
             {
                 throw new FailedAssertionException("Map is empty");
             }
-            
+
         };
     }
+
 }

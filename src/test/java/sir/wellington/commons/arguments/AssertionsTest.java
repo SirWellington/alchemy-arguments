@@ -15,31 +15,37 @@
  */
 package sir.wellington.commons.arguments;
 
+import com.google.common.base.CharMatcher;
+import static java.lang.Math.abs;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import java.util.regex.Pattern;
 import static org.hamcrest.Matchers.notNullValue;
+import static org.junit.Assert.assertThat;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verifyZeroInteractions;
 import org.mockito.runners.MockitoJUnitRunner;
-
-import static org.junit.Assert.*;
-import static org.mockito.Mockito.*;
-import static sir.wellington.commons.arguments.Assertions.stringWithNoWhitespace;
-import static sir.wellington.commons.arguments.Assertions.nonEmptyString;
-import static sir.wellington.commons.arguments.Assertions.intIsAtLeast;
+import static sir.wellington.commons.arguments.Assertions.greaterThan;
+import static sir.wellington.commons.arguments.Assertions.greaterThanOrEqualTo;
 import static sir.wellington.commons.arguments.Assertions.nonEmptyCollection;
 import static sir.wellington.commons.arguments.Assertions.nonEmptyList;
 import static sir.wellington.commons.arguments.Assertions.nonEmptyMap;
+import static sir.wellington.commons.arguments.Assertions.nonEmptyString;
 import static sir.wellington.commons.arguments.Assertions.notNull;
 import static sir.wellington.commons.arguments.Assertions.numberBetween;
 import static sir.wellington.commons.arguments.Assertions.positiveInteger;
-import static sir.wellington.commons.arguments.Assertions.stringIsAtLeastOfLength;
-import static sir.wellington.commons.arguments.Assertions.stringIsAtMostOfLength;
-import static sir.wellington.commons.arguments.Assertions.stringIsOExactfLength;
-import static sir.wellington.commons.arguments.Assertions.stringLengthBetween;
+import static sir.wellington.commons.arguments.Assertions.positiveLong;
+import static sir.wellington.commons.arguments.Assertions.stringWithLength;
+import static sir.wellington.commons.arguments.Assertions.stringWithLengthBetween;
+import static sir.wellington.commons.arguments.Assertions.stringWithLengthGreaterThanOrEqualTo;
+import static sir.wellington.commons.arguments.Assertions.stringWithLengthLessThanOrEqualTo;
+import static sir.wellington.commons.arguments.Assertions.stringWithNoWhitespace;
+import sir.wellington.commons.test.DataGenerator;
 import static sir.wellington.commons.test.DataGenerator.alphabeticString;
 import static sir.wellington.commons.test.DataGenerator.hexadecimalString;
 import static sir.wellington.commons.test.DataGenerator.integers;
@@ -50,6 +56,8 @@ import static sir.wellington.commons.test.DataGenerator.negativeIntegers;
 import static sir.wellington.commons.test.DataGenerator.oneOf;
 import static sir.wellington.commons.test.DataGenerator.positiveIntegers;
 import static sir.wellington.commons.test.DataGenerator.positiveLongs;
+import static sir.wellington.commons.test.DataGenerator.smallPositiveIntegers;
+import static sir.wellington.commons.test.DataGenerator.smallPositiveLongs;
 import static sir.wellington.commons.test.DataGenerator.strings;
 import static sir.wellington.commons.test.DataGenerator.stringsFromFixedList;
 import static sir.wellington.commons.test.DataGenerator.uuids;
@@ -68,7 +76,7 @@ public class AssertionsTest
     @Before
     public void setUp()
     {
-        iterations = oneOf(integers(100, 1000));
+        iterations = oneOf(integers(1000, 10_000));
     }
 
     private void checkForNullCase(Assertion assertion)
@@ -123,12 +131,15 @@ public class AssertionsTest
     }
 
     @Test
-    public void testStringIsOExactfLength() throws Exception
+    public void testStringWithLength() throws Exception
     {
-        System.out.println("stringIsOfLength");
+        System.out.println("testStringWithLength");
+
+        assertThrows(() -> stringWithLength(oneOf(negativeIntegers())))
+                .isInstanceOf(IllegalArgumentException.class);
 
         int expectedLength = oneOf(integers(5, 25));
-        Assertion<String> instance = stringIsOExactfLength(expectedLength);
+        Assertion<String> instance = stringWithLength(expectedLength);
         assertThat(instance, notNullValue());
         checkForNullCase(instance);
 
@@ -151,49 +162,104 @@ public class AssertionsTest
     }
 
     @Test
-    public void testIntIsAtLeast() throws Exception
+    public void testGreaterThanInt()
     {
-        System.out.println("intIsAtLeast");
+        System.out.println("testGreaterThanInt");
 
-        int atLeastThisMuch = oneOf(positiveIntegers());
-        Assertion<Integer> instance = intIsAtLeast(atLeastThisMuch);
+        int exclusiveLowerBound = oneOf(integers(-1000, 1000));
+        Assertion<Integer> instance = greaterThan(exclusiveLowerBound);
         assertThat(instance, notNullValue());
         checkForNullCase(instance);
 
         doInLoop(() ->
         {
-            int amountToAdd = oneOf(positiveIntegers());
-            instance.check(atLeastThisMuch + amountToAdd);
+            int amountToAdd = oneOf(smallPositiveIntegers());
 
-            int amountToSubtract = oneOf(positiveIntegers());
-            assertThrows(() -> instance.check(atLeastThisMuch - amountToSubtract))
+            assertThrows(() -> instance.check(exclusiveLowerBound))
+                    .isInstanceOf(FailedAssertionException.class);
+
+            instance.check(exclusiveLowerBound + 1);
+            instance.check(exclusiveLowerBound + amountToAdd);
+
+            int amountToSubtract = amountToAdd;
+            int badValue = exclusiveLowerBound - amountToSubtract;
+            assertThrows(() -> instance.check(badValue))
+                    .isInstanceOf(FailedAssertionException.class);
+        });
+    }
+
+    @Test
+    public void testGreaterThanOrEqualToInt() throws Exception
+    {
+        System.out.println("testGreaterThanOrEqualToInt");
+
+        int inclusiveLowerBound = oneOf(integers(-1000, 1000));
+        Assertion<Integer> instance = greaterThanOrEqualTo(inclusiveLowerBound);
+        assertThat(instance, notNullValue());
+        checkForNullCase(instance);
+
+        doInLoop(() ->
+        {
+            int amountToAdd = oneOf(integers(40, 100));
+
+            instance.check(inclusiveLowerBound);
+            instance.check(inclusiveLowerBound + amountToAdd);
+
+            int amountToSubtract = oneOf(integers(50, 100));
+            int badValue = inclusiveLowerBound - amountToSubtract;
+            assertThrows(() -> instance.check(badValue))
                     .isInstanceOf(FailedAssertionException.class);
         });
 
     }
 
     @Test
-    public void testStringIsAtLeastOfLengthWithBadArgs() throws Exception
+    public void testGreaterThanOrEqualToLong() throws Exception
     {
-        System.out.println("testStringIsAtLeastOfLengthWithBadArgs");
+        System.out.println("testGreaterThanOrEqualToLong");
+
+        long inclusiveLowerBound = oneOf(longs(-10000L, 1000L));
+        Assertion<Long> instance = greaterThanOrEqualTo(inclusiveLowerBound);
+        assertThat(instance, notNullValue());
+        checkForNullCase(instance);
+
+        doInLoop(() ->
+        {
+            long amountToAdd = oneOf(longs(40, 100));
+
+            instance.check(inclusiveLowerBound);
+            instance.check(inclusiveLowerBound + amountToAdd);
+
+            long amountToSubtract = oneOf(longs(50, 100));
+            long badValue = inclusiveLowerBound - amountToSubtract;
+            assertThrows(() -> instance.check(badValue))
+                    .isInstanceOf(FailedAssertionException.class);
+        });
+
+    }
+
+    @Test
+    public void testStringWithLengthGreaterThanOrEqualToWithBadArgs() throws Exception
+    {
+        System.out.println("testStringWithLengthGreaterThanOrEqualToWithBadArgs");
 
         doInLoop(() ->
         {
             int negativeNumber = oneOf(negativeIntegers());
 
-            assertThrows(() -> stringIsAtLeastOfLength(negativeNumber))
+            assertThrows(() -> stringWithLengthGreaterThanOrEqualTo(negativeNumber))
                     .isInstanceOf(IllegalArgumentException.class);
         });
     }
 
     @Test
-    public void testStringIsAtLeastOfLength() throws Exception
+    public void testStringWithLengthGreaterThanOrEqualTo() throws Exception
     {
-        System.out.println("stringIsAtLeastOfLength");
+        System.out.println("testStringWithLengthGreaterThanOrEqualTo");
 
         int expectedSize = oneOf(integers(10, 100));
 
-        Assertion<String> instance = stringIsAtLeastOfLength(expectedSize);
+        Assertion<String> instance = stringWithLengthGreaterThanOrEqualTo(expectedSize);
         assertThat(instance, notNullValue());
         checkForNullCase(instance);
 
@@ -215,32 +281,35 @@ public class AssertionsTest
     }
 
     @Test
-    public void testStringIsAtMostOfLengthWithBadArgs() throws Exception
+    public void testStringWithLengthLessThanOrEqualToWithBadArgs() throws Exception
     {
-        System.out.println("testStringIsAtMostOfLengthWithBadArgs");
+        System.out.println("testStringWithLengthLessThanOrEqualToWithBadArgs");
 
         doInLoop(() ->
         {
             int negativeNumber = oneOf(negativeIntegers());
 
-            assertThrows(() -> stringIsAtMostOfLength(negativeNumber))
+            assertThrows(() -> stringWithLengthLessThanOrEqualTo(negativeNumber))
                     .isInstanceOf(IllegalArgumentException.class);
         });
     }
 
     @Test
-    public void testStringIsAtMostOfLength() throws Exception
+    public void testStringWithLengthLessThanOrEqualTo() throws Exception
     {
-        System.out.println("stringIsAtMostOfLength");
+        System.out.println("testStringWithLengthLessThanOrEqualTo");
 
         int expectedSize = oneOf(integers(5, 100));
-        Assertion<String> instance = stringIsAtMostOfLength(expectedSize);
+        Assertion<String> instance = stringWithLengthLessThanOrEqualTo(expectedSize);
         assertThat(instance, notNullValue());
         checkForNullCase(instance);
 
         doInLoop(() ->
         {
-            final String goodString = oneOf(strings(expectedSize));
+            String goodString = oneOf(strings(expectedSize));
+            instance.check(goodString);
+
+            goodString = oneOf(strings(expectedSize - 1));
             instance.check(goodString);
 
             int amountToAdd = oneOf(integers(5, 10));
@@ -273,64 +342,84 @@ public class AssertionsTest
     }
 
     @Test
-    public void testStringLengthBetweenWithBadArgs() throws Exception
+    public void testStringWithLengthBetweenWithBadArgs() throws Exception
     {
-        System.out.println("testStringLengthBetweenWithBadArgs");
-        int goodMin = oneOf(positiveIntegers());
-        int goodMax = goodMin + oneOf(positiveIntegers());
-
-        int badMin = oneOf(negativeIntegers());
-        int badMax = goodMin - oneOf(positiveIntegers());
-
-        assertThrows(() -> stringLengthBetween(badMin, goodMax))
-                .isInstanceOf(IllegalArgumentException.class);
-
-        assertThrows(() -> stringLengthBetween(goodMin, badMax))
-                .isInstanceOf(IllegalArgumentException.class);
-    }
-
-    @Test
-    public void testStringLengthBetween() throws Exception
-    {
-        System.out.println("stringLengthBetween");
-
-        int minimumLength = oneOf(integers(10, 1000));
-        int maximumLength = minimumLength + oneOf(positiveIntegers());
-
-        Assertion<String> instance = stringLengthBetween(minimumLength, maximumLength);
-        assertThat(instance, notNullValue());
-        checkForNullCase(instance);
+        System.out.println("testStringWithLengthBetweenWithBadArgs");
 
         doInLoop(() ->
         {
-            //Happy Cases
-            String stringAtMinimum = oneOf(strings(minimumLength));
-            instance.check(stringAtMinimum);
+            int goodMin = oneOf(integers(-1000, 10000));
+            int goodMax = goodMin + oneOf(integers(1000, 10_000));
 
-            String stringAtMaximum = oneOf(strings(maximumLength));
-            instance.check(stringAtMaximum);
+            int badMin = oneOf(negativeIntegers());
+            int badMax = goodMin - oneOf(positiveIntegers());
 
-            //Sad cases
-            int stringTooShortLength = minimumLength - oneOf(integers(1, 9));
-            String stringTooShort = oneOf(strings(stringTooShortLength));
-            assertThrows(() -> instance.check(stringTooShort))
-                    .isInstanceOf(FailedAssertionException.class);
+            assertThrows(() -> stringWithLengthBetween(badMin, goodMax))
+                    .isInstanceOf(IllegalArgumentException.class);
 
-            int stringTooLongLength = maximumLength + oneOf(positiveIntegers());
-            String stringTooLong = oneOf(strings(stringTooLongLength));
-            assertThrows(() -> instance.check(stringTooLong))
-                    .isInstanceOf(FailedAssertionException.class);
+            assertThrows(() -> stringWithLengthBetween(goodMin, badMax))
+                    .isInstanceOf(IllegalArgumentException.class);
         });
 
     }
 
     @Test
-    public void testNumberBetween_int_int() throws Exception
+    public void testStringWithLengthBetween() throws Exception
     {
-        System.out.println("testNumberBetween_int_int");
+        System.out.println("testStringWithLengthBetween");
 
-        int min = oneOf(integers(-100, 100));
-        int max = min + oneOf(positiveIntegers());
+        int minimumLength = oneOf(integers(10, 100));
+        int maximumLength = oneOf(integers(minimumLength, 1_000));
+
+        assertThrows(() -> stringWithLengthBetween(maximumLength, minimumLength))
+                .isInstanceOf(IllegalArgumentException.class);
+
+        assertThrows(() -> stringWithLengthBetween(-minimumLength, maximumLength))
+                .isInstanceOf(IllegalArgumentException.class);
+
+        Assertion<String> instance = stringWithLengthBetween(minimumLength, maximumLength);
+        assertThat(instance, notNullValue());
+        checkForNullCase(instance);
+        
+        DataGenerator<String> tooShort = () ->
+        {
+             //Sad cases
+            int stringTooShortLength = minimumLength - oneOf(integers(1, 9));
+            String stringTooShort = oneOf(strings(stringTooShortLength));
+            return stringTooShort;
+        };
+        
+        DataGenerator<String> tooLong = () ->
+        {
+             int stringTooLongLength = maximumLength + oneOf(smallPositiveIntegers());
+            String stringTooLong = oneOf(strings(stringTooLongLength));
+            return stringTooLong;
+        };
+        
+        DataGenerator<String> goodStrings = () ->
+        {
+          int length = oneOf(integers(minimumLength, maximumLength));
+          return oneOf(strings(length));
+        };
+
+        runTests(instance, tooLong, goodStrings);
+        
+        goodStrings = strings(minimumLength);
+        runTests(instance, tooShort, goodStrings);
+
+    }
+
+    @Test
+    public void testNumberBetweenInts() throws Exception
+    {
+        System.out.println("testNumberBetweenInts");
+
+        int min = oneOf(integers(Integer.MIN_VALUE, Integer.MAX_VALUE - 10));
+        int max = oneOf(integers(min, Integer.MAX_VALUE));
+
+        assertThrows(() -> numberBetween(max, min))
+                .isInstanceOf(IllegalArgumentException.class);
+
         Assertion<Integer> instance = numberBetween(min, max);
         assertThat(instance, notNullValue());
         checkForNullCase(instance);
@@ -341,23 +430,35 @@ public class AssertionsTest
             instance.check(goodNumber);
 
             int numberBelowMinimum = min - oneOf(positiveIntegers());
-            assertThrows(() -> instance.check(numberBelowMinimum))
-                    .isInstanceOf(FailedAssertionException.class);
+
+            if (numberBelowMinimum < min)
+            {
+                assertThrows(() -> instance.check(numberBelowMinimum))
+                        .isInstanceOf(FailedAssertionException.class);
+            }
 
             int numberAboveMaximum = max + oneOf(positiveIntegers());
-            assertThrows(() -> instance.check(numberAboveMaximum))
-                    .isInstanceOf(FailedAssertionException.class);
+            if (numberAboveMaximum > max)
+            {
+                assertThrows(() -> instance.check(numberAboveMaximum))
+                        .isInstanceOf(FailedAssertionException.class);
+            }
+
         });
 
     }
 
     @Test
-    public void testNumberBetween_long_long() throws Exception
+    public void testNumberBetweenLongs() throws Exception
     {
-        System.out.println("testNumberBetween_long_long");
+        System.out.println("testNumberBetweenLongs");
 
-        long min = oneOf(longs(-10000, 10000));
-        long max = min + oneOf(positiveLongs());
+        long min = oneOf(longs(Long.MIN_VALUE, Long.MAX_VALUE - 10L));
+        long max = oneOf(longs(min, Long.MAX_VALUE));
+
+        assertThrows(() -> numberBetween(max, min))
+                .isInstanceOf(IllegalArgumentException.class);
+
         Assertion<Long> instance = numberBetween(min, max);
         assertThat(instance, notNullValue());
         checkForNullCase(instance);
@@ -368,12 +469,19 @@ public class AssertionsTest
             instance.check(goodLong);
 
             long numberBelowMin = min - oneOf(positiveLongs());
-            assertThrows(() -> instance.check(numberBelowMin))
-                    .isInstanceOf(FailedAssertionException.class);
+
+            if (numberBelowMin < min)
+            {
+                assertThrows(() -> instance.check(numberBelowMin))
+                        .isInstanceOf(FailedAssertionException.class);
+            }
 
             long numberAboveMax = max + oneOf(positiveIntegers());
-            assertThrows(() -> instance.check(numberAboveMax))
-                    .isInstanceOf(FailedAssertionException.class);
+            if (numberAboveMax > max)
+            {
+                assertThrows(() -> instance.check(numberAboveMax))
+                        .isInstanceOf(FailedAssertionException.class);
+            }
         });
 
     }
@@ -393,11 +501,31 @@ public class AssertionsTest
             int goodNumber = oneOf(positiveIntegers());
             instance.check(goodNumber);
 
-            int badNumber = oneOf(integers(-10000, -100));
+            int badNumber = oneOf(negativeIntegers());
             assertThrows(() -> instance.check(badNumber))
                     .isInstanceOf(FailedAssertionException.class);
         });
 
+    }
+
+    @Test
+    public void testPositiveLong()
+    {
+        System.out.println("testPositiveLong");
+
+        Assertion<Long> instance = positiveLong();
+        assertThat(instance, notNullValue());
+        checkForNullCase(instance);
+
+        doInLoop(() ->
+        {
+            long goodNumber = oneOf(positiveLongs());
+            instance.check(goodNumber);
+
+            long badNumber = oneOf(negativeIntegers());
+            assertThrows(() -> instance.check(badNumber))
+                    .isInstanceOf(FailedAssertionException.class);
+        });
     }
 
     @Test
@@ -409,21 +537,26 @@ public class AssertionsTest
         assertThat(instance, notNullValue());
         checkForNullCase(instance);
 
-        String arg = oneOf(alphabeticString());
-        instance.check(arg);
-        arg = oneOf(hexadecimalString(10));
-        instance.check(arg);
-        arg = oneOf(strings(10));
-        instance.check(arg);
+        doInLoop(() ->
+        {
+            String arg = oneOf(alphabeticString());
+            instance.check(arg);
+            arg = oneOf(hexadecimalString(10));
+            instance.check(arg);
+            arg = oneOf(strings(10));
+            arg = CharMatcher.WHITESPACE.removeFrom(arg);
+            instance.check(arg);
 
-        assertThrows(() -> instance.check(oneOf(alphabeticString()) + " "))
-                .isInstanceOf(FailedAssertionException.class);
+            assertThrows(() -> instance.check(oneOf(alphabeticString()) + " "))
+                    .isInstanceOf(FailedAssertionException.class);
 
-        assertThrows(() -> instance.check("some white space here"))
-                .isInstanceOf(FailedAssertionException.class);
+            assertThrows(() -> instance.check("some white space here"))
+                    .isInstanceOf(FailedAssertionException.class);
 
-        assertThrows(() -> instance.check(" " + oneOf(uuids)))
-                .isInstanceOf(FailedAssertionException.class);
+            assertThrows(() -> instance.check(" " + oneOf(uuids)))
+                    .isInstanceOf(FailedAssertionException.class);
+
+        });
 
     }
 
@@ -493,6 +626,196 @@ public class AssertionsTest
 
         });
 
+    }
+
+    @Test
+    public void testIntGreaterThan()
+    {
+        System.out.println("testIntGreaterThan");
+
+        assertThrows(() -> Assertions.greaterThan(Integer.MAX_VALUE))
+                .isInstanceOf(IllegalArgumentException.class);
+
+        int lowerBound = oneOf(integers(-1000, 1000));
+        Assertion<Integer> instance = Assertions.greaterThan(lowerBound);
+        checkForNullCase(instance);
+
+        DataGenerator<Integer> badNumbers = integers(lowerBound - oneOf(smallPositiveIntegers()), lowerBound);
+        DataGenerator<Integer> goodNumbers = integers(lowerBound + 1, lowerBound + oneOf(smallPositiveIntegers()));
+
+        runTests(instance, badNumbers, goodNumbers);
+    }
+
+    @Test
+    public void testIntLessThan()
+    {
+        System.out.println("testIntLessThan");
+
+        assertThrows(() -> Assertions.lessThan(Integer.MIN_VALUE))
+                .isInstanceOf(IllegalArgumentException.class);
+
+        int upperBound = oneOf(integers(-1000, 1000));
+
+        Assertion<Integer> instance = Assertions.lessThan(upperBound);
+        checkForNullCase(instance);
+
+        DataGenerator<Integer> badNumbers = () -> upperBound + oneOf(integers(0, 100));
+        DataGenerator<Integer> goodNumbers = () -> upperBound - oneOf(smallPositiveIntegers());
+        runTests(instance, badNumbers, goodNumbers);
+
+    }
+
+    @Test
+    public void testIntLessThanOrEqualTo()
+    {
+        System.out.println("testIntLessThanOrEqualTo");
+
+        int upperBound = oneOf(integers(-1000, 1000));
+        Assertion<Integer> instance = Assertions.lessThanOrEqualTo(upperBound);
+        checkForNullCase(instance);
+
+        DataGenerator<Integer> badNumbers = () -> upperBound + oneOf(smallPositiveIntegers());
+        DataGenerator<Integer> goodNumbers = () -> upperBound - oneOf(integers(0, 1000));
+        runTests(instance, badNumbers, goodNumbers);
+    }
+
+    @Test
+    public void testLongGreaterThan()
+    {
+        System.out.println("testLongGreaterThan");
+
+        assertThrows(() -> Assertions.greaterThan(Long.MAX_VALUE))
+                .isInstanceOf(IllegalArgumentException.class);
+
+        long lowerBound = oneOf(longs(-100_000L, 100_000L));
+        Assertion<Long> instance = Assertions.greaterThan(lowerBound);
+        checkForNullCase(instance);
+
+        DataGenerator<Long> badNumbers = () -> lowerBound - oneOf(longs(0, 1000L));
+        DataGenerator<Long> goodNumbers = () -> lowerBound + oneOf(smallPositiveLongs());
+        runTests(instance, badNumbers, goodNumbers);
+    }
+
+    @Test
+    public void testLongLessThan()
+    {
+        System.out.println("testLongLessThan");
+
+        assertThrows(() -> Assertions.lessThan(Long.MIN_VALUE))
+                .isInstanceOf(IllegalArgumentException.class);
+
+        long upperBound = oneOf(longs(-10_000L, 100_000));
+        Assertion<Long> instance = Assertions.lessThan(upperBound);
+        checkForNullCase(instance);
+
+        DataGenerator<Long> badNumbers = () -> upperBound + oneOf(longs(0, 10_000L));
+        DataGenerator<Long> goodNumbers = () -> upperBound - oneOf(smallPositiveLongs());
+        runTests(instance, badNumbers, goodNumbers);
+        badNumbers = () -> upperBound;
+        runTests(instance, badNumbers, goodNumbers);
+    }
+
+    @Test
+    public void testLongLessThanOrEqualTo()
+    {
+        System.out.println("testLongLessThanOrEqualTo");
+
+        long lowerBound = oneOf(longs(-10_000L, 100_000L));
+        Assertion<Long> instance = Assertions.lessThanOrEqualTo(lowerBound);
+        checkForNullCase(instance);
+
+        DataGenerator<Long> badNumbers = () -> lowerBound + oneOf(smallPositiveLongs());
+        DataGenerator<Long> goodNumbers = () -> lowerBound - oneOf(longs(0, 1000L));
+        runTests(instance, badNumbers, goodNumbers);
+        goodNumbers = () -> lowerBound;
+        runTests(instance, badNumbers, goodNumbers);
+    }
+
+    @Test
+    public void testEmptyString()
+    {
+        System.out.println("testEmptyString");
+
+        Assertion<String> instance = Assertions.emptyString();
+
+        DataGenerator<String> badArguments = alphabeticString();
+        DataGenerator<String> goodArguments = stringsFromFixedList(null, "");
+        runTests(instance, badArguments, goodArguments);
+    }
+
+    @Test
+    public void testStringWithLengthGreaterThan()
+    {
+        System.out.println("testStringWithLengthGreaterThan");
+
+        int minAccepted = oneOf(smallPositiveIntegers());
+        Assertion<String> instance = Assertions.stringWithLengthGreaterThan(minAccepted);
+        DataGenerator<String> badArguments = () ->
+        {
+            int length = abs(minAccepted - oneOf(integers(0, 10)));
+            return oneOf(alphabeticString(length));
+        };
+        DataGenerator<String> goodArguments = () ->
+        {
+            int length = minAccepted + oneOf(smallPositiveIntegers());
+            return oneOf(alphabeticString(length));
+        };
+
+        runTests(instance, badArguments, goodArguments);
+        badArguments = strings(minAccepted);
+        runTests(instance, badArguments, goodArguments);
+    }
+
+    @Test
+    public void testStringWithLengthLessThan()
+    {
+        System.out.println("testStringWithLengthLessThan");
+
+        int upperBound = oneOf(smallPositiveIntegers());
+        Assertion<String> instance = Assertions.stringWithLengthLessThan(upperBound);
+        DataGenerator<String> badArguments = () ->
+        {
+            int length = upperBound + oneOf(integers(0, 100));
+            return oneOf(strings(length));
+        };
+
+        DataGenerator<String> goodArugments = () ->
+        {
+            int length = oneOf(integers(1, upperBound - 1));
+            return oneOf(strings(length));
+        };
+
+        runTests(instance, badArguments, goodArugments);
+    }
+
+    @Test
+    public void testStringThatMatches()
+    {
+        System.out.println("testStringWithLengthLessThan");
+
+        String letter = oneOf(alphabeticString()).substring(0, 1);
+        Pattern pattern = Pattern.compile(".*" + letter + ".*");
+        Assertion<String> instance = Assertions.stringThatMatches(pattern);
+        DataGenerator<String> badArguments = () -> alphabeticString().get().replaceAll(letter, "");
+        DataGenerator<String> goodArguments = () -> alphabeticString().get() + letter;
+        runTests(instance, badArguments, goodArguments);
+    }
+
+    private <T> void runTests(Assertion<T> assertion,
+                              DataGenerator<T> badArguments,
+                              DataGenerator<T> goodArguments)
+    {
+        doInLoop(() ->
+        {
+            assertThat(assertion, notNullValue());
+
+            T badArgument = oneOf(badArguments);
+            assertThrows(() -> assertion.check(badArgument))
+                    .isInstanceOf(FailedAssertionException.class);
+
+            T goodArgument = oneOf(goodArguments);
+            assertion.check(goodArgument);
+        });
     }
 
 }
