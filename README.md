@@ -1,2 +1,183 @@
-# commons-arguments
-Common argument checks and validation done using a fluid language style
+Commons Library for Argument Validations
+==============================================
+
+[![Build Status](https://travis-ci.org/SirWellington/commons-arguments.svg)](https://travis-ci.org/SirWellington/commons-arguments)
+
+# Purpose
+This Library allows developers to perform fluid argument checking and validation.
+
+# Requirements
+
+* JDK 8
+* Maven
+
+# License
+
+This Software is licensed under the Apache 2.0 License
+
+
+# Building
+This project builds with maven. Just run a `mvn clean install` to compile and install to your local maven repository
+
+
+# Download
+
+> This library is not yet available on Maven Central
+
+To use, simply add the following maven dependency.
+
+## Release
+```xml
+<dependency>
+	<groupId>sir.wellington.commons</groupId>
+	<artifactId>commons-arguments</artifactId>
+	<version>1.0.0</version>
+</dependency>
+```
+
+
+## JitPack 
+
+You can also use [JitPack.io](https://jitpack.io/#SirWellington/commons-arguments/v1.0.0).
+
+```xml
+<repository>
+    <id>jitpack.io</id>
+    <url>https://jitpack.io</url>
+</repository>
+```
+
+```xml
+<dependency>
+    <groupId>com.github.SirWellington</groupId>
+    <artifactId>commons-arguments</artifactId>
+    <version>v1.0.0</version>
+</dependency>
+```
+
+# API
+
+The API of this library aims to use fluid-style language to argument checking and validation. It's like Hamcrest's Matchers,
+but with the additional ability to apply multiple conditions on a single argument.
+
+
+Instead of 
+
+``` java
+if (zipCode < 0)
+{
+	throw new IllegalArgumentException("Zip Code must be positive");
+}
+
+if (zipCode > 99999)
+{
+	throw new IllegalArgumentException("Zip Code cannot exceed 99999");
+}
+
+```
+You can now just do: 
+
+``` java
+checkThat(zipCode)
+	.is(positiveInteger())
+	.is(lessThanOrEqualTo(99999));
+```
+
+# Why use this
+
+You might be wondering, _why would I use this over Guava's Preconditions_?
+
+## Custom Exceptions
+
+Guava's preconditions are great when throwing an `IllegalArgumentException` is an acceptable response for your program.
+Back-End Services, however, tend to throw their own custom exceptions, which are mapped to a proper response for the client.
+
+For example,
+```java
+{
+	String nameField; //Part of the Request Object
+	//Throws IllegalArgumentException
+	Preconditions.checkArgument(!Strings.isNullOrEmpty(nameField));
+}
+``` 
+In stock Jersey, this would cause a 500, and make it look like your Service Failed.
+
+This library allows you to throw your own custom exceptions when making assertions.
+
+```java
+checkThat(password)
+	.usingException(BadPasswordException.class)
+	.is(nonEmptyString())
+	.is(stringWithLengthBetween(10, 20));
+
+```
+
+In the example above, if the password fails the checks, a `BadPasswordException` will be thrown. It is much cleaner than:
+
+``` java
+if (Strings.isNullOrEmpty(password) &&
+	password.length() < MIN_LENGTH && 
+	password.length() > MAX_LENGTH)
+{
+	throw new BadPasswordException("missing password");
+}
+```
+
+
+Alternatively, you can also supply custom Exception throwing behavior. 
+Let's try with an age check:
+
+```java
+checkThat(age)
+	.usingException(ex -> new BadPasswordException(ex))
+	.is(positiveInteger())
+	.is(greaterThanOrEqualTo(18))
+	.is(lessThan(150));
+```
+
+This also allows you to decide what message to include in the exception, and whether to include or mask the causing exception.
+
+## Custom Assertions
+
+You can create your own library of custom assertions and reuse them.
+
+Thanks to the new Java 8 lambdas, it is much easier to create inline assertions in your code. 
+
+```java
+Assertion<Car> sedan = car ->
+{
+	if (!(car instanceof Sedan))
+	{
+		throw new FailedAssertionException("Expecting a Sedan");
+	}
+};
+	
+checkThat(car)
+	.is(sedan);
+
+```
+
+```java
+Assertion<Vehicle> truck = v ->
+{
+	if (!(v instanceof Truck))
+	{
+		throw new FailedAssertionException("Expecting a Truck but got " + v);
+	}	
+};
+
+//This masks the causing FailedAssertionException message.
+checkThat(vehicle)
+	.usingException(ex -> new UnauthorizedException("Trucks only"))
+	.is(truck);
+
+```
+
+# Release Notes
+
+
+## 1.0.1
+
+
+## 1.0.0
++ Initial Release
