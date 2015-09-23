@@ -100,7 +100,7 @@ For example,
 	Preconditions.checkArgument(!Strings.isNullOrEmpty(nameField));
 }
 ``` 
-In stock Jersey, this would cause a 500, and make it look like your Service Failed.
+In stock Jersey, this would cause a 500, and make it look like your Service failed.
 
 This library allows you to throw your own custom exceptions when making assertions.
 
