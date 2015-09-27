@@ -82,7 +82,7 @@
         <dependency>
             <groupId>${project.groupId}</groupId>
             <artifactId>commons-test</artifactId>
-            <version>1.0.3-SNAPSHOT</version>
+            <version>1.0.3</version>
             <scope>test</scope>
         </dependency>
     </dependencies>
