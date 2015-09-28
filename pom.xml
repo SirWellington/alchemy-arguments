@@ -8,7 +8,7 @@
     
     <packaging>jar</packaging>
 
-    <name>${project.groupId}:${project.artifactId}</name>
+    <name>${project.artifactId}</name>
     <url>https://github.com/SirWellington/commons-arguments</url>
     <description>
         The purpose of this library is to make it easier to add argument checking
@@ -21,8 +21,33 @@
             <email>jwellington.moreno@gmail.com</email>
             <id>SirWellington</id>
             <organizationUrl>https://github.com/SirWellington</organizationUrl>
+            <roles>
+                <role>owner</role>
+                <role>developer</role>
+            </roles>
         </developer>
     </developers>
+    
+     
+    <issueManagement>
+        <system>GitHub Issues</system>
+        <url>https://github.com/SirWellington/commons-arguments/issues</url>
+    </issueManagement>
+
+    <inceptionYear>2015</inceptionYear>
+
+    <prerequisites>
+        <maven>3.0.3</maven>
+    </prerequisites>
+    
+    <licenses>
+        <license>
+            <name>Apache License, Version 2.0</name>
+            <url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
+            <distribution>repo</distribution>
+        </license>
+    </licenses>
+    
     
     <properties>
         <!--Java Compiler Properties-->
@@ -160,6 +185,23 @@
                 </executions>
             </plugin>
 
+     
+            <!--Code Signing-->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-gpg-plugin</artifactId>
+                <version>1.6</version>
+                <executions>
+                    <execution>
+                        <id>sign-artifacts</id>
+                        <phase>verify</phase>
+                        <goals>
+                            <goal>sign</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+            
         </plugins>
     </build>
 

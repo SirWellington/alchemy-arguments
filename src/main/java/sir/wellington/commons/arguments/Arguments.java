@@ -20,7 +20,7 @@ import org.slf4j.LoggerFactory;
 
 /**
  * This is the main entry-point for the Library. From here you can do:
- * 
+ *
  * <pre>
  * {@code
  * checkThat(zipCode)
@@ -31,7 +31,7 @@ import org.slf4j.LoggerFactory;
  * .is(intAtMost(99999));
  * }
  * </pre>
- * 
+ *
  * @author SirWellington
  */
 public final class Arguments
@@ -43,6 +43,14 @@ public final class Arguments
     {
     }
 
+    /**
+     * Begin assertions on an argument.
+     *
+     * @param <Argument> The type of the argument
+     * @param argument   The argument itself
+     *
+     * @return An object that allows building assertions on the argument.
+     */
     public static <Argument> AssertionBuilder<Argument, FailedAssertionException> checkThat(Argument argument)
     {
         return AssertionBuilderImpl.checkThat(argument);
