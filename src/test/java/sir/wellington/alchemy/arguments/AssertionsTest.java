@@ -1,5 +1,5 @@
 /*
- * Copyright 2015 Wellington.
+ * Copyright 2015 SirWellington.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package sir.wellington.commons.arguments;
+package sir.wellington.alchemy.arguments;
 
 import com.google.common.base.CharMatcher;
 import static java.lang.Math.abs;
@@ -30,6 +30,21 @@ import org.junit.runner.RunWith;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verifyZeroInteractions;
 import org.mockito.runners.MockitoJUnitRunner;
+import static sir.wellington.alchemy.arguments.Assertions.greaterThan;
+import static sir.wellington.alchemy.arguments.Assertions.greaterThanOrEqualTo;
+import static sir.wellington.alchemy.arguments.Assertions.nonEmptyCollection;
+import static sir.wellington.alchemy.arguments.Assertions.nonEmptyList;
+import static sir.wellington.alchemy.arguments.Assertions.nonEmptyMap;
+import static sir.wellington.alchemy.arguments.Assertions.nonEmptyString;
+import static sir.wellington.alchemy.arguments.Assertions.notNull;
+import static sir.wellington.alchemy.arguments.Assertions.numberBetween;
+import static sir.wellington.alchemy.arguments.Assertions.positiveInteger;
+import static sir.wellington.alchemy.arguments.Assertions.positiveLong;
+import static sir.wellington.alchemy.arguments.Assertions.stringWithLength;
+import static sir.wellington.alchemy.arguments.Assertions.stringWithLengthBetween;
+import static sir.wellington.alchemy.arguments.Assertions.stringWithLengthGreaterThanOrEqualTo;
+import static sir.wellington.alchemy.arguments.Assertions.stringWithLengthLessThanOrEqualTo;
+import static sir.wellington.alchemy.arguments.Assertions.stringWithNoWhitespace;
 import sir.wellington.alchemy.test.DataGenerator;
 import static sir.wellington.alchemy.test.DataGenerator.alphabeticString;
 import static sir.wellington.alchemy.test.DataGenerator.hexadecimalString;
@@ -47,21 +62,6 @@ import static sir.wellington.alchemy.test.DataGenerator.strings;
 import static sir.wellington.alchemy.test.DataGenerator.stringsFromFixedList;
 import static sir.wellington.alchemy.test.DataGenerator.uuids;
 import static sir.wellington.alchemy.test.junit.ThrowableAssertion.assertThrows;
-import static sir.wellington.commons.arguments.Assertions.greaterThan;
-import static sir.wellington.commons.arguments.Assertions.greaterThanOrEqualTo;
-import static sir.wellington.commons.arguments.Assertions.nonEmptyCollection;
-import static sir.wellington.commons.arguments.Assertions.nonEmptyList;
-import static sir.wellington.commons.arguments.Assertions.nonEmptyMap;
-import static sir.wellington.commons.arguments.Assertions.nonEmptyString;
-import static sir.wellington.commons.arguments.Assertions.notNull;
-import static sir.wellington.commons.arguments.Assertions.numberBetween;
-import static sir.wellington.commons.arguments.Assertions.positiveInteger;
-import static sir.wellington.commons.arguments.Assertions.positiveLong;
-import static sir.wellington.commons.arguments.Assertions.stringWithLength;
-import static sir.wellington.commons.arguments.Assertions.stringWithLengthBetween;
-import static sir.wellington.commons.arguments.Assertions.stringWithLengthGreaterThanOrEqualTo;
-import static sir.wellington.commons.arguments.Assertions.stringWithLengthLessThanOrEqualTo;
-import static sir.wellington.commons.arguments.Assertions.stringWithNoWhitespace;
 
 /**
  *

@@ -1,5 +1,5 @@
 /*
- * Copyright 2015 Wellington.
+ * Copyright 2015 SirWellington.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package sir.wellington.commons.arguments;
+package sir.wellington.alchemy.arguments;
 
 import java.sql.SQLException;
 import static org.hamcrest.Matchers.notNullValue;
@@ -29,10 +29,10 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyZeroInteractions;
 import static org.mockito.Mockito.when;
 import org.mockito.runners.MockitoJUnitRunner;
+import static sir.wellington.alchemy.arguments.AssertionBuilderImpl.checkThat;
 import static sir.wellington.alchemy.test.DataGenerator.alphabeticString;
 import static sir.wellington.alchemy.test.DataGenerator.oneOf;
 import static sir.wellington.alchemy.test.junit.ThrowableAssertion.assertThrows;
-import static sir.wellington.commons.arguments.AssertionBuilderImpl.checkThat;
 
 /**
  *

@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package sir.wellington.commons.arguments;
+package sir.wellington.alchemy.arguments;
 
 import com.google.common.base.Preconditions;
 import com.google.common.base.Strings;
@@ -23,7 +23,7 @@ import sir.wellington.alchemy.annotations.concurrency.Immutable;
 import sir.wellington.alchemy.annotations.patterns.FluidAPIPattern;
 import sir.wellington.alchemy.annotations.patterns.StrategyPattern;
 import static sir.wellington.alchemy.annotations.patterns.StrategyPattern.Role.CLIENT;
-import static sir.wellington.commons.arguments.ExceptionMapper.IDENTITY;
+import static sir.wellington.alchemy.arguments.ExceptionMapper.IDENTITY;
 
 /**
  *
