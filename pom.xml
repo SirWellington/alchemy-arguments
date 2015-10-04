@@ -11,8 +11,9 @@
     <name>${project.artifactId}</name>
     <url>https://github.com/SirWellington/alchemy-arguments</url>
     <description>
-        The purpose of this library is to make it easier to add argument checking
-        logic to your Services, Libraries, and Scripts.
+        Part of the Alchemy Collection.
+        Easy, Simple, and Robust argument checking logic 
+        for your Services, Libraries, and Scripts.
     </description>
     
     <developers>
