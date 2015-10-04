@@ -26,8 +26,8 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.runners.MockitoJUnitRunner;
-import static sir.wellington.commons.test.DataGenerator.alphabeticString;
-import static sir.wellington.commons.test.DataGenerator.oneOf;
+import static sir.wellington.alchemy.test.DataGenerator.alphabeticString;
+import static sir.wellington.alchemy.test.DataGenerator.oneOf;
 
 /**
  *

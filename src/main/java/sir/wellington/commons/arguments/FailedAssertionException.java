@@ -1,5 +1,5 @@
 /*
- * Copyright 2015 Wellington.
+ * Copyright 2015 SirWellington.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,6 +15,8 @@
  */
 package sir.wellington.commons.arguments;
 
+import sir.wellington.alchemy.annotations.access.Internal;
+
 /**
  *
  * An exception that is thrown when an argument assertion fails. This exception is a sub-type of
@@ -25,6 +27,8 @@ package sir.wellington.commons.arguments;
 public class FailedAssertionException extends IllegalArgumentException
 {
 
+    private String message = "";
+
     public FailedAssertionException()
     {
     }
@@ -32,16 +36,30 @@ public class FailedAssertionException extends IllegalArgumentException
     public FailedAssertionException(String message)
     {
         super(message);
+        this.message = message;
     }
 
     public FailedAssertionException(String message, Throwable cause)
     {
         super(message, cause);
+        this.message = message;
     }
 
     public FailedAssertionException(Throwable cause)
     {
         super(cause);
+    }
+
+    @Override
+    public String getMessage()
+    {
+        return message;
+    }
+
+    @Internal
+    void changeMessage(String message)
+    {
+        this.message = message;
     }
 
 }

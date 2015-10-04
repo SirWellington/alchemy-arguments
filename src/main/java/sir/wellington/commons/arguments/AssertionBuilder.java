@@ -1,5 +1,5 @@
 /*
- * Copyright 2015 Wellington.
+ * Copyright 2015 SirWellington.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,6 +14,9 @@
  * limitations under the License.
  */
 package sir.wellington.commons.arguments;
+
+import sir.wellington.alchemy.annotations.arguments.NonEmpty;
+import sir.wellington.alchemy.annotations.patterns.FluidAPIPattern;
 
 /**
  * The {@code AssertionBuilder} allows compositions of rich argument checks.
@@ -50,9 +53,20 @@ package sir.wellington.commons.arguments;
  *
  * @author SirWellington
  */
+@FluidAPIPattern
 public interface AssertionBuilder<Argument, Ex extends Throwable>
 {
-
+    /**
+     * Makes it easy to override the
+     * {@linkplain FailedAssertionException#getMessage() error message} in the Exception thrown, in
+     * case the argument fails the assertion.
+     *
+     * @param message
+     * 
+     * @return 
+     */
+    AssertionBuilder<Argument, Ex> usingMessage(@NonEmpty String message);
+    
     /**
      * Provide the behavior that responds to an argument failing an {@link Assertion}. If the
      * provided {@code ExceptionMapper} returns null, no exception will be thrown, and it will be as

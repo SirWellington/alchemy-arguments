@@ -17,6 +17,7 @@ package sir.wellington.commons.arguments;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import sir.wellington.alchemy.annotations.arguments.Nullable;
 
 /**
  * This is the main entry-point for the Library. From here you can do:
@@ -51,9 +52,9 @@ public final class Arguments
      *
      * @return An object that allows building assertions on the argument.
      */
-    public static <Argument> AssertionBuilder<Argument, FailedAssertionException> checkThat(Argument argument)
+    public static <Argument> AssertionBuilder<Argument, FailedAssertionException> checkThat(@Nullable Argument argument)
     {
         return AssertionBuilderImpl.checkThat(argument);
     }
-
+    
 }

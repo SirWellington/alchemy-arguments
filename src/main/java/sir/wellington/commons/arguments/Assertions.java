@@ -1,5 +1,5 @@
 /*
- * Copyright 2015 Wellington.
+ * Copyright 2015   SirWellington.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -25,12 +25,15 @@ import java.util.Map;
 import java.util.regex.Pattern;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import sir.wellington.alchemy.annotations.patterns.StrategyPattern;
+import static sir.wellington.alchemy.annotations.patterns.StrategyPattern.Role.CONCRETE_BEHAVIOR;
 
 /**
  * A class containing a library of common argument assertions.
  *
  * @author SirWellington
  */
+@StrategyPattern(role = CONCRETE_BEHAVIOR)
 public final class Assertions
 {
 
@@ -578,6 +581,19 @@ public final class Assertions
                 throw new FailedAssertionException("Map is empty");
             }
 
+        };
+    }
+    
+    public static <T> Assertion<T[]> nonEmptyArray()
+    {
+        return (array) ->
+        {
+            notNull().check(array);
+            
+            if(array.length == 0)
+            {
+                throw new FailedAssertionException("Array is empty");
+            }
         };
     }
 

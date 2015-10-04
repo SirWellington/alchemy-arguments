@@ -30,6 +30,23 @@ import org.junit.runner.RunWith;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verifyZeroInteractions;
 import org.mockito.runners.MockitoJUnitRunner;
+import sir.wellington.alchemy.test.DataGenerator;
+import static sir.wellington.alchemy.test.DataGenerator.alphabeticString;
+import static sir.wellington.alchemy.test.DataGenerator.hexadecimalString;
+import static sir.wellington.alchemy.test.DataGenerator.integers;
+import static sir.wellington.alchemy.test.DataGenerator.listOf;
+import static sir.wellington.alchemy.test.DataGenerator.longs;
+import static sir.wellington.alchemy.test.DataGenerator.mapOf;
+import static sir.wellington.alchemy.test.DataGenerator.negativeIntegers;
+import static sir.wellington.alchemy.test.DataGenerator.oneOf;
+import static sir.wellington.alchemy.test.DataGenerator.positiveIntegers;
+import static sir.wellington.alchemy.test.DataGenerator.positiveLongs;
+import static sir.wellington.alchemy.test.DataGenerator.smallPositiveIntegers;
+import static sir.wellington.alchemy.test.DataGenerator.smallPositiveLongs;
+import static sir.wellington.alchemy.test.DataGenerator.strings;
+import static sir.wellington.alchemy.test.DataGenerator.stringsFromFixedList;
+import static sir.wellington.alchemy.test.DataGenerator.uuids;
+import static sir.wellington.alchemy.test.junit.ThrowableAssertion.assertThrows;
 import static sir.wellington.commons.arguments.Assertions.greaterThan;
 import static sir.wellington.commons.arguments.Assertions.greaterThanOrEqualTo;
 import static sir.wellington.commons.arguments.Assertions.nonEmptyCollection;
@@ -45,23 +62,6 @@ import static sir.wellington.commons.arguments.Assertions.stringWithLengthBetwee
 import static sir.wellington.commons.arguments.Assertions.stringWithLengthGreaterThanOrEqualTo;
 import static sir.wellington.commons.arguments.Assertions.stringWithLengthLessThanOrEqualTo;
 import static sir.wellington.commons.arguments.Assertions.stringWithNoWhitespace;
-import sir.wellington.commons.test.DataGenerator;
-import static sir.wellington.commons.test.DataGenerator.alphabeticString;
-import static sir.wellington.commons.test.DataGenerator.hexadecimalString;
-import static sir.wellington.commons.test.DataGenerator.integers;
-import static sir.wellington.commons.test.DataGenerator.listOf;
-import static sir.wellington.commons.test.DataGenerator.longs;
-import static sir.wellington.commons.test.DataGenerator.mapOf;
-import static sir.wellington.commons.test.DataGenerator.negativeIntegers;
-import static sir.wellington.commons.test.DataGenerator.oneOf;
-import static sir.wellington.commons.test.DataGenerator.positiveIntegers;
-import static sir.wellington.commons.test.DataGenerator.positiveLongs;
-import static sir.wellington.commons.test.DataGenerator.smallPositiveIntegers;
-import static sir.wellington.commons.test.DataGenerator.smallPositiveLongs;
-import static sir.wellington.commons.test.DataGenerator.strings;
-import static sir.wellington.commons.test.DataGenerator.stringsFromFixedList;
-import static sir.wellington.commons.test.DataGenerator.uuids;
-import static sir.wellington.commons.test.junit.ThrowableAssertion.assertThrows;
 
 /**
  *
@@ -380,30 +380,30 @@ public class AssertionsTest
         Assertion<String> instance = stringWithLengthBetween(minimumLength, maximumLength);
         assertThat(instance, notNullValue());
         checkForNullCase(instance);
-        
+
         DataGenerator<String> tooShort = () ->
         {
-             //Sad cases
+            //Sad cases
             int stringTooShortLength = minimumLength - oneOf(integers(1, 9));
             String stringTooShort = oneOf(strings(stringTooShortLength));
             return stringTooShort;
         };
-        
+
         DataGenerator<String> tooLong = () ->
         {
-             int stringTooLongLength = maximumLength + oneOf(smallPositiveIntegers());
+            int stringTooLongLength = maximumLength + oneOf(smallPositiveIntegers());
             String stringTooLong = oneOf(strings(stringTooLongLength));
             return stringTooLong;
         };
-        
+
         DataGenerator<String> goodStrings = () ->
         {
-          int length = oneOf(integers(minimumLength, maximumLength));
-          return oneOf(strings(length));
+            int length = oneOf(integers(minimumLength, maximumLength));
+            return oneOf(strings(length));
         };
 
         runTests(instance, tooLong, goodStrings);
-        
+
         goodStrings = strings(minimumLength);
         runTests(instance, tooShort, goodStrings);
 
@@ -815,6 +815,30 @@ public class AssertionsTest
 
             T goodArgument = oneOf(goodArguments);
             assertion.check(goodArgument);
+        });
+    }
+
+    @Test
+    public void testNonEmptyArray()
+    {
+        System.out.println("testNonEmptyArray");
+
+        Assertion<String[]> instance = Assertions.nonEmptyArray();
+        assertThat(instance, notNullValue());
+        
+        assertThrows(() -> instance.check(null))
+                .isInstanceOf(FailedAssertionException.class);
+
+        doInLoop(() ->
+        {
+            String[] stringArray = listOf(alphabeticString()).toArray(new String[] {});
+            
+            instance.check(stringArray);
+            
+            String[] emptyStringArray = new String [] {};
+            
+            assertThrows(() -> instance.check(emptyStringArray))
+                    .isInstanceOf(FailedAssertionException.class);
         });
     }
 

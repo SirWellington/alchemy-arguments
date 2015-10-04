@@ -1,5 +1,5 @@
 /*
- * Copyright 2015 Wellington.
+ * Copyright 2015 SirWellington.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,6 +16,8 @@
 package sir.wellington.commons.arguments;
 
 import com.google.common.base.Preconditions;
+import sir.wellington.alchemy.annotations.patterns.StrategyPattern;
+import static sir.wellington.alchemy.annotations.patterns.StrategyPattern.Role.INTERFACE;
 
 /**
  * Assertions analyze input arguments for validity. You can always supply your own.
@@ -25,6 +27,7 @@ import com.google.common.base.Preconditions;
  * @author SirWellington
  */
 @FunctionalInterface
+@StrategyPattern(role = INTERFACE)
 public interface Assertion<A>
 {
 

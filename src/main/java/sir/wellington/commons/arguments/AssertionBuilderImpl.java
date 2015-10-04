@@ -1,5 +1,5 @@
 /*
- * Copyright 2015 Wellington.
+ * Copyright 2015 SirWellington.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,14 +16,22 @@
 package sir.wellington.commons.arguments;
 
 import com.google.common.base.Preconditions;
+import com.google.common.base.Strings;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import sir.wellington.alchemy.annotations.concurrency.Immutable;
+import sir.wellington.alchemy.annotations.patterns.FluidAPIPattern;
+import sir.wellington.alchemy.annotations.patterns.StrategyPattern;
+import static sir.wellington.alchemy.annotations.patterns.StrategyPattern.Role.CLIENT;
 import static sir.wellington.commons.arguments.ExceptionMapper.IDENTITY;
 
 /**
  *
  * @author SirWellington
  */
+@FluidAPIPattern
+@StrategyPattern(role = CLIENT)
+@Immutable
 final class AssertionBuilderImpl<Argument, Ex extends Throwable> implements AssertionBuilder<Argument, Ex>
 {
 
@@ -32,18 +40,30 @@ final class AssertionBuilderImpl<Argument, Ex extends Throwable> implements Asse
     private final Assertion<Argument> assertion;
     private final ExceptionMapper<Ex> exceptionMapper;
     private final Argument argument;
+    private final String overrideMessage;
 
-
-    private AssertionBuilderImpl(Assertion<Argument> assertion, ExceptionMapper<Ex> exceptionMapper, Argument argument)
+    private AssertionBuilderImpl(Assertion<Argument> assertion,
+                                 ExceptionMapper<Ex> exceptionMapper,
+                                 String overrideMessage,
+                                 Argument argument)
     {
         this.assertion = assertion;
         this.exceptionMapper = exceptionMapper;
+        this.overrideMessage = overrideMessage;
         this.argument = argument;
+    }
+
+    @Override
+    public AssertionBuilder<Argument, Ex> usingMessage(String message)
+    {
+        Preconditions.checkArgument(!Strings.isNullOrEmpty(message), "error message is empty");
+
+        return new AssertionBuilderImpl<>(assertion, exceptionMapper, message, argument);
     }
 
     static <Argument> AssertionBuilderImpl<Argument, FailedAssertionException> checkThat(Argument argument)
     {
-        return new AssertionBuilderImpl<>(null, IDENTITY, argument);
+        return new AssertionBuilderImpl<>(null, IDENTITY, "", argument);
     }
 
     @Override
@@ -51,7 +71,7 @@ final class AssertionBuilderImpl<Argument, Ex extends Throwable> implements Asse
     {
         Preconditions.checkNotNull(exceptionMapper, "exceptionMapper is null");
 
-        return new AssertionBuilderImpl<>(null, exceptionMapper, argument);
+        return new AssertionBuilderImpl<>(null, exceptionMapper, "", argument);
     }
 
     @Override
@@ -59,7 +79,7 @@ final class AssertionBuilderImpl<Argument, Ex extends Throwable> implements Asse
     {
         Preconditions.checkNotNull(assertion, "assertion is null");
 
-        AssertionBuilderImpl<Argument, Ex> newBuilder = new AssertionBuilderImpl<>(assertion, exceptionMapper, argument);
+        AssertionBuilderImpl<Argument, Ex> newBuilder = new AssertionBuilderImpl<>(assertion, exceptionMapper, overrideMessage, argument);
 
         //Check this assertion
         newBuilder.checkAssertion();
@@ -81,13 +101,17 @@ final class AssertionBuilderImpl<Argument, Ex extends Throwable> implements Asse
         catch (FailedAssertionException ex)
         {
             caught = ex;
+            if (!Strings.isNullOrEmpty(overrideMessage))
+            {
+                caught.changeMessage(overrideMessage);
+            }
         }
         catch (RuntimeException ex)
         {
             handleUnexpectedException(ex);
         }
 
-        if(exceptionOccured(caught))
+        if (exceptionOccured(caught))
         {
             handleFailedAssertion(caught);
         }
