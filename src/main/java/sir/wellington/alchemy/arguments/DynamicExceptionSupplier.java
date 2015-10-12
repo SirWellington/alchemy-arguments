@@ -1,5 +1,5 @@
 /*
- * Copyright 2015 SirWellington.
+ * Copyright 2015 Sir Wellington.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,8 +15,6 @@
  */
 package sir.wellington.alchemy.arguments;
 
-import com.google.common.base.Preconditions;
-import com.google.common.base.Strings;
 import java.lang.reflect.Constructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -40,7 +38,7 @@ final class DynamicExceptionSupplier<Ex extends Throwable> implements ExceptionM
 
     DynamicExceptionSupplier(Class<Ex> exceptionClass, String message)
     {
-        Preconditions.checkNotNull(exceptionClass, "missing exceptionClass");
+        Checks.checkNotNull(exceptionClass, "missing exceptionClass");
         this.exceptionClass = exceptionClass;
         this.message = message;
     }
@@ -122,7 +120,7 @@ final class DynamicExceptionSupplier<Ex extends Throwable> implements ExceptionM
 
     private boolean hasMessageToInclude()
     {
-        return !Strings.isNullOrEmpty(message);
+        return !Checks.isNullOrEmpty(message);
     }
 
     private boolean hasConstructorWithArguments(Class<?>... classes) throws NoSuchMethodException, SecurityException
@@ -160,22 +158,22 @@ final class DynamicExceptionSupplier<Ex extends Throwable> implements ExceptionM
 
     private boolean hasNeitherAMessageOrACause(String message, FailedAssertionException cause)
     {
-        return cause == null && Strings.isNullOrEmpty(message);
+        return cause == null && Checks.isNullOrEmpty(message);
     }
 
     private boolean haveOnlyAMessage(String message, FailedAssertionException cause)
     {
-        return !Strings.isNullOrEmpty(message) && cause == null;
+        return !Checks.isNullOrEmpty(message) && cause == null;
     }
 
     private boolean haveOnlyACause(String message, FailedAssertionException cause)
     {
-        return cause != null && Strings.isNullOrEmpty(message);
+        return cause != null && Checks.isNullOrEmpty(message);
     }
 
     private boolean haveBothAMessageAndACause(String message, FailedAssertionException cause)
     {
-        return cause != null && !Strings.isNullOrEmpty(message);
+        return cause != null && !Checks.isNullOrEmpty(message);
     }
 
 }

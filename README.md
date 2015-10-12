@@ -181,3 +181,15 @@ checkThat(vehicle)
 
 ## 1.0.0
 + Initial Release
+
+# Planned Features
+
+## Assertions on multiple arguments simultaneously
+For example
+
+```java
+
+checkThat(firstName, middleName, lastName, password, description)
+.are(nonEmptyString());
+
+```

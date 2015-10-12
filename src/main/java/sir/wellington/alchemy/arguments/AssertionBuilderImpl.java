@@ -1,5 +1,5 @@
 /*
- * Copyright 2015 SirWellington.
+ * Copyright 2015 Sir Wellington.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,8 +15,6 @@
  */
 package sir.wellington.alchemy.arguments;
 
-import com.google.common.base.Preconditions;
-import com.google.common.base.Strings;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import sir.wellington.alchemy.annotations.concurrency.Immutable;
@@ -56,7 +54,7 @@ final class AssertionBuilderImpl<Argument, Ex extends Throwable> implements Asse
     @Override
     public AssertionBuilder<Argument, Ex> usingMessage(String message)
     {
-        Preconditions.checkArgument(!Strings.isNullOrEmpty(message), "error message is empty");
+        Checks.checkThat(!Checks.isNullOrEmpty(message), "error message is empty");
 
         return new AssertionBuilderImpl<>(assertion, exceptionMapper, message, argument);
     }
@@ -69,7 +67,7 @@ final class AssertionBuilderImpl<Argument, Ex extends Throwable> implements Asse
     @Override
     public <Ex extends Throwable> AssertionBuilderImpl<Argument, Ex> usingException(ExceptionMapper<Ex> exceptionMapper)
     {
-        Preconditions.checkNotNull(exceptionMapper, "exceptionMapper is null");
+        Checks.checkNotNull(exceptionMapper, "exceptionMapper is null");
 
         return new AssertionBuilderImpl<>(null, exceptionMapper, "", argument);
     }
@@ -77,7 +75,7 @@ final class AssertionBuilderImpl<Argument, Ex extends Throwable> implements Asse
     @Override
     public AssertionBuilderImpl<Argument, Ex> is(Assertion<Argument> assertion) throws Ex
     {
-        Preconditions.checkNotNull(assertion, "assertion is null");
+        Checks.checkNotNull(assertion, "assertion is null");
 
         AssertionBuilderImpl<Argument, Ex> newBuilder = new AssertionBuilderImpl<>(assertion, exceptionMapper, overrideMessage, argument);
 
@@ -89,8 +87,8 @@ final class AssertionBuilderImpl<Argument, Ex extends Throwable> implements Asse
 
     private void checkAssertion() throws Ex
     {
-        Preconditions.checkState(assertion != null, "no assertion found");
-        Preconditions.checkState(exceptionMapper != null, "no exceptionMapper found");
+        Checks.checkState(assertion != null, "no assertion found");
+        Checks.checkState(exceptionMapper != null, "no exceptionMapper found");
 
         FailedAssertionException caught = null;
 
@@ -101,7 +99,7 @@ final class AssertionBuilderImpl<Argument, Ex extends Throwable> implements Asse
         catch (FailedAssertionException ex)
         {
             caught = ex;
-            if (!Strings.isNullOrEmpty(overrideMessage))
+            if (!Checks.isNullOrEmpty(overrideMessage))
             {
                 caught.changeMessage(overrideMessage);
             }

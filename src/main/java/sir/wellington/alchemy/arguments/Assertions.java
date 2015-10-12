@@ -1,5 +1,5 @@
 /*
- * Copyright 2015   SirWellington.
+ * Copyright 2015   Sir Wellington.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,9 +15,6 @@
  */
 package sir.wellington.alchemy.arguments;
 
-import com.google.common.base.CharMatcher;
-import com.google.common.base.Preconditions;
-import com.google.common.base.Strings;
 import static java.lang.String.format;
 import java.util.Collection;
 import java.util.List;
@@ -57,6 +54,61 @@ public final class Assertions
             if (reference == null)
             {
                 throw new FailedAssertionException("Argument is null");
+            }
+        };
+    }
+
+    public static <A> Assertion<A> sameInstance(Object other)
+    {
+        return (argument) ->
+        {
+            if (argument == null && other == null)
+            {
+                return;
+            }
+
+            if (argument != other)
+            {
+                throw new FailedAssertionException("Expected " + argument + " to be the same instance as " + other);
+            }
+        };
+    }
+
+    public static <A> Assertion<A> equalTo(A other)
+    {
+        return (argument) ->
+        {
+            if (argument == null && other == null)
+            {
+                return;
+            }
+
+            if (argument == null)
+            {
+                throw new FailedAssertionException("null is not equal to " + other);
+            }
+
+            if (!argument.equals(other))
+            {
+                throw new FailedAssertionException("Expected " + argument + " to be equal to " + other);
+            }
+        };
+    }
+
+    public static <A> Assertion<A> not(Assertion<A> assertion)
+    {
+        Checks.checkNotNull(assertion, "missing assertion");
+
+        return (argument) ->
+        {
+            try
+            {
+                assertion.check(argument);
+                throw new FailedAssertionException("Expected assertion to fail, but it passed: " + assertion);
+            }
+            catch (FailedAssertionException ex)
+            {
+
             }
         };
     }
@@ -108,7 +160,7 @@ public final class Assertions
      */
     public static Assertion<Integer> numberBetween(int min, int max)
     {
-        Preconditions.checkArgument(min < max, "Minimum must be less than Max.");
+        Checks.checkThat(min < max, "Minimum must be less than Max.");
 
         return (Integer number) ->
         {
@@ -132,7 +184,7 @@ public final class Assertions
      */
     public static Assertion<Long> numberBetween(long min, long max)
     {
-        Preconditions.checkArgument(min < max, "Minimum must be less than Max.");
+        Checks.checkThat(min < max, "Minimum must be less than Max.");
 
         return (number) ->
         {
@@ -155,7 +207,7 @@ public final class Assertions
      */
     public static Assertion<Integer> greaterThan(int exclusiveLowerBound)
     {
-        Preconditions.checkArgument(exclusiveLowerBound != Integer.MAX_VALUE, "Integers cannot exceed " + Integer.MAX_VALUE);
+        Checks.checkThat(exclusiveLowerBound != Integer.MAX_VALUE, "Integers cannot exceed " + Integer.MAX_VALUE);
 
         return (integer) ->
         {
@@ -176,7 +228,7 @@ public final class Assertions
      */
     public static Assertion<Long> greaterThan(long exclusiveLowerBound)
     {
-        Preconditions.checkArgument(exclusiveLowerBound != Long.MAX_VALUE, "Longs cannot exceed " + Long.MAX_VALUE);
+        Checks.checkThat(exclusiveLowerBound != Long.MAX_VALUE, "Longs cannot exceed " + Long.MAX_VALUE);
 
         return (number) ->
         {
@@ -237,7 +289,7 @@ public final class Assertions
      */
     public static Assertion<Integer> lessThan(int exclusiveUpperBound)
     {
-        Preconditions.checkArgument(exclusiveUpperBound != Integer.MIN_VALUE, "Ints cannot be less than " + Integer.MIN_VALUE);
+        Checks.checkThat(exclusiveUpperBound != Integer.MIN_VALUE, "Ints cannot be less than " + Integer.MIN_VALUE);
 
         return (number) ->
         {
@@ -259,7 +311,7 @@ public final class Assertions
      */
     public static Assertion<Long> lessThan(long exclusiveUpperBound)
     {
-        Preconditions.checkArgument(exclusiveUpperBound != Long.MIN_VALUE, "Longs cannot be less than " + Long.MIN_VALUE);
+        Checks.checkThat(exclusiveUpperBound != Long.MIN_VALUE, "Longs cannot be less than " + Long.MIN_VALUE);
 
         return (number) ->
         {
@@ -322,7 +374,7 @@ public final class Assertions
     {
         return (string) ->
         {
-            if (Strings.isNullOrEmpty(string))
+            if (Checks.isNullOrEmpty(string))
             {
                 throw new FailedAssertionException("String argument is empty");
             }
@@ -338,7 +390,7 @@ public final class Assertions
     {
         return (string) ->
         {
-            if (!Strings.isNullOrEmpty(string))
+            if (!Checks.isNullOrEmpty(string))
             {
                 throw new FailedAssertionException("Expected empty string but got: " + string);
             }
@@ -354,7 +406,7 @@ public final class Assertions
      */
     public static Assertion<String> stringWithLength(int expectedLength)
     {
-        Preconditions.checkArgument(expectedLength >= 0, "expectedLength must be >= 0");
+        Checks.checkThat(expectedLength >= 0, "expectedLength must be >= 0");
 
         return (string) ->
         {
@@ -376,7 +428,7 @@ public final class Assertions
      */
     public static Assertion<String> stringWithLengthGreaterThan(int minimumLength)
     {
-        Preconditions.checkArgument(minimumLength > 0, "minimumLength must be > 0");
+        Checks.checkThat(minimumLength > 0, "minimumLength must be > 0");
 
         return (string) ->
         {
@@ -398,7 +450,7 @@ public final class Assertions
      */
     public static Assertion<String> stringWithLengthGreaterThanOrEqualTo(int minimumLength)
     {
-        Preconditions.checkArgument(minimumLength >= 0);
+        Checks.checkThat(minimumLength >= 0);
         return (string) ->
         {
             notNull().check(string);
@@ -419,7 +471,7 @@ public final class Assertions
      */
     public static Assertion<String> stringWithLengthLessThan(int upperBound)
     {
-        Preconditions.checkArgument(upperBound > 0, "upperBound must be > 0");
+        Checks.checkThat(upperBound > 0, "upperBound must be > 0");
 
         return (string) ->
         {
@@ -441,7 +493,7 @@ public final class Assertions
      */
     public static Assertion<String> stringWithLengthLessThanOrEqualTo(int maximumLength)
     {
-        Preconditions.checkArgument(maximumLength >= 0);
+        Checks.checkThat(maximumLength >= 0);
         return (string) ->
         {
             notNull().check(string);
@@ -463,8 +515,8 @@ public final class Assertions
      */
     public static Assertion<String> stringWithLengthBetween(int minimumLength, int maximumLength)
     {
-        Preconditions.checkArgument(minimumLength >= 0, "Minimum length must be at least 0");
-        Preconditions.checkArgument(minimumLength < maximumLength, "Minimum length must be > maximum length.");
+        Checks.checkThat(minimumLength >= 0, "Minimum length must be at least 0");
+        Checks.checkThat(minimumLength < maximumLength, "Minimum length must be > maximum length.");
 
         return (string) ->
         {
@@ -492,9 +544,12 @@ public final class Assertions
         {
             notNull().check(string);
 
-            if (CharMatcher.WHITESPACE.matchesAnyOf(string))
+            for (char character : string.toCharArray())
             {
-                throw new FailedAssertionException("Argument should not have whitespace.");
+                if (Character.isWhitespace(character))
+                {
+                    throw new FailedAssertionException("Argument should not have whitespace.");
+                }
             }
         };
 
@@ -509,7 +564,7 @@ public final class Assertions
      */
     public static Assertion<String> stringThatMatches(Pattern pattern)
     {
-        Preconditions.checkNotNull(pattern, "missing pattern");
+        Checks.checkNotNull(pattern, "missing pattern");
 
         return (string) ->
         {
@@ -583,14 +638,14 @@ public final class Assertions
 
         };
     }
-    
+
     public static <T> Assertion<T[]> nonEmptyArray()
     {
         return (array) ->
         {
             notNull().check(array);
-            
-            if(array.length == 0)
+
+            if (array.length == 0)
             {
                 throw new FailedAssertionException("Array is empty");
             }

@@ -1,5 +1,5 @@
 /*
- * Copyright 2015 SirWellington.
+ * Copyright 2015 Sir Wellington.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -40,8 +40,9 @@ public final class Arguments
 
     private final static Logger LOG = LoggerFactory.getLogger(Arguments.class);
 
-    private Arguments()
+    private Arguments() throws IllegalAccessException
     {
+        throw new IllegalAccessException("not meant to be instantiated");
     }
 
     /**
@@ -56,5 +57,5 @@ public final class Arguments
     {
         return AssertionBuilderImpl.checkThat(argument);
     }
-    
+
 }

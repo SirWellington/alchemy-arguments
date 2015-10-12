@@ -1,5 +1,5 @@
 /*
- * Copyright 2015 SirWellington.
+ * Copyright 2015 Sir Wellington.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,7 +15,6 @@
  */
 package sir.wellington.alchemy.arguments;
 
-import com.google.common.base.Preconditions;
 import sir.wellington.alchemy.annotations.patterns.StrategyPattern;
 import static sir.wellington.alchemy.annotations.patterns.StrategyPattern.Role.INTERFACE;
 
@@ -52,35 +51,37 @@ public interface Assertion<A>
      * <pre>
      *
      * {@code
-     *  Assertion<Integer> validAge = Assertion.multipleAssertions(
-     *     nonNull(),
-     *     greaterThanOrEqualTo(1),
-     *     lessThanOrEqualTo(120)
-     *  );
-     *
-     * checkThat(age)
-     *      .is(validAge);
-     * }
+     *  Assertion<Integer> validAge = Assertion.combine(
+     nonNull(),
+     greaterThanOrEqualTo(1),
+     lessThanOrEqualTo(120)
+  );
+
+ checkThat(age)
+      .is(validAge);
+ }
      *
      * </pre>
      *
      * This allows you to save and store Assertions that are commonly used together to perform
      * argument checks, and to do so at runtime.
      *
+     * @param first
      * @param <T>
      *
-     * @param assertions
+     * @param other
      *
      * @return
      */
-    static <T> Assertion<T> multipleAssertions(Assertion<T>... assertions)
+    static <T> Assertion<T> combine(Assertion<T> first, Assertion<T>... other)
     {
-        Preconditions.checkArgument(assertions != null, "no assertions");
-        Preconditions.checkArgument(assertions.length > 0, "no assertions");
+        Checks.checkNotNull(first, "first Assertion cannot be null");
 
         return (argument) ->
         {
-            for (Assertion<T> assertion : assertions)
+            first.check(argument);
+
+            for (Assertion<T> assertion : other)
             {
                 assertion.check(argument);
             }

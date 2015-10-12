@@ -1,5 +1,5 @@
 /*
- * Copyright 2015 SirWellington.
+ * Copyright 2015 Sir Wellington.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,7 +15,6 @@
  */
 package sir.wellington.alchemy.arguments;
 
-import com.google.common.base.CharMatcher;
 import static java.lang.Math.abs;
 import java.util.Collection;
 import java.util.Collections;
@@ -539,13 +538,11 @@ public class AssertionsTest
 
         doInLoop(() ->
         {
-            String arg = oneOf(alphabeticString());
-            instance.check(arg);
-            arg = oneOf(hexadecimalString(10));
-            instance.check(arg);
-            arg = oneOf(strings(10));
-            arg = CharMatcher.WHITESPACE.removeFrom(arg);
-            instance.check(arg);
+            String alphabetic = oneOf(alphabeticString());
+            instance.check(alphabetic);
+
+            String hex = oneOf(hexadecimalString(10));
+            instance.check(hex);
 
             assertThrows(() -> instance.check(oneOf(alphabeticString()) + " "))
                     .isInstanceOf(FailedAssertionException.class);
@@ -825,18 +822,22 @@ public class AssertionsTest
 
         Assertion<String[]> instance = Assertions.nonEmptyArray();
         assertThat(instance, notNullValue());
-        
+
         assertThrows(() -> instance.check(null))
                 .isInstanceOf(FailedAssertionException.class);
 
         doInLoop(() ->
         {
-            String[] stringArray = listOf(alphabeticString()).toArray(new String[] {});
-            
+            String[] stringArray = listOf(alphabeticString()).toArray(new String[]
+            {
+            });
+
             instance.check(stringArray);
-            
-            String[] emptyStringArray = new String [] {};
-            
+
+            String[] emptyStringArray = new String[]
+            {
+            };
+
             assertThrows(() -> instance.check(emptyStringArray))
                     .isInstanceOf(FailedAssertionException.class);
         });
