@@ -1,4 +1,4 @@
-Commons Library for Argument Validations
+Alchemt Arguments
 ==============================================
 
 [![Build Status](https://travis-ci.org/SirWellington/commons-arguments.svg)](https://travis-ci.org/SirWellington/commons-arguments)
@@ -8,13 +8,8 @@ This Library allows developers to perform fluid argument checking and validation
 
 # Requirements
 
-* JDK 8
-* Maven
-
-# License
-
-This Software is licensed under the Apache 2.0 License
-
++ JDK 8
++ Maven
 
 # Building
 This project builds with maven. Just run a `mvn clean install` to compile and install to your local maven repository
@@ -29,30 +24,21 @@ To use, simply add the following maven dependency.
 ## Release
 ```xml
 <dependency>
-	<groupId>sir.wellington.commons</groupId>
-	<artifactId>commons-arguments</artifactId>
-	<version>1.0.0</version>
+	<groupId>tech.sirwellington.alchemy</groupId>
+	<artifactId>alchemy-arguments</artifactId>
+	<version>1.0</version>
 </dependency>
 ```
 
-
-## JitPack 
-
-You can also use [JitPack.io](https://jitpack.io/#SirWellington/commons-arguments/v1.0.0).
-
-```xml
-<repository>
-    <id>jitpack.io</id>
-    <url>https://jitpack.io</url>
-</repository>
-```
+## Snapshot
 
 ```xml
 <dependency>
-    <groupId>com.github.SirWellington</groupId>
-    <artifactId>commons-arguments</artifactId>
-    <version>v1.0.0</version>
+	<groupId>tech.sirwellington.alchemy</groupId>
+	<artifactId>alchemy-arguments</artifactId>
+	<version>1.1-SNAPSHOT</version>
 </dependency>
+```
 ```
 
 # API
@@ -172,6 +158,13 @@ checkThat(vehicle)
 	.is(truck);
 
 ```
+
+
+# License
+
+This Software is licensed under the Apache 2.0 License
+
+http://www.apache.org/licenses/LICENSE-2.0
 
 # Release Notes
 

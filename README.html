@@ -879,11 +879,6 @@ body .markdown-body
 </ul>
 
 <h1>
-<a id="user-content-license" class="anchor" href="#license" aria-hidden="true"><span class="octicon octicon-link"></span></a>License</h1>
-
-<p>This Software is licensed under the Apache 2.0 License</p>
-
-<h1>
 <a id="user-content-building" class="anchor" href="#building" aria-hidden="true"><span class="octicon octicon-link"></span></a>Building</h1>
 
 <p>This project builds with maven. Just run a <code>mvn clean install</code> to compile and install to your local maven repository</p>
@@ -901,45 +896,41 @@ body .markdown-body
 <a id="user-content-release" class="anchor" href="#release" aria-hidden="true"><span class="octicon octicon-link"></span></a>Release</h2>
 
 <div class="highlight highlight-text-xml"><pre>&lt;<span class="pl-ent">dependency</span>&gt;
-    &lt;<span class="pl-ent">groupId</span>&gt;sir.wellington.commons&lt;/<span class="pl-ent">groupId</span>&gt;
-    &lt;<span class="pl-ent">artifactId</span>&gt;commons-arguments&lt;/<span class="pl-ent">artifactId</span>&gt;
-    &lt;<span class="pl-ent">version</span>&gt;1.0.0&lt;/<span class="pl-ent">version</span>&gt;
+    &lt;<span class="pl-ent">groupId</span>&gt;tech.sirwellington.alchemy&lt;/<span class="pl-ent">groupId</span>&gt;
+    &lt;<span class="pl-ent">artifactId</span>&gt;alchemy-arguments&lt;/<span class="pl-ent">artifactId</span>&gt;
+    &lt;<span class="pl-ent">version</span>&gt;1.0&lt;/<span class="pl-ent">version</span>&gt;
 &lt;/<span class="pl-ent">dependency</span>&gt;</pre></div>
 
 <h2>
-<a id="user-content-jitpack" class="anchor" href="#jitpack" aria-hidden="true"><span class="octicon octicon-link"></span></a>JitPack</h2>
-
-<p>You can also use <a href="https://jitpack.io/#SirWellington/commons-arguments/v1.0.0">JitPack.io</a>.</p>
-
-<div class="highlight highlight-text-xml"><pre>&lt;<span class="pl-ent">repository</span>&gt;
-    &lt;<span class="pl-ent">id</span>&gt;jitpack.io&lt;/<span class="pl-ent">id</span>&gt;
-    &lt;<span class="pl-ent">url</span>&gt;https://jitpack.io&lt;/<span class="pl-ent">url</span>&gt;
-&lt;/<span class="pl-ent">repository</span>&gt;</pre></div>
+<a id="user-content-snapshot" class="anchor" href="#snapshot" aria-hidden="true"><span class="octicon octicon-link"></span></a>Snapshot</h2>
 
 <div class="highlight highlight-text-xml"><pre>&lt;<span class="pl-ent">dependency</span>&gt;
-    &lt;<span class="pl-ent">groupId</span>&gt;com.github.SirWellington&lt;/<span class="pl-ent">groupId</span>&gt;
-    &lt;<span class="pl-ent">artifactId</span>&gt;commons-arguments&lt;/<span class="pl-ent">artifactId</span>&gt;
-    &lt;<span class="pl-ent">version</span>&gt;v1.0.0&lt;/<span class="pl-ent">version</span>&gt;
+    &lt;<span class="pl-ent">groupId</span>&gt;tech.sirwellington.alchemy&lt;/<span class="pl-ent">groupId</span>&gt;
+    &lt;<span class="pl-ent">artifactId</span>&gt;alchemy-arguments&lt;/<span class="pl-ent">artifactId</span>&gt;
+    &lt;<span class="pl-ent">version</span>&gt;1.1-SNAPSHOT&lt;/<span class="pl-ent">version</span>&gt;
 &lt;/<span class="pl-ent">dependency</span>&gt;</pre></div>
 
-<h1>
-<a id="user-content-api" class="anchor" href="#api" aria-hidden="true"><span class="octicon octicon-link"></span></a>API</h1>
+<pre><code>
+# API
 
-<p>The API of this library aims to use fluid-style language to argument checking and validation. It's like Hamcrest's Matchers,
-but with the additional ability to apply multiple conditions on a single argument.</p>
+The API of this library aims to use fluid-style language to argument checking and validation. It's like Hamcrest's Matchers,
+but with the additional ability to apply multiple conditions on a single argument.
 
-<p>Instead of </p>
 
-<div class="highlight highlight-source-java"><pre><span class="pl-k">if</span> (zipCode <span class="pl-k">&lt;</span> <span class="pl-c1">0</span>)
+Instead of 
+
+``` java
+if (zipCode &lt; 0)
 {
-    <span class="pl-k">throw</span> <span class="pl-k">new</span> <span class="pl-smi">IllegalArgumentException</span>(<span class="pl-s"><span class="pl-pds">"</span>Zip Code must be positive<span class="pl-pds">"</span></span>);
+    throw new IllegalArgumentException("Zip Code must be positive");
 }
 
-<span class="pl-k">if</span> (zipCode <span class="pl-k">&gt;</span> <span class="pl-c1">99999</span>)
+if (zipCode &gt; 99999)
 {
-    <span class="pl-k">throw</span> <span class="pl-k">new</span> <span class="pl-smi">IllegalArgumentException</span>(<span class="pl-s"><span class="pl-pds">"</span>Zip Code cannot exceed 99999<span class="pl-pds">"</span></span>);
+    throw new IllegalArgumentException("Zip Code cannot exceed 99999");
 }
-</pre></div>
+
+</code></pre>
 
 <p>You can now just do: </p>
 
@@ -1028,6 +1019,13 @@ checkThat(vehicle)
     .usingException(ex <span class="pl-k">-</span><span class="pl-k">&gt;</span> <span class="pl-k">new</span> <span class="pl-smi">UnauthorizedException</span>(<span class="pl-s"><span class="pl-pds">"</span>Trucks only<span class="pl-pds">"</span></span>))
     .is(truck);
 </pre></div>
+
+<h1>
+<a id="user-content-license" class="anchor" href="#license" aria-hidden="true"><span class="octicon octicon-link"></span></a>License</h1>
+
+<p>This Software is licensed under the Apache 2.0 License</p>
+
+<p><a href="http://www.apache.org/licenses/LICENSE-2.0">http://www.apache.org/licenses/LICENSE-2.0</a></p>
 
 <h1>
 <a id="user-content-release-notes" class="anchor" href="#release-notes" aria-hidden="true"><span class="octicon octicon-link"></span></a>Release Notes</h1>
