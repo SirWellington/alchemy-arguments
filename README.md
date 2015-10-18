@@ -1,4 +1,4 @@
-Alchemt Arguments
+Alchemy Arguments
 ==============================================
 
 [![Build Status](https://travis-ci.org/SirWellington/commons-arguments.svg)](https://travis-ci.org/SirWellington/commons-arguments)
@@ -8,7 +8,7 @@ This Library allows developers to perform fluid argument checking and validation
 
 # Requirements
 
-+ JDK 8
++ Java 8
 + Maven
 
 # Building
@@ -16,8 +16,6 @@ This project builds with maven. Just run a `mvn clean install` to compile and in
 
 
 # Download
-
-> This library is not yet available on Maven Central
 
 To use, simply add the following maven dependency.
 
@@ -47,7 +45,7 @@ The API of this library aims to use fluid-style language to argument checking an
 but with the additional ability to apply multiple conditions on a single argument.
 
 
-Instead of 
+Instead of
 
 ``` java
 if (zipCode < 0)
@@ -61,7 +59,7 @@ if (zipCode > 99999)
 }
 
 ```
-You can now just do: 
+You can now just do:
 
 ``` java
 checkThat(zipCode)
@@ -85,7 +83,7 @@ For example,
 	//Throws IllegalArgumentException
 	Preconditions.checkArgument(!Strings.isNullOrEmpty(nameField));
 }
-``` 
+```
 In stock Jersey, this would cause a 500, and make it look like your Service failed.
 
 This library allows you to throw your own custom exceptions when making assertions.
@@ -102,7 +100,7 @@ In the example above, if the password fails the checks, a `BadPasswordException`
 
 ``` java
 if (Strings.isNullOrEmpty(password) &&
-	password.length() < MIN_LENGTH && 
+	password.length() < MIN_LENGTH &&
 	password.length() > MAX_LENGTH)
 {
 	throw new BadPasswordException("missing password");
@@ -110,7 +108,7 @@ if (Strings.isNullOrEmpty(password) &&
 ```
 
 
-Alternatively, you can also supply custom Exception throwing behavior. 
+Alternatively, you can also supply custom Exception throwing behavior.
 Let's try with an age check:
 
 ```java
@@ -127,7 +125,7 @@ This also allows you to decide what message to include in the exception, and whe
 
 You can create your own library of custom assertions and reuse them.
 
-Thanks to the new Java 8 lambdas, it is much easier to create inline assertions in your code. 
+Thanks to the new Java 8 lambdas, it is much easier to create inline assertions in your code.
 
 ```java
 Assertion<Car> sedan = car ->
@@ -137,7 +135,7 @@ Assertion<Car> sedan = car ->
 		throw new FailedAssertionException("Expecting a Sedan");
 	}
 };
-	
+
 checkThat(car)
 	.is(sedan);
 
@@ -149,7 +147,7 @@ Assertion<Vehicle> truck = v ->
 	if (!(v instanceof Truck))
 	{
 		throw new FailedAssertionException("Expecting a Truck but got " + v);
-	}	
+	}
 };
 
 //This masks the causing FailedAssertionException message.
@@ -160,16 +158,12 @@ checkThat(vehicle)
 ```
 
 
-# License
-
-This Software is licensed under the Apache 2.0 License
-
-http://www.apache.org/licenses/LICENSE-2.0
 
 # Release Notes
 
 
-## 1.0.1
+## 1.1
++ Initial Public Release
 
 
 ## 1.0.0
@@ -186,3 +180,9 @@ checkThat(firstName, middleName, lastName, password, description)
 .are(nonEmptyString());
 
 ```
+
+# License
+
+This Software is licensed under the Apache 2.0 License
+
+http://www.apache.org/licenses/LICENSE-2.0

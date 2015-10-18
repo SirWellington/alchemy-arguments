@@ -15,7 +15,7 @@
  */
 package sir.wellington.alchemy.arguments;
 
-import sir.wellington.alchemy.annotations.access.Internal;
+import tech.sirwellington.alchemy.annotations.access.Internal;
 
 /**
  *

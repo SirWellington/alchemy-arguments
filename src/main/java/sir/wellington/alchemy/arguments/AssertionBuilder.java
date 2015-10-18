@@ -15,8 +15,9 @@
  */
 package sir.wellington.alchemy.arguments;
 
-import sir.wellington.alchemy.annotations.arguments.NonEmpty;
-import sir.wellington.alchemy.annotations.patterns.FluidAPIPattern;
+import tech.sirwellington.alchemy.annotations.arguments.NonEmpty;
+import tech.sirwellington.alchemy.annotations.arguments.NonNull;
+import tech.sirwellington.alchemy.annotations.designs.FluidAPIDesign;
 
 /**
  * The {@code AssertionBuilder} allows compositions of rich argument checks.
@@ -53,7 +54,7 @@ import sir.wellington.alchemy.annotations.patterns.FluidAPIPattern;
  *
  * @author SirWellington
  */
-@FluidAPIPattern
+@FluidAPIDesign
 public interface AssertionBuilder<Argument, Ex extends Throwable>
 {
     /**
@@ -68,7 +69,7 @@ public interface AssertionBuilder<Argument, Ex extends Throwable>
     AssertionBuilder<Argument, Ex> usingMessage(@NonEmpty String message);
     
     /**
-     * Provide the behavior that responds to an argument failing an {@link Assertion}. If the
+     * Provide the behavior that responds to an argument failing an {@link AlchemyAssertion}. If the
      * provided {@code ExceptionMapper} returns null, no exception will be thrown, and it will be as
      * if the assertion was passed.
      *
@@ -79,7 +80,7 @@ public interface AssertionBuilder<Argument, Ex extends Throwable>
      *
      * @see ExceptionMapper
      */
-    <Ex extends Throwable> AssertionBuilder<Argument, Ex> usingException(ExceptionMapper<Ex> exceptionMapper);
+    <Ex extends Throwable> AssertionBuilder<Argument, Ex> usingException(@NonNull ExceptionMapper<Ex> exceptionMapper);
 
     /**
      * This operation runs the specified assertion on the {@code Argument}. This operation is
@@ -91,7 +92,7 @@ public interface AssertionBuilder<Argument, Ex extends Throwable>
      *
      * @throws Ex Throws the desired exception if the assertion fails.
      */
-    AssertionBuilder<Argument, Ex> is(Assertion<Argument> assertion) throws Ex;
+    AssertionBuilder<Argument, Ex> is(@NonNull AlchemyAssertion<Argument> assertion) throws Ex;
 
     /**
      * This is an alternate way to specify an Exception, using instead a class. The library will
@@ -104,7 +105,7 @@ public interface AssertionBuilder<Argument, Ex extends Throwable>
      *
      * @return
      */
-    default <Ex extends Throwable> AssertionBuilder<Argument, Ex> usingException(Class<Ex> exceptionClass)
+    default <Ex extends Throwable> AssertionBuilder<Argument, Ex> usingException(@NonNull Class<Ex> exceptionClass)
     {
         return usingException(new DynamicExceptionSupplier<>(exceptionClass, ""));
     }

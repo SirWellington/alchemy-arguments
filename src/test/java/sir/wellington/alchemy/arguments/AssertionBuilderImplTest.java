@@ -30,9 +30,9 @@ import static org.mockito.Mockito.verifyZeroInteractions;
 import static org.mockito.Mockito.when;
 import org.mockito.runners.MockitoJUnitRunner;
 import static sir.wellington.alchemy.arguments.AssertionBuilderImpl.checkThat;
-import static sir.wellington.alchemy.test.DataGenerator.alphabeticString;
-import static sir.wellington.alchemy.test.DataGenerator.oneOf;
-import static sir.wellington.alchemy.test.junit.ThrowableAssertion.assertThrows;
+import static tech.sirwellington.alchemy.generator.AlchemyGenerator.one;
+import static tech.sirwellington.alchemy.generator.StringGenerators.alphabeticString;
+import static tech.sirwellington.alchemy.test.junit.ThrowableAssertion.assertThrows;
 
 /**
  *
@@ -43,7 +43,7 @@ public class AssertionBuilderImplTest
 {
 
     @Mock
-    private Assertion assertion;
+    private AlchemyAssertion assertion;
 
     @Mock
     private ExceptionMapper<SQLException> exceptionMapper;
@@ -57,11 +57,11 @@ public class AssertionBuilderImplTest
     @Before
     public void setUp()
     {
-        argument = oneOf(alphabeticString());
+        argument = one(alphabeticString());
 
         instance = AssertionBuilderImpl.checkThat(argument);
 
-        assertException = new FailedAssertionException(oneOf(alphabeticString()));
+        assertException = new FailedAssertionException(one(alphabeticString()));
     }
 
     @Test
@@ -84,7 +84,7 @@ public class AssertionBuilderImplTest
         System.out.println("testUsingExceptionWhenNotWrapped");
 
         when(exceptionMapper.apply(assertException))
-                .thenReturn(new SQLException(oneOf(alphabeticString())));
+                .thenReturn(new SQLException(one(alphabeticString())));
 
         doThrow(assertException)
                 .when(assertion)
@@ -103,7 +103,7 @@ public class AssertionBuilderImplTest
         System.out.println("testUsingExceptionWhenWrapped");
 
         when(exceptionMapper.apply(assertException))
-                .thenReturn(new SQLException(oneOf(alphabeticString()), assertException));
+                .thenReturn(new SQLException(one(alphabeticString()), assertException));
 
         doThrow(assertException)
                 .when(assertion)
@@ -179,8 +179,8 @@ public class AssertionBuilderImplTest
     {
         System.out.println("testUsingException");
 
-        String embeddedExceptionMessage = oneOf(alphabeticString());
-        String overrideMessage = oneOf(alphabeticString());
+        String embeddedExceptionMessage = one(alphabeticString());
+        String overrideMessage = one(alphabeticString());
 
         doThrow(new FailedAssertionException(embeddedExceptionMessage))
                 .when(assertion)

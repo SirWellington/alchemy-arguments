@@ -26,8 +26,8 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.runners.MockitoJUnitRunner;
-import static sir.wellington.alchemy.test.DataGenerator.alphabeticString;
-import static sir.wellington.alchemy.test.DataGenerator.oneOf;
+import static tech.sirwellington.alchemy.generator.AlchemyGenerator.one;
+import static tech.sirwellington.alchemy.generator.StringGenerators.alphabeticString;
 
 /**
  *
@@ -47,8 +47,8 @@ public class DynamicExceptionSupplierTest
     @Before
     public void setUp()
     {
-        message = oneOf(alphabeticString());
-        assertionException = new FailedAssertionException(oneOf(alphabeticString()));
+        message = one(alphabeticString());
+        assertionException = new FailedAssertionException(one(alphabeticString()));
         exceptionClass = FakeExceptionWithMessage.class;
 
         instance = new DynamicExceptionSupplier<>(exceptionClass, message);

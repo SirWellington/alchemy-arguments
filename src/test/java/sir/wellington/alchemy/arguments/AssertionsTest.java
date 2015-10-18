@@ -44,23 +44,23 @@ import static sir.wellington.alchemy.arguments.Assertions.stringWithLengthBetwee
 import static sir.wellington.alchemy.arguments.Assertions.stringWithLengthGreaterThanOrEqualTo;
 import static sir.wellington.alchemy.arguments.Assertions.stringWithLengthLessThanOrEqualTo;
 import static sir.wellington.alchemy.arguments.Assertions.stringWithNoWhitespace;
-import sir.wellington.alchemy.test.DataGenerator;
-import static sir.wellington.alchemy.test.DataGenerator.alphabeticString;
-import static sir.wellington.alchemy.test.DataGenerator.hexadecimalString;
-import static sir.wellington.alchemy.test.DataGenerator.integers;
-import static sir.wellington.alchemy.test.DataGenerator.listOf;
-import static sir.wellington.alchemy.test.DataGenerator.longs;
-import static sir.wellington.alchemy.test.DataGenerator.mapOf;
-import static sir.wellington.alchemy.test.DataGenerator.negativeIntegers;
-import static sir.wellington.alchemy.test.DataGenerator.oneOf;
-import static sir.wellington.alchemy.test.DataGenerator.positiveIntegers;
-import static sir.wellington.alchemy.test.DataGenerator.positiveLongs;
-import static sir.wellington.alchemy.test.DataGenerator.smallPositiveIntegers;
-import static sir.wellington.alchemy.test.DataGenerator.smallPositiveLongs;
-import static sir.wellington.alchemy.test.DataGenerator.strings;
-import static sir.wellington.alchemy.test.DataGenerator.stringsFromFixedList;
-import static sir.wellington.alchemy.test.DataGenerator.uuids;
-import static sir.wellington.alchemy.test.junit.ThrowableAssertion.assertThrows;
+import tech.sirwellington.alchemy.generator.AlchemyGenerator;
+import static tech.sirwellington.alchemy.generator.AlchemyGenerator.one;
+import static tech.sirwellington.alchemy.generator.CollectionGenerators.listOf;
+import static tech.sirwellington.alchemy.generator.CollectionGenerators.mapOf;
+import static tech.sirwellington.alchemy.generator.NumberGenerators.integers;
+import static tech.sirwellington.alchemy.generator.NumberGenerators.longs;
+import static tech.sirwellington.alchemy.generator.NumberGenerators.negativeIntegers;
+import static tech.sirwellington.alchemy.generator.NumberGenerators.positiveIntegers;
+import static tech.sirwellington.alchemy.generator.NumberGenerators.positiveLongs;
+import static tech.sirwellington.alchemy.generator.NumberGenerators.smallPositiveIntegers;
+import static tech.sirwellington.alchemy.generator.NumberGenerators.smallPositiveLongs;
+import static tech.sirwellington.alchemy.generator.StringGenerators.alphabeticString;
+import static tech.sirwellington.alchemy.generator.StringGenerators.hexadecimalString;
+import static tech.sirwellington.alchemy.generator.StringGenerators.strings;
+import static tech.sirwellington.alchemy.generator.StringGenerators.stringsFromFixedList;
+import static tech.sirwellington.alchemy.generator.StringGenerators.uuids;
+import static tech.sirwellington.alchemy.test.junit.ThrowableAssertion.assertThrows;
 
 /**
  *
@@ -75,10 +75,10 @@ public class AssertionsTest
     @Before
     public void setUp()
     {
-        iterations = oneOf(integers(1000, 10_000));
+        iterations = one(integers(1000, 10_000));
     }
 
-    private void checkForNullCase(Assertion assertion)
+    private void checkForNullCase(AlchemyAssertion assertion)
     {
         assertThrows(() -> assertion.check(null))
                 .isInstanceOf(FailedAssertionException.class)
@@ -98,7 +98,7 @@ public class AssertionsTest
     {
         System.out.println("testNullCheck");
 
-        Assertion<Object> instance = notNull();
+        AlchemyAssertion<Object> instance = notNull();
         assertThat(instance, notNullValue());
         checkForNullCase(instance);
 
@@ -113,12 +113,12 @@ public class AssertionsTest
     {
         System.out.println("testNonEmptyString");
 
-        Assertion<String> instance = nonEmptyString();
+        AlchemyAssertion<String> instance = nonEmptyString();
         assertThat(instance, notNullValue());
 
         doInLoop(() ->
         {
-            String arg = oneOf(alphabeticString());
+            String arg = one(alphabeticString());
             instance.check(arg);
 
             assertThrows(() -> instance.check(""))
@@ -134,25 +134,25 @@ public class AssertionsTest
     {
         System.out.println("testStringWithLength");
 
-        assertThrows(() -> stringWithLength(oneOf(negativeIntegers())))
+        assertThrows(() -> stringWithLength(one(negativeIntegers())))
                 .isInstanceOf(IllegalArgumentException.class);
 
-        int expectedLength = oneOf(integers(5, 25));
-        Assertion<String> instance = stringWithLength(expectedLength);
+        int expectedLength = one(integers(5, 25));
+        AlchemyAssertion<String> instance = stringWithLength(expectedLength);
         assertThat(instance, notNullValue());
         checkForNullCase(instance);
 
         doInLoop(() ->
         {
 
-            String arg = oneOf(alphabeticString(expectedLength));
+            String arg = one(alphabeticString(expectedLength));
             instance.check(arg);
 
-            String tooShort = oneOf(alphabeticString(expectedLength - 1));
+            String tooShort = one(alphabeticString(expectedLength - 1));
             assertThrows(() -> instance.check(tooShort)).
                     isInstanceOf(FailedAssertionException.class);
 
-            String tooLong = oneOf(strings(expectedLength + 1));
+            String tooLong = one(strings(expectedLength + 1));
             assertThrows(() -> instance.check(tooLong))
                     .isInstanceOf(FailedAssertionException.class);
 
@@ -165,14 +165,14 @@ public class AssertionsTest
     {
         System.out.println("testGreaterThanInt");
 
-        int exclusiveLowerBound = oneOf(integers(-1000, 1000));
-        Assertion<Integer> instance = greaterThan(exclusiveLowerBound);
+        int exclusiveLowerBound = one(integers(-1000, 1000));
+        AlchemyAssertion<Integer> instance = greaterThan(exclusiveLowerBound);
         assertThat(instance, notNullValue());
         checkForNullCase(instance);
 
         doInLoop(() ->
         {
-            int amountToAdd = oneOf(smallPositiveIntegers());
+            int amountToAdd = one(smallPositiveIntegers());
 
             assertThrows(() -> instance.check(exclusiveLowerBound))
                     .isInstanceOf(FailedAssertionException.class);
@@ -192,19 +192,19 @@ public class AssertionsTest
     {
         System.out.println("testGreaterThanOrEqualToInt");
 
-        int inclusiveLowerBound = oneOf(integers(-1000, 1000));
-        Assertion<Integer> instance = greaterThanOrEqualTo(inclusiveLowerBound);
+        int inclusiveLowerBound = one(integers(-1000, 1000));
+        AlchemyAssertion<Integer> instance = greaterThanOrEqualTo(inclusiveLowerBound);
         assertThat(instance, notNullValue());
         checkForNullCase(instance);
 
         doInLoop(() ->
         {
-            int amountToAdd = oneOf(integers(40, 100));
+            int amountToAdd = one(integers(40, 100));
 
             instance.check(inclusiveLowerBound);
             instance.check(inclusiveLowerBound + amountToAdd);
 
-            int amountToSubtract = oneOf(integers(50, 100));
+            int amountToSubtract = one(integers(50, 100));
             int badValue = inclusiveLowerBound - amountToSubtract;
             assertThrows(() -> instance.check(badValue))
                     .isInstanceOf(FailedAssertionException.class);
@@ -217,19 +217,19 @@ public class AssertionsTest
     {
         System.out.println("testGreaterThanOrEqualToLong");
 
-        long inclusiveLowerBound = oneOf(longs(-10000L, 1000L));
-        Assertion<Long> instance = greaterThanOrEqualTo(inclusiveLowerBound);
+        long inclusiveLowerBound = one(longs(-10000L, 1000L));
+        AlchemyAssertion<Long> instance = greaterThanOrEqualTo(inclusiveLowerBound);
         assertThat(instance, notNullValue());
         checkForNullCase(instance);
 
         doInLoop(() ->
         {
-            long amountToAdd = oneOf(longs(40, 100));
+            long amountToAdd = one(longs(40, 100));
 
             instance.check(inclusiveLowerBound);
             instance.check(inclusiveLowerBound + amountToAdd);
 
-            long amountToSubtract = oneOf(longs(50, 100));
+            long amountToSubtract = one(longs(50, 100));
             long badValue = inclusiveLowerBound - amountToSubtract;
             assertThrows(() -> instance.check(badValue))
                     .isInstanceOf(FailedAssertionException.class);
@@ -244,7 +244,7 @@ public class AssertionsTest
 
         doInLoop(() ->
         {
-            int negativeNumber = oneOf(negativeIntegers());
+            int negativeNumber = one(negativeIntegers());
 
             assertThrows(() -> stringWithLengthGreaterThanOrEqualTo(negativeNumber))
                     .isInstanceOf(IllegalArgumentException.class);
@@ -256,23 +256,23 @@ public class AssertionsTest
     {
         System.out.println("testStringWithLengthGreaterThanOrEqualTo");
 
-        int expectedSize = oneOf(integers(10, 100));
+        int expectedSize = one(integers(10, 100));
 
-        Assertion<String> instance = stringWithLengthGreaterThanOrEqualTo(expectedSize);
+        AlchemyAssertion<String> instance = stringWithLengthGreaterThanOrEqualTo(expectedSize);
         assertThat(instance, notNullValue());
         checkForNullCase(instance);
 
         doInLoop(() ->
         {
-            String goodString = oneOf(strings(expectedSize));
+            String goodString = one(strings(expectedSize));
             instance.check(goodString);
 
-            int amountToAdd = oneOf(integers(1, 5));
-            String anotherGoodString = oneOf(strings(expectedSize + amountToAdd));
+            int amountToAdd = one(integers(1, 5));
+            String anotherGoodString = one(strings(expectedSize + amountToAdd));
             instance.check(anotherGoodString);
 
-            int amountToSubtract = oneOf(integers(1, 5));
-            String badString = oneOf(strings(expectedSize - amountToSubtract));
+            int amountToSubtract = one(integers(1, 5));
+            String badString = one(strings(expectedSize - amountToSubtract));
             assertThrows(() -> instance.check(badString))
                     .isInstanceOf(FailedAssertionException.class);
         });
@@ -286,7 +286,7 @@ public class AssertionsTest
 
         doInLoop(() ->
         {
-            int negativeNumber = oneOf(negativeIntegers());
+            int negativeNumber = one(negativeIntegers());
 
             assertThrows(() -> stringWithLengthLessThanOrEqualTo(negativeNumber))
                     .isInstanceOf(IllegalArgumentException.class);
@@ -298,21 +298,21 @@ public class AssertionsTest
     {
         System.out.println("testStringWithLengthLessThanOrEqualTo");
 
-        int expectedSize = oneOf(integers(5, 100));
-        Assertion<String> instance = stringWithLengthLessThanOrEqualTo(expectedSize);
+        int expectedSize = one(integers(5, 100));
+        AlchemyAssertion<String> instance = stringWithLengthLessThanOrEqualTo(expectedSize);
         assertThat(instance, notNullValue());
         checkForNullCase(instance);
 
         doInLoop(() ->
         {
-            String goodString = oneOf(strings(expectedSize));
+            String goodString = one(strings(expectedSize));
             instance.check(goodString);
 
-            goodString = oneOf(strings(expectedSize - 1));
+            goodString = one(strings(expectedSize - 1));
             instance.check(goodString);
 
-            int amountToAdd = oneOf(integers(5, 10));
-            final String badString = oneOf(strings(expectedSize + amountToAdd));
+            int amountToAdd = one(integers(5, 10));
+            final String badString = one(strings(expectedSize + amountToAdd));
             assertThrows(() -> instance.check(badString))
                     .isInstanceOf(FailedAssertionException.class);
         });
@@ -324,16 +324,16 @@ public class AssertionsTest
     {
         System.out.println("testStringWithNoWhitespace");
 
-        Assertion<String> instance = stringWithNoWhitespace();
+        AlchemyAssertion<String> instance = stringWithNoWhitespace();
         assertThat(instance, notNullValue());
         checkForNullCase(instance);
 
         doInLoop(() ->
         {
-            String goodString = oneOf(alphabeticString());
+            String goodString = one(alphabeticString());
             instance.check(goodString);
 
-            String badString = goodString + oneOf(stringsFromFixedList(" ", "\n", "\t")) + goodString;
+            String badString = goodString + one(stringsFromFixedList(" ", "\n", "\t")) + goodString;
             assertThrows(() -> instance.check(badString))
                     .isInstanceOf(FailedAssertionException.class);
         });
@@ -347,11 +347,11 @@ public class AssertionsTest
 
         doInLoop(() ->
         {
-            int goodMin = oneOf(integers(-1000, 10000));
-            int goodMax = goodMin + oneOf(integers(1000, 10_000));
+            int goodMin = one(integers(-1000, 10000));
+            int goodMax = goodMin + one(integers(1000, 10_000));
 
-            int badMin = oneOf(negativeIntegers());
-            int badMax = goodMin - oneOf(positiveIntegers());
+            int badMin = one(negativeIntegers());
+            int badMax = goodMin - one(positiveIntegers());
 
             assertThrows(() -> stringWithLengthBetween(badMin, goodMax))
                     .isInstanceOf(IllegalArgumentException.class);
@@ -367,8 +367,8 @@ public class AssertionsTest
     {
         System.out.println("testStringWithLengthBetween");
 
-        int minimumLength = oneOf(integers(10, 100));
-        int maximumLength = oneOf(integers(minimumLength, 1_000));
+        int minimumLength = one(integers(10, 100));
+        int maximumLength = one(integers(minimumLength, 1_000));
 
         assertThrows(() -> stringWithLengthBetween(maximumLength, minimumLength))
                 .isInstanceOf(IllegalArgumentException.class);
@@ -376,29 +376,29 @@ public class AssertionsTest
         assertThrows(() -> stringWithLengthBetween(-minimumLength, maximumLength))
                 .isInstanceOf(IllegalArgumentException.class);
 
-        Assertion<String> instance = stringWithLengthBetween(minimumLength, maximumLength);
+        AlchemyAssertion<String> instance = stringWithLengthBetween(minimumLength, maximumLength);
         assertThat(instance, notNullValue());
         checkForNullCase(instance);
 
-        DataGenerator<String> tooShort = () ->
+        AlchemyGenerator<String> tooShort = () ->
         {
             //Sad cases
-            int stringTooShortLength = minimumLength - oneOf(integers(1, 9));
-            String stringTooShort = oneOf(strings(stringTooShortLength));
+            int stringTooShortLength = minimumLength - one(integers(1, 9));
+            String stringTooShort = one(strings(stringTooShortLength));
             return stringTooShort;
         };
 
-        DataGenerator<String> tooLong = () ->
+        AlchemyGenerator<String> tooLong = () ->
         {
-            int stringTooLongLength = maximumLength + oneOf(smallPositiveIntegers());
-            String stringTooLong = oneOf(strings(stringTooLongLength));
+            int stringTooLongLength = maximumLength + one(smallPositiveIntegers());
+            String stringTooLong = one(strings(stringTooLongLength));
             return stringTooLong;
         };
 
-        DataGenerator<String> goodStrings = () ->
+        AlchemyGenerator<String> goodStrings = () ->
         {
-            int length = oneOf(integers(minimumLength, maximumLength));
-            return oneOf(strings(length));
+            int length = one(integers(minimumLength, maximumLength));
+            return one(strings(length));
         };
 
         runTests(instance, tooLong, goodStrings);
@@ -413,22 +413,22 @@ public class AssertionsTest
     {
         System.out.println("testNumberBetweenInts");
 
-        int min = oneOf(integers(Integer.MIN_VALUE, Integer.MAX_VALUE - 10));
-        int max = oneOf(integers(min, Integer.MAX_VALUE));
+        int min = one(integers(Integer.MIN_VALUE, Integer.MAX_VALUE - 10));
+        int max = one(integers(min, Integer.MAX_VALUE));
 
         assertThrows(() -> numberBetween(max, min))
                 .isInstanceOf(IllegalArgumentException.class);
 
-        Assertion<Integer> instance = numberBetween(min, max);
+        AlchemyAssertion<Integer> instance = numberBetween(min, max);
         assertThat(instance, notNullValue());
         checkForNullCase(instance);
 
         doInLoop(() ->
         {
-            int goodNumber = oneOf(integers(min, max));
+            int goodNumber = one(integers(min, max));
             instance.check(goodNumber);
 
-            int numberBelowMinimum = min - oneOf(positiveIntegers());
+            int numberBelowMinimum = min - one(positiveIntegers());
 
             if (numberBelowMinimum < min)
             {
@@ -436,7 +436,7 @@ public class AssertionsTest
                         .isInstanceOf(FailedAssertionException.class);
             }
 
-            int numberAboveMaximum = max + oneOf(positiveIntegers());
+            int numberAboveMaximum = max + one(positiveIntegers());
             if (numberAboveMaximum > max)
             {
                 assertThrows(() -> instance.check(numberAboveMaximum))
@@ -452,22 +452,22 @@ public class AssertionsTest
     {
         System.out.println("testNumberBetweenLongs");
 
-        long min = oneOf(longs(Long.MIN_VALUE, Long.MAX_VALUE - 10L));
-        long max = oneOf(longs(min, Long.MAX_VALUE));
+        long min = one(longs(Long.MIN_VALUE, Long.MAX_VALUE - 10L));
+        long max = one(longs(min, Long.MAX_VALUE));
 
         assertThrows(() -> numberBetween(max, min))
                 .isInstanceOf(IllegalArgumentException.class);
 
-        Assertion<Long> instance = numberBetween(min, max);
+        AlchemyAssertion<Long> instance = numberBetween(min, max);
         assertThat(instance, notNullValue());
         checkForNullCase(instance);
 
         doInLoop(() ->
         {
-            long goodLong = oneOf(longs(min, max));
+            long goodLong = one(longs(min, max));
             instance.check(goodLong);
 
-            long numberBelowMin = min - oneOf(positiveLongs());
+            long numberBelowMin = min - one(positiveLongs());
 
             if (numberBelowMin < min)
             {
@@ -475,7 +475,7 @@ public class AssertionsTest
                         .isInstanceOf(FailedAssertionException.class);
             }
 
-            long numberAboveMax = max + oneOf(positiveIntegers());
+            long numberAboveMax = max + one(positiveIntegers());
             if (numberAboveMax > max)
             {
                 assertThrows(() -> instance.check(numberAboveMax))
@@ -491,16 +491,16 @@ public class AssertionsTest
 
         System.out.println("testPositiveInteger");
 
-        Assertion<Integer> instance = positiveInteger();
+        AlchemyAssertion<Integer> instance = positiveInteger();
         assertThat(instance, notNullValue());
         checkForNullCase(instance);
 
         doInLoop(() ->
         {
-            int goodNumber = oneOf(positiveIntegers());
+            int goodNumber = one(positiveIntegers());
             instance.check(goodNumber);
 
-            int badNumber = oneOf(negativeIntegers());
+            int badNumber = one(negativeIntegers());
             assertThrows(() -> instance.check(badNumber))
                     .isInstanceOf(FailedAssertionException.class);
         });
@@ -512,16 +512,16 @@ public class AssertionsTest
     {
         System.out.println("testPositiveLong");
 
-        Assertion<Long> instance = positiveLong();
+        AlchemyAssertion<Long> instance = positiveLong();
         assertThat(instance, notNullValue());
         checkForNullCase(instance);
 
         doInLoop(() ->
         {
-            long goodNumber = oneOf(positiveLongs());
+            long goodNumber = one(positiveLongs());
             instance.check(goodNumber);
 
-            long badNumber = oneOf(negativeIntegers());
+            long badNumber = one(negativeIntegers());
             assertThrows(() -> instance.check(badNumber))
                     .isInstanceOf(FailedAssertionException.class);
         });
@@ -532,25 +532,25 @@ public class AssertionsTest
     {
         System.out.println("testHasNoWhitespace");
 
-        Assertion<String> instance = stringWithNoWhitespace();
+        AlchemyAssertion<String> instance = stringWithNoWhitespace();
         assertThat(instance, notNullValue());
         checkForNullCase(instance);
 
         doInLoop(() ->
         {
-            String alphabetic = oneOf(alphabeticString());
+            String alphabetic = one(alphabeticString());
             instance.check(alphabetic);
 
-            String hex = oneOf(hexadecimalString(10));
+            String hex = one(hexadecimalString(10));
             instance.check(hex);
 
-            assertThrows(() -> instance.check(oneOf(alphabeticString()) + " "))
+            assertThrows(() -> instance.check(one(alphabeticString()) + " "))
                     .isInstanceOf(FailedAssertionException.class);
 
             assertThrows(() -> instance.check("some white space here"))
                     .isInstanceOf(FailedAssertionException.class);
 
-            assertThrows(() -> instance.check(" " + oneOf(uuids)))
+            assertThrows(() -> instance.check(" " + one(uuids)))
                     .isInstanceOf(FailedAssertionException.class);
 
         });
@@ -562,7 +562,7 @@ public class AssertionsTest
     {
         System.out.println("testNonEmptyCollection");
 
-        Assertion<Collection<String>> instance = nonEmptyCollection();
+        AlchemyAssertion<Collection<String>> instance = nonEmptyCollection();
         assertThat(instance, notNullValue());
 
         doInLoop(() ->
@@ -584,7 +584,7 @@ public class AssertionsTest
     {
         System.out.println("testNonEmptyList");
 
-        Assertion<List<String>> instance = nonEmptyList();
+        AlchemyAssertion<List<String>> instance = nonEmptyList();
         assertThat(instance, notNullValue());
 
         doInLoop(() ->
@@ -605,7 +605,7 @@ public class AssertionsTest
     {
         System.out.println("testNonEmptyMap");
 
-        Assertion<Map<String, Integer>> instance = nonEmptyMap();
+        AlchemyAssertion<Map<String, Integer>> instance = nonEmptyMap();
 
         doInLoop(() ->
         {
@@ -633,12 +633,12 @@ public class AssertionsTest
         assertThrows(() -> Assertions.greaterThan(Integer.MAX_VALUE))
                 .isInstanceOf(IllegalArgumentException.class);
 
-        int lowerBound = oneOf(integers(-1000, 1000));
-        Assertion<Integer> instance = Assertions.greaterThan(lowerBound);
+        int lowerBound = one(integers(-1000, 1000));
+        AlchemyAssertion<Integer> instance = Assertions.greaterThan(lowerBound);
         checkForNullCase(instance);
 
-        DataGenerator<Integer> badNumbers = integers(lowerBound - oneOf(smallPositiveIntegers()), lowerBound);
-        DataGenerator<Integer> goodNumbers = integers(lowerBound + 1, lowerBound + oneOf(smallPositiveIntegers()));
+        AlchemyGenerator<Integer> badNumbers = integers(lowerBound - one(smallPositiveIntegers()), lowerBound);
+        AlchemyGenerator<Integer> goodNumbers = integers(lowerBound + 1, lowerBound + one(smallPositiveIntegers()));
 
         runTests(instance, badNumbers, goodNumbers);
     }
@@ -651,13 +651,13 @@ public class AssertionsTest
         assertThrows(() -> Assertions.lessThan(Integer.MIN_VALUE))
                 .isInstanceOf(IllegalArgumentException.class);
 
-        int upperBound = oneOf(integers(-1000, 1000));
+        int upperBound = one(integers(-1000, 1000));
 
-        Assertion<Integer> instance = Assertions.lessThan(upperBound);
+        AlchemyAssertion<Integer> instance = Assertions.lessThan(upperBound);
         checkForNullCase(instance);
 
-        DataGenerator<Integer> badNumbers = () -> upperBound + oneOf(integers(0, 100));
-        DataGenerator<Integer> goodNumbers = () -> upperBound - oneOf(smallPositiveIntegers());
+        AlchemyGenerator<Integer> badNumbers = () -> upperBound + one(integers(0, 100));
+        AlchemyGenerator<Integer> goodNumbers = () -> upperBound - one(smallPositiveIntegers());
         runTests(instance, badNumbers, goodNumbers);
 
     }
@@ -667,12 +667,12 @@ public class AssertionsTest
     {
         System.out.println("testIntLessThanOrEqualTo");
 
-        int upperBound = oneOf(integers(-1000, 1000));
-        Assertion<Integer> instance = Assertions.lessThanOrEqualTo(upperBound);
+        int upperBound = one(integers(-1000, 1000));
+        AlchemyAssertion<Integer> instance = Assertions.lessThanOrEqualTo(upperBound);
         checkForNullCase(instance);
 
-        DataGenerator<Integer> badNumbers = () -> upperBound + oneOf(smallPositiveIntegers());
-        DataGenerator<Integer> goodNumbers = () -> upperBound - oneOf(integers(0, 1000));
+        AlchemyGenerator<Integer> badNumbers = () -> upperBound + one(smallPositiveIntegers());
+        AlchemyGenerator<Integer> goodNumbers = () -> upperBound - one(integers(0, 1000));
         runTests(instance, badNumbers, goodNumbers);
     }
 
@@ -684,12 +684,12 @@ public class AssertionsTest
         assertThrows(() -> Assertions.greaterThan(Long.MAX_VALUE))
                 .isInstanceOf(IllegalArgumentException.class);
 
-        long lowerBound = oneOf(longs(-100_000L, 100_000L));
-        Assertion<Long> instance = Assertions.greaterThan(lowerBound);
+        long lowerBound = one(longs(-100_000L, 100_000L));
+        AlchemyAssertion<Long> instance = Assertions.greaterThan(lowerBound);
         checkForNullCase(instance);
 
-        DataGenerator<Long> badNumbers = () -> lowerBound - oneOf(longs(0, 1000L));
-        DataGenerator<Long> goodNumbers = () -> lowerBound + oneOf(smallPositiveLongs());
+        AlchemyGenerator<Long> badNumbers = () -> lowerBound - one(longs(0, 1000L));
+        AlchemyGenerator<Long> goodNumbers = () -> lowerBound + one(smallPositiveLongs());
         runTests(instance, badNumbers, goodNumbers);
     }
 
@@ -701,12 +701,12 @@ public class AssertionsTest
         assertThrows(() -> Assertions.lessThan(Long.MIN_VALUE))
                 .isInstanceOf(IllegalArgumentException.class);
 
-        long upperBound = oneOf(longs(-10_000L, 100_000));
-        Assertion<Long> instance = Assertions.lessThan(upperBound);
+        long upperBound = one(longs(-10_000L, 100_000));
+        AlchemyAssertion<Long> instance = Assertions.lessThan(upperBound);
         checkForNullCase(instance);
 
-        DataGenerator<Long> badNumbers = () -> upperBound + oneOf(longs(0, 10_000L));
-        DataGenerator<Long> goodNumbers = () -> upperBound - oneOf(smallPositiveLongs());
+        AlchemyGenerator<Long> badNumbers = () -> upperBound + one(longs(0, 10_000L));
+        AlchemyGenerator<Long> goodNumbers = () -> upperBound - one(smallPositiveLongs());
         runTests(instance, badNumbers, goodNumbers);
         badNumbers = () -> upperBound;
         runTests(instance, badNumbers, goodNumbers);
@@ -717,12 +717,12 @@ public class AssertionsTest
     {
         System.out.println("testLongLessThanOrEqualTo");
 
-        long lowerBound = oneOf(longs(-10_000L, 100_000L));
-        Assertion<Long> instance = Assertions.lessThanOrEqualTo(lowerBound);
+        long lowerBound = one(longs(-10_000L, 100_000L));
+        AlchemyAssertion<Long> instance = Assertions.lessThanOrEqualTo(lowerBound);
         checkForNullCase(instance);
 
-        DataGenerator<Long> badNumbers = () -> lowerBound + oneOf(smallPositiveLongs());
-        DataGenerator<Long> goodNumbers = () -> lowerBound - oneOf(longs(0, 1000L));
+        AlchemyGenerator<Long> badNumbers = () -> lowerBound + one(smallPositiveLongs());
+        AlchemyGenerator<Long> goodNumbers = () -> lowerBound - one(longs(0, 1000L));
         runTests(instance, badNumbers, goodNumbers);
         goodNumbers = () -> lowerBound;
         runTests(instance, badNumbers, goodNumbers);
@@ -733,10 +733,10 @@ public class AssertionsTest
     {
         System.out.println("testEmptyString");
 
-        Assertion<String> instance = Assertions.emptyString();
+        AlchemyAssertion<String> instance = Assertions.emptyString();
 
-        DataGenerator<String> badArguments = alphabeticString();
-        DataGenerator<String> goodArguments = stringsFromFixedList(null, "");
+        AlchemyGenerator<String> badArguments = alphabeticString();
+        AlchemyGenerator<String> goodArguments = stringsFromFixedList(null, "");
         runTests(instance, badArguments, goodArguments);
     }
 
@@ -745,17 +745,17 @@ public class AssertionsTest
     {
         System.out.println("testStringWithLengthGreaterThan");
 
-        int minAccepted = oneOf(smallPositiveIntegers());
-        Assertion<String> instance = Assertions.stringWithLengthGreaterThan(minAccepted);
-        DataGenerator<String> badArguments = () ->
+        int minAccepted = one(smallPositiveIntegers());
+        AlchemyAssertion<String> instance = Assertions.stringWithLengthGreaterThan(minAccepted);
+        AlchemyGenerator<String> badArguments = () ->
         {
-            int length = abs(minAccepted - oneOf(integers(0, 10)));
-            return oneOf(alphabeticString(length));
+            int length = abs(minAccepted - one(integers(0, 10)));
+            return one(alphabeticString(length));
         };
-        DataGenerator<String> goodArguments = () ->
+        AlchemyGenerator<String> goodArguments = () ->
         {
-            int length = minAccepted + oneOf(smallPositiveIntegers());
-            return oneOf(alphabeticString(length));
+            int length = minAccepted + one(smallPositiveIntegers());
+            return one(alphabeticString(length));
         };
 
         runTests(instance, badArguments, goodArguments);
@@ -768,18 +768,18 @@ public class AssertionsTest
     {
         System.out.println("testStringWithLengthLessThan");
 
-        int upperBound = oneOf(smallPositiveIntegers());
-        Assertion<String> instance = Assertions.stringWithLengthLessThan(upperBound);
-        DataGenerator<String> badArguments = () ->
+        int upperBound = one(smallPositiveIntegers());
+        AlchemyAssertion<String> instance = Assertions.stringWithLengthLessThan(upperBound);
+        AlchemyGenerator<String> badArguments = () ->
         {
-            int length = upperBound + oneOf(integers(0, 100));
-            return oneOf(strings(length));
+            int length = upperBound + one(integers(0, 100));
+            return one(strings(length));
         };
 
-        DataGenerator<String> goodArugments = () ->
+        AlchemyGenerator<String> goodArugments = () ->
         {
-            int length = oneOf(integers(1, upperBound - 1));
-            return oneOf(strings(length));
+            int length = one(integers(1, upperBound - 1));
+            return one(strings(length));
         };
 
         runTests(instance, badArguments, goodArugments);
@@ -790,27 +790,27 @@ public class AssertionsTest
     {
         System.out.println("testStringWithLengthLessThan");
 
-        String letter = oneOf(alphabeticString()).substring(0, 1);
+        String letter = one(alphabeticString()).substring(0, 1);
         Pattern pattern = Pattern.compile(".*" + letter + ".*");
-        Assertion<String> instance = Assertions.stringThatMatches(pattern);
-        DataGenerator<String> badArguments = () -> alphabeticString().get().replaceAll(letter, "");
-        DataGenerator<String> goodArguments = () -> alphabeticString().get() + letter;
+        AlchemyAssertion<String> instance = Assertions.stringThatMatches(pattern);
+        AlchemyGenerator<String> badArguments = () -> alphabeticString().get().replaceAll(letter, "");
+        AlchemyGenerator<String> goodArguments = () -> alphabeticString().get() + letter;
         runTests(instance, badArguments, goodArguments);
     }
 
-    private <T> void runTests(Assertion<T> assertion,
-                              DataGenerator<T> badArguments,
-                              DataGenerator<T> goodArguments)
+    private <T> void runTests(AlchemyAssertion<T> assertion,
+                              AlchemyGenerator<T> badArguments,
+                              AlchemyGenerator<T> goodArguments)
     {
         doInLoop(() ->
         {
             assertThat(assertion, notNullValue());
 
-            T badArgument = oneOf(badArguments);
+            T badArgument = one(badArguments);
             assertThrows(() -> assertion.check(badArgument))
                     .isInstanceOf(FailedAssertionException.class);
 
-            T goodArgument = oneOf(goodArguments);
+            T goodArgument = one(goodArguments);
             assertion.check(goodArgument);
         });
     }
@@ -820,7 +820,7 @@ public class AssertionsTest
     {
         System.out.println("testNonEmptyArray");
 
-        Assertion<String[]> instance = Assertions.nonEmptyArray();
+        AlchemyAssertion<String[]> instance = Assertions.nonEmptyArray();
         assertThat(instance, notNullValue());
 
         assertThrows(() -> instance.check(null))

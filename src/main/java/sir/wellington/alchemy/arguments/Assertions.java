@@ -22,8 +22,8 @@ import java.util.Map;
 import java.util.regex.Pattern;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import sir.wellington.alchemy.annotations.patterns.StrategyPattern;
-import static sir.wellington.alchemy.annotations.patterns.StrategyPattern.Role.CONCRETE_BEHAVIOR;
+import tech.sirwellington.alchemy.annotations.designs.patterns.StrategyPattern;
+import static tech.sirwellington.alchemy.annotations.designs.patterns.StrategyPattern.Role.CONCRETE_BEHAVIOR;
 
 /**
  * A class containing a library of common argument assertions.
@@ -47,7 +47,7 @@ public final class Assertions
      *
      * @return
      */
-    public static <A> Assertion<A> notNull()
+    public static <A> AlchemyAssertion<A> notNull()
     {
         return (reference) ->
         {
@@ -58,7 +58,7 @@ public final class Assertions
         };
     }
 
-    public static <A> Assertion<A> sameInstance(Object other)
+    public static <A> AlchemyAssertion<A> sameInstance(Object other)
     {
         return (argument) ->
         {
@@ -74,7 +74,7 @@ public final class Assertions
         };
     }
 
-    public static <A> Assertion<A> equalTo(A other)
+    public static <A> AlchemyAssertion<A> equalTo(A other)
     {
         return (argument) ->
         {
@@ -95,7 +95,7 @@ public final class Assertions
         };
     }
 
-    public static <A> Assertion<A> not(Assertion<A> assertion)
+    public static <A> AlchemyAssertion<A> not(AlchemyAssertion<A> assertion)
     {
         Checks.checkNotNull(assertion, "missing assertion");
 
@@ -119,7 +119,7 @@ public final class Assertions
      *
      * @return
      */
-    public static Assertion<Integer> positiveInteger()
+    public static AlchemyAssertion<Integer> positiveInteger()
     {
         return (number) ->
         {
@@ -137,7 +137,7 @@ public final class Assertions
      *
      * @return
      */
-    public static Assertion<Long> positiveLong()
+    public static AlchemyAssertion<Long> positiveLong()
     {
         return (number) ->
         {
@@ -158,7 +158,7 @@ public final class Assertions
      *
      * @return
      */
-    public static Assertion<Integer> numberBetween(int min, int max)
+    public static AlchemyAssertion<Integer> numberBetween(int min, int max)
     {
         Checks.checkThat(min < max, "Minimum must be less than Max.");
 
@@ -182,7 +182,7 @@ public final class Assertions
      *
      * @return
      */
-    public static Assertion<Long> numberBetween(long min, long max)
+    public static AlchemyAssertion<Long> numberBetween(long min, long max)
     {
         Checks.checkThat(min < max, "Minimum must be less than Max.");
 
@@ -205,7 +205,7 @@ public final class Assertions
      *
      * @return
      */
-    public static Assertion<Integer> greaterThan(int exclusiveLowerBound)
+    public static AlchemyAssertion<Integer> greaterThan(int exclusiveLowerBound)
     {
         Checks.checkThat(exclusiveLowerBound != Integer.MAX_VALUE, "Integers cannot exceed " + Integer.MAX_VALUE);
 
@@ -226,7 +226,7 @@ public final class Assertions
      *
      * @return
      */
-    public static Assertion<Long> greaterThan(long exclusiveLowerBound)
+    public static AlchemyAssertion<Long> greaterThan(long exclusiveLowerBound)
     {
         Checks.checkThat(exclusiveLowerBound != Long.MAX_VALUE, "Longs cannot exceed " + Long.MAX_VALUE);
 
@@ -247,7 +247,7 @@ public final class Assertions
      *
      * @return
      */
-    public static Assertion<Integer> greaterThanOrEqualTo(int inclusiveLowerBound)
+    public static AlchemyAssertion<Integer> greaterThanOrEqualTo(int inclusiveLowerBound)
     {
         return (number) ->
         {
@@ -267,7 +267,7 @@ public final class Assertions
      *
      * @return
      */
-    public static Assertion<Long> greaterThanOrEqualTo(long inclusiveLowerBound)
+    public static AlchemyAssertion<Long> greaterThanOrEqualTo(long inclusiveLowerBound)
     {
         return (number) ->
         {
@@ -287,7 +287,7 @@ public final class Assertions
      *
      * @return
      */
-    public static Assertion<Integer> lessThan(int exclusiveUpperBound)
+    public static AlchemyAssertion<Integer> lessThan(int exclusiveUpperBound)
     {
         Checks.checkThat(exclusiveUpperBound != Integer.MIN_VALUE, "Ints cannot be less than " + Integer.MIN_VALUE);
 
@@ -309,7 +309,7 @@ public final class Assertions
      *
      * @return
      */
-    public static Assertion<Long> lessThan(long exclusiveUpperBound)
+    public static AlchemyAssertion<Long> lessThan(long exclusiveUpperBound)
     {
         Checks.checkThat(exclusiveUpperBound != Long.MIN_VALUE, "Longs cannot be less than " + Long.MIN_VALUE);
 
@@ -331,7 +331,7 @@ public final class Assertions
      *
      * @return
      */
-    public static Assertion<Integer> lessThanOrEqualTo(int inclusiveUpperBound)
+    public static AlchemyAssertion<Integer> lessThanOrEqualTo(int inclusiveUpperBound)
     {
         return (number) ->
         {
@@ -351,7 +351,7 @@ public final class Assertions
      *
      * @return
      */
-    public static Assertion<Long> lessThanOrEqualTo(long inclusiveUpperBound)
+    public static AlchemyAssertion<Long> lessThanOrEqualTo(long inclusiveUpperBound)
     {
         return (number) ->
         {
@@ -370,7 +370,7 @@ public final class Assertions
      *
      * @return
      */
-    public static Assertion<String> nonEmptyString()
+    public static AlchemyAssertion<String> nonEmptyString()
     {
         return (string) ->
         {
@@ -386,7 +386,7 @@ public final class Assertions
      *
      * @return
      */
-    public static Assertion<String> emptyString()
+    public static AlchemyAssertion<String> emptyString()
     {
         return (string) ->
         {
@@ -404,7 +404,7 @@ public final class Assertions
      *
      * @return
      */
-    public static Assertion<String> stringWithLength(int expectedLength)
+    public static AlchemyAssertion<String> stringWithLength(int expectedLength)
     {
         Checks.checkThat(expectedLength >= 0, "expectedLength must be >= 0");
 
@@ -426,7 +426,7 @@ public final class Assertions
      *
      * @return
      */
-    public static Assertion<String> stringWithLengthGreaterThan(int minimumLength)
+    public static AlchemyAssertion<String> stringWithLengthGreaterThan(int minimumLength)
     {
         Checks.checkThat(minimumLength > 0, "minimumLength must be > 0");
 
@@ -448,7 +448,7 @@ public final class Assertions
      *
      * @return
      */
-    public static Assertion<String> stringWithLengthGreaterThanOrEqualTo(int minimumLength)
+    public static AlchemyAssertion<String> stringWithLengthGreaterThanOrEqualTo(int minimumLength)
     {
         Checks.checkThat(minimumLength >= 0);
         return (string) ->
@@ -469,7 +469,7 @@ public final class Assertions
      *
      * @return
      */
-    public static Assertion<String> stringWithLengthLessThan(int upperBound)
+    public static AlchemyAssertion<String> stringWithLengthLessThan(int upperBound)
     {
         Checks.checkThat(upperBound > 0, "upperBound must be > 0");
 
@@ -491,7 +491,7 @@ public final class Assertions
      *
      * @return
      */
-    public static Assertion<String> stringWithLengthLessThanOrEqualTo(int maximumLength)
+    public static AlchemyAssertion<String> stringWithLengthLessThanOrEqualTo(int maximumLength)
     {
         Checks.checkThat(maximumLength >= 0);
         return (string) ->
@@ -513,7 +513,7 @@ public final class Assertions
      *
      * @return
      */
-    public static Assertion<String> stringWithLengthBetween(int minimumLength, int maximumLength)
+    public static AlchemyAssertion<String> stringWithLengthBetween(int minimumLength, int maximumLength)
     {
         Checks.checkThat(minimumLength >= 0, "Minimum length must be at least 0");
         Checks.checkThat(minimumLength < maximumLength, "Minimum length must be > maximum length.");
@@ -538,7 +538,7 @@ public final class Assertions
      *
      * @return
      */
-    public static Assertion<String> stringWithNoWhitespace()
+    public static AlchemyAssertion<String> stringWithNoWhitespace()
     {
         return (string) ->
         {
@@ -562,7 +562,7 @@ public final class Assertions
      *
      * @return
      */
-    public static Assertion<String> stringThatMatches(Pattern pattern)
+    public static AlchemyAssertion<String> stringThatMatches(Pattern pattern)
     {
         Checks.checkNotNull(pattern, "missing pattern");
 
@@ -583,7 +583,7 @@ public final class Assertions
      *
      * @return
      */
-    public static <T> Assertion<Collection<T>> nonEmptyCollection()
+    public static <T> AlchemyAssertion<Collection<T>> nonEmptyCollection()
     {
         return (collection) ->
         {
@@ -603,7 +603,7 @@ public final class Assertions
      *
      * @return
      */
-    public static <T> Assertion<List<T>> nonEmptyList()
+    public static <T> AlchemyAssertion<List<T>> nonEmptyList()
     {
         return (list) ->
         {
@@ -625,7 +625,7 @@ public final class Assertions
      *
      * @return
      */
-    public static <K, V> Assertion<Map<K, V>> nonEmptyMap()
+    public static <K, V> AlchemyAssertion<Map<K, V>> nonEmptyMap()
     {
         return (map) ->
         {
@@ -639,7 +639,7 @@ public final class Assertions
         };
     }
 
-    public static <T> Assertion<T[]> nonEmptyArray()
+    public static <T> AlchemyAssertion<T[]> nonEmptyArray()
     {
         return (array) ->
         {

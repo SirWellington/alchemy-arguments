@@ -17,17 +17,17 @@ package sir.wellington.alchemy.arguments;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import sir.wellington.alchemy.annotations.concurrency.Immutable;
-import sir.wellington.alchemy.annotations.patterns.FluidAPIPattern;
-import sir.wellington.alchemy.annotations.patterns.StrategyPattern;
-import static sir.wellington.alchemy.annotations.patterns.StrategyPattern.Role.CLIENT;
 import static sir.wellington.alchemy.arguments.ExceptionMapper.IDENTITY;
+import tech.sirwellington.alchemy.annotations.concurrency.Immutable;
+import tech.sirwellington.alchemy.annotations.designs.FluidAPIDesign;
+import tech.sirwellington.alchemy.annotations.designs.patterns.StrategyPattern;
+import static tech.sirwellington.alchemy.annotations.designs.patterns.StrategyPattern.Role.CLIENT;
 
 /**
  *
  * @author SirWellington
  */
-@FluidAPIPattern
+@FluidAPIDesign
 @StrategyPattern(role = CLIENT)
 @Immutable
 final class AssertionBuilderImpl<Argument, Ex extends Throwable> implements AssertionBuilder<Argument, Ex>
@@ -35,12 +35,12 @@ final class AssertionBuilderImpl<Argument, Ex extends Throwable> implements Asse
 
     private final static Logger LOG = LoggerFactory.getLogger(AssertionBuilderImpl.class);
 
-    private final Assertion<Argument> assertion;
+    private final AlchemyAssertion<Argument> assertion;
     private final ExceptionMapper<Ex> exceptionMapper;
     private final Argument argument;
     private final String overrideMessage;
 
-    private AssertionBuilderImpl(Assertion<Argument> assertion,
+    private AssertionBuilderImpl(AlchemyAssertion<Argument> assertion,
                                  ExceptionMapper<Ex> exceptionMapper,
                                  String overrideMessage,
                                  Argument argument)
@@ -73,7 +73,7 @@ final class AssertionBuilderImpl<Argument, Ex extends Throwable> implements Asse
     }
 
     @Override
-    public AssertionBuilderImpl<Argument, Ex> is(Assertion<Argument> assertion) throws Ex
+    public AssertionBuilderImpl<Argument, Ex> is(AlchemyAssertion<Argument> assertion) throws Ex
     {
         Checks.checkNotNull(assertion, "assertion is null");
 

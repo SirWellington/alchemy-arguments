@@ -15,11 +15,12 @@
  */
 package sir.wellington.alchemy.arguments;
 
-import sir.wellington.alchemy.annotations.patterns.StrategyPattern;
-import static sir.wellington.alchemy.annotations.patterns.StrategyPattern.Role.INTERFACE;
+import tech.sirwellington.alchemy.annotations.designs.patterns.StrategyPattern;
+import static tech.sirwellington.alchemy.annotations.designs.patterns.StrategyPattern.Role.INTERFACE;
 
 /**
- * Assertions analyze input arguments for validity. You can always supply your own.
+ * {@linkplain AlchemyAssertion Alchemy Assertions} analyze arguments for validity. You can always
+ * supply your own assertions to make for powerful custom argument checks.
  *
  * @param <A> The type of argument an assertion checks
  *
@@ -27,7 +28,7 @@ import static sir.wellington.alchemy.annotations.patterns.StrategyPattern.Role.I
  */
 @FunctionalInterface
 @StrategyPattern(role = INTERFACE)
-public interface Assertion<A>
+public interface AlchemyAssertion<A>
 {
 
     /**
@@ -44,22 +45,22 @@ public interface Assertion<A>
     void check(A argument) throws FailedAssertionException;
 
     /**
-     * Allows you to create a single {@link Assertion} that is composed of multiple Assertions.
+     * Combines multiple {@linkplain AlchemyAssertion assertions} into one.
      *
      * For example, a {@code validAge} assertion could be constructed dynamically using:
-     *
      * <pre>
      *
      * {@code
-     *  Assertion<Integer> validAge = Assertion.combine(
-     nonNull(),
-     greaterThanOrEqualTo(1),
-     lessThanOrEqualTo(120)
-  );
-
- checkThat(age)
-      .is(validAge);
- }
+     * AlchemyAssertion<Integer> validAge = AlchemyAssertion.combine
+     * (
+     *  notNull(),
+     *  greaterThanOrEqualTo(1),
+     *  lessThanOrEqualTo(120)
+     * );
+     *
+     * checkThat(age)
+     * .is(validAge);
+     * }
      *
      * </pre>
      *
@@ -67,13 +68,14 @@ public interface Assertion<A>
      * argument checks, and to do so at runtime.
      *
      * @param first
-     * @param <T>
      *
      * @param other
      *
+     * @param <T>
+     * 
      * @return
      */
-    static <T> Assertion<T> combine(Assertion<T> first, Assertion<T>... other)
+    static <T> AlchemyAssertion<T> combine(AlchemyAssertion<T> first, AlchemyAssertion<T>... other)
     {
         Checks.checkNotNull(first, "first Assertion cannot be null");
 
@@ -81,7 +83,7 @@ public interface Assertion<A>
         {
             first.check(argument);
 
-            for (Assertion<T> assertion : other)
+            for (AlchemyAssertion<T> assertion : other)
             {
                 assertion.check(argument);
             }

@@ -28,12 +28,12 @@ import static sir.wellington.alchemy.arguments.Checks.checkNotNull;
 import static sir.wellington.alchemy.arguments.Checks.checkState;
 import static sir.wellington.alchemy.arguments.Checks.checkThat;
 import static sir.wellington.alchemy.arguments.Checks.isNullOrEmpty;
-import static sir.wellington.alchemy.test.DataGenerator.alphabeticString;
-import static sir.wellington.alchemy.test.DataGenerator.listOf;
-import static sir.wellington.alchemy.test.DataGenerator.oneOf;
-import static sir.wellington.alchemy.test.DataGenerator.positiveIntegers;
-import static sir.wellington.alchemy.test.DataGenerator.strings;
-import static sir.wellington.alchemy.test.junit.ThrowableAssertion.assertThrows;
+import static tech.sirwellington.alchemy.generator.AlchemyGenerator.one;
+import static tech.sirwellington.alchemy.generator.CollectionGenerators.listOf;
+import static tech.sirwellington.alchemy.generator.NumberGenerators.positiveIntegers;
+import static tech.sirwellington.alchemy.generator.StringGenerators.alphabeticString;
+import static tech.sirwellington.alchemy.generator.StringGenerators.strings;
+import static tech.sirwellington.alchemy.test.junit.ThrowableAssertion.assertThrows;
 
 /**
  *
@@ -65,7 +65,7 @@ public class ChecksTest
     {
         System.out.println("testCheckNotNull_Object_String");
 
-        String message = oneOf(alphabeticString());
+        String message = one(alphabeticString());
         checkNotNull("", message);
         checkNotNull(this, message);
 
@@ -90,7 +90,7 @@ public class ChecksTest
     {
         System.out.println("testCheckThat_boolean_String");
 
-        String message = oneOf(alphabeticString());
+        String message = one(alphabeticString());
 
         checkThat(true, message);
 
@@ -104,7 +104,7 @@ public class ChecksTest
     {
         System.out.println("testCheckState");
 
-        String message = oneOf(alphabeticString());
+        String message = one(alphabeticString());
         checkState(true, message);
 
         assertThrows(() -> checkState(false, message))
@@ -121,7 +121,7 @@ public class ChecksTest
         assertThat(isNullOrEmpty(""), is(true));
         assertThat(isNullOrEmpty(" "), is(false));
 
-        String string = oneOf(alphabeticString());
+        String string = one(alphabeticString());
         assertThat(isNullOrEmpty(string), is(false));
     }
 

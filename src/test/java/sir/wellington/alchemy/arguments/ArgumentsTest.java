@@ -21,9 +21,9 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.runners.MockitoJUnitRunner;
-import static sir.wellington.alchemy.test.DataGenerator.alphabeticString;
-import static sir.wellington.alchemy.test.DataGenerator.oneOf;
-import static sir.wellington.alchemy.test.junit.ThrowableAssertion.assertThrows;
+import static tech.sirwellington.alchemy.generator.AlchemyGenerator.one;
+import static tech.sirwellington.alchemy.generator.StringGenerators.alphabeticString;
+import static tech.sirwellington.alchemy.test.junit.ThrowableAssertion.assertThrows;
 
 /**
  *
@@ -32,31 +32,31 @@ import static sir.wellington.alchemy.test.junit.ThrowableAssertion.assertThrows;
 @RunWith(MockitoJUnitRunner.class)
 public class ArgumentsTest
 {
-    
+
     private Object argument;
-    
+
     @Before
     public void setUp()
     {
-        argument = oneOf(alphabeticString());
+        argument = one(alphabeticString());
     }
-    
+
     @Test
     public void testConstructorThrows()
     {
         System.out.println("testConstructorThrows");
-        
+
         assertThrows(() -> Arguments.class.newInstance())
                 ;
     }
-    
+
     @Test
     public void testCheckThat()
     {
         System.out.println("testCheckThat");
-        
+
         AssertionBuilder<Object, FailedAssertionException> instance = Arguments.checkThat(argument);
         assertThat(instance, notNullValue());
     }
-    
+
 }

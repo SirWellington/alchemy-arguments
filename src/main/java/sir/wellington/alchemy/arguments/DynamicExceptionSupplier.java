@@ -18,8 +18,8 @@ package sir.wellington.alchemy.arguments;
 import java.lang.reflect.Constructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import sir.wellington.alchemy.annotations.access.Internal;
-import sir.wellington.alchemy.annotations.concurrency.Immutable;
+import tech.sirwellington.alchemy.annotations.access.Internal;
+import tech.sirwellington.alchemy.annotations.concurrency.Immutable;
 
 /**
  * This class uses an Exception class to dynamically create an appropriate wrapper exception.

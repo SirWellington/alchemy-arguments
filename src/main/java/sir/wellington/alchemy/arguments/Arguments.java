@@ -17,7 +17,9 @@ package sir.wellington.alchemy.arguments;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import sir.wellington.alchemy.annotations.arguments.Nullable;
+import tech.sirwellington.alchemy.annotations.access.NonInstantiable;
+import tech.sirwellington.alchemy.annotations.arguments.Nullable;
+import tech.sirwellington.alchemy.annotations.designs.FluidAPIDesign;
 
 /**
  * This is the main entry-point for the Library. From here you can do:
@@ -35,14 +37,15 @@ import sir.wellington.alchemy.annotations.arguments.Nullable;
  *
  * @author SirWellington
  */
+@NonInstantiable
+@FluidAPIDesign
 public final class Arguments
 {
 
     private final static Logger LOG = LoggerFactory.getLogger(Arguments.class);
-
-    private Arguments() throws IllegalAccessException
+    Arguments() throws IllegalAccessException
     {
-        throw new IllegalAccessException("not meant to be instantiated");
+        throw new IllegalAccessException("cannot instantiate class");
     }
 
     /**

@@ -25,9 +25,9 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import org.mockito.runners.MockitoJUnitRunner;
-import static sir.wellington.alchemy.test.DataGenerator.alphabeticString;
-import static sir.wellington.alchemy.test.DataGenerator.listOf;
-import static sir.wellington.alchemy.test.DataGenerator.oneOf;
+import static tech.sirwellington.alchemy.generator.AlchemyGenerator.one;
+import static tech.sirwellington.alchemy.generator.CollectionGenerators.listOf;
+import static tech.sirwellington.alchemy.generator.StringGenerators.alphabeticString;
 
 /**
  *
@@ -49,7 +49,7 @@ public class AssertionTest
     {
         List<FakeAssertion<Object>> assertions = listOf(() -> mock(FakeAssertion.class));
         otherAssertions = assertions.toArray(new FakeAssertion[0]);
-        argument = oneOf(alphabeticString());
+        argument = one(alphabeticString());
     }
 
     @Test
@@ -62,7 +62,7 @@ public class AssertionTest
     {
         System.out.println("testCombineWithMultiple");
 
-        Assertion<Object> multipleAssertions = Assertion.combine(first, otherAssertions);
+        AlchemyAssertion<Object> multipleAssertions = AlchemyAssertion.combine(first, otherAssertions);
 
         multipleAssertions.check(argument);
 
@@ -77,7 +77,7 @@ public class AssertionTest
     {
         System.out.println("testCombineWithSingle");
 
-        Assertion<Object> multipleAssertions = Assertion.combine(first);
+        AlchemyAssertion<Object> multipleAssertions = AlchemyAssertion.combine(first);
         multipleAssertions.check(argument);
 
         verify(first).check(argument);
@@ -85,7 +85,7 @@ public class AssertionTest
                 .forEach(a -> verify(a, never()).check(argument));
     }
 
-    private static class FakeAssertion<T> implements Assertion<T>
+    private static class FakeAssertion<T> implements AlchemyAssertion<T>
     {
 
         @Override

@@ -39,7 +39,7 @@ public interface ExceptionMapper<Ex extends Throwable> extends Function<FailedAs
 
     /**
      * This identity instance passes the same {@link FailedAssertionException} thrown by the
-     * {@link Assertion}.
+     * {@link AlchemyAssertion}.
      */
     ExceptionMapper<FailedAssertionException> IDENTITY = ex -> ex;
 
@@ -48,7 +48,7 @@ public interface ExceptionMapper<Ex extends Throwable> extends Function<FailedAs
      * causing exception, or ignore it all-together. You can use the {@link #IDENTITY} to just
      * re-throw the {@link FailedAssertionException}.
      *
-     * @param cause The exception thrown by the {@link Assertion}
+     * @param cause The exception thrown by the {@link AlchemyAssertion}
      *
      * @return Never return a null Exception
      *

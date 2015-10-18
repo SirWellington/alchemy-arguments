@@ -18,7 +18,7 @@ package sir.wellington.alchemy.arguments;
 import java.util.Collection;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import sir.wellington.alchemy.annotations.access.Internal;
+import tech.sirwellington.alchemy.annotations.access.Internal;
 
 /**
  * This is an internal class, used to check arguments passed to the library by clients. This is
