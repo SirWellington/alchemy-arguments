@@ -16,6 +16,8 @@
 package sir.wellington.alchemy.arguments;
 
 import java.sql.SQLException;
+import static java.util.Arrays.asList;
+import java.util.List;
 import static org.hamcrest.Matchers.notNullValue;
 import static org.junit.Assert.assertThat;
 import org.junit.Before;
@@ -49,6 +51,7 @@ public class AssertionBuilderImplTest
     private ExceptionMapper<SQLException> exceptionMapper;
 
     private String argument;
+    private List<String> arguments;
 
     private AssertionBuilderImpl<String, FailedAssertionException> instance;
 
@@ -58,8 +61,9 @@ public class AssertionBuilderImplTest
     public void setUp()
     {
         argument = one(alphabeticString());
+        arguments = asList(argument);
 
-        instance = AssertionBuilderImpl.checkThat(argument);
+        instance = AssertionBuilderImpl.checkThat(arguments);
 
         assertException = new FailedAssertionException(one(alphabeticString()));
     }
@@ -70,7 +74,7 @@ public class AssertionBuilderImplTest
         System.out.println("testCheckThat");
 
         Object mockArgument = mock(Object.class);
-        instance = checkThat(argument);
+        instance = checkThat(arguments);
         assertThat(instance, notNullValue());
         verifyZeroInteractions(mockArgument);
 

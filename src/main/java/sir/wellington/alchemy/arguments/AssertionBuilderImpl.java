@@ -15,9 +15,11 @@
  */
 package sir.wellington.alchemy.arguments;
 
+import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import static sir.wellington.alchemy.arguments.ExceptionMapper.IDENTITY;
+import tech.sirwellington.alchemy.annotations.access.Internal;
 import tech.sirwellington.alchemy.annotations.concurrency.Immutable;
 import tech.sirwellington.alchemy.annotations.designs.FluidAPIDesign;
 import tech.sirwellington.alchemy.annotations.designs.patterns.StrategyPattern;
@@ -30,6 +32,7 @@ import static tech.sirwellington.alchemy.annotations.designs.patterns.StrategyPa
 @FluidAPIDesign
 @StrategyPattern(role = CLIENT)
 @Immutable
+@Internal
 final class AssertionBuilderImpl<Argument, Ex extends Throwable> implements AssertionBuilder<Argument, Ex>
 {
 
@@ -37,18 +40,19 @@ final class AssertionBuilderImpl<Argument, Ex extends Throwable> implements Asse
 
     private final AlchemyAssertion<Argument> assertion;
     private final ExceptionMapper<Ex> exceptionMapper;
-    private final Argument argument;
+    @Immutable
+    private final List<Argument> arguments;
     private final String overrideMessage;
 
     private AssertionBuilderImpl(AlchemyAssertion<Argument> assertion,
                                  ExceptionMapper<Ex> exceptionMapper,
                                  String overrideMessage,
-                                 Argument argument)
+                                 List<Argument> arguments)
     {
         this.assertion = assertion;
         this.exceptionMapper = exceptionMapper;
         this.overrideMessage = overrideMessage;
-        this.argument = argument;
+        this.arguments = arguments;
     }
 
     @Override
@@ -56,12 +60,12 @@ final class AssertionBuilderImpl<Argument, Ex extends Throwable> implements Asse
     {
         Checks.checkThat(!Checks.isNullOrEmpty(message), "error message is empty");
 
-        return new AssertionBuilderImpl<>(assertion, exceptionMapper, message, argument);
+        return new AssertionBuilderImpl<>(assertion, exceptionMapper, message, arguments);
     }
 
-    static <Argument> AssertionBuilderImpl<Argument, FailedAssertionException> checkThat(Argument argument)
+    static <Argument> AssertionBuilderImpl<Argument, FailedAssertionException> checkThat(List<Argument> arguments)
     {
-        return new AssertionBuilderImpl<>(null, IDENTITY, "", argument);
+        return new AssertionBuilderImpl<>(null, IDENTITY, "", arguments);
     }
 
     @Override
@@ -69,7 +73,7 @@ final class AssertionBuilderImpl<Argument, Ex extends Throwable> implements Asse
     {
         Checks.checkNotNull(exceptionMapper, "exceptionMapper is null");
 
-        return new AssertionBuilderImpl<>(null, exceptionMapper, "", argument);
+        return new AssertionBuilderImpl<>(null, exceptionMapper, "", arguments);
     }
 
     @Override
@@ -77,7 +81,7 @@ final class AssertionBuilderImpl<Argument, Ex extends Throwable> implements Asse
     {
         Checks.checkNotNull(assertion, "assertion is null");
 
-        AssertionBuilderImpl<Argument, Ex> newBuilder = new AssertionBuilderImpl<>(assertion, exceptionMapper, overrideMessage, argument);
+        AssertionBuilderImpl<Argument, Ex> newBuilder = new AssertionBuilderImpl<>(assertion, exceptionMapper, overrideMessage, arguments);
 
         //Check this assertion
         newBuilder.checkAssertion();
@@ -94,7 +98,7 @@ final class AssertionBuilderImpl<Argument, Ex extends Throwable> implements Asse
 
         try
         {
-            assertion.check(argument);
+            arguments.forEach(assertion::check);
         }
         catch (FailedAssertionException ex)
         {
