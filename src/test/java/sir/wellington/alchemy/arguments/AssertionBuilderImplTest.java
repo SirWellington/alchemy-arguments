@@ -32,7 +32,9 @@ import static org.mockito.Mockito.verifyZeroInteractions;
 import static org.mockito.Mockito.when;
 import org.mockito.runners.MockitoJUnitRunner;
 import static sir.wellington.alchemy.arguments.AssertionBuilderImpl.checkThat;
+import static sir.wellington.alchemy.arguments.Assertions.nonEmptyString;
 import static tech.sirwellington.alchemy.generator.AlchemyGenerator.one;
+import static tech.sirwellington.alchemy.generator.CollectionGenerators.listOf;
 import static tech.sirwellington.alchemy.generator.StringGenerators.alphabeticString;
 import static tech.sirwellington.alchemy.test.junit.ThrowableAssertion.assertThrows;
 
@@ -197,6 +199,25 @@ public class AssertionBuilderImplTest
         assertThrows(() -> instance.usingMessage(overrideMessage).is(assertion))
                 .isInstanceOf(FailedAssertionException.class)
                 .hasMessage(overrideMessage);
+
+    }
+
+    @Test
+    public void testWithMultipleArguments()
+    {
+        System.out.println("testWithMultipleArguments");
+
+        arguments = listOf(alphabeticString());
+        //No Exceptions expected
+        AssertionBuilderImpl.checkThat(arguments)
+                .is(nonEmptyString());
+
+        arguments.add("");
+        assertThrows(() -> AssertionBuilderImpl.checkThat(arguments).is(nonEmptyString()))
+                .isInstanceOf(FailedAssertionException.class);
+
+        assertThrows(() -> AssertionBuilderImpl.checkThat(arguments).are(nonEmptyString()))
+                .isInstanceOf(FailedAssertionException.class);
 
     }
 }

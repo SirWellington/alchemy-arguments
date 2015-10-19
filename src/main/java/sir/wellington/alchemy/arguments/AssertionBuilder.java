@@ -23,7 +23,7 @@ import tech.sirwellington.alchemy.annotations.designs.FluidAPIDesign;
  * The {@code AssertionBuilder} allows compositions of rich argument checks.
  *
  * <pre>
- * 
+ *
  * {@code
  * checkThat(password)
  *      .usingException(ex -> new BadRequestException("Bad Password", ex))
@@ -57,17 +57,18 @@ import tech.sirwellington.alchemy.annotations.designs.FluidAPIDesign;
 @FluidAPIDesign
 public interface AssertionBuilder<Argument, Ex extends Throwable>
 {
+
     /**
      * Makes it easy to override the
      * {@linkplain FailedAssertionException#getMessage() error message} in the Exception thrown, in
      * case the argument fails the assertion.
      *
      * @param message
-     * 
-     * @return 
+     *
+     * @return
      */
     AssertionBuilder<Argument, Ex> usingMessage(@NonEmpty String message);
-    
+
     /**
      * Provide the behavior that responds to an argument failing an {@link AlchemyAssertion}. If the
      * provided {@code ExceptionMapper} returns null, no exception will be thrown, and it will be as
@@ -93,6 +94,30 @@ public interface AssertionBuilder<Argument, Ex extends Throwable>
      * @throws Ex Throws the desired exception if the assertion fails.
      */
     AssertionBuilder<Argument, Ex> is(@NonNull AlchemyAssertion<Argument> assertion) throws Ex;
+
+    /**
+     * Grammatical sugar in case multiple arguments are used.
+     * <br>
+     * It reads better to say
+     * <pre>
+     *  checkThat(first, second, third)
+     *      .are(notEmpty());
+     * </pre>
+     * than to say
+     * <pre>
+     * checkThat(first, second, third)
+     *      .is(notEmpty());
+     * </pre>
+     * but the result is the same.
+     * 
+     * @param assertion
+     * @return
+     * @throws Ex 
+     */
+    default AssertionBuilder<Argument, Ex> are(@NonNull AlchemyAssertion<Argument> assertion) throws Ex
+    {
+        return is(assertion);
+    }
 
     /**
      * This is an alternate way to specify an Exception, using instead a class. The library will

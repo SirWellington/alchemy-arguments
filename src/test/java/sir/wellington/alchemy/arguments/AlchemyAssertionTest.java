@@ -34,7 +34,7 @@ import static tech.sirwellington.alchemy.generator.StringGenerators.alphabeticSt
  * @author SirWellington
  */
 @RunWith(MockitoJUnitRunner.class)
-public class AssertionTest
+public class AlchemyAssertionTest
 {
 
     @Mock
