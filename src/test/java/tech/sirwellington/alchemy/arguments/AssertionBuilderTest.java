@@ -63,7 +63,7 @@ public class AssertionBuilderTest
         }
 
         @Override
-        public <Ex extends Throwable> AssertionBuilder<A, Ex> usingException(ExceptionMapper<Ex> exceptionMapper)
+        public <Ex extends Throwable> AssertionBuilder<A, Ex> throwing(ExceptionMapper<Ex> exceptionMapper)
         {
             return (AssertionBuilder<A, Ex>) this;
         }

@@ -69,7 +69,7 @@ final class AssertionBuilderImpl<Argument, Ex extends Throwable> implements Asse
     }
 
     @Override
-    public <Ex extends Throwable> AssertionBuilderImpl<Argument, Ex> usingException(ExceptionMapper<Ex> exceptionMapper)
+    public <Ex extends Throwable> AssertionBuilderImpl<Argument, Ex> throwing(ExceptionMapper<Ex> exceptionMapper)
     {
         Checks.checkNotNull(exceptionMapper, "exceptionMapper is null");
 

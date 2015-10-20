@@ -20,30 +20,28 @@ import tech.sirwellington.alchemy.annotations.arguments.NonNull;
 import tech.sirwellington.alchemy.annotations.designs.FluidAPIDesign;
 
 /**
- * The {@code AssertionBuilder} allows compositions of rich argument checks.
+ * The {@link AssertionBuilder} allows compositions of rich argument checks.
  *
  * <pre>
  *
  * {@code
  * checkThat(password)
- *      .usingException(ex -> new BadRequestException("Bad Password", ex))
+ *      .usingMessage("Invalid Password")
  *      .is(notNull())
  *      .is(nonEmptyString())
  *      .is(stringIsAtLeastOfLength(10));
  * }
- * </pre>
- *
- * Alternatively:
+ * </pre> 
+ * Alternatively using custom Exception Thrower:
  *
  * <pre>
- *
  * {@code
  * checkThat(password)
- *      .usingException(BadRequestException.class)
- *      .is(notNull())
- *      .is(nonEmptyString())
- *      .is(stringIsAtLeastOfLength(10));
- * }
+      .throwing(ex -> new BadRequestException("Bad Password", ex))
+      .is(notNull())
+      .is(nonEmptyString())
+      .is(stringIsAtLeastOfLength(10));
+ }
  * </pre>
  *
  * With no {@link ExceptionMapper} provided, an
@@ -81,7 +79,7 @@ public interface AssertionBuilder<Argument, Ex extends Throwable>
      *
      * @see ExceptionMapper
      */
-    <Ex extends Throwable> AssertionBuilder<Argument, Ex> usingException(@NonNull ExceptionMapper<Ex> exceptionMapper);
+    <Ex extends Throwable> AssertionBuilder<Argument, Ex> throwing(@NonNull ExceptionMapper<Ex> exceptionMapper);
 
     /**
      * This operation runs the specified assertion on the {@code Argument}. This operation is
@@ -102,17 +100,15 @@ public interface AssertionBuilder<Argument, Ex extends Throwable>
      * <pre>
      *  checkThat(first, second, third)
      *      .are(notEmpty());
-     * </pre>
-     * than to say
+     * </pre> than to say
      * <pre>
      * checkThat(first, second, third)
      *      .is(notEmpty());
-     * </pre>
-     * but the result is the same.
-     * 
+     * </pre> but the result is the same.
+     *
      * @param assertion
      * @return
-     * @throws Ex 
+     * @throws Ex
      */
     default AssertionBuilder<Argument, Ex> are(@NonNull AlchemyAssertion<Argument> assertion) throws Ex
     {
@@ -130,9 +126,9 @@ public interface AssertionBuilder<Argument, Ex extends Throwable>
      *
      * @return
      */
-    default <Ex extends Throwable> AssertionBuilder<Argument, Ex> usingException(@NonNull Class<Ex> exceptionClass)
+    default <Ex extends Throwable> AssertionBuilder<Argument, Ex> throwing(@NonNull Class<Ex> exceptionClass)
     {
-        return usingException(new DynamicExceptionSupplier<>(exceptionClass, ""));
+        return AssertionBuilder.this.throwing(new DynamicExceptionSupplier<>(exceptionClass, ""));
     }
 
 }

@@ -49,9 +49,9 @@ public class ChecksTest
     }
 
     @Test
-    public void testCheckNotNull_Object()
+    public void testCheckNotNull()
     {
-        System.out.println("testCheckNotNull_Object");
+        System.out.println("testCheckNotNull");
 
         checkNotNull("");
         checkNotNull(this);
@@ -61,9 +61,9 @@ public class ChecksTest
     }
 
     @Test
-    public void testCheckNotNull_Object_String()
+    public void testCheckNotNullWithMessage()
     {
-        System.out.println("testCheckNotNull_Object_String");
+        System.out.println("testCheckNotNullWithMessage");
 
         String message = one(alphabeticString());
         checkNotNull("", message);
@@ -75,9 +75,9 @@ public class ChecksTest
     }
 
     @Test
-    public void testCheckThat_boolean()
+    public void testCheckThat()
     {
-        System.out.println("testCheckThat_boolean");
+        System.out.println("testCheckThat");
 
         checkThat(true);
 
@@ -86,9 +86,9 @@ public class ChecksTest
     }
 
     @Test
-    public void testCheckThat_boolean_String()
+    public void testCheckThatWithMessage()
     {
-        System.out.println("testCheckThat_boolean_String");
+        System.out.println("testCheckThatWithMessage");
 
         String message = one(alphabeticString());
 
@@ -113,9 +113,9 @@ public class ChecksTest
     }
 
     @Test
-    public void testIsNullOrEmpty_String()
+    public void testIsNullOrEmptyString()
     {
-        System.out.println("testIsNullOrEmpty_String");
+        System.out.println("testIsNullOrEmptyString");
 
         assertThat(isNullOrEmpty((String) null), is(true));
         assertThat(isNullOrEmpty(""), is(true));
@@ -126,9 +126,9 @@ public class ChecksTest
     }
 
     @Test
-    public void testIsNullOrEmpty_Collection()
+    public void testIsNullOrEmptyCollection()
     {
-        System.out.println("testIsNullOrEmpty_Collection");
+        System.out.println("testIsNullOrEmptyCollection");
 
         assertThat(isNullOrEmpty(Collections.EMPTY_LIST), is(true));
         assertThat(isNullOrEmpty(Collections.EMPTY_SET), is(true));

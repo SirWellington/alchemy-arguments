@@ -85,9 +85,9 @@ public class AssertionBuilderImplTest
     }
 
     @Test
-    public void testUsingExceptionWhenNotWrapped()
+    public void testThrowingWhenExceptionIsNotWrapped()
     {
-        System.out.println("testUsingExceptionWhenNotWrapped");
+        System.out.println("testThrowingWhenExceptionIsNotWrapped");
 
         when(exceptionMapper.apply(assertException))
                 .thenReturn(new SQLException(one(alphabeticString())));
@@ -96,7 +96,7 @@ public class AssertionBuilderImplTest
                 .when(assertion)
                 .check(argument);
 
-        assertThrows(() -> instance.usingException(exceptionMapper).is(assertion))
+        assertThrows(() -> instance.throwing(exceptionMapper).is(assertion))
                 .isInstanceOf(SQLException.class);
 
         verify(exceptionMapper).apply(assertException);
@@ -104,9 +104,9 @@ public class AssertionBuilderImplTest
     }
 
     @Test
-    public void testUsingExceptionWhenWrapped()
+    public void testThrowingWhenExceptionIsWrapped()
     {
-        System.out.println("testUsingExceptionWhenWrapped");
+        System.out.println("testThrowingWhenExceptionIsWrapped");
 
         when(exceptionMapper.apply(assertException))
                 .thenReturn(new SQLException(one(alphabeticString()), assertException));
@@ -115,15 +115,15 @@ public class AssertionBuilderImplTest
                 .when(assertion)
                 .check(argument);
 
-        assertThrows(() -> instance.usingException(exceptionMapper).is(assertion))
+        assertThrows(() -> instance.throwing(exceptionMapper).is(assertion))
                 .isInstanceOf(SQLException.class)
                 .hasCauseInstanceOf(FailedAssertionException.class);
     }
 
     @Test
-    public void testUsingExceptionClass()
+    public void testThrowingExceptionClass()
     {
-        System.out.println("testUsingExceptionClass");
+        System.out.println("testThrowingExceptionClass");
 
         when(exceptionMapper.apply(assertException))
                 .thenReturn(new SQLException());
@@ -132,10 +132,9 @@ public class AssertionBuilderImplTest
                 .when(assertion)
                 .check(argument);
 
-        assertThrows(() -> instance.usingException(SQLException.class).is(assertion))
+        assertThrows(() -> instance.throwing(SQLException.class).is(assertion))
                 .isInstanceOf(SQLException.class)
                 .hasCauseInstanceOf(FailedAssertionException.class);
-
     }
 
     @Test
@@ -181,9 +180,9 @@ public class AssertionBuilderImplTest
     }
 
     @Test
-    public void testUsingException()
+    public void testUsingMessage()
     {
-        System.out.println("testUsingException");
+        System.out.println("testUsingMessage");
 
         String embeddedExceptionMessage = one(alphabeticString());
         String overrideMessage = one(alphabeticString());
@@ -203,19 +202,21 @@ public class AssertionBuilderImplTest
     }
 
     @Test
-    public void testWithMultipleArguments()
+    public void testChecksWithMultipleArguments()
     {
-        System.out.println("testWithMultipleArguments");
+        System.out.println("testChecksWithMultipleArguments");
 
         arguments = listOf(alphabeticString());
         //No Exceptions expected
         AssertionBuilderImpl.checkThat(arguments)
-                .is(nonEmptyString());
+                .are(nonEmptyString());
 
         arguments.add("");
+        //Test 'is'
         assertThrows(() -> AssertionBuilderImpl.checkThat(arguments).is(nonEmptyString()))
                 .isInstanceOf(FailedAssertionException.class);
 
+        //Test 'are' as well
         assertThrows(() -> AssertionBuilderImpl.checkThat(arguments).are(nonEmptyString()))
                 .isInstanceOf(FailedAssertionException.class);
 

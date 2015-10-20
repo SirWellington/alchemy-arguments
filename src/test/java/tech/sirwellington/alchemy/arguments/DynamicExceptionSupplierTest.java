@@ -26,6 +26,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.runners.MockitoJUnitRunner;
+import tech.sirwellington.alchemy.annotations.access.Internal;
 import static tech.sirwellington.alchemy.generator.AlchemyGenerator.one;
 import static tech.sirwellington.alchemy.generator.StringGenerators.alphabeticString;
 
@@ -166,6 +167,8 @@ public class DynamicExceptionSupplierTest
 
     }
 
+    //Private Fake Exception types used for Testing.
+    @Internal
     private static class FakeException extends Exception
     {
 
@@ -174,6 +177,7 @@ public class DynamicExceptionSupplierTest
         }
     }
 
+    @Internal
     private static class FakeExceptionWithMessage extends Exception
     {
 
@@ -188,6 +192,7 @@ public class DynamicExceptionSupplierTest
 
     }
 
+    @Internal
     private static class FakeExceptionWithThrowable extends Exception
     {
 
@@ -202,6 +207,7 @@ public class DynamicExceptionSupplierTest
 
     }
 
+    @Internal
     private static class FakeExceptionWithBoth extends Exception
     {
 
@@ -226,6 +232,7 @@ public class DynamicExceptionSupplierTest
 
     }
 
+    @Internal
     private static class FakeExceptionThatThrowsOnConstruct extends Exception
     {
 

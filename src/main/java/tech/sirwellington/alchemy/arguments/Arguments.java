@@ -31,12 +31,12 @@ import tech.sirwellington.alchemy.annotations.designs.FluidAPIDesign;
  * <pre>
  * {@code
  * checkThat(zipCode)
- * .usingException(ex -> new InvalidZipCodeException(zipCode))
- * .is(notNull())
- * .is(positiveInteger())
- * .is(intAtLeast(10000))
- * .is(intAtMost(99999));
- * }
+ .throwing(ex -> new InvalidZipCodeException(zipCode))
+ .is(notNull())
+ .is(positiveInteger())
+ .is(intAtLeast(10000))
+ .is(intAtMost(99999));
+ }
  * </pre>
  *
  * @author SirWellington
