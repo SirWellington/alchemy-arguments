@@ -67,7 +67,7 @@ public class ArgumentsTest
         System.out.println("testCheckThatWithMultipleArguments");
 
         List<String> strings = listOf(alphabeticString(), 30);
-        String[] stringArray = strings.toArray(new String[0]);
+        String[] stringArray = strings.toArray(new String[strings.size()]);
 
         AssertionBuilder<String, FailedAssertionException> instance = Arguments.checkThat(argument, stringArray);
         assertThat(instance, notNullValue());

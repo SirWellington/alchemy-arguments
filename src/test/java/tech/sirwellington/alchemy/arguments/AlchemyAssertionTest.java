@@ -50,7 +50,7 @@ public class AlchemyAssertionTest
     {
         List<FakeAssertion<Object>> assertions = listOf(() -> spy(FakeAssertion.class));
 
-        otherAssertions = assertions.toArray(new FakeAssertion[0]);
+        otherAssertions = assertions.toArray(new FakeAssertion[assertions.size()]);
         argument = one(alphabeticString());
     }
 

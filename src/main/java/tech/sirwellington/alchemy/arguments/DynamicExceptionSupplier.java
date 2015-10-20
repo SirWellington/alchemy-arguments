@@ -151,11 +151,6 @@ final class DynamicExceptionSupplier<Ex extends Throwable> implements ExceptionM
         return hasConstructorWithArguments(String.class, Throwable.class);
     }
 
-    private boolean hasNeitherAMessageOrACause(String message, FailedAssertionException cause)
-    {
-        return cause == null && Checks.isNullOrEmpty(message);
-    }
-
     private boolean haveOnlyAMessage(String message, FailedAssertionException cause)
     {
         return !Checks.isNullOrEmpty(message) && cause == null;
