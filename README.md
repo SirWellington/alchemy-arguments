@@ -1,9 +1,12 @@
 Alchemy Arguments
 ==============================================
 
-[![Build Status](https://travis-ci.org/SirWellington/commons-arguments.svg)](https://travis-ci.org/SirWellington/commons-arguments)
+## "Check Yoself!"
+
+[![Build Status](https://travis-ci.org/SirWellington/alchemy-arguments.svg)](https://travis-ci.org/SirWellington/alchemy-arguments)
 
 # Purpose
+Part of the Alchemy Collection.
 This Library allows developers to perform fluid argument checking and validation.
 
 # Requirements
@@ -30,14 +33,25 @@ To use, simply add the following maven dependency.
 
 ## Snapshot
 
+>First add the Snapshot Repository
+```xml
+<repository>
+	<id>ossrh</id>
+    <url>https://oss.sonatype.org/content/repositories/snapshots</url>
+</repository>
+```
+
 ```xml
 <dependency>
 	<groupId>tech.sirwellington.alchemy</groupId>
-	<artifactId>alchemy-arguments</artifactId>
-	<version>1.1-SNAPSHOT</version>
+	<artifactId>alchemy-test</artifactId>
+	<version>1.2-SNAPSHOT</version>
 </dependency>
 ```
-```
+
+# Javadocs
+## [Latest](http://www.javadoc.io/doc/tech.sirwellington.alchemy/alchemy-arguments/)
+
 
 # API
 
@@ -90,13 +104,13 @@ This library allows you to throw your own custom exceptions when making assertio
 
 ```java
 checkThat(password)
-	.usingException(BadPasswordException.class)
+	.throwing(BadPasswordException.class)
 	.is(nonEmptyString())
 	.is(stringWithLengthBetween(10, 20));
 
 ```
 
-In the example above, if the password fails the checks, a `BadPasswordException` will be thrown. It is much cleaner than:
+In the example above, if the password fails the checks, a `BadPasswordException` will be thrown. It is much cleaner writing:
 
 ``` java
 if (Strings.isNullOrEmpty(password) &&
@@ -113,7 +127,7 @@ Let's try with an age check:
 
 ```java
 checkThat(age)
-	.usingException(ex -> new BadPasswordException(ex))
+	.throwing(ex -> new BadPasswordException(ex))
 	.is(positiveInteger())
 	.is(greaterThanOrEqualTo(18))
 	.is(lessThan(150));
@@ -152,7 +166,7 @@ Assertion<Vehicle> truck = v ->
 
 //This masks the causing FailedAssertionException message.
 checkThat(vehicle)
-	.usingException(ex -> new UnauthorizedException("Trucks only"))
+	.throwing(ex -> new UnauthorizedException("Trucks only"))
 	.is(truck);
 
 ```
