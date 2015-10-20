@@ -21,7 +21,9 @@ This project builds with maven. Just run a `mvn clean install` to compile and in
 # Download
 
 To use, simply add the following maven dependency.
-
+> Note: Not yet released on Maven Central.
+>
+>Coming soon...
 ## Release
 ```xml
 <dependency>
