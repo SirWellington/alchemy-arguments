@@ -9,3 +9,6 @@ buildNumber.properties
 
 #Netbeans
 nb-configuration.xml
+nb-actions.xml
+
+nbactions.xml
