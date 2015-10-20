@@ -20,14 +20,15 @@ import java.util.List;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.mockito.Mock;
-import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.verify;
+import org.mockito.Spy;
 import org.mockito.runners.MockitoJUnitRunner;
 import static tech.sirwellington.alchemy.generator.AlchemyGenerator.one;
 import static tech.sirwellington.alchemy.generator.CollectionGenerators.listOf;
 import static tech.sirwellington.alchemy.generator.StringGenerators.alphabeticString;
+import static tech.sirwellington.alchemy.test.junit.ThrowableAssertion.assertThrows;
 
 /**
  *
@@ -37,7 +38,7 @@ import static tech.sirwellington.alchemy.generator.StringGenerators.alphabeticSt
 public class AlchemyAssertionTest
 {
 
-    @Mock
+    @Spy
     private FakeAssertion<Object> first;
 
     private FakeAssertion[] otherAssertions;
@@ -47,14 +48,34 @@ public class AlchemyAssertionTest
     @Before
     public void setUp()
     {
-        List<FakeAssertion<Object>> assertions = listOf(() -> mock(FakeAssertion.class));
+        List<FakeAssertion<Object>> assertions = listOf(() -> spy(FakeAssertion.class));
+
         otherAssertions = assertions.toArray(new FakeAssertion[0]);
         argument = one(alphabeticString());
     }
 
     @Test
-    public void testCheck()
+    public void testOther()
     {
+        System.out.println("testOther");
+        AlchemyAssertion<Object> assertion = first;
+
+        for (AlchemyAssertion<Object> element : otherAssertions)
+        {
+            assertion = assertion.and(element);
+        }
+
+        assertion.check(argument);
+        verify(first).check(argument);
+        asList(otherAssertions).forEach(a -> verify(a).check(argument));
+    }
+
+    @Test
+    public void testOtherWithBadArgs()
+    {
+        System.out.println("testOtherWithBadArgs");
+
+        assertThrows(() -> first.and(null));
     }
 
     @Test
@@ -73,6 +94,16 @@ public class AlchemyAssertionTest
     }
 
     @Test
+    public void testCombineWithMultipleWithBadArgs()
+    {
+        System.out.println("testCombineWithMultipleWithBadArgs");
+
+        assertThrows(() -> AlchemyAssertion.combine(null, (AlchemyAssertion[]) null));
+        assertThrows(() -> AlchemyAssertion.combine(first, (AlchemyAssertion[]) null));
+
+    }
+
+    @Test
     public void testCombineWithSingle()
     {
         System.out.println("testCombineWithSingle");
@@ -85,7 +116,7 @@ public class AlchemyAssertionTest
                 .forEach(a -> verify(a, never()).check(argument));
     }
 
-    private static class FakeAssertion<T> implements AlchemyAssertion<T>
+    static class FakeAssertion<T> implements AlchemyAssertion<T>
     {
 
         @Override

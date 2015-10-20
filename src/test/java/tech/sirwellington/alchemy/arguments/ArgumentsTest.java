@@ -15,13 +15,16 @@
  */
 package tech.sirwellington.alchemy.arguments;
 
+import java.util.List;
 import static org.hamcrest.Matchers.notNullValue;
 import static org.junit.Assert.assertThat;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.runners.MockitoJUnitRunner;
+import static tech.sirwellington.alchemy.arguments.Assertions.nonEmptyString;
 import static tech.sirwellington.alchemy.generator.AlchemyGenerator.one;
+import static tech.sirwellington.alchemy.generator.CollectionGenerators.listOf;
 import static tech.sirwellington.alchemy.generator.StringGenerators.alphabeticString;
 import static tech.sirwellington.alchemy.test.junit.ThrowableAssertion.assertThrows;
 
@@ -33,7 +36,7 @@ import static tech.sirwellington.alchemy.test.junit.ThrowableAssertion.assertThr
 public class ArgumentsTest
 {
 
-    private Object argument;
+    private String argument;
 
     @Before
     public void setUp()
@@ -46,8 +49,7 @@ public class ArgumentsTest
     {
         System.out.println("testConstructorThrows");
 
-        assertThrows(() -> Arguments.class.newInstance())
-                ;
+        assertThrows(() -> Arguments.class.newInstance());
     }
 
     @Test
@@ -57,6 +59,34 @@ public class ArgumentsTest
 
         AssertionBuilder<Object, FailedAssertionException> instance = Arguments.checkThat(argument);
         assertThat(instance, notNullValue());
+    }
+
+    @Test
+    public void testCheckThatWithMultipleArguments()
+    {
+        System.out.println("testCheckThatWithMultipleArguments");
+
+        List<String> strings = listOf(alphabeticString(), 30);
+        String[] stringArray = strings.toArray(new String[0]);
+
+        AssertionBuilder<String, FailedAssertionException> instance = Arguments.checkThat(argument, stringArray);
+        assertThat(instance, notNullValue());
+        instance.are(nonEmptyString());
+
+        instance = Arguments.checkThat(argument, new String[0]);
+        assertThat(instance, notNullValue());
+        instance.are(nonEmptyString());
+    }
+
+    @Test
+    public void testCheckThatWithMultipleArgumentsWithFailure()
+    {
+        System.out.println("testCheckThatWithMultipleArgumentsWithFailure");
+
+        AssertionBuilder<String, FailedAssertionException> instance = Arguments.checkThat(argument, new String[1]);
+        assertThat(instance, notNullValue());
+        assertThrows(() -> instance.are(nonEmptyString()))
+                .isInstanceOf(FailedAssertionException.class);
     }
 
 }

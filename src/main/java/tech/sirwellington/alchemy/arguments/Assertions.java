@@ -33,11 +33,12 @@ import static tech.sirwellington.alchemy.annotations.designs.patterns.StrategyPa
 @StrategyPattern(role = CONCRETE_BEHAVIOR)
 public final class Assertions
 {
-
+    
     private final static Logger LOG = LoggerFactory.getLogger(Assertions.class);
-
-    private Assertions()
+    
+    Assertions() throws IllegalAccessException
     {
+        throw new IllegalAccessException("cannot instantiate class");
     }
 
     /**
@@ -57,7 +58,7 @@ public final class Assertions
             }
         };
     }
-
+    
     public static <A> AlchemyAssertion<A> sameInstance(Object other)
     {
         return (argument) ->
@@ -66,14 +67,14 @@ public final class Assertions
             {
                 return;
             }
-
+            
             if (argument != other)
             {
                 throw new FailedAssertionException("Expected " + argument + " to be the same instance as " + other);
             }
         };
     }
-
+    
     public static <A> AlchemyAssertion<A> equalTo(A other)
     {
         return (argument) ->
@@ -82,23 +83,23 @@ public final class Assertions
             {
                 return;
             }
-
+            
             if (argument == null)
             {
                 throw new FailedAssertionException("null is not equal to " + other);
             }
-
+            
             if (!argument.equals(other))
             {
                 throw new FailedAssertionException("Expected " + argument + " to be equal to " + other);
             }
         };
     }
-
+    
     public static <A> AlchemyAssertion<A> not(AlchemyAssertion<A> assertion)
     {
         Checks.checkNotNull(assertion, "missing assertion");
-
+        
         return (argument) ->
         {
             try
@@ -108,7 +109,7 @@ public final class Assertions
             }
             catch (FailedAssertionException ex)
             {
-
+                
             }
         };
     }
@@ -124,7 +125,7 @@ public final class Assertions
         return (number) ->
         {
             notNull().check(number);
-
+            
             if (number <= 0)
             {
                 throw new FailedAssertionException("Expected positive integer: " + number);
@@ -142,7 +143,7 @@ public final class Assertions
         return (number) ->
         {
             notNull().check(number);
-
+            
             if (number <= 0)
             {
                 throw new FailedAssertionException("Expected positive long: " + number);
@@ -161,11 +162,11 @@ public final class Assertions
     public static AlchemyAssertion<Integer> numberBetween(int min, int max)
     {
         Checks.checkThat(min < max, "Minimum must be less than Max.");
-
+        
         return (Integer number) ->
         {
             notNull().check(number);
-
+            
             if (number < min || number > max)
             {
                 String message = format("Expected a number between %d and %d but got %d instead", min, max, number);
@@ -185,11 +186,11 @@ public final class Assertions
     public static AlchemyAssertion<Long> numberBetween(long min, long max)
     {
         Checks.checkThat(min < max, "Minimum must be less than Max.");
-
+        
         return (number) ->
         {
             notNull().check(number);
-
+            
             if (number < min || number > max)
             {
                 String message = format("Expected a number between %d and %d but got %d instead", min, max, number);
@@ -208,7 +209,7 @@ public final class Assertions
     public static AlchemyAssertion<Integer> greaterThan(int exclusiveLowerBound)
     {
         Checks.checkThat(exclusiveLowerBound != Integer.MAX_VALUE, "Integers cannot exceed " + Integer.MAX_VALUE);
-
+        
         return (integer) ->
         {
             notNull().check(integer);
@@ -229,7 +230,7 @@ public final class Assertions
     public static AlchemyAssertion<Long> greaterThan(long exclusiveLowerBound)
     {
         Checks.checkThat(exclusiveLowerBound != Long.MAX_VALUE, "Longs cannot exceed " + Long.MAX_VALUE);
-
+        
         return (number) ->
         {
             notNull().check(number);
@@ -252,7 +253,7 @@ public final class Assertions
         return (number) ->
         {
             notNull().check(number);
-
+            
             if (number < inclusiveLowerBound)
             {
                 throw new FailedAssertionException("Number must be greater than or equal to " + inclusiveLowerBound);
@@ -272,7 +273,7 @@ public final class Assertions
         return (number) ->
         {
             notNull().check(number);
-
+            
             if (number < inclusiveLowerBound)
             {
                 throw new FailedAssertionException("Number must be greater than or equal to " + inclusiveLowerBound);
@@ -290,11 +291,11 @@ public final class Assertions
     public static AlchemyAssertion<Integer> lessThan(int exclusiveUpperBound)
     {
         Checks.checkThat(exclusiveUpperBound != Integer.MIN_VALUE, "Ints cannot be less than " + Integer.MIN_VALUE);
-
+        
         return (number) ->
         {
             notNull().check(number);
-
+            
             if (number >= exclusiveUpperBound)
             {
                 throw new FailedAssertionException("Number must be < " + exclusiveUpperBound);
@@ -312,11 +313,11 @@ public final class Assertions
     public static AlchemyAssertion<Long> lessThan(long exclusiveUpperBound)
     {
         Checks.checkThat(exclusiveUpperBound != Long.MIN_VALUE, "Longs cannot be less than " + Long.MIN_VALUE);
-
+        
         return (number) ->
         {
             notNull().check(number);
-
+            
             if (number >= exclusiveUpperBound)
             {
                 throw new FailedAssertionException("Number must be < " + exclusiveUpperBound);
@@ -336,7 +337,7 @@ public final class Assertions
         return (number) ->
         {
             notNull().check(number);
-
+            
             if (number > inclusiveUpperBound)
             {
                 throw new FailedAssertionException("Number must be less than or equal to " + inclusiveUpperBound);
@@ -356,7 +357,7 @@ public final class Assertions
         return (number) ->
         {
             notNull().check(number);
-
+            
             if (number > inclusiveUpperBound)
             {
                 throw new FailedAssertionException("Number must be less than or equal to " + inclusiveUpperBound);
@@ -407,11 +408,11 @@ public final class Assertions
     public static AlchemyAssertion<String> stringWithLength(int expectedLength)
     {
         Checks.checkThat(expectedLength >= 0, "expectedLength must be >= 0");
-
+        
         return (string) ->
         {
             notNull().check(string);
-
+            
             if (string.length() != expectedLength)
             {
                 throw new FailedAssertionException("Expecting a String with length " + expectedLength);
@@ -429,11 +430,11 @@ public final class Assertions
     public static AlchemyAssertion<String> stringWithLengthGreaterThan(int minimumLength)
     {
         Checks.checkThat(minimumLength > 0, "minimumLength must be > 0");
-
+        
         return (string) ->
         {
             nonEmptyString().check(string);
-
+            
             if (string.length() <= minimumLength)
             {
                 throw new FailedAssertionException("Expected a String with length > " + minimumLength);
@@ -454,7 +455,7 @@ public final class Assertions
         return (string) ->
         {
             notNull().check(string);
-
+            
             if (string.length() < minimumLength)
             {
                 throw new FailedAssertionException("Expecting a String with length >= " + minimumLength);
@@ -472,11 +473,11 @@ public final class Assertions
     public static AlchemyAssertion<String> stringWithLengthLessThan(int upperBound)
     {
         Checks.checkThat(upperBound > 0, "upperBound must be > 0");
-
+        
         return (string) ->
         {
             nonEmptyString().check(string);
-
+            
             if (string.length() >= upperBound)
             {
                 throw new FailedAssertionException("Expecting a String with length < " + upperBound);
@@ -497,7 +498,7 @@ public final class Assertions
         return (string) ->
         {
             notNull().check(string);
-
+            
             if (string == null || string.length() > maximumLength)
             {
                 throw new FailedAssertionException("Argument exceeds the maximum string length of: " + maximumLength);
@@ -517,11 +518,11 @@ public final class Assertions
     {
         Checks.checkThat(minimumLength >= 0, "Minimum length must be at least 0");
         Checks.checkThat(minimumLength < maximumLength, "Minimum length must be > maximum length.");
-
+        
         return (string) ->
         {
             notNull().check(string);
-
+            
             if (string.length() < minimumLength ||
                 string.length() > maximumLength)
             {
@@ -543,7 +544,7 @@ public final class Assertions
         return (string) ->
         {
             notNull().check(string);
-
+            
             for (char character : string.toCharArray())
             {
                 if (Character.isWhitespace(character))
@@ -552,7 +553,7 @@ public final class Assertions
                 }
             }
         };
-
+        
     }
 
     /**
@@ -565,7 +566,7 @@ public final class Assertions
     public static AlchemyAssertion<String> stringThatMatches(Pattern pattern)
     {
         Checks.checkNotNull(pattern, "missing pattern");
-
+        
         return (string) ->
         {
             if (!pattern.matcher(string).matches())
@@ -588,7 +589,7 @@ public final class Assertions
         return (collection) ->
         {
             notNull().check(collection);
-
+            
             if (collection.isEmpty())
             {
                 throw new FailedAssertionException("Collection is empty");
@@ -608,13 +609,13 @@ public final class Assertions
         return (list) ->
         {
             notNull().check(list);
-
+            
             if (list.isEmpty())
             {
                 throw new FailedAssertionException("List is empty");
             }
         };
-
+        
     }
 
     /**
@@ -630,26 +631,26 @@ public final class Assertions
         return (map) ->
         {
             notNull().check(map);
-
+            
             if (map.isEmpty())
             {
                 throw new FailedAssertionException("Map is empty");
             }
-
+            
         };
     }
-
+    
     public static <T> AlchemyAssertion<T[]> nonEmptyArray()
     {
         return (array) ->
         {
             notNull().check(array);
-
+            
             if (array.length == 0)
             {
                 throw new FailedAssertionException("Array is empty");
             }
         };
     }
-
+    
 }

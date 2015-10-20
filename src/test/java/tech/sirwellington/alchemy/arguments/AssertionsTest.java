@@ -92,6 +92,17 @@ public class AssertionsTest
             operation.run();
         }
     }
+    
+    
+    @Test
+    public void testCannotInstantiateClass()
+    {
+        System.out.println("testCannotInstantiateClass");
+        assertThrows(() -> Assertions.class.newInstance());
+        
+        assertThrows(() -> new Assertions())
+                .isInstanceOf(IllegalAccessException.class);
+    }
 
     @Test
     public void testNotNull() throws Exception

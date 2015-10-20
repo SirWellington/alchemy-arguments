@@ -21,8 +21,8 @@ import tech.sirwellington.alchemy.annotations.designs.patterns.StrategyPattern;
 import static tech.sirwellington.alchemy.annotations.designs.patterns.StrategyPattern.Role.INTERFACE;
 
 /**
- * {@linkplain AlchemyAssertion Alchemy Assertions} analyze arguments for validity. You can always
- * supply your own assertions to make for powerful custom argument checks.
+ * {@linkplain AlchemyAssertion Alchemy Assertions} analyze arguments for validity. It is very easy
+ * to write your own assertions, making for powerful custom argument checks.
  *
  * @param <A> The type of argument an assertion checks
  *
@@ -34,15 +34,15 @@ public interface AlchemyAssertion<A>
 {
 
     /**
-     * Asserts that the argument for validity.
+     * Asserts the validity of the argument.
      *
      * @param argument The argument to validate
      *
      * @throws FailedAssertionException When the argument-check fails. Note that
      *                                  {@link FailedAssertionException} already extends
-     *                                  {@link IllegalArgumentException}. Any other kinds of
-     *                                  exceptions thrown will be wrapped in a
-     *                                  {@link FailedAssertionException}.
+     *                                  {@link IllegalArgumentException}. Any other types of
+     *                                  {@linkplain Exception Exceptions} thrown will be wrapped in
+     *                                  a {@link FailedAssertionException}.
      */
     void check(@Nullable A argument) throws FailedAssertionException;
 
@@ -65,11 +65,27 @@ public interface AlchemyAssertion<A>
      *
      * This allows you to save and store Assertions that are commonly used together to perform
      * argument checks, and to do so at runtime.
-     *
+     * <p>
+     * Note that due to limitations of the Java Compiler, the first
+     * {@linkplain AlchemyAssertion Assertion} that you make must match the type of the argument. So
+     * for example,
+     * <pre>
+     * {@code
+     *  notNull()
+     *      .and(positiveInteger())
+     *      .check(age);
+     * }
+     * </pre>
+     * would not work because notNull references a vanilla {@code Object}.
+     * <p>
+     * {@link #combine(tech.sirwellington.alchemy.arguments.AlchemyAssertion, tech.sirwellington.alchemy.arguments.AlchemyAssertion...)} 
+     * does not have these limitations.
      *
      * @param other
      *
      * @return
+     * 
+     * @see #combine(tech.sirwellington.alchemy.arguments.AlchemyAssertion, tech.sirwellington.alchemy.arguments.AlchemyAssertion...) 
      */
     @NonNull
     default AlchemyAssertion<A> and(@NonNull AlchemyAssertion<A> other) throws IllegalArgumentException
@@ -104,25 +120,26 @@ public interface AlchemyAssertion<A>
      *
      * </pre>
      *
-     * This allows you to combine and store Assertions that are commonly used together to perform
+     * This allows you to <b>combine and store</b> Assertions that are commonly used together to perform
      * argument checks.
      *
      * @param first
-     *
      * @param other
-     *
      * @param <T>
      *
      * @return
+     * 
+     * @see #and(tech.sirwellington.alchemy.arguments.AlchemyAssertion) 
      */
     static <T> AlchemyAssertion<T> combine(@NonNull AlchemyAssertion<T> first, AlchemyAssertion<T>... other)
     {
-        Checks.checkNotNull(first, "first Assertion cannot be null");
+        Checks.checkNotNull(first, "the first AlchemyAssertion cannot be null");
+        Checks.checkNotNull(other, "null varargs");
 
         return (argument) ->
         {
             first.check(argument);
-
+            
             for (AlchemyAssertion<T> assertion : other)
             {
                 assertion.check(argument);
