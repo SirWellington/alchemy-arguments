@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package sir.wellington.alchemy.arguments;
+package tech.sirwellington.alchemy.arguments;
 
 import java.util.ArrayList;
 import static java.util.Arrays.asList;

@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package sir.wellington.alchemy.arguments;
+package tech.sirwellington.alchemy.arguments;
 
 import java.util.Collection;
 import java.util.Collections;
@@ -24,10 +24,10 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.runners.MockitoJUnitRunner;
-import static sir.wellington.alchemy.arguments.Checks.checkNotNull;
-import static sir.wellington.alchemy.arguments.Checks.checkState;
-import static sir.wellington.alchemy.arguments.Checks.checkThat;
-import static sir.wellington.alchemy.arguments.Checks.isNullOrEmpty;
+import static tech.sirwellington.alchemy.arguments.Checks.checkNotNull;
+import static tech.sirwellington.alchemy.arguments.Checks.checkState;
+import static tech.sirwellington.alchemy.arguments.Checks.checkThat;
+import static tech.sirwellington.alchemy.arguments.Checks.isNullOrEmpty;
 import static tech.sirwellington.alchemy.generator.AlchemyGenerator.one;
 import static tech.sirwellington.alchemy.generator.CollectionGenerators.listOf;
 import static tech.sirwellington.alchemy.generator.NumberGenerators.positiveIntegers;

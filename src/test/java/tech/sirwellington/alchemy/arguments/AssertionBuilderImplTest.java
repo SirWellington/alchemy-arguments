@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package sir.wellington.alchemy.arguments;
+package tech.sirwellington.alchemy.arguments;
 
 import java.sql.SQLException;
 import static java.util.Arrays.asList;
@@ -31,8 +31,8 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyZeroInteractions;
 import static org.mockito.Mockito.when;
 import org.mockito.runners.MockitoJUnitRunner;
-import static sir.wellington.alchemy.arguments.AssertionBuilderImpl.checkThat;
-import static sir.wellington.alchemy.arguments.Assertions.nonEmptyString;
+import static tech.sirwellington.alchemy.arguments.AssertionBuilderImpl.checkThat;
+import static tech.sirwellington.alchemy.arguments.Assertions.nonEmptyString;
 import static tech.sirwellington.alchemy.generator.AlchemyGenerator.one;
 import static tech.sirwellington.alchemy.generator.CollectionGenerators.listOf;
 import static tech.sirwellington.alchemy.generator.StringGenerators.alphabeticString;
