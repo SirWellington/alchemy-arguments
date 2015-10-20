@@ -27,7 +27,7 @@ import tech.sirwellington.alchemy.annotations.access.Internal;
  * @author SirWellington
  */
 @Internal
-class Checks
+final class Checks
 {
 
     private final static Logger LOG = LoggerFactory.getLogger(Checks.class);

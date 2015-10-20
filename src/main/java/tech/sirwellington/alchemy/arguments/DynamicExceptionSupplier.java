@@ -118,11 +118,6 @@ final class DynamicExceptionSupplier<Ex extends Throwable> implements ExceptionM
         return "DynamicExceptionSupplier{" + "exceptionClass=" + exceptionClass + ", message=" + message + '}';
     }
 
-    private boolean hasMessageToInclude()
-    {
-        return !Checks.isNullOrEmpty(message);
-    }
-
     private boolean hasConstructorWithArguments(Class<?>... classes) throws NoSuchMethodException, SecurityException
     {
         try

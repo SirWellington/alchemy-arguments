@@ -18,7 +18,7 @@ package tech.sirwellington.alchemy.arguments;
 import java.util.function.Function;
 
 /**
- * An {@code ExceptionMapper} decided how to handle a {@link FailedAssertionException}.
+ * An {@code ExceptionMapper} decides how to handle a {@link FailedAssertionException}.
  *
  * It can :
  * <ol>
