@@ -3,19 +3,14 @@ Alchemy Arguments
 
 ## "Check Yoself!"
 
+<img src="https://raw.githubusercontent.com/SirWellington/alchemy/develop/Graphics/Logo/Alchemy-Logo-v3-name.png" width="200">
+
 [![Build Status](https://travis-ci.org/SirWellington/alchemy-arguments.svg)](https://travis-ci.org/SirWellington/alchemy-arguments)
 
+
+
 # Purpose
-Part of the Alchemy Collection.
-This Library allows developers to perform fluid argument checking and validation.
-
-# Requirements
-
-+ Java 8
-+ Maven
-
-# Building
-This project builds with maven. Just run a `mvn clean install` to compile and install to your local maven repository
+Part of the Alchemy Collection, **Alchemy Arguments** allows developers to perform fluid argument checking and validation.
 
 
 # Download
@@ -174,9 +169,17 @@ checkThat(vehicle)
 ```
 
 
+# Requirements
+
++ Java 8
++ Maven
+
+# Building
+This project builds with maven. Just run a `mvn clean install` to compile and install to your local maven repository
+
+
 
 # Release Notes
-
 
 ## 1.1
 + Initial Public Release
