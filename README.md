@@ -1,9 +1,9 @@
 Alchemy Arguments
 ==============================================
 
-## "Check Yoself!"
-
 <img src="https://raw.githubusercontent.com/SirWellington/alchemy/develop/Graphics/Logo/Alchemy-Logo-v3-name.png" width="200">
+
+## "Check Yoself!"
 
 [![Build Status](https://travis-ci.org/SirWellington/alchemy-arguments.svg)](https://travis-ci.org/SirWellington/alchemy-arguments)
 
