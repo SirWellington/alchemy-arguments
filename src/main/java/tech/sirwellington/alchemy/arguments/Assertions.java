@@ -88,6 +88,46 @@ public final class Assertions
     }
 
     /**
+     * Asserts that an argument is an {@code instanceOf} the specified class. This Assertion
+     * respects the inheritance hierarchy, so
+     * 
+     * <pre>
+     * 
+     * Integer instanceOf Object
+     * Integer instanceOf Number 
+     * Integer instanceOf Integer
+     * </pre>
+     * 
+     * will pass, but
+     * 
+     * <pre>
+     * 
+     * Integer instanceOf Double
+     * Integer instanceOf String
+     * </pre>
+     * 
+     * will fail.
+     *
+     * @param <A>
+     * @param classOfExpectedType
+     * @return
+     */
+    public static <A> AlchemyAssertion<A> instanceOf(Class<?> classOfExpectedType)
+    {
+        Checks.checkNotNull(classOfExpectedType, "class cannot be null");
+
+        return (argument) ->
+        {
+            notNull().check(argument);
+
+            if (!classOfExpectedType.isInstance(argument))
+            {
+                throw new FailedAssertionException("Expected Object of type: " + classOfExpectedType);
+            }
+        };
+    }
+
+    /**
      * Asserts that the argument is
      * {@linkplain Object#equals(java.lang.Object) equal to} {@code other}.
      *
