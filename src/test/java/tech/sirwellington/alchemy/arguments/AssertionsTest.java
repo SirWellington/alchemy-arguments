@@ -853,4 +853,31 @@ public class AssertionsTest
         });
     }
 
+    @Test
+    public void testSameInstance()
+    {
+        System.out.println("testSameInstance");
+        AlchemyAssertion<Object> instanceOne = Assertions.sameInstance(null);
+        
+        //null is the same instance as null
+        assertThat(instanceOne, notNullValue());
+        instanceOne.check(null);
+        
+        //null is not the same instance as any other non-null object
+        assertThrows(() -> instanceOne.check(""))
+                .isInstanceOf(FailedAssertionException.class);
+        
+        
+        doInLoop(() ->
+        {
+            Object someObject = new Object();
+            AlchemyAssertion<Object> instanceTwo = Assertions.sameInstance(someObject);
+            instanceTwo.check(someObject);
+            
+            Object differentObject = new Object();
+            assertThrows(() -> instanceTwo.check(differentObject))
+                    .isInstanceOf(FailedAssertionException.class);
+        });
+    }
+
 }
