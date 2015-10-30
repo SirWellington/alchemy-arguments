@@ -16,15 +16,13 @@ Part of the Alchemy Collection, **Alchemy Arguments** allows developers to perfo
 # Download
 
 To use, simply add the following maven dependency.
-> Note: Not yet released on Maven Central.
->
->Coming soon...
+
 ## Release
 ```xml
 <dependency>
 	<groupId>tech.sirwellington.alchemy</groupId>
 	<artifactId>alchemy-arguments</artifactId>
-	<version>1.0</version>
+	<version>1.1</version>
 </dependency>
 ```
 
@@ -46,8 +44,7 @@ To use, simply add the following maven dependency.
 </dependency>
 ```
 
-# Javadocs
-## [Latest](http://www.javadoc.io/doc/tech.sirwellington.alchemy/alchemy-arguments/)
+# [Javadocs](http://www.javadoc.io/doc/tech.sirwellington.alchemy/alchemy-arguments/)
 
 
 # API
@@ -180,6 +177,10 @@ This project builds with maven. Just run a `mvn clean install` to compile and in
 
 
 # Release Notes
+
+## 1.2
+New Assertions
++ `instanceOf()`
 
 ## 1.1
 + Initial Public Release
