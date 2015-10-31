@@ -90,22 +90,22 @@ public final class Assertions
     /**
      * Asserts that an argument is an {@code instanceOf} the specified class. This Assertion
      * respects the inheritance hierarchy, so
-     * 
+     *
      * <pre>
-     * 
+     *
      * Integer instanceOf Object
-     * Integer instanceOf Number 
+     * Integer instanceOf Number
      * Integer instanceOf Integer
      * </pre>
-     * 
+     *
      * will pass, but
-     * 
+     *
      * <pre>
-     * 
+     *
      * Integer instanceOf Double
      * Integer instanceOf String
      * </pre>
-     * 
+     *
      * will fail.
      *
      * @param <A>
@@ -657,6 +657,28 @@ public final class Assertions
                 throw new FailedAssertionException("Expected String to match pattern: " + pattern);
             }
         };
+    }
+
+    /**
+     * Assert that the argument String starts with a particular prefix.
+     * 
+     * @param prefix The prefix to check that argument against.
+     * 
+     * @return 
+     */
+    public static AlchemyAssertion<String> stringStartsWith(String prefix)
+    {
+        Checks.checkThat(!Checks.isNullOrEmpty(prefix), "missing prefix");
+
+        return (string) ->
+        {
+            if (!string.startsWith(prefix))
+            {
+                String message = String.format("Expected \"%s\" to start with \"%s\"", string, prefix);
+                throw new FailedAssertionException(message);
+            }
+        };
+
     }
 
     //==========================Collection Assertions====================================
