@@ -914,17 +914,17 @@ public class AssertionsTest
     {
         System.out.println("testStringStartsWith");
         
-        assertThrows(() -> Assertions.stringStartsWith(null))
+        assertThrows(() -> Assertions.stringThatStartsWith(null))
                 .isInstanceOf(IllegalArgumentException.class);
         
-        assertThrows(() -> Assertions.stringStartsWith(""))
+        assertThrows(() -> Assertions.stringThatStartsWith(""))
                 .isInstanceOf(IllegalArgumentException.class);
         
         doInLoop(() -> {
             String string = one(strings(20));
             String prefix = one(strings(4));
             
-            AlchemyAssertion<String> instance = Assertions.stringStartsWith(prefix);
+            AlchemyAssertion<String> instance = Assertions.stringThatStartsWith(prefix);
             
             //Happy Cases
             instance.check(prefix + string);

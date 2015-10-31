@@ -666,7 +666,7 @@ public final class Assertions
      * 
      * @return 
      */
-    public static AlchemyAssertion<String> stringStartsWith(String prefix)
+    public static AlchemyAssertion<String> stringThatStartsWith(String prefix)
     {
         Checks.checkThat(!Checks.isNullOrEmpty(prefix), "missing prefix");
 
