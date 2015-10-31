@@ -15,10 +15,14 @@
  */
 package tech.sirwellington.alchemy.arguments;
 
+import java.sql.Timestamp;
+import java.util.ArrayList;
+
 import static java.lang.Math.abs;
 
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.regex.Pattern;
@@ -56,6 +60,7 @@ import tech.sirwellington.alchemy.generator.AlchemyGenerator;
 import static tech.sirwellington.alchemy.generator.AlchemyGenerator.one;
 import static tech.sirwellington.alchemy.generator.CollectionGenerators.listOf;
 import static tech.sirwellington.alchemy.generator.CollectionGenerators.mapOf;
+import static tech.sirwellington.alchemy.generator.DateGenerators.now;
 import static tech.sirwellington.alchemy.generator.NumberGenerators.integers;
 import static tech.sirwellington.alchemy.generator.NumberGenerators.longs;
 import static tech.sirwellington.alchemy.generator.NumberGenerators.negativeIntegers;
@@ -866,7 +871,8 @@ public class AssertionsTest
     public void testSameInstance()
     {
         System.out.println("testSameInstance");
-        AlchemyAssertion<Object> instanceOne = Assertions.sameInstance(null);
+        
+        AlchemyAssertion<Object> instanceOne = Assertions.<Object>sameInstance(null);
 
         //null is the same instance as null
         assertThat(instanceOne, notNullValue());
