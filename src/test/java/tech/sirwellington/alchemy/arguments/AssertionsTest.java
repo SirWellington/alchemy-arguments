@@ -15,7 +15,6 @@
  */
 package tech.sirwellington.alchemy.arguments;
 
-
 import static java.lang.Math.abs;
 
 import java.util.Collection;
@@ -107,7 +106,7 @@ public class AssertionsTest
     public void testCannotInstantiateClass()
     {
         System.out.println("testCannotInstantiateClass");
-        
+
         assertThrows(() -> Assertions.class.newInstance());
 
         assertThrows(() -> new Assertions())
@@ -868,7 +867,7 @@ public class AssertionsTest
     public void testSameInstance()
     {
         System.out.println("testSameInstance");
-        
+
         AlchemyAssertion<Object> instanceOne = Assertions.<Object>sameInstance(null);
 
         //null is the same instance as null
@@ -895,42 +894,46 @@ public class AssertionsTest
     public void testInstanceOf()
     {
         System.out.println("testInstanceOf");
-        
+
         assertThrows(() -> Assertions.instanceOf(null))
                 .isInstanceOf(IllegalArgumentException.class);
-        
+
         AlchemyAssertion<Object> numberAssertion = Assertions.instanceOf(Number.class);
-        
+
         numberAssertion.check(one(positiveIntegers()));
         numberAssertion.check(one(positiveLongs()));
         numberAssertion.check(one(positiveDoubles()));
-        
+
         assertThrows(() -> numberAssertion.check(one(alphabeticString())));
-        
+
     }
 
     @Test
     public void testStringStartsWith()
     {
         System.out.println("testStringStartsWith");
-        
+
         assertThrows(() -> Assertions.stringThatStartsWith(null))
                 .isInstanceOf(IllegalArgumentException.class);
-        
+
         assertThrows(() -> Assertions.stringThatStartsWith(""))
                 .isInstanceOf(IllegalArgumentException.class);
-        
-        doInLoop(() -> {
+
+        doInLoop(() ->
+        {
             String string = one(strings(20));
             String prefix = one(strings(4));
-            
+
             AlchemyAssertion<String> instance = Assertions.stringThatStartsWith(prefix);
-            
+
             //Happy Cases
             instance.check(prefix + string);
             instance.check(prefix);
-            
+
             //Sad Cases
+            assertThrows(() -> instance.check(null))
+                    .isInstanceOf(FailedAssertionException.class);
+
             assertThrows(() -> instance.check(string))
                     .isInstanceOf(FailedAssertionException.class);
         });

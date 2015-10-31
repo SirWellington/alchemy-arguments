@@ -672,6 +672,8 @@ public final class Assertions
 
         return (string) ->
         {
+            nonEmptyString().check(string);
+            
             if (!string.startsWith(prefix))
             {
                 String message = String.format("Expected \"%s\" to start with \"%s\"", string, prefix);
