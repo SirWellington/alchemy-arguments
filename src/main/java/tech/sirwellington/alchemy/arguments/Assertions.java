@@ -15,7 +15,6 @@
  */
 package tech.sirwellington.alchemy.arguments;
 
-import static java.lang.String.format;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
@@ -26,6 +25,8 @@ import tech.sirwellington.alchemy.annotations.access.NonInstantiable;
 import tech.sirwellington.alchemy.annotations.arguments.NonNull;
 import tech.sirwellington.alchemy.annotations.arguments.Nullable;
 import tech.sirwellington.alchemy.annotations.designs.patterns.StrategyPattern;
+
+import static java.lang.String.format;
 import static tech.sirwellington.alchemy.annotations.designs.patterns.StrategyPattern.Role.CONCRETE_BEHAVIOR;
 
 /**
@@ -515,6 +516,7 @@ public final class Assertions
     public static AlchemyAssertion<String> stringWithLengthGreaterThan(int minimumLength)
     {
         Checks.checkThat(minimumLength > 0, "minimumLength must be > 0");
+        Checks.checkThat(minimumLength < Integer.MAX_VALUE, "not possible to have a String larger than Integer.MAX_VALUE");
 
         return (string) ->
         {
