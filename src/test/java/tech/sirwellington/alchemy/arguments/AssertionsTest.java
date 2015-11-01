@@ -53,6 +53,9 @@ import static tech.sirwellington.alchemy.arguments.Assertions.stringWithNoWhites
 
 import tech.sirwellington.alchemy.generator.AlchemyGenerator;
 
+import static org.mockito.Matchers.any;
+import static org.mockito.Mockito.doNothing;
+import static org.mockito.Mockito.doThrow;
 import static tech.sirwellington.alchemy.generator.AlchemyGenerator.one;
 import static tech.sirwellington.alchemy.generator.CollectionGenerators.listOf;
 import static tech.sirwellington.alchemy.generator.CollectionGenerators.mapOf;
@@ -937,5 +940,26 @@ public class AssertionsTest
             assertThrows(() -> instance.check(string))
                     .isInstanceOf(FailedAssertionException.class);
         });
+    }
+
+    @Test
+    public void testNot()
+    {
+        AlchemyAssertion<Object> assertion = mock(AlchemyAssertion.class);
+        doThrow(new FailedAssertionException())
+                .when(assertion)
+                .check(any());
+
+        AlchemyAssertion<Object> instance = Assertions.not(assertion);
+        
+        instance.check("");
+        
+        doNothing()
+                .when(assertion)
+                .check(any());
+        
+        assertThrows(() -> instance.check(""))
+                .isInstanceOf(FailedAssertionException.class);
+        
     }
 }

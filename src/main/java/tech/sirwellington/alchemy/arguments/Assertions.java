@@ -183,12 +183,14 @@ public final class Assertions
             try
             {
                 assertion.check(argument);
-                throw new FailedAssertionException("Expected assertion to fail, but it passed: " + assertion);
             }
             catch (FailedAssertionException ex)
             {
-
+                return;
             }
+
+            throw new FailedAssertionException("Expected assertion to fail, but it passed: " + assertion);
+
         };
     }
 
@@ -661,10 +663,10 @@ public final class Assertions
 
     /**
      * Assert that the argument String starts with a particular prefix.
-     * 
+     *
      * @param prefix The prefix to check that argument against.
-     * 
-     * @return 
+     *
+     * @return
      */
     public static AlchemyAssertion<String> stringThatStartsWith(String prefix)
     {
@@ -673,7 +675,7 @@ public final class Assertions
         return (string) ->
         {
             nonEmptyString().check(string);
-            
+
             if (!string.startsWith(prefix))
             {
                 String message = String.format("Expected \"%s\" to start with \"%s\"", string, prefix);
