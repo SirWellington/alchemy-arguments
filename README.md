@@ -22,7 +22,7 @@ To use, simply add the following maven dependency.
 <dependency>
 	<groupId>tech.sirwellington.alchemy</groupId>
 	<artifactId>alchemy-arguments</artifactId>
-	<version>1.1</version>
+	<version>1.2</version>
 </dependency>
 ```
 
@@ -40,7 +40,7 @@ To use, simply add the following maven dependency.
 <dependency>
 	<groupId>tech.sirwellington.alchemy</groupId>
 	<artifactId>alchemy-test</artifactId>
-	<version>1.2-SNAPSHOT</version>
+	<version>1.3-SNAPSHOT</version>
 </dependency>
 ```
 
