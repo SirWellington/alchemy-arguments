@@ -39,7 +39,7 @@ To use, simply add the following maven dependency.
 ```xml
 <dependency>
 	<groupId>tech.sirwellington.alchemy</groupId>
-	<artifactId>alchemy-test</artifactId>
+	<artifactId>alchemy-arguments</artifactId>
 	<version>1.3-SNAPSHOT</version>
 </dependency>
 ```
