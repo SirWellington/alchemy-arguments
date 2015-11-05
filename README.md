@@ -179,8 +179,16 @@ This project builds with maven. Just run a `mvn clean install` to compile and in
 # Release Notes
 
 ## 1.2
+Multiple Assertions
+```java
+
+checkThat(firstName, middleName, lastName, password, description)
+.are(nonEmptyString());
+```
+
 New Assertions
 + `instanceOf()`
++ `stringThatStartsWith()`
 
 ## 1.1
 + Initial Public Release
