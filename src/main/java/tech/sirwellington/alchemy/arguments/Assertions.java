@@ -15,7 +15,6 @@
  */
 package tech.sirwellington.alchemy.arguments;
 
-import static java.lang.String.format;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
@@ -26,6 +25,8 @@ import tech.sirwellington.alchemy.annotations.access.NonInstantiable;
 import tech.sirwellington.alchemy.annotations.arguments.NonNull;
 import tech.sirwellington.alchemy.annotations.arguments.Nullable;
 import tech.sirwellington.alchemy.annotations.designs.patterns.StrategyPattern;
+
+import static java.lang.String.format;
 import static tech.sirwellington.alchemy.annotations.designs.patterns.StrategyPattern.Role.CONCRETE_BEHAVIOR;
 
 /**
@@ -88,6 +89,46 @@ public final class Assertions
     }
 
     /**
+     * Asserts that an argument is an {@code instanceOf} the specified class. This Assertion
+     * respects the inheritance hierarchy, so
+     *
+     * <pre>
+     *
+     * Integer instanceOf Object
+     * Integer instanceOf Number
+     * Integer instanceOf Integer
+     * </pre>
+     *
+     * will pass, but
+     *
+     * <pre>
+     *
+     * Integer instanceOf Double
+     * Integer instanceOf String
+     * </pre>
+     *
+     * will fail.
+     *
+     * @param <A>
+     * @param classOfExpectedType
+     * @return
+     */
+    public static <A> AlchemyAssertion<A> instanceOf(Class<?> classOfExpectedType)
+    {
+        Checks.checkNotNull(classOfExpectedType, "class cannot be null");
+
+        return (argument) ->
+        {
+            notNull().check(argument);
+
+            if (!classOfExpectedType.isInstance(argument))
+            {
+                throw new FailedAssertionException("Expected Object of type: " + classOfExpectedType);
+            }
+        };
+    }
+
+    /**
      * Asserts that the argument is
      * {@linkplain Object#equals(java.lang.Object) equal to} {@code other}.
      *
@@ -143,12 +184,14 @@ public final class Assertions
             try
             {
                 assertion.check(argument);
-                throw new FailedAssertionException("Expected assertion to fail, but it passed: " + assertion);
             }
             catch (FailedAssertionException ex)
             {
-
+                return;
             }
+
+            throw new FailedAssertionException("Expected assertion to fail, but it passed: " + assertion);
+
         };
     }
 
@@ -473,6 +516,7 @@ public final class Assertions
     public static AlchemyAssertion<String> stringWithLengthGreaterThan(int minimumLength)
     {
         Checks.checkThat(minimumLength > 0, "minimumLength must be > 0");
+        Checks.checkThat(minimumLength < Integer.MAX_VALUE, "not possible to have a String larger than Integer.MAX_VALUE");
 
         return (string) ->
         {
@@ -617,6 +661,30 @@ public final class Assertions
                 throw new FailedAssertionException("Expected String to match pattern: " + pattern);
             }
         };
+    }
+
+    /**
+     * Assert that the argument String starts with a particular prefix.
+     *
+     * @param prefix The prefix to check that argument against.
+     *
+     * @return
+     */
+    public static AlchemyAssertion<String> stringThatStartsWith(String prefix)
+    {
+        Checks.checkThat(!Checks.isNullOrEmpty(prefix), "missing prefix");
+
+        return (string) ->
+        {
+            nonEmptyString().check(string);
+
+            if (!string.startsWith(prefix))
+            {
+                String message = String.format("Expected \"%s\" to start with \"%s\"", string, prefix);
+                throw new FailedAssertionException(message);
+            }
+        };
+
     }
 
     //==========================Collection Assertions====================================

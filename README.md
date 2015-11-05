@@ -1,35 +1,28 @@
 Alchemy Arguments
 ==============================================
 
+<img src="https://raw.githubusercontent.com/SirWellington/alchemy/develop/Graphics/Logo/Alchemy-Logo-v3-name.png" width="200">
+
 ## "Check Yoself!"
 
 [![Build Status](https://travis-ci.org/SirWellington/alchemy-arguments.svg)](https://travis-ci.org/SirWellington/alchemy-arguments)
 
+
+
 # Purpose
-Part of the Alchemy Collection.
-This Library allows developers to perform fluid argument checking and validation.
-
-# Requirements
-
-+ Java 8
-+ Maven
-
-# Building
-This project builds with maven. Just run a `mvn clean install` to compile and install to your local maven repository
+Part of the Alchemy Collection, **Alchemy Arguments** allows developers to perform fluid argument checking and validation.
 
 
 # Download
 
 To use, simply add the following maven dependency.
-> Note: Not yet released on Maven Central.
->
->Coming soon...
+
 ## Release
 ```xml
 <dependency>
 	<groupId>tech.sirwellington.alchemy</groupId>
 	<artifactId>alchemy-arguments</artifactId>
-	<version>1.0</version>
+	<version>1.2</version>
 </dependency>
 ```
 
@@ -47,12 +40,11 @@ To use, simply add the following maven dependency.
 <dependency>
 	<groupId>tech.sirwellington.alchemy</groupId>
 	<artifactId>alchemy-test</artifactId>
-	<version>1.2-SNAPSHOT</version>
+	<version>1.3-SNAPSHOT</version>
 </dependency>
 ```
 
-# Javadocs
-## [Latest](http://www.javadoc.io/doc/tech.sirwellington.alchemy/alchemy-arguments/)
+# [Javadocs](http://www.javadoc.io/doc/tech.sirwellington.alchemy/alchemy-arguments/)
 
 
 # API
@@ -174,9 +166,29 @@ checkThat(vehicle)
 ```
 
 
+# Requirements
+
++ Java 8
++ Maven
+
+# Building
+This project builds with maven. Just run a `mvn clean install` to compile and install to your local maven repository
+
+
 
 # Release Notes
 
+## 1.2
+Multiple Assertions
+```java
+
+checkThat(firstName, middleName, lastName, password, description)
+.are(nonEmptyString());
+```
+
+New Assertions
++ `instanceOf()`
++ `stringThatStartsWith()`
 
 ## 1.1
 + Initial Public Release
