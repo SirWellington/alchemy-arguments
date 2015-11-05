@@ -15,20 +15,24 @@
  */
 package tech.sirwellington.alchemy.arguments;
 
-import static java.lang.Math.abs;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.regex.Pattern;
-import static org.hamcrest.Matchers.notNullValue;
-import static org.junit.Assert.assertThat;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.runners.MockitoJUnitRunner;
+import tech.sirwellington.alchemy.generator.AlchemyGenerator;
+
+import static org.hamcrest.Matchers.notNullValue;
+import static org.junit.Assert.assertThat;
+import static org.mockito.Matchers.any;
+import static org.mockito.Mockito.doNothing;
+import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verifyZeroInteractions;
-import org.mockito.runners.MockitoJUnitRunner;
 import static tech.sirwellington.alchemy.arguments.Assertions.greaterThan;
 import static tech.sirwellington.alchemy.arguments.Assertions.greaterThanOrEqualTo;
 import static tech.sirwellington.alchemy.arguments.Assertions.nonEmptyCollection;
@@ -44,13 +48,13 @@ import static tech.sirwellington.alchemy.arguments.Assertions.stringWithLengthBe
 import static tech.sirwellington.alchemy.arguments.Assertions.stringWithLengthGreaterThanOrEqualTo;
 import static tech.sirwellington.alchemy.arguments.Assertions.stringWithLengthLessThanOrEqualTo;
 import static tech.sirwellington.alchemy.arguments.Assertions.stringWithNoWhitespace;
-import tech.sirwellington.alchemy.generator.AlchemyGenerator;
 import static tech.sirwellington.alchemy.generator.AlchemyGenerator.one;
 import static tech.sirwellington.alchemy.generator.CollectionGenerators.listOf;
 import static tech.sirwellington.alchemy.generator.CollectionGenerators.mapOf;
 import static tech.sirwellington.alchemy.generator.NumberGenerators.integers;
 import static tech.sirwellington.alchemy.generator.NumberGenerators.longs;
 import static tech.sirwellington.alchemy.generator.NumberGenerators.negativeIntegers;
+import static tech.sirwellington.alchemy.generator.NumberGenerators.positiveDoubles;
 import static tech.sirwellington.alchemy.generator.NumberGenerators.positiveIntegers;
 import static tech.sirwellington.alchemy.generator.NumberGenerators.positiveLongs;
 import static tech.sirwellington.alchemy.generator.NumberGenerators.smallPositiveIntegers;
@@ -97,6 +101,7 @@ public class AssertionsTest
     public void testCannotInstantiateClass()
     {
         System.out.println("testCannotInstantiateClass");
+
         assertThrows(() -> Assertions.class.newInstance());
 
         assertThrows(() -> new Assertions())
@@ -747,6 +752,7 @@ public class AssertionsTest
 
         AlchemyGenerator<String> badArguments = alphabeticString();
         AlchemyGenerator<String> goodArguments = stringsFromFixedList(null, "");
+
         runTests(instance, badArguments, goodArguments);
     }
 
@@ -755,13 +761,22 @@ public class AssertionsTest
     {
         System.out.println("testStringWithLengthGreaterThan");
 
+        assertThrows(() -> Assertions.stringWithLengthGreaterThan(Integer.MAX_VALUE))
+                .isInstanceOf(IllegalArgumentException.class);
+
+        int badArgument = one(integers(Integer.MIN_VALUE, 1));
+        assertThrows(() -> Assertions.stringWithLengthGreaterThan(badArgument))
+                .isInstanceOf(IllegalArgumentException.class);
+
         int minAccepted = one(smallPositiveIntegers());
         AlchemyAssertion<String> instance = Assertions.stringWithLengthGreaterThan(minAccepted);
+
         AlchemyGenerator<String> badArguments = () ->
         {
-            int length = abs(minAccepted - one(integers(0, 10)));
+            int length = one(integers(1, minAccepted));
             return one(alphabeticString(length));
         };
+
         AlchemyGenerator<String> goodArguments = () ->
         {
             int length = minAccepted + one(smallPositiveIntegers());
@@ -778,11 +793,16 @@ public class AssertionsTest
     {
         System.out.println("testStringWithLengthLessThan");
 
+        int badArgument = one(integers(Integer.MIN_VALUE, 1));
+        assertThrows(() -> Assertions.stringWithLengthLessThan(badArgument))
+                .isInstanceOf(IllegalArgumentException.class);
+
         int upperBound = one(smallPositiveIntegers());
         AlchemyAssertion<String> instance = Assertions.stringWithLengthLessThan(upperBound);
+
         AlchemyGenerator<String> badArguments = () ->
         {
-            int length = upperBound + one(integers(0, 100));
+            int length = one(integers(upperBound + 1, upperBound * 2));
             return one(strings(length));
         };
 
@@ -853,4 +873,100 @@ public class AssertionsTest
         });
     }
 
+    @Test
+    public void testSameInstance()
+    {
+        System.out.println("testSameInstance");
+
+        AlchemyAssertion<Object> instanceOne = Assertions.<Object>sameInstance(null);
+
+        //null is the same instance as null
+        assertThat(instanceOne, notNullValue());
+        instanceOne.check(null);
+
+        //null is not the same instance as any other non-null object
+        assertThrows(() -> instanceOne.check(""))
+                .isInstanceOf(FailedAssertionException.class);
+
+        doInLoop(() ->
+        {
+            Object someObject = new Object();
+            AlchemyAssertion<Object> instanceTwo = Assertions.sameInstance(someObject);
+            instanceTwo.check(someObject);
+
+            Object differentObject = new Object();
+            assertThrows(() -> instanceTwo.check(differentObject))
+                    .isInstanceOf(FailedAssertionException.class);
+        });
+    }
+
+    @Test
+    public void testInstanceOf()
+    {
+        System.out.println("testInstanceOf");
+
+        assertThrows(() -> Assertions.instanceOf(null))
+                .isInstanceOf(IllegalArgumentException.class);
+
+        AlchemyAssertion<Object> numberAssertion = Assertions.instanceOf(Number.class);
+
+        numberAssertion.check(one(positiveIntegers()));
+        numberAssertion.check(one(positiveLongs()));
+        numberAssertion.check(one(positiveDoubles()));
+
+        assertThrows(() -> numberAssertion.check(one(alphabeticString())));
+
+    }
+
+    @Test
+    public void testStringStartsWith()
+    {
+        System.out.println("testStringStartsWith");
+
+        assertThrows(() -> Assertions.stringThatStartsWith(null))
+                .isInstanceOf(IllegalArgumentException.class);
+
+        assertThrows(() -> Assertions.stringThatStartsWith(""))
+                .isInstanceOf(IllegalArgumentException.class);
+
+        doInLoop(() ->
+        {
+            String string = one(strings(20));
+            String prefix = one(strings(4));
+
+            AlchemyAssertion<String> instance = Assertions.stringThatStartsWith(prefix);
+
+            //Happy Cases
+            instance.check(prefix + string);
+            instance.check(prefix);
+
+            //Sad Cases
+            assertThrows(() -> instance.check(null))
+                    .isInstanceOf(FailedAssertionException.class);
+
+            assertThrows(() -> instance.check(string))
+                    .isInstanceOf(FailedAssertionException.class);
+        });
+    }
+
+    @Test
+    public void testNot()
+    {
+        AlchemyAssertion<Object> assertion = mock(AlchemyAssertion.class);
+        doThrow(new FailedAssertionException())
+                .when(assertion)
+                .check(any());
+
+        AlchemyAssertion<Object> instance = Assertions.not(assertion);
+
+        instance.check("");
+
+        doNothing()
+                .when(assertion)
+                .check(any());
+
+        assertThrows(() -> instance.check(""))
+                .isInstanceOf(FailedAssertionException.class);
+
+    }
 }
