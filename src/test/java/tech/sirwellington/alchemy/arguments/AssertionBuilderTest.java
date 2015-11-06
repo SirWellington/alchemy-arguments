@@ -18,18 +18,19 @@ package tech.sirwellington.alchemy.arguments;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import static org.mockito.Matchers.any;
 import org.mockito.Mock;
+import org.mockito.Spy;
+import tech.sirwellington.alchemy.test.junit.runners.AlchemyTestRunner;
+
+import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
-import org.mockito.Spy;
-import org.mockito.runners.MockitoJUnitRunner;
 
 /**
  *
  * @author SirWellington
  */
-@RunWith(MockitoJUnitRunner.class)
+@RunWith(AlchemyTestRunner.class)
 public class AssertionBuilderTest
 {
 
