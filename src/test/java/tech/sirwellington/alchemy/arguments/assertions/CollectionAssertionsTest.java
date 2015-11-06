@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package tech.sirwellington.alchemy.arguments;
+package tech.sirwellington.alchemy.arguments.assertions;
 
 import java.util.Collection;
 import java.util.Collections;
@@ -23,6 +23,8 @@ import java.util.Map;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import tech.sirwellington.alchemy.arguments.AlchemyAssertion;
+import tech.sirwellington.alchemy.arguments.FailedAssertionException;
 import tech.sirwellington.alchemy.test.junit.runners.AlchemyTestRunner;
 import tech.sirwellington.alchemy.test.junit.runners.Repeat;
 

@@ -13,21 +13,24 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package tech.sirwellington.alchemy.arguments;
 
 import java.util.Collection;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import tech.sirwellington.alchemy.annotations.access.Internal;
+import tech.sirwellington.alchemy.annotations.access.NonInstantiable;
+import tech.sirwellington.alchemy.arguments.assertions.Assertions;
 
 /**
- * This is an internal class, used to check arguments passed to the library by clients. This is
- * completely separate from what actual {@link Assertion Assertions} use.
+ * This is an internal class, used to check arguments passed to the library by clients. This is completely separate from
+ * what actual {@link Assertions} use.
  *
  * @author SirWellington
  */
-@Internal
-final class Checks
+@tech.sirwellington.alchemy.annotations.access.Internal
+@NonInstantiable
+public final class Checks
 {
 
     private final static Logger LOG = LoggerFactory.getLogger(Checks.class);
@@ -37,45 +40,52 @@ final class Checks
         throw new IllegalAccessException("not meant to be instantiated");
     }
 
-    static void checkNotNull(Object reference) throws IllegalArgumentException
+    @tech.sirwellington.alchemy.annotations.access.Internal
+    @NonInstantiable
+    public static class Internal
     {
-        checkNotNull(reference, "");
-    }
 
-    static void checkNotNull(Object reference, String message) throws IllegalArgumentException
-    {
-        checkThat(reference != null, message);
-    }
-
-    static void checkThat(boolean predicate) throws IllegalArgumentException
-    {
-        checkThat(predicate, "");
-    }
-
-    static void checkThat(boolean predicate, String message) throws IllegalArgumentException
-    {
-        if (!predicate)
+        public static boolean isNullOrEmpty(String string)
         {
-            throw new IllegalArgumentException(message);
+            return string == null || string.isEmpty();
         }
-    }
 
-    static void checkState(boolean predicate, String message) throws IllegalStateException
-    {
-        if (!predicate)
+        public static boolean isNullOrEmpty(Collection<?> collection)
         {
-            throw new IllegalStateException(message);
+            return collection == null || collection.isEmpty();
         }
-    }
 
-    static boolean isNullOrEmpty(String string)
-    {
-        return string == null || string.isEmpty();
-    }
+        public static void checkNotNull(Object reference) throws IllegalArgumentException
+        {
+            checkNotNull(reference, "");
+        }
 
-    static boolean isNullOrEmpty(Collection<?> collection)
-    {
-        return collection == null || collection.isEmpty();
+        public static void checkNotNull(Object reference, String message) throws IllegalArgumentException
+        {
+            checkThat(reference != null, message);
+        }
+
+        public static void checkState(boolean predicate, String message) throws IllegalStateException
+        {
+            if (!predicate)
+            {
+                throw new IllegalStateException(message);
+            }
+        }
+
+        public static void checkThat(boolean predicate) throws IllegalArgumentException
+        {
+            checkThat(predicate, "");
+        }
+
+        public static void checkThat(boolean predicate, String message) throws IllegalArgumentException
+        {
+            if (!predicate)
+            {
+                throw new IllegalArgumentException(message);
+            }
+        }
+
     }
 
 }

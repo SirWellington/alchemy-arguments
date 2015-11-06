@@ -15,11 +15,16 @@
  */
 
  
-package tech.sirwellington.alchemy.arguments;
+package tech.sirwellington.alchemy.arguments.assertions;
 
 
 import java.util.regex.Pattern;
 import tech.sirwellington.alchemy.annotations.access.NonInstantiable;
+import tech.sirwellington.alchemy.arguments.AlchemyAssertion;
+import tech.sirwellington.alchemy.arguments.Checks;
+import tech.sirwellington.alchemy.arguments.FailedAssertionException;
+
+import static tech.sirwellington.alchemy.arguments.Checks.Internal.isNullOrEmpty;
 
 /**
  *
@@ -42,7 +47,7 @@ public final class StringAssertions
      */
     public static AlchemyAssertion<String> stringThatMatches(Pattern pattern)
     {
-        Checks.checkNotNull(pattern, "missing pattern");
+        Checks.Internal.checkNotNull(pattern, "missing pattern");
         return (String string) ->
         {
             if (!pattern.matcher(string).matches())
@@ -61,7 +66,7 @@ public final class StringAssertions
     {
         return (String string) ->
         {
-            if (!Checks.isNullOrEmpty(string))
+            if (!Checks.Internal.isNullOrEmpty(string))
             {
                 throw new FailedAssertionException("Expected empty string but got: " + string);
             }
@@ -77,7 +82,7 @@ public final class StringAssertions
      */
     public static AlchemyAssertion<String> stringWithLengthGreaterThanOrEqualTo(int minimumLength)
     {
-        Checks.checkThat(minimumLength >= 0);
+        Checks.Internal.checkThat(minimumLength >= 0);
         return (String string) ->
         {
             Assertions.notNull().check(string);
@@ -117,7 +122,7 @@ public final class StringAssertions
      */
     public static AlchemyAssertion<String> stringWithLength(int expectedLength)
     {
-        Checks.checkThat(expectedLength >= 0, "expectedLength must be >= 0");
+        Checks.Internal.checkThat(expectedLength >= 0, "expectedLength must be >= 0");
         return (String string) ->
         {
             Assertions.notNull().check(string);
@@ -137,7 +142,7 @@ public final class StringAssertions
      */
     public static AlchemyAssertion<String> stringWithLengthLessThan(int upperBound)
     {
-        Checks.checkThat(upperBound > 0, "upperBound must be > 0");
+        Checks.Internal.checkThat(upperBound > 0, "upperBound must be > 0");
         return (String string) ->
         {
             nonEmptyString().check(string);
@@ -157,7 +162,7 @@ public final class StringAssertions
      */
     public static AlchemyAssertion<String> stringThatStartsWith(String prefix)
     {
-        Checks.checkThat(!Checks.isNullOrEmpty(prefix), "missing prefix");
+        Checks.Internal.checkThat(!isNullOrEmpty(prefix), "missing prefix");
         return (String string) ->
         {
             nonEmptyString().check(string);
@@ -178,7 +183,7 @@ public final class StringAssertions
      */
     public static AlchemyAssertion<String> stringWithLengthLessThanOrEqualTo(int maximumLength)
     {
-        Checks.checkThat(maximumLength >= 0);
+        Checks.Internal.checkThat(maximumLength >= 0);
         return (String string) ->
         {
             Assertions.notNull().check(string);
@@ -198,8 +203,8 @@ public final class StringAssertions
      */
     public static AlchemyAssertion<String> stringWithLengthGreaterThan(int minimumLength)
     {
-        Checks.checkThat(minimumLength > 0, "minimumLength must be > 0");
-        Checks.checkThat(minimumLength < Integer.MAX_VALUE, "not possible to have a String larger than Integer.MAX_VALUE");
+        Checks.Internal.checkThat(minimumLength > 0, "minimumLength must be > 0");
+        Checks.Internal.checkThat(minimumLength < Integer.MAX_VALUE, "not possible to have a String larger than Integer.MAX_VALUE");
         return (String string) ->
         {
             nonEmptyString().check(string);
@@ -220,7 +225,7 @@ public final class StringAssertions
     {
         return (String string) ->
         {
-            if (Checks.isNullOrEmpty(string))
+            if (Checks.Internal.isNullOrEmpty(string))
             {
                 throw new FailedAssertionException("String argument is empty");
             }
@@ -237,8 +242,8 @@ public final class StringAssertions
      */
     public static AlchemyAssertion<String> stringWithLengthBetween(int minimumLength, int maximumLength)
     {
-        Checks.checkThat(minimumLength >= 0, "Minimum length must be at least 0");
-        Checks.checkThat(minimumLength < maximumLength, "Minimum length must be > maximum length.");
+        Checks.Internal.checkThat(minimumLength >= 0, "Minimum length must be at least 0");
+        Checks.Internal.checkThat(minimumLength < maximumLength, "Minimum length must be > maximum length.");
         return (String string) ->
         {
             Assertions.notNull().check(string);

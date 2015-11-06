@@ -38,7 +38,7 @@ final class DynamicExceptionSupplier<Ex extends Throwable> implements ExceptionM
 
     DynamicExceptionSupplier(Class<Ex> exceptionClass, String message)
     {
-        Checks.checkNotNull(exceptionClass, "missing exceptionClass");
+        Checks.Internal.checkNotNull(exceptionClass, "missing exceptionClass");
         this.exceptionClass = exceptionClass;
         this.message = message;
     }
@@ -153,17 +153,17 @@ final class DynamicExceptionSupplier<Ex extends Throwable> implements ExceptionM
 
     private boolean haveOnlyAMessage(String message, FailedAssertionException cause)
     {
-        return !Checks.isNullOrEmpty(message) && cause == null;
+        return !Checks.Internal.isNullOrEmpty(message) && cause == null;
     }
 
     private boolean haveOnlyACause(String message, FailedAssertionException cause)
     {
-        return cause != null && Checks.isNullOrEmpty(message);
+        return cause != null && Checks.Internal.isNullOrEmpty(message);
     }
 
     private boolean haveBothAMessageAndACause(String message, FailedAssertionException cause)
     {
-        return cause != null && !Checks.isNullOrEmpty(message);
+        return cause != null && !Checks.Internal.isNullOrEmpty(message);
     }
 
 }

@@ -33,14 +33,14 @@ import static tech.sirwellington.alchemy.test.junit.ThrowableAssertion.assertThr
  */
 @Internal
 @NonInstantiable
-class Tests
+public class Tests
 {
 
     private final static Logger LOG = LoggerFactory.getLogger(Tests.class);
 
-    static <T> void runTests(AlchemyAssertion<T> assertion,
-                             AlchemyGenerator<T> badArguments,
-                             AlchemyGenerator<T> goodArguments)
+    public static <T> void runTests(AlchemyAssertion<T> assertion,
+                                    AlchemyGenerator<T> badArguments,
+                                    AlchemyGenerator<T> goodArguments)
     {
         assertThat(assertion, notNullValue());
 
@@ -52,7 +52,7 @@ class Tests
         assertion.check(goodArgument);
     }
 
-    static void checkForNullCase(AlchemyAssertion assertion)
+    public static void checkForNullCase(AlchemyAssertion assertion)
     {
         assertThrows(() -> assertion.check(null))
                 .isInstanceOf(FailedAssertionException.class)

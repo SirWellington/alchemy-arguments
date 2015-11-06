@@ -14,11 +14,14 @@
  * limitations under the License.
  */
 
-package tech.sirwellington.alchemy.arguments;
+package tech.sirwellington.alchemy.arguments.assertions;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import tech.sirwellington.alchemy.annotations.access.NonInstantiable;
+import tech.sirwellington.alchemy.arguments.AlchemyAssertion;
+import tech.sirwellington.alchemy.arguments.Checks;
+import tech.sirwellington.alchemy.arguments.FailedAssertionException;
 
 /**
  *
@@ -44,7 +47,7 @@ public final class NumberAssertions
      */
     public static AlchemyAssertion<Integer> greaterThan(int exclusiveLowerBound)
     {
-        Checks.checkThat(exclusiveLowerBound != Integer.MAX_VALUE, "Integers cannot exceed " + Integer.MAX_VALUE);
+        Checks.Internal.checkThat(exclusiveLowerBound != Integer.MAX_VALUE, "Integers cannot exceed " + Integer.MAX_VALUE);
         return (Integer integer) ->
         {
             Assertions.notNull().check(integer);
@@ -64,7 +67,7 @@ public final class NumberAssertions
      */
     public static AlchemyAssertion<Long> greaterThan(long exclusiveLowerBound)
     {
-        Checks.checkThat(exclusiveLowerBound != Long.MAX_VALUE, "Longs cannot exceed " + Long.MAX_VALUE);
+        Checks.Internal.checkThat(exclusiveLowerBound != Long.MAX_VALUE, "Longs cannot exceed " + Long.MAX_VALUE);
         return (Long number) ->
         {
             Assertions.notNull().check(number);
@@ -194,7 +197,7 @@ public final class NumberAssertions
      */
     public static AlchemyAssertion<Integer> lessThan(int exclusiveUpperBound)
     {
-        Checks.checkThat(exclusiveUpperBound != Integer.MIN_VALUE, "Ints cannot be less than " + Integer.MIN_VALUE);
+        Checks.Internal.checkThat(exclusiveUpperBound != Integer.MIN_VALUE, "Ints cannot be less than " + Integer.MIN_VALUE);
         return (Integer number) ->
         {
             Assertions.notNull().check(number);
@@ -214,7 +217,7 @@ public final class NumberAssertions
      */
     public static AlchemyAssertion<Long> lessThan(long exclusiveUpperBound)
     {
-        Checks.checkThat(exclusiveUpperBound != Long.MIN_VALUE, "Longs cannot be less than " + Long.MIN_VALUE);
+        Checks.Internal.checkThat(exclusiveUpperBound != Long.MIN_VALUE, "Longs cannot be less than " + Long.MIN_VALUE);
         return (Long number) ->
         {
             Assertions.notNull().check(number);
@@ -237,7 +240,7 @@ public final class NumberAssertions
      */
     public static AlchemyAssertion<Integer> numberBetween(int min, int max) throws IllegalArgumentException
     {
-        Checks.checkThat(min < max, "Minimum must be less than Max.");
+        Checks.Internal.checkThat(min < max, "Minimum must be less than Max.");
         return (Integer number) ->
         {
             Assertions.notNull().check(number);
@@ -261,7 +264,7 @@ public final class NumberAssertions
      */
     public static AlchemyAssertion<Long> numberBetween(long min, long max) throws IllegalArgumentException
     {
-        Checks.checkThat(min < max, "Minimum must be less than Max.");
+        Checks.Internal.checkThat(min < max, "Minimum must be less than Max.");
         return (Long number) ->
         {
             Assertions.notNull().check(number);

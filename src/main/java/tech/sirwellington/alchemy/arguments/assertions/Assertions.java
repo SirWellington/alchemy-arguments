@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package tech.sirwellington.alchemy.arguments;
+package tech.sirwellington.alchemy.arguments.assertions;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -21,6 +21,9 @@ import tech.sirwellington.alchemy.annotations.access.NonInstantiable;
 import tech.sirwellington.alchemy.annotations.arguments.NonNull;
 import tech.sirwellington.alchemy.annotations.arguments.Nullable;
 import tech.sirwellington.alchemy.annotations.designs.patterns.StrategyPattern;
+import tech.sirwellington.alchemy.arguments.AlchemyAssertion;
+import tech.sirwellington.alchemy.arguments.Checks;
+import tech.sirwellington.alchemy.arguments.FailedAssertionException;
 
 import static tech.sirwellington.alchemy.annotations.designs.patterns.StrategyPattern.Role.CONCRETE_BEHAVIOR;
 
@@ -110,7 +113,7 @@ public final class Assertions
      */
     public static <A> AlchemyAssertion<A> instanceOf(Class<?> classOfExpectedType)
     {
-        Checks.checkNotNull(classOfExpectedType, "class cannot be null");
+        Checks.Internal.checkNotNull(classOfExpectedType, "class cannot be null");
 
         return (argument) ->
         {
@@ -172,7 +175,7 @@ public final class Assertions
      */
     public static <A> AlchemyAssertion<A> not(@NonNull AlchemyAssertion<A> assertion)
     {
-        Checks.checkNotNull(assertion, "missing assertion");
+        Checks.Internal.checkNotNull(assertion, "missing assertion");
 
         return (argument) ->
         {

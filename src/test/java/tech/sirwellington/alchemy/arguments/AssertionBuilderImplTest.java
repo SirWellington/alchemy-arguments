@@ -15,6 +15,7 @@
  */
 package tech.sirwellington.alchemy.arguments;
 
+import tech.sirwellington.alchemy.arguments.assertions.StringAssertions;
 import java.sql.SQLException;
 import java.util.List;
 import org.junit.Before;
