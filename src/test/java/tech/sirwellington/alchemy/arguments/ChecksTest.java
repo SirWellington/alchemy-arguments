@@ -13,6 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package tech.sirwellington.alchemy.arguments;
 
 import java.util.Collection;
@@ -46,6 +47,16 @@ public class ChecksTest
     @Before
     public void setUp()
     {
+    }
+
+    @Test
+    public void testCannotInstantiate()
+    {
+        assertThrows(() -> Checks.class.newInstance())
+                .isInstanceOf(IllegalAccessException.class);
+
+        assertThrows(() -> Checks.Internal.class.newInstance())
+                .isInstanceOf(IllegalAccessException.class);
     }
 
     @DontRepeat

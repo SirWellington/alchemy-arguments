@@ -45,6 +45,11 @@ public final class Checks
     public static class Internal
     {
 
+        private Internal() throws IllegalAccessException
+        {
+            throw new IllegalAccessException("not meant to be instantiated");
+        }
+
         public static boolean isNullOrEmpty(String string)
         {
             return string == null || string.isEmpty();
