@@ -13,8 +13,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package tech.sirwellington.alchemy.arguments.assertions;
 
+import java.util.Objects;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import tech.sirwellington.alchemy.annotations.access.NonInstantiable;
@@ -25,6 +27,7 @@ import tech.sirwellington.alchemy.arguments.AlchemyAssertion;
 import tech.sirwellington.alchemy.arguments.Checks;
 import tech.sirwellington.alchemy.arguments.FailedAssertionException;
 
+import static java.lang.String.format;
 import static tech.sirwellington.alchemy.annotations.designs.patterns.StrategyPattern.Role.CONCRETE_BEHAVIOR;
 
 /**
@@ -87,8 +90,8 @@ public final class Assertions
     }
 
     /**
-     * Asserts that an argument is an {@code instanceOf} the specified class. This Assertion
-     * respects the inheritance hierarchy, so
+     * Asserts that an argument is an {@code instanceOf} the specified class. This Assertion respects the inheritance
+     * hierarchy, so
      *
      * <pre>
      *
@@ -127,8 +130,7 @@ public final class Assertions
     }
 
     /**
-     * Asserts that the argument is
-     * {@linkplain Object#equals(java.lang.Object) equal to} {@code other}.
+     * Asserts that the argument is {@linkplain Object#equals(java.lang.Object) equal to} {@code other}.
      *
      * @param <A>
      * @param other
@@ -139,26 +141,15 @@ public final class Assertions
     {
         return (argument) ->
         {
-            if (argument == null && other == null)
+            if (!Objects.equals(argument, other))
             {
-                return;
-            }
-
-            if (argument == null)
-            {
-                throw new FailedAssertionException("null is not equal to " + other);
-            }
-
-            if (!argument.equals(other))
-            {
-                throw new FailedAssertionException("Expected " + argument + " to be equal to " + other);
+                throw new FailedAssertionException(format("Expected %s to be equal to %s", argument, other));
             }
         };
     }
 
     /**
-     * Runs the inverse on another {@link AlchemyAssertion}. This allows you to create expressions
-     * such as:
+     * Runs the inverse on another {@link AlchemyAssertion}. This allows you to create expressions such as:
      *
      * <pre>
      * {@code
@@ -192,7 +183,5 @@ public final class Assertions
 
         };
     }
-
-
 
 }

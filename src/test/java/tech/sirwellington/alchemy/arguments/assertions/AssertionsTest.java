@@ -16,6 +16,7 @@
 
 package tech.sirwellington.alchemy.arguments.assertions;
 
+import java.util.Objects;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -38,6 +39,7 @@ import static tech.sirwellington.alchemy.generator.NumberGenerators.positiveDoub
 import static tech.sirwellington.alchemy.generator.NumberGenerators.positiveIntegers;
 import static tech.sirwellington.alchemy.generator.NumberGenerators.positiveLongs;
 import static tech.sirwellington.alchemy.generator.StringGenerators.alphabeticString;
+import static tech.sirwellington.alchemy.generator.StringGenerators.strings;
 import static tech.sirwellington.alchemy.test.junit.ThrowableAssertion.assertThrows;
 
 /**
@@ -145,5 +147,28 @@ public class AssertionsTest
     {
         assertThrows(() -> Assertions.not(null))
                 .isInstanceOf(IllegalArgumentException.class);
+    }
+
+    @Test
+    public void testEqualTo()
+    {
+
+        String first = one(strings());
+        String second = "";
+        do
+        {
+            second = one(strings());
+        }
+        while (Objects.equals(first, second));
+        
+        AlchemyAssertion<String> instance = Assertions.equalTo(second);
+
+        //Check against self should be ok;
+        instance.check(second);
+        instance.check("" + second);
+        
+        assertThrows(() -> instance.check(first))
+                .isInstanceOf(FailedAssertionException.class);
+        
     }
 }
