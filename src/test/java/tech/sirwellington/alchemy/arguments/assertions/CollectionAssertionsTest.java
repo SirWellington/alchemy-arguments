@@ -34,6 +34,7 @@ import static tech.sirwellington.alchemy.generator.CollectionGenerators.listOf;
 import static tech.sirwellington.alchemy.generator.CollectionGenerators.mapOf;
 import static tech.sirwellington.alchemy.generator.NumberGenerators.positiveIntegers;
 import static tech.sirwellington.alchemy.generator.StringGenerators.alphabeticString;
+import static tech.sirwellington.alchemy.generator.StringGenerators.hexadecimalString;
 import static tech.sirwellington.alchemy.test.junit.ThrowableAssertion.assertThrows;
 
 /**
@@ -130,6 +131,22 @@ public class CollectionAssertionsTest
         };
 
         assertThrows(() -> instance.check(emptyStringArray))
+                .isInstanceOf(FailedAssertionException.class);
+    }
+
+    @Test
+    public void testListContaining()
+    {
+        List<String> strings = listOf(alphabeticString());
+        String string = strings.stream().findAny().orElseGet(alphabeticString());
+
+        AlchemyAssertion<List<String>> instance = CollectionAssertions.listContaining(string);
+        assertThat(instance, notNullValue());
+        instance.check(strings);
+
+        List<String> hex = listOf(hexadecimalString(100));
+
+        assertThrows(() -> instance.check(hex))
                 .isInstanceOf(FailedAssertionException.class);
     }
 
