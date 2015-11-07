@@ -117,7 +117,7 @@ This also allows you to decide what message to include in the exception, and whe
 
 ## Custom Assertions
 
-You can create your own library of custom assertions and reuse them. In fact, we encourage it. It is common to perform the same argument checks in multiple parts of the Codebase.
+You can create your own library of custom assertions and reuse them. In fact, **we encourage it**. It is common to perform the same argument checks in multiple parts of the Codebase.
 
 Thanks to the new Java 8 lambdas, it is much easier to create inline assertions in your code.
 
@@ -175,6 +175,8 @@ public String findUsername(Person person)
 {
 	checkThat(person)
 		.is(validPerson());
+
+	//Proceed safely
 }
 
 ```
