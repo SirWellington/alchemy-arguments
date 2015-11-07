@@ -50,21 +50,34 @@ checkThat(firstName, middleName, lastName)
 	.are(stringWithLengthAtLeast(1));
 ```
 
+## Error Message
+
+Each Assertion includes a specific error message in the Exception, but sometimes you want to include a
+message more suited to the context.
+
+```java
+checkThat(responseCode)
+	.usingMessage("Server Response not OK")
+	.is(equalTo(200));
+```
+
 ## Custom Exceptions
 
-Sometimes an `IllegalArgumentException` is not the Exception you want to thrown from your argument checks.
+Sometimes an `IllegalArgumentException` is not the Exception you want to throw.
 
 For example,
 ```java
 {
-	String nameField; //Part of the Request Object
-	//Throws IllegalArgumentException
-	Preconditions.checkArgument(!Strings.isNullOrEmpty(nameField));
+	String nameField;
+
+	checkThat(nameField)
+		.usingMessage("missing name")
+		.is(nonEmptyString());
 }
 ```
 In stock Jersey, this would cause a 500, and make it seem like your Service failed.
 
-This library allows you to throw your own custom exceptions when making assertions.
+You can throw a more specific Exceptions when making assertions.
 
 ```java
 checkThat(password)
@@ -74,9 +87,9 @@ checkThat(password)
 	.is(stringWithLengthBetween(10, 20));
 
 ```
+In the example above, if the password fails the checks, a `BadPasswordException` will be thrown.
 
-In the example above, if the password fails the checks, a `BadPasswordException` will be thrown. It is much cleaner writing:
-
+>Compare that to:
 ``` java
 if (Strings.isNullOrEmpty(password) &&
 	password.length() < MIN_LENGTH &&
@@ -98,16 +111,16 @@ checkThat(age)
 	.is(lessThan(150));
 ```
 
-This also allows you to decide what message to include in the exception, and whether to include or mask the causing exception.
+This also allows you to decide what message to include in the exception, and whether to include or mask the underlying assertion error.
 
 ## Custom Assertions
 
-You can create your own library of custom assertions and reuse them.
+You can create your own library of custom assertions and reuse them. In fact, we encourage it. It is common to perform the same argument checks in multiple parts of the Codebase.
 
 Thanks to the new Java 8 lambdas, it is much easier to create inline assertions in your code.
 
 ```java
-Assertion<Car> sedan = car ->
+AlchemyAssertion<Car> sedan = car ->
 {
 	if (!(car instanceof Sedan))
 	{
@@ -121,7 +134,7 @@ checkThat(car)
 ```
 
 ```java
-Assertion<Vehicle> truck = v ->
+AlchemyAssertion<Vehicle> truck = v ->
 {
 	if (!(v instanceof Truck))
 	{
@@ -136,6 +149,33 @@ checkThat(vehicle)
 
 ```
 
+Building on Existing assertions can make for powerful checks.
+
+```java
+
+public static AlchemyAssertion<Person> validPerson()
+{
+	return person ->
+	{
+		checkThat(person).is(notNull);
+
+		checkThat(person.firstName, person.lastName)
+			.usingMessage("person is missing names")
+			.are(nonEmptyString());
+
+		checkThat(person.birthday)
+			.is(beforeNow());
+	};
+}
+
+// Reuse the argument checks
+public String findUsername(Person person)
+{
+	checkThat(person)
+		.is(validPerson());
+}
+
+```
 
 # Download
 
