@@ -32,6 +32,7 @@ import static org.hamcrest.Matchers.notNullValue;
 import static org.junit.Assert.assertThat;
 import static tech.sirwellington.alchemy.generator.CollectionGenerators.listOf;
 import static tech.sirwellington.alchemy.generator.CollectionGenerators.mapOf;
+import static tech.sirwellington.alchemy.generator.NumberGenerators.negativeIntegers;
 import static tech.sirwellington.alchemy.generator.NumberGenerators.positiveIntegers;
 import static tech.sirwellington.alchemy.generator.StringGenerators.alphabeticString;
 import static tech.sirwellington.alchemy.generator.StringGenerators.hexadecimalString;
@@ -148,6 +149,40 @@ public class CollectionAssertionsTest
 
         assertThrows(() -> instance.check(hex))
                 .isInstanceOf(FailedAssertionException.class);
+    }
+
+    @Test
+    public void testMapWithKey()
+    {
+        Map<Integer, String> map = mapOf(positiveIntegers(), hexadecimalString(100), 100);
+        
+        Integer key = map.keySet().stream().findAny().get();
+        
+        AlchemyAssertion<Map<Integer, String>> instance = CollectionAssertions.mapWithKey(key);
+        assertThat(instance, notNullValue());
+        
+        instance.check(map);
+        
+        Map<Integer, String> badMap = mapOf(negativeIntegers(), hexadecimalString(100), 100);
+        assertThrows(() -> instance.check(badMap));
+    }
+
+    @Test
+    public void testMapWithKeyAndValue()
+    {
+        Map<Integer, String> map = mapOf(positiveIntegers(), alphabeticString(), 100);
+
+        Map.Entry<Integer, String> anyEntry = map.entrySet().stream().findAny().get();
+
+        AlchemyAssertion<Map<Integer, String>> instance;
+        instance = CollectionAssertions.mapWithKeyAndValue(anyEntry.getKey(), anyEntry.getValue());
+        assertThat(instance, notNullValue());
+
+        //Should pass OK
+        instance.check(map);
+
+        Map<Integer, String> badMap = mapOf(negativeIntegers(), hexadecimalString(100), 100);
+        assertThrows(() -> instance.check(badMap));
     }
 
 }

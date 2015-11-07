@@ -152,7 +152,6 @@ public class AssertionsTest
     @Test
     public void testEqualTo()
     {
-
         String first = one(strings());
         String second = "";
         do
