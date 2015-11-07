@@ -168,14 +168,14 @@ public class CollectionAssertionsTest
     }
 
     @Test
-    public void testMapWithKeyAndValue()
+    public void testMapWithKeyValue()
     {
         Map<Integer, String> map = mapOf(positiveIntegers(), alphabeticString(), 100);
 
         Map.Entry<Integer, String> anyEntry = map.entrySet().stream().findAny().get();
 
         AlchemyAssertion<Map<Integer, String>> instance;
-        instance = CollectionAssertions.mapWithKeyAndValue(anyEntry.getKey(), anyEntry.getValue());
+        instance = CollectionAssertions.mapWithKeyValue(anyEntry.getKey(), anyEntry.getValue());
         assertThat(instance, notNullValue());
 
         //Should pass OK

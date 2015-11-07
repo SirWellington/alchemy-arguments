@@ -8,43 +8,8 @@ Alchemy Arguments
 [![Build Status](https://travis-ci.org/SirWellington/alchemy-arguments.svg)](https://travis-ci.org/SirWellington/alchemy-arguments)
 
 
-
 # Purpose
-Part of the Alchemy Collection, **Alchemy Arguments** allows developers to perform fluid argument checking and validation.
-
-
-# Download
-
-To use, simply add the following maven dependency.
-
-## Release
-```xml
-<dependency>
-	<groupId>tech.sirwellington.alchemy</groupId>
-	<artifactId>alchemy-arguments</artifactId>
-	<version>1.2</version>
-</dependency>
-```
-
-## Snapshot
-
->First add the Snapshot Repository
-```xml
-<repository>
-	<id>ossrh</id>
-    <url>https://oss.sonatype.org/content/repositories/snapshots</url>
-</repository>
-```
-
-```xml
-<dependency>
-	<groupId>tech.sirwellington.alchemy</groupId>
-	<artifactId>alchemy-arguments</artifactId>
-	<version>1.3-SNAPSHOT</version>
-</dependency>
-```
-
-# [Javadocs](http://www.javadoc.io/doc/tech.sirwellington.alchemy/alchemy-arguments/)
+Part of the [Alchemy Collection](https://github.com/SirWellington/alchemy), **Alchemy Arguments** allows developers to perform fluid argument checking and validation.
 
 
 # API
@@ -75,14 +40,19 @@ checkThat(zipCode)
 	.is(lessThanOrEqualTo(99999));
 ```
 
-# Why use this
+## Multiple Arguments
 
-You might be wondering, _why would I use this over Guava's Preconditions_?
+You can also check multiple Arguments at the same time.
+
+```java
+checkThat(firstName, middleName, lastName)
+	.are(nonEmptyString())
+	.are(stringWithLengthAtLeast(1));
+```
 
 ## Custom Exceptions
 
-Guava's preconditions are great when throwing an `IllegalArgumentException` is an acceptable response for your program.
-Back-End Services, however, tend to throw their own custom exceptions, which are mapped to a proper response for the client.
+Sometimes an `IllegalArgumentException` is not the Exception you want to thrown from your argument checks.
 
 For example,
 ```java
@@ -92,7 +62,7 @@ For example,
 	Preconditions.checkArgument(!Strings.isNullOrEmpty(nameField));
 }
 ```
-In stock Jersey, this would cause a 500, and make it look like your Service failed.
+In stock Jersey, this would cause a 500, and make it seem like your Service failed.
 
 This library allows you to throw your own custom exceptions when making assertions.
 
@@ -100,6 +70,7 @@ This library allows you to throw your own custom exceptions when making assertio
 checkThat(password)
 	.throwing(BadPasswordException.class)
 	.is(nonEmptyString())
+	.is(alphanumericString())
 	.is(stringWithLengthBetween(10, 20));
 
 ```
@@ -166,6 +137,39 @@ checkThat(vehicle)
 ```
 
 
+# Download
+
+To use, simply add the following maven dependency.
+
+## Release
+```xml
+<dependency>
+	<groupId>tech.sirwellington.alchemy</groupId>
+	<artifactId>alchemy-arguments</artifactId>
+	<version>1.2</version>
+</dependency>
+```
+
+## Snapshot
+
+>First add the Snapshot Repository
+```xml
+<repository>
+	<id>ossrh</id>
+    <url>https://oss.sonatype.org/content/repositories/snapshots</url>
+</repository>
+```
+
+```xml
+<dependency>
+	<groupId>tech.sirwellington.alchemy</groupId>
+	<artifactId>alchemy-arguments</artifactId>
+	<version>1.3-SNAPSHOT</version>
+</dependency>
+```
+
+# [Javadocs](http://www.javadoc.io/doc/tech.sirwellington.alchemy/alchemy-arguments/)
+
 # Requirements
 
 + Java 8
@@ -175,8 +179,13 @@ checkThat(vehicle)
 This project builds with maven. Just run a `mvn clean install` to compile and install to your local maven repository
 
 
-
 # Release Notes
+
+## 1.3
+New Assertions
++ `mapWithKey()
++ `mapWithKeyAndValue()`
+
 
 ## 1.2
 Multiple Assertions
@@ -204,7 +213,7 @@ For example
 
 ```java
 
-checkThat(firstName, middleName, lastName, password, description)
+checkThat(firstName, middleName, lastName)
 .are(nonEmptyString());
 
 ```

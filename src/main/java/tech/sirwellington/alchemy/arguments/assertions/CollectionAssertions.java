@@ -151,7 +151,7 @@ public final class CollectionAssertions
         };
     }
 
-    public static <K, V> AlchemyAssertion<Map<K, V>> mapWithKeyAndValue(@NonNull K key, V value) throws IllegalArgumentException
+    public static <K, V> AlchemyAssertion<Map<K, V>> mapWithKeyValue(@NonNull K key, V value) throws IllegalArgumentException
     {
         checkNotNull(key, "key cannot be null");
 
