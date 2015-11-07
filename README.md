@@ -67,6 +67,8 @@ Sometimes an `IllegalArgumentException` is not the Exception you want to throw.
 
 For example,
 ```java
+@GET
+public Response getCoffee(String nameField)
 {
 	String nameField;
 
