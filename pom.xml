@@ -66,24 +66,21 @@
 
         <dependency>
             <groupId>tech.sirwellington.alchemy</groupId>
-            <artifactId>alchemy-test</artifactId>
-            <version>1.2</version>
-            <scope>test</scope>
-        </dependency>
-
-        <dependency>
-            <groupId>tech.sirwellington.alchemy</groupId>
             <artifactId>alchemy-annotations</artifactId>
             <version>1.2</version>
         </dependency>
-        
         <dependency>
             <groupId>${project.groupId}</groupId>
             <artifactId>alchemy-generator</artifactId>
-            <version>1.1</version>
+            <version>1.2-SNAPSHOT</version>
             <scope>test</scope>
         </dependency>
-        
+        <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>alchemy-test</artifactId>
+            <version>${project.version}</version>
+            <scope>test</scope>
+        </dependency>
     </dependencies>
 
     <build>
