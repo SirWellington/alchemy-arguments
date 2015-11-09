@@ -53,15 +53,15 @@ public class DateAssertionsTest
         AlchemyAssertion<Date> instance = DateAssertions.inThePast();
         assertThat(instance, notNullValue());
 
-        Date past = one(DateGenerators.beforeNow());
+        Date past = one(DateGenerators.pastDates());
         instance.check(past);
 
-        Date future = one(DateGenerators.afterNow());
+        Date future = one(DateGenerators.futureDates());
         assertThrows(() -> instance.check(future))
                 .isInstanceOf(FailedAssertionException.class);
 
         Thread.sleep(1);
-        //Start time should now be past as well
+        //Start time should presentDate be past as well
         instance.check(startTime);
     }
 
@@ -78,12 +78,12 @@ public class DateAssertionsTest
                 .isInstanceOf(FailedAssertionException.class);
 
         //The past is not after the reference date
-        Date past = one(DateGenerators.beforeNow());
+        Date past = one(DateGenerators.pastDates());
         assertThrows(() -> instance.check(past))
                 .isInstanceOf(FailedAssertionException.class);
 
         //The future should be after the reference date
-        Date future = one(DateGenerators.afterNow());
+        Date future = one(DateGenerators.futureDates());
         instance.check(future);
 
     }
@@ -119,12 +119,12 @@ public class DateAssertionsTest
         AlchemyAssertion<Date> instance = DateAssertions.inTheFuture();
         assertThat(instance, notNullValue());
 
-        //Future is ahead of the present
-        Date future = one(DateGenerators.afterNow());
+        //Future is ahead of the presentDate
+        Date future = one(DateGenerators.futureDates());
         instance.check(future);
 
-        //Past is behind the present
-        Date past = one(DateGenerators.beforeNow());
+        //Past is behind the presentDate
+        Date past = one(DateGenerators.pastDates());
         assertThrows(() -> instance.check(past))
                 .isInstanceOf(IllegalArgumentException.class);
 
