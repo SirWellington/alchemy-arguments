@@ -227,7 +227,7 @@ This project builds with maven. Just run a `mvn clean install` to compile and in
 
 ## 1.3
 New Assertions
-+ `mapWithKey()
++ `mapWithKey()`
 + `mapWithKeyAndValue()`
 
 
