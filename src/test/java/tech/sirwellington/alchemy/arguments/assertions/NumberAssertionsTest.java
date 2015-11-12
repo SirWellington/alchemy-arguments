@@ -127,7 +127,7 @@ public class NumberAssertionsTest
         Tests.checkForNullCase(instance);
 
         AlchemyGenerator<Integer> badNumbers = integers(lowerBound - one(smallPositiveIntegers()), lowerBound);
-        AlchemyGenerator<Integer> goodNumbers = integers(lowerBound + 1, lowerBound + one(smallPositiveIntegers()));
+        AlchemyGenerator<Integer> goodNumbers = integers(lowerBound + 1, lowerBound + one(integers(2, 1000)));
         Tests.runTests(instance, badNumbers, goodNumbers);
     }
 
