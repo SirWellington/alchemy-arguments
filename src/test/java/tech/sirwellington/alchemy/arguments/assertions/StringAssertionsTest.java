@@ -123,7 +123,7 @@ public class StringAssertionsTest
 
         AlchemyGenerator<String> goodArugments = () ->
         {
-            int length = one(integers(1, upperBound - 1));
+            int length = one(integers(1, upperBound));
             return one(strings(length));
         };
 
