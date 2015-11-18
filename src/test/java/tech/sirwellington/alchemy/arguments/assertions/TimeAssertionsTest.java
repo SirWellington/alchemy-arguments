@@ -24,6 +24,7 @@ import tech.sirwellington.alchemy.arguments.AlchemyAssertion;
 import tech.sirwellington.alchemy.arguments.FailedAssertionException;
 import tech.sirwellington.alchemy.generator.TimeGenerators;
 import tech.sirwellington.alchemy.test.junit.runners.AlchemyTestRunner;
+import tech.sirwellington.alchemy.test.junit.runners.DontRepeat;
 import tech.sirwellington.alchemy.test.junit.runners.Repeat;
 
 import static org.hamcrest.Matchers.notNullValue;
@@ -44,7 +45,18 @@ public class TimeAssertionsTest
     public void setUp()
     {
     }
-
+    
+    @DontRepeat
+    @Test
+    public void testCannotInstantiate()
+    {
+        assertThrows(() -> new TimeAssertions())
+            .isInstanceOf(IllegalAccessException.class);
+        
+        assertThrows(() -> TimeAssertions.class.newInstance())
+            .isInstanceOf(IllegalAccessException.class);
+    }
+    
     @Test
     public void testInThePast() throws InterruptedException
     {

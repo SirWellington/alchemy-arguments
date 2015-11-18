@@ -24,6 +24,7 @@ import tech.sirwellington.alchemy.arguments.AlchemyAssertion;
 import tech.sirwellington.alchemy.arguments.FailedAssertionException;
 import tech.sirwellington.alchemy.generator.DateGenerators;
 import tech.sirwellington.alchemy.test.junit.runners.AlchemyTestRunner;
+import tech.sirwellington.alchemy.test.junit.runners.DontRepeat;
 import tech.sirwellington.alchemy.test.junit.runners.Repeat;
 
 import static org.hamcrest.Matchers.notNullValue;
@@ -43,6 +44,17 @@ public class DateAssertionsTest
     @Before
     public void setUp()
     {
+    }
+    
+    @DontRepeat
+    @Test
+    public void testCannotInstantiate()
+    {
+        assertThrows(() -> new DateAssertions())
+            .isInstanceOf(IllegalAccessException.class);
+        
+        assertThrows(() -> DateAssertions.class.newInstance())
+            .isInstanceOf(IllegalAccessException.class);
     }
 
     @Test

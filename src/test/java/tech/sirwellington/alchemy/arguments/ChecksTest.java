@@ -49,6 +49,7 @@ public class ChecksTest
     {
     }
 
+    @DontRepeat
     @Test
     public void testCannotInstantiate()
     {

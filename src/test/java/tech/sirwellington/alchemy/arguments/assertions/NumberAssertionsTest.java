@@ -52,6 +52,7 @@ public class NumberAssertionsTest
     {
     }
 
+    @DontRepeat
     @Test
     public void testCannotInstantiateClass()
     {
