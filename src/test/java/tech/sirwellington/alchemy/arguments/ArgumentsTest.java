@@ -70,11 +70,11 @@ public class ArgumentsTest
 
         AssertionBuilder<String, FailedAssertionException> instance = Arguments.checkThat(argument, stringArray);
         assertThat(instance, notNullValue());
-        instance.are(StringAssertions.nonEmptyString());
+        instance.are(StringAssertions.aNonEmptyString());
 
         instance = Arguments.checkThat(argument, new String[0]);
         assertThat(instance, notNullValue());
-        instance.are(StringAssertions.nonEmptyString());
+        instance.are(StringAssertions.aNonEmptyString());
     }
 
     @Test
@@ -82,7 +82,7 @@ public class ArgumentsTest
     {
         AssertionBuilder<String, FailedAssertionException> instance = Arguments.checkThat(argument, new String[1]);
         assertThat(instance, notNullValue());
-        assertThrows(() -> instance.are(StringAssertions.nonEmptyString()))
+        assertThrows(() -> instance.are(StringAssertions.aNonEmptyString()))
                 .isInstanceOf(FailedAssertionException.class);
     }
 

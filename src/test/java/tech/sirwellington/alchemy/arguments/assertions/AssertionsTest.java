@@ -80,9 +80,9 @@ public class AssertionsTest
     }
     
     @Test
-    public void testSameInstance()
+    public void testSameInstanceAs()
     {
-        AlchemyAssertion<Object> instanceOne = Assertions.<Object>sameInstance(null);
+        AlchemyAssertion<Object> instanceOne = Assertions.<Object>sameInstanceAs(null);
 
         //null is the same instance as null
         assertThat(instanceOne, notNullValue());
@@ -93,7 +93,7 @@ public class AssertionsTest
                 .isInstanceOf(FailedAssertionException.class);
         
         Object someObject = new Object();
-        AlchemyAssertion<Object> instanceTwo = Assertions.sameInstance(someObject);
+        AlchemyAssertion<Object> instanceTwo = Assertions.sameInstanceAs(someObject);
         instanceTwo.check(someObject);
         
         Object differentObject = new Object();

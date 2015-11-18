@@ -81,18 +81,18 @@ public final class NumberAssertions
     /**
      * Asserts that an integer is {@code >=} the supplied value.
      *
-     * @param inclusiveLowerBound The argument integer must be {@code >= inclusiveLowerBound}
+     * @param lowerBound The argument integer must be {@code >= inclusiveLowerBound}
      *
      * @return
      */
-    public static AlchemyAssertion<Integer> greaterThanOrEqualTo(int inclusiveLowerBound)
+    public static AlchemyAssertion<Integer> greaterThanOrEqualTo(int lowerBound)
     {
         return (Integer number) ->
         {
             Assertions.notNull().check(number);
-            if (number < inclusiveLowerBound)
+            if (number < lowerBound)
             {
-                throw new FailedAssertionException("Number must be greater than or equal to " + inclusiveLowerBound);
+                throw new FailedAssertionException("Number must be greater than or equal to " + lowerBound);
             }
         };
     }
@@ -100,18 +100,18 @@ public final class NumberAssertions
     /**
      * Asserts that a long is {@code >= inclusiveLowerBound}.
      *
-     * @param inclusiveLowerBound The argument integer must be {@code >= inclusiveUpperBound}
+     * @param lowerBound The argument integer must be {@code >= inclusiveUpperBound}
      *
      * @return
      */
-    public static AlchemyAssertion<Long> greaterThanOrEqualTo(long inclusiveLowerBound)
+    public static AlchemyAssertion<Long> greaterThanOrEqualTo(long lowerBound)
     {
         return (Long number) ->
         {
             Assertions.notNull().check(number);
-            if (number < inclusiveLowerBound)
+            if (number < lowerBound)
             {
-                throw new FailedAssertionException("Number must be greater than or equal to " + inclusiveLowerBound);
+                throw new FailedAssertionException("Number must be greater than or equal to " + lowerBound);
             }
         };
     }
@@ -121,7 +121,7 @@ public final class NumberAssertions
      *
      * @return
      */
-    public static AlchemyAssertion<Integer> positiveInteger()
+    public static AlchemyAssertion<Integer> aPositiveInteger()
     {
         return (Integer number) ->
         {
@@ -176,7 +176,7 @@ public final class NumberAssertions
      *
      * @return
      */
-    public static AlchemyAssertion<Long> positiveLong()
+    public static AlchemyAssertion<Long> aPositiveLong()
     {
         return (Long number) ->
         {
@@ -238,7 +238,7 @@ public final class NumberAssertions
      *
      * @throws IllegalArgumentException If {@code min >= max}. {@code min} should always be less than {@code max}.
      */
-    public static AlchemyAssertion<Integer> numberBetween(int min, int max) throws IllegalArgumentException
+    public static AlchemyAssertion<Integer> aNumberBetween(int min, int max) throws IllegalArgumentException
     {
         Checks.Internal.checkThat(min < max, "Minimum must be less than Max.");
         return (Integer number) ->

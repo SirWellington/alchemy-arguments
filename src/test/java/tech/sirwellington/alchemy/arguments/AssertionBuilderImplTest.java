@@ -194,15 +194,15 @@ public class AssertionBuilderImplTest
         arguments = listOf(alphabeticString());
         //No Exceptions expected
         AssertionBuilderImpl.checkThat(arguments)
-                .are(StringAssertions.nonEmptyString());
+                .are(StringAssertions.aNonEmptyString());
 
         arguments.add("");
         //Test 'is'
-        assertThrows(() -> AssertionBuilderImpl.checkThat(arguments).is(StringAssertions.nonEmptyString()))
+        assertThrows(() -> AssertionBuilderImpl.checkThat(arguments).is(StringAssertions.aNonEmptyString()))
                 .isInstanceOf(FailedAssertionException.class);
 
         //Test 'are' as well
-        assertThrows(() -> AssertionBuilderImpl.checkThat(arguments).are(StringAssertions.nonEmptyString()))
+        assertThrows(() -> AssertionBuilderImpl.checkThat(arguments).are(StringAssertions.aNonEmptyString()))
                 .isInstanceOf(FailedAssertionException.class);
 
     }

@@ -73,7 +73,7 @@ public final class Assertions
      *
      * @return
      */
-    public static <A> AlchemyAssertion<A> sameInstance(@Nullable Object other)
+    public static <A> AlchemyAssertion<A> sameInstanceAs(@Nullable Object other)
     {
         return (argument) ->
         {

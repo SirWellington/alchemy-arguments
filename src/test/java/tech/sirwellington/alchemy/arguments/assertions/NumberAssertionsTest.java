@@ -43,7 +43,7 @@ import static tech.sirwellington.alchemy.test.junit.ThrowableAssertion.assertThr
  * @author SirWellington
  */
 @RunWith(AlchemyTestRunner.class)
-@Repeat
+@Repeat(10_000)
 public class NumberAssertionsTest
 {
 
@@ -107,7 +107,7 @@ public class NumberAssertionsTest
     @Test
     public void testGreaterThanOrEqualToLong() throws Exception
     {
-        long inclusiveLowerBound = one(longs(-10000L, 1000L));
+        long inclusiveLowerBound = one(longs(-10_000L, 10_000L));
         AlchemyAssertion<Long> instance = NumberAssertions.greaterThanOrEqualTo(inclusiveLowerBound);
 
         assertThat(instance, notNullValue());
@@ -141,11 +141,11 @@ public class NumberAssertionsTest
     }
 
     @Test
-    public void testNumberBetweenInts() throws Exception
+    public void testANumberBetweenInts() throws Exception
     {
         int min = one(integers(Integer.MIN_VALUE, Integer.MAX_VALUE - 10));
         int max = one(integers(min, Integer.MAX_VALUE));
-        AlchemyAssertion<Integer> instance = NumberAssertions.numberBetween(min, max);
+        AlchemyAssertion<Integer> instance = NumberAssertions.aNumberBetween(min, max);
 
         assertThat(instance, notNullValue());
         Tests.checkForNullCase(instance);
@@ -166,19 +166,19 @@ public class NumberAssertionsTest
     }
 
     @Test
-    public void testNumberBetweenIntsEdgeCases() throws Exception
+    public void testANumberBetweenIntsEdgeCases() throws Exception
     {
         int min = one(integers(Integer.MIN_VALUE, Integer.MAX_VALUE - 10));
         int max = one(integers(min, Integer.MAX_VALUE));
 
-        assertThrows(() -> NumberAssertions.numberBetween(max, min))
+        assertThrows(() -> NumberAssertions.aNumberBetween(max, min))
                 .isInstanceOf(IllegalArgumentException.class);
     }
 
     @Test
-    public void testPositiveLong()
+    public void testAPositiveLong()
     {
-        AlchemyAssertion<Long> instance = NumberAssertions.positiveLong();
+        AlchemyAssertion<Long> instance = NumberAssertions.aPositiveLong();
         assertThat(instance, notNullValue());
         Tests.checkForNullCase(instance);
 
@@ -301,9 +301,9 @@ public class NumberAssertionsTest
     }
 
     @Test
-    public void testPositiveInteger()
+    public void testAPositiveInteger()
     {
-        AlchemyAssertion<Integer> instance = NumberAssertions.positiveInteger();
+        AlchemyAssertion<Integer> instance = NumberAssertions.aPositiveInteger();
 
         assertThat(instance, notNullValue());
         Tests.checkForNullCase(instance);

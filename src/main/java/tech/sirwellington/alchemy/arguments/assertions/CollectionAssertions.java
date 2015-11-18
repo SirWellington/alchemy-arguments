@@ -54,7 +54,7 @@ public final class CollectionAssertions
      *
      * @return
      */
-    public static <T> AlchemyAssertion<Collection<T>> nonEmptyCollection()
+    public static <T> AlchemyAssertion<Collection<T>> aNonEmptyCollection ()
     {
         return (collection) ->
         {
@@ -74,7 +74,7 @@ public final class CollectionAssertions
      *
      * @return
      */
-    public static <T> AlchemyAssertion<List<T>> nonEmptyList()
+    public static <T> AlchemyAssertion<List<T>> aNonEmptyList()
     {
         return (list) ->
         {
@@ -96,7 +96,7 @@ public final class CollectionAssertions
      *
      * @return
      */
-    public static <K, V> AlchemyAssertion<Map<K, V>> nonEmptyMap()
+    public static <K, V> AlchemyAssertion<Map<K, V>> aNonEmptyMap()
     {
         return (map) ->
         {
@@ -110,7 +110,7 @@ public final class CollectionAssertions
         };
     }
 
-    public static <T> AlchemyAssertion<T[]> nonEmptyArray()
+    public static <T> AlchemyAssertion<T[]> aNonEmptyArray()
     {
         return (array) ->
         {
@@ -123,7 +123,7 @@ public final class CollectionAssertions
         };
     }
 
-    public static <T> AlchemyAssertion<List<T>> listContaining(@NonNull T element) throws IllegalArgumentException
+    public static <T> AlchemyAssertion<List<T>> aListContaining(@NonNull T element) throws IllegalArgumentException
     {
         Checks.Internal.checkNotNull(element, "cannot check for null");
         return list ->
@@ -136,7 +136,7 @@ public final class CollectionAssertions
         };
     }
 
-    public static <K, V> AlchemyAssertion<Map<K, V>> mapWithKey(@NonNull K key) throws IllegalArgumentException
+    public static <K, V> AlchemyAssertion<Map<K, V>> aMapWithKey(@NonNull K key) throws IllegalArgumentException
     {
         checkNotNull(key, "key cannot be null");
 
@@ -151,13 +151,13 @@ public final class CollectionAssertions
         };
     }
 
-    public static <K, V> AlchemyAssertion<Map<K, V>> mapWithKeyValue(@NonNull K key, V value) throws IllegalArgumentException
+    public static <K, V> AlchemyAssertion<Map<K, V>> aMapWithKeyValue(@NonNull K key, V value) throws IllegalArgumentException
     {
         checkNotNull(key, "key cannot be null");
 
         return map ->
         {
-            CollectionAssertions.<K, V>mapWithKey(key)
+            CollectionAssertions.<K, V>aMapWithKey(key)
                     .check(map);
 
             V valueInMap = map.get(key);
