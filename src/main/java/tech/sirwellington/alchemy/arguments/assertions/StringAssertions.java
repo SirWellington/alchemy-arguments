@@ -241,15 +241,15 @@ public final class StringAssertions
     /**
      * Asserts that the argument string's length is between the specified lengths, inclusively.
      *
-     * @param minimumLength The String's length must be greater than or equal to this.
-     * @param maximumLength The String's length must be less than or equal to this.
+     * @param minimumLength Minimum String Length, inclusive.
+     * @param maximumLength Maximum String Length, inclusive.
      *
      * @return
      */
     public static AlchemyAssertion<String> aStringWithLengthBetween(int minimumLength, int maximumLength)
     {
         Checks.Internal.checkThat(minimumLength >= 0, "Minimum length must be at least 0");
-        Checks.Internal.checkThat(minimumLength < maximumLength, "Minimum length must be > maximum length.");
+        Checks.Internal.checkThat(minimumLength < maximumLength, "Minimum length must be < maximum length.");
 
         return (String string) ->
         {
