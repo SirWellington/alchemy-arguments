@@ -64,10 +64,10 @@ public class CollectionAssertionsTest
     }
 
     @Test
-    public void testANonEmptyCollection()
+    public void testNonEmptyCollection()
     {
 
-        AlchemyAssertion<Collection<String>> instance = CollectionAssertions.aNonEmptyCollection();
+        AlchemyAssertion<Collection<String>> instance = CollectionAssertions.nonEmptyCollection();
         assertThat(instance, notNullValue());
 
         List<String> strings = listOf(alphabeticString());
@@ -82,9 +82,9 @@ public class CollectionAssertionsTest
     }
 
     @Test
-    public void testANonEmptyList()
+    public void testNonEmptyList()
     {
-        AlchemyAssertion<List<String>> instance = CollectionAssertions.aNonEmptyList();
+        AlchemyAssertion<List<String>> instance = CollectionAssertions.nonEmptyList();
         assertThat(instance, notNullValue());
 
         List<String> strings = listOf(alphabeticString());
@@ -98,9 +98,9 @@ public class CollectionAssertionsTest
     }
 
     @Test
-    public void testANonEmptyMap()
+    public void testNonEmptyMap()
     {
-        AlchemyAssertion<Map<String, Integer>> instance = CollectionAssertions.aNonEmptyMap();
+        AlchemyAssertion<Map<String, Integer>> instance = CollectionAssertions.nonEmptyMap();
 
         Map<String, Integer> map = mapOf(alphabeticString(),
                                          positiveIntegers(),
@@ -116,9 +116,9 @@ public class CollectionAssertionsTest
     }
 
     @Test
-    public void testANonEmptyArray()
+    public void testNonEmptyArray()
     {
-        AlchemyAssertion<String[]> instance = CollectionAssertions.aNonEmptyArray();
+        AlchemyAssertion<String[]> instance = CollectionAssertions.nonEmptyArray();
         assertThat(instance, notNullValue());
 
         assertThrows(() -> instance.check(null))
@@ -138,12 +138,12 @@ public class CollectionAssertionsTest
     }
 
     @Test
-    public void testAListContaining()
+    public void testListContaining()
     {
         List<String> strings = listOf(alphabeticString());
         String string = strings.stream().findAny().orElseGet(alphabeticString());
 
-        AlchemyAssertion<List<String>> instance = CollectionAssertions.aListContaining(string);
+        AlchemyAssertion<List<String>> instance = CollectionAssertions.listContaining(string);
         assertThat(instance, notNullValue());
         instance.check(strings);
 
@@ -154,13 +154,13 @@ public class CollectionAssertionsTest
     }
 
     @Test
-    public void testAMapWithKey()
+    public void testMapWithKey()
     {
         Map<Integer, String> map = mapOf(positiveIntegers(), hexadecimalString(100), 100);
         
         Integer key = map.keySet().stream().findAny().get();
         
-        AlchemyAssertion<Map<Integer, String>> instance = CollectionAssertions.aMapWithKey(key);
+        AlchemyAssertion<Map<Integer, String>> instance = CollectionAssertions.mapWithKey(key);
         assertThat(instance, notNullValue());
         
         instance.check(map);
@@ -170,14 +170,14 @@ public class CollectionAssertionsTest
     }
 
     @Test
-    public void testAMapWithKeyValue()
+    public void testMapWithKeyValue()
     {
         Map<Integer, String> map = mapOf(positiveIntegers(), alphabeticString(), 100);
 
         Map.Entry<Integer, String> anyEntry = map.entrySet().stream().findAny().get();
 
         AlchemyAssertion<Map<Integer, String>> instance;
-        instance = CollectionAssertions.aMapWithKeyValue(anyEntry.getKey(), anyEntry.getValue());
+        instance = CollectionAssertions.mapWithKeyValue(anyEntry.getKey(), anyEntry.getValue());
         assertThat(instance, notNullValue());
 
         //Should pass OK

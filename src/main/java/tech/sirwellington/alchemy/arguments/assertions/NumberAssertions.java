@@ -121,7 +121,7 @@ public final class NumberAssertions
      *
      * @return
      */
-    public static AlchemyAssertion<Integer> aPositiveInteger()
+    public static AlchemyAssertion<Integer> positiveInteger()
     {
         return (Integer number) ->
         {
@@ -176,7 +176,7 @@ public final class NumberAssertions
      *
      * @return
      */
-    public static AlchemyAssertion<Long> aPositiveLong()
+    public static AlchemyAssertion<Long> positiveLong()
     {
         return (Long number) ->
         {
@@ -238,7 +238,7 @@ public final class NumberAssertions
      *
      * @throws IllegalArgumentException If {@code min >= max}. {@code min} should always be less than {@code max}.
      */
-    public static AlchemyAssertion<Integer> aNumberBetween(int min, int max) throws IllegalArgumentException
+    public static AlchemyAssertion<Integer> numberBetween(int min, int max) throws IllegalArgumentException
     {
         Checks.Internal.checkThat(min < max, "Minimum must be less than Max.");
         return (Integer number) ->

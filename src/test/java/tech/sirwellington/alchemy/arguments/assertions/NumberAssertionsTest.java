@@ -142,11 +142,11 @@ public class NumberAssertionsTest
     }
 
     @Test
-    public void testANumberBetweenInts() throws Exception
+    public void testNumberBetweenInts() throws Exception
     {
         int min = one(integers(Integer.MIN_VALUE, Integer.MAX_VALUE - 10));
         int max = one(integers(min, Integer.MAX_VALUE));
-        AlchemyAssertion<Integer> instance = NumberAssertions.aNumberBetween(min, max);
+        AlchemyAssertion<Integer> instance = NumberAssertions.numberBetween(min, max);
 
         assertThat(instance, notNullValue());
         Tests.checkForNullCase(instance);
@@ -167,19 +167,19 @@ public class NumberAssertionsTest
     }
 
     @Test
-    public void testANumberBetweenIntsEdgeCases() throws Exception
+    public void testNumberBetweenIntsEdgeCases() throws Exception
     {
         int min = one(integers(Integer.MIN_VALUE, Integer.MAX_VALUE - 10));
         int max = one(integers(min, Integer.MAX_VALUE));
 
-        assertThrows(() -> NumberAssertions.aNumberBetween(max, min))
+        assertThrows(() -> NumberAssertions.numberBetween(max, min))
                 .isInstanceOf(IllegalArgumentException.class);
     }
 
     @Test
-    public void testAPositiveLong()
+    public void testPositiveLong()
     {
-        AlchemyAssertion<Long> instance = NumberAssertions.aPositiveLong();
+        AlchemyAssertion<Long> instance = NumberAssertions.positiveLong();
         assertThat(instance, notNullValue());
         Tests.checkForNullCase(instance);
 
@@ -302,9 +302,9 @@ public class NumberAssertionsTest
     }
 
     @Test
-    public void testAPositiveInteger()
+    public void testPositiveInteger()
     {
-        AlchemyAssertion<Integer> instance = NumberAssertions.aPositiveInteger();
+        AlchemyAssertion<Integer> instance = NumberAssertions.positiveInteger();
 
         assertThat(instance, notNullValue());
         Tests.checkForNullCase(instance);

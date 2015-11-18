@@ -63,9 +63,9 @@ public class StringAssertionsTest
     }
 
     @Test
-    public void testAnEmptyString()
+    public void testEmptyString()
     {
-        AlchemyAssertion<String> instance = StringAssertions.anEmptyString();
+        AlchemyAssertion<String> instance = StringAssertions.emptyString();
 
         AlchemyGenerator<String> badArguments = alphabeticString();
         AlchemyGenerator<String> goodArguments = stringsFromFixedList(null, "");
@@ -74,11 +74,11 @@ public class StringAssertionsTest
     }
 
     @Test
-    public void testAStringWithLengthGreaterThan()
+    public void testStringWithLengthGreaterThan()
     {
 
         int minAccepted = one(integers(2, 10_100));
-        AlchemyAssertion<String> instance = StringAssertions.aStringWithLengthGreaterThan(minAccepted);
+        AlchemyAssertion<String> instance = StringAssertions.stringWithLengthGreaterThan(minAccepted);
 
         AlchemyGenerator<String> badArguments = () ->
         {
@@ -99,21 +99,21 @@ public class StringAssertionsTest
     }
 
     @Test
-    public void testAStringWithLengthGreaterThanEdgeCases()
+    public void testStringWithLengthGreaterThanEdgeCases()
     {
-        assertThrows(() -> StringAssertions.aStringWithLengthGreaterThan(Integer.MAX_VALUE))
+        assertThrows(() -> StringAssertions.stringWithLengthGreaterThan(Integer.MAX_VALUE))
                 .isInstanceOf(IllegalArgumentException.class);
 
         int badArgument = one(integers(Integer.MIN_VALUE, 1));
-        assertThrows(() -> StringAssertions.aStringWithLengthGreaterThan(badArgument))
+        assertThrows(() -> StringAssertions.stringWithLengthGreaterThan(badArgument))
                 .isInstanceOf(IllegalArgumentException.class);
     }
 
     @Test
-    public void testAStringWithLengthLessThan()
+    public void testStringWithLengthLessThan()
     {
         int upperBound = one(integers(2, 1_000));
-        AlchemyAssertion<String> instance = StringAssertions.aStringWithLengthLessThan(upperBound);
+        AlchemyAssertion<String> instance = StringAssertions.stringWithLengthLessThan(upperBound);
 
         AlchemyGenerator<String> badArguments = () ->
         {
@@ -131,35 +131,35 @@ public class StringAssertionsTest
     }
 
     @Test
-    public void testAStringWithLengthLessThanEdgeCases()
+    public void testStringWithLengthLessThanEdgeCases()
     {
         int badArgument = one(integers(Integer.MIN_VALUE, 1));
-        assertThrows(() -> StringAssertions.aStringWithLengthLessThan(badArgument))
+        assertThrows(() -> StringAssertions.stringWithLengthLessThan(badArgument))
                 .isInstanceOf(IllegalArgumentException.class);
     }
 
     @Test
-    public void testAStringThatMatches()
+    public void testStringThatMatches()
     {
         String letter = one(alphabeticString()).substring(0, 1);
         Pattern pattern = Pattern.compile(".*" + letter + ".*");
-        AlchemyAssertion<String> instance = StringAssertions.aStringThatMatches(pattern);
+        AlchemyAssertion<String> instance = StringAssertions.stringThatMatches(pattern);
         AlchemyGenerator<String> badArguments = () -> alphabeticString().get().replaceAll(letter, "");
         AlchemyGenerator<String> goodArguments = () -> alphabeticString().get() + letter;
         Tests.runTests(instance, badArguments, goodArguments);
     }
 
     @Test
-    public void testAStringThatMatchesEdgeCases()
+    public void testStringThatMatchesEdgeCases()
     {
-        assertThrows(() -> StringAssertions.aStringThatMatches(null))
+        assertThrows(() -> StringAssertions.stringThatMatches(null))
                 .isInstanceOf(IllegalArgumentException.class);
     }
 
     @Test
-    public void testANonEmptyString() throws Exception
+    public void testNonEmptyString() throws Exception
     {
-        AlchemyAssertion<String> instance = StringAssertions.aNonEmptyString();
+        AlchemyAssertion<String> instance = StringAssertions.nonEmptyString();
         assertThat(instance, notNullValue());
 
         String arg = one(alphabeticString());
@@ -173,13 +173,13 @@ public class StringAssertionsTest
     }
 
     @Test
-    public void testAStringWithLength() throws Exception
+    public void testStringWithLength() throws Exception
     {
-        assertThrows(() -> StringAssertions.aStringWithLength(one(negativeIntegers())))
+        assertThrows(() -> StringAssertions.stringWithLength(one(negativeIntegers())))
                 .isInstanceOf(IllegalArgumentException.class);
 
         int expectedLength = one(integers(5, 25));
-        AlchemyAssertion<String> instance = StringAssertions.aStringWithLength(expectedLength);
+        AlchemyAssertion<String> instance = StringAssertions.stringWithLength(expectedLength);
         assertThat(instance, notNullValue());
         Tests.checkForNullCase(instance);
 
@@ -197,29 +197,29 @@ public class StringAssertionsTest
     }
 
     @Test
-    public void testAStringWithLengthEdgeCases() throws Exception
+    public void testStringWithLengthEdgeCases() throws Exception
     {
         int badArgument = one(negativeIntegers());
 
-        assertThrows(() -> StringAssertions.aStringWithLength(badArgument))
+        assertThrows(() -> StringAssertions.stringWithLength(badArgument))
                 .isInstanceOf(IllegalArgumentException.class);
     }
 
     @Test
-    public void testAStringWithLengthGreaterThanOrEqualToWithBadArgs() throws Exception
+    public void testStringWithLengthGreaterThanOrEqualToWithBadArgs() throws Exception
     {
         int negativeNumber = one(negativeIntegers());
 
-        assertThrows(() -> StringAssertions.aStringWithLengthGreaterThanOrEqualTo(negativeNumber))
+        assertThrows(() -> StringAssertions.stringWithLengthGreaterThanOrEqualTo(negativeNumber))
                 .isInstanceOf(IllegalArgumentException.class);
     }
 
     @Test
-    public void testAStringWithLengthGreaterThanOrEqualTo() throws Exception
+    public void testStringWithLengthGreaterThanOrEqualTo() throws Exception
     {
         int expectedSize = one(integers(10, 100));
 
-        AlchemyAssertion<String> instance = StringAssertions.aStringWithLengthGreaterThanOrEqualTo(expectedSize);
+        AlchemyAssertion<String> instance = StringAssertions.stringWithLengthGreaterThanOrEqualTo(expectedSize);
         assertThat(instance, notNullValue());
         Tests.checkForNullCase(instance);
 
@@ -238,19 +238,19 @@ public class StringAssertionsTest
     }
 
     @Test
-    public void testAStringWithLengthLessThanOrEqualToWithBadArgs() throws Exception
+    public void testStringWithLengthLessThanOrEqualToWithBadArgs() throws Exception
     {
         int negativeNumber = one(negativeIntegers());
 
-        assertThrows(() -> StringAssertions.aStringWithLengthLessThanOrEqualTo(negativeNumber))
+        assertThrows(() -> StringAssertions.stringWithLengthLessThanOrEqualTo(negativeNumber))
                 .isInstanceOf(IllegalArgumentException.class);
     }
 
     @Test
-    public void testAStringWithLengthLessThanOrEqualTo() throws Exception
+    public void testStringWithLengthLessThanOrEqualTo() throws Exception
     {
         int expectedSize = one(integers(5, 100));
-        AlchemyAssertion<String> instance = StringAssertions.aStringWithLengthLessThanOrEqualTo(expectedSize);
+        AlchemyAssertion<String> instance = StringAssertions.stringWithLengthLessThanOrEqualTo(expectedSize);
 
         assertThat(instance, notNullValue());
         Tests.checkForNullCase(instance);
@@ -264,9 +264,9 @@ public class StringAssertionsTest
     }
 
     @Test
-    public void testAStringWithNoWhitespace() throws Exception
+    public void testStringWithNoWhitespace() throws Exception
     {
-        AlchemyAssertion<String> instance = StringAssertions.aStringWithNoWhitespace();
+        AlchemyAssertion<String> instance = StringAssertions.stringWithNoWhitespace();
         assertThat(instance, notNullValue());
         Tests.checkForNullCase(instance);
 
@@ -279,12 +279,12 @@ public class StringAssertionsTest
     }
 
     @Test
-    public void testAStringWithLengthBetween() throws Exception
+    public void testStringWithLengthBetween() throws Exception
     {
         int minimumLength = one(integers(10, 100));
         int maximumLength = one(integers(minimumLength + 1, 1_000));
 
-        AlchemyAssertion<String> instance = StringAssertions.aStringWithLengthBetween(minimumLength, maximumLength);
+        AlchemyAssertion<String> instance = StringAssertions.stringWithLengthBetween(minimumLength, maximumLength);
         assertThat(instance, notNullValue());
         Tests.checkForNullCase(instance);
 
@@ -317,26 +317,26 @@ public class StringAssertionsTest
     }
 
     @Test
-    public void testAStringWithLengthBetweenEdgeCases() throws Exception
+    public void testStringWithLengthBetweenEdgeCases() throws Exception
     {
 
         int minimumLength = one(integers(10, 100));
         int maximumLength = one(integers(minimumLength, 1_000));
 
-        assertThrows(() -> StringAssertions.aStringWithLengthBetween(maximumLength, minimumLength))
+        assertThrows(() -> StringAssertions.stringWithLengthBetween(maximumLength, minimumLength))
                 .isInstanceOf(IllegalArgumentException.class);
 
-        assertThrows(() -> StringAssertions.aStringWithLengthBetween(-minimumLength, maximumLength))
+        assertThrows(() -> StringAssertions.stringWithLengthBetween(-minimumLength, maximumLength))
                 .isInstanceOf(IllegalArgumentException.class);
     }
 
     @Test
-    public void testAStringBeginningWith()
+    public void testStringBeginningWith()
     {
         String string = one(strings(20));
         String prefix = one(strings(4));
 
-        AlchemyAssertion<String> instance = StringAssertions.aStringBeginningWith(prefix);
+        AlchemyAssertion<String> instance = StringAssertions.stringBeginningWith(prefix);
 
         //Happy Cases
         instance.check(prefix + string);
@@ -351,12 +351,12 @@ public class StringAssertionsTest
     }
 
     @Test
-    public void testAStringBeginningWithEdgeCases()
+    public void testStringBeginningWithEdgeCases()
     {
-        assertThrows(() -> StringAssertions.aStringBeginningWith(null))
+        assertThrows(() -> StringAssertions.stringBeginningWith(null))
                 .isInstanceOf(IllegalArgumentException.class);
 
-        assertThrows(() -> StringAssertions.aStringBeginningWith(""))
+        assertThrows(() -> StringAssertions.stringBeginningWith(""))
                 .isInstanceOf(IllegalArgumentException.class);
     }
 
