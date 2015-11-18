@@ -43,7 +43,7 @@ import static tech.sirwellington.alchemy.test.junit.ThrowableAssertion.assertThr
  *
  * @author SirWellington
  */
-@Repeat
+@Repeat(1_000)
 @RunWith(AlchemyTestRunner.class)
 public class StringAssertionsTest
 {
@@ -77,7 +77,7 @@ public class StringAssertionsTest
     public void testAStringWithLengthGreaterThan()
     {
 
-        int minAccepted = one(smallPositiveIntegers());
+        int minAccepted = one(integers(2, 10_100));
         AlchemyAssertion<String> instance = StringAssertions.aStringWithLengthGreaterThan(minAccepted);
 
         AlchemyGenerator<String> badArguments = () ->
