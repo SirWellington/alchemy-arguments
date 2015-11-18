@@ -33,17 +33,15 @@ import static tech.sirwellington.alchemy.generator.NumberGenerators.integers;
 import static tech.sirwellington.alchemy.generator.NumberGenerators.negativeIntegers;
 import static tech.sirwellington.alchemy.generator.NumberGenerators.smallPositiveIntegers;
 import static tech.sirwellington.alchemy.generator.StringGenerators.alphabeticString;
-import static tech.sirwellington.alchemy.generator.StringGenerators.hexadecimalString;
 import static tech.sirwellington.alchemy.generator.StringGenerators.strings;
 import static tech.sirwellington.alchemy.generator.StringGenerators.stringsFromFixedList;
-import static tech.sirwellington.alchemy.generator.StringGenerators.uuids;
 import static tech.sirwellington.alchemy.test.junit.ThrowableAssertion.assertThrows;
 
 /**
  *
  * @author SirWellington
  */
-@Repeat(1_000)
+@Repeat(5_000)
 @RunWith(AlchemyTestRunner.class)
 public class StringAssertionsTest
 {
@@ -112,7 +110,7 @@ public class StringAssertionsTest
     @Test
     public void testAStringWithLengthLessThan()
     {
-        int upperBound = one(smallPositiveIntegers());
+        int upperBound = one(integers(2, 1_000));
         AlchemyAssertion<String> instance = StringAssertions.aStringWithLengthLessThan(upperBound);
 
         AlchemyGenerator<String> badArguments = () ->
@@ -271,7 +269,9 @@ public class StringAssertionsTest
         Tests.checkForNullCase(instance);
 
         AlchemyGenerator<String> goodString = alphabeticString();
-        AlchemyGenerator<String> badStrings = () -> goodString + one(stringsFromFixedList(" ", "\n", "\t")) + goodString;
+        AlchemyGenerator<String> badStrings = () -> goodString 
+                                                    + one(stringsFromFixedList(" ", "\n", "\t"))
+                                                    + goodString;
 
         Tests.runTests(instance, badStrings, goodString);
     }
@@ -326,30 +326,6 @@ public class StringAssertionsTest
 
         assertThrows(() -> StringAssertions.aStringWithLengthBetween(-minimumLength, maximumLength))
                 .isInstanceOf(IllegalArgumentException.class);
-    }
-
-    @Test
-    public void testHasNoWhitespace()
-    {
-        AlchemyAssertion<String> instance = StringAssertions.aStringWithNoWhitespace();
-        assertThat(instance, notNullValue());
-        Tests.checkForNullCase(instance);
-
-        String alphabetic = one(alphabeticString());
-        instance.check(alphabetic);
-
-        String hex = one(hexadecimalString(10));
-        instance.check(hex);
-
-        assertThrows(() -> instance.check(one(alphabeticString()) + " "))
-                .isInstanceOf(FailedAssertionException.class);
-
-        assertThrows(() -> instance.check("some white space here"))
-                .isInstanceOf(FailedAssertionException.class);
-
-        assertThrows(() -> instance.check(" " + one(uuids)))
-                .isInstanceOf(FailedAssertionException.class);
-
     }
 
     @Test
