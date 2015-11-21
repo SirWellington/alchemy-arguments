@@ -36,6 +36,7 @@ import static tech.sirwellington.alchemy.generator.NumberGenerators.smallPositiv
 import static tech.sirwellington.alchemy.generator.StringGenerators.alphabeticString;
 import static tech.sirwellington.alchemy.generator.StringGenerators.strings;
 import static tech.sirwellington.alchemy.generator.StringGenerators.stringsFromFixedList;
+import static tech.sirwellington.alchemy.generator.StringGenerators.uuids;
 import static tech.sirwellington.alchemy.test.junit.ThrowableAssertion.assertThrows;
 
 /**
@@ -358,6 +359,29 @@ public class StringAssertionsTest
 
         assertThrows(() -> StringAssertions.stringBeginningWith(""))
                 .isInstanceOf(IllegalArgumentException.class);
+    }
+
+    @Test
+    public void testStringContaining()
+    {
+        String longString = one(strings(1000));
+        String substring = longString.substring(0, 100);
+        
+        // Happy Case
+        StringAssertions.stringContaining(substring)
+            .check(longString);
+        
+        //Sad Cases
+        assertThrows(() -> StringAssertions.stringContaining(""))
+            .isInstanceOf(IllegalArgumentException.class);
+
+        assertThrows(() -> StringAssertions.stringContaining(null))
+            .isInstanceOf(IllegalArgumentException.class);
+
+        String notSubstring = substring + one(uuids());
+        assertThrows(() -> StringAssertions.stringContaining(notSubstring)
+                                           .check(longString))
+            .isInstanceOf(FailedAssertionException.class);
     }
 
 }

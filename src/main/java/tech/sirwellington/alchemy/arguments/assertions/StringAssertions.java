@@ -20,10 +20,12 @@ package tech.sirwellington.alchemy.arguments.assertions;
 
 import java.util.regex.Pattern;
 import tech.sirwellington.alchemy.annotations.access.NonInstantiable;
+import tech.sirwellington.alchemy.annotations.arguments.NonEmpty;
 import tech.sirwellington.alchemy.arguments.AlchemyAssertion;
 import tech.sirwellington.alchemy.arguments.Checks;
 import tech.sirwellington.alchemy.arguments.FailedAssertionException;
 
+import static java.lang.String.format;
 import static tech.sirwellington.alchemy.arguments.Checks.Internal.isNullOrEmpty;
 
 /**
@@ -216,7 +218,6 @@ public final class StringAssertions
         };
     }
 
-    //==========================String Assertions====================================
     /**
      * Asserts that a given string is not empty (neither null nor completely empty).
      *
@@ -246,13 +247,34 @@ public final class StringAssertions
         Checks.Internal.checkThat(minimumLength >= 0, "Minimum length must be at least 0");
         Checks.Internal.checkThat(minimumLength < maximumLength, "Minimum length must be < maximum length.");
 
-        return (String string) ->
+        return string ->
         {
             Assertions.notNull().check(string);
             if (string.length() < minimumLength || string.length() > maximumLength)
             {
                 String message = String.format("Argument size is not between acceptable range of [%d -> %d]", minimumLength, maximumLength);
                 throw new FailedAssertionException(message);
+            }
+        };
+    }
+    
+    /**
+     * Checks that a string contains another.
+     * 
+     * @param substring
+     * @throws IllegalArgumentException If {@code substring} is null or empty.
+     */
+    public static AlchemyAssertion<String> stringContaining(@NonEmpty String substring) throws IllegalArgumentException
+    {
+        Checks.Internal.checkNotNullOrEmpty(substring, "substring cannot be empty");
+        
+        return string ->
+        {
+            nonEmptyString().check(string);
+            
+            if (!string.contains(substring))
+            {
+                throw new FailedAssertionException(format("Expected %s to contain %s", string, substring));
             }
         };
     }
