@@ -7,6 +7,26 @@ Alchemy Arguments
 
 [![Build Status](https://travis-ci.org/SirWellington/alchemy-arguments.svg)](https://travis-ci.org/SirWellington/alchemy-arguments)
 
+- [Purpose](#purpose)
+- [API](#api)
+  - [Multiple Arguments](#multiple-arguments)
+  - [Error Message](#error-message)
+  - [Custom Exceptions](#custom-exceptions)
+  - [Custom Assertions](#custom-assertions)
+- [Download](#download)
+  - [Release](#release)
+  - [Snapshot](#snapshot)
+- [[Javadocs](http://www.javadoc.io/doc/tech.sirwellington.alchemy/alchemy-arguments/)](#javadocshttpwwwjavadociodoctechsirwellingtonalchemyalchemy-arguments)
+- [Requirements](#requirements)
+- [Building](#building)
+- [Release Notes](#release-notes)
+  - [1.3](#13)
+  - [1.2](#12)
+  - [1.1](#11)
+  - [1.0.0](#100)
+- [Planned Features](#planned-features)
+  - [Assertions on multiple arguments simultaneously](#assertions-on-multiple-arguments-simultaneously)
+- [License](#license)
 
 # Purpose
 Part of the [Alchemy Collection](https://github.com/SirWellington/alchemy), **Alchemy Arguments** allows developers to perform fluid argument checking and validation.
@@ -190,7 +210,7 @@ To use, simply add the following maven dependency.
 <dependency>
 	<groupId>tech.sirwellington.alchemy</groupId>
 	<artifactId>alchemy-arguments</artifactId>
-	<version>1.2</version>
+	<version>1.3</version>
 </dependency>
 ```
 
@@ -208,7 +228,7 @@ To use, simply add the following maven dependency.
 <dependency>
 	<groupId>tech.sirwellington.alchemy</groupId>
 	<artifactId>alchemy-arguments</artifactId>
-	<version>1.3-SNAPSHOT</version>
+	<version>1.4-SNAPSHOT</version>
 </dependency>
 ```
 
@@ -230,6 +250,17 @@ New Assertions
 + `mapWithKey()`
 + `mapWithKeyAndValue()`
 
+New Assertions
+Dates and Times:
++ `inThePast()`
++ `inTheFuture()`
++ `before()`
++ `after()`
+Other
++ `stringBeginningWith()`
++ `stringContaining()`
++ `stringThatMatches()`
++ `listContaining()`
 
 ## 1.2
 Multiple Assertions
@@ -241,26 +272,10 @@ checkThat(firstName, middleName, lastName, password, description)
 
 New Assertions
 + `instanceOf()`
-+ `stringThatStartsWith()`
+
 
 ## 1.1
 + Initial Public Release
-
-
-## 1.0.0
-+ Initial Release
-
-# Planned Features
-
-## Assertions on multiple arguments simultaneously
-For example
-
-```java
-
-checkThat(firstName, middleName, lastName)
-.are(nonEmptyString());
-
-```
 
 # License
 
