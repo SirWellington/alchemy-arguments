@@ -90,6 +90,16 @@ public final class Checks
                 throw new IllegalArgumentException(message);
             }
         }
+        
+        public static void checkNotNullOrEmpty(String string) throws IllegalArgumentException
+        {
+            checkThat(!isNullOrEmpty(string));
+        }
+        
+        public static void checkNotNullOrEmpty(String string, String message) throws IllegalArgumentException
+        {
+            checkThat(!isNullOrEmpty(string), message);
+        }
 
     }
 

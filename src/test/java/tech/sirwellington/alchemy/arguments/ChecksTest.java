@@ -54,10 +54,10 @@ public class ChecksTest
     public void testCannotInstantiate()
     {
         assertThrows(() -> Checks.class.newInstance())
-                .isInstanceOf(IllegalAccessException.class);
+            .isInstanceOf(IllegalAccessException.class);
 
         assertThrows(() -> Checks.Internal.class.newInstance())
-                .isInstanceOf(IllegalAccessException.class);
+            .isInstanceOf(IllegalAccessException.class);
     }
 
     @DontRepeat
@@ -68,7 +68,7 @@ public class ChecksTest
         Checks.Internal.checkNotNull(this);
 
         assertThrows(() -> Checks.Internal.checkNotNull(null))
-                .isInstanceOf(IllegalArgumentException.class);
+            .isInstanceOf(IllegalArgumentException.class);
     }
 
     @Test
@@ -79,8 +79,8 @@ public class ChecksTest
         Checks.Internal.checkNotNull(this, message);
 
         assertThrows(() -> Checks.Internal.checkNotNull(null, message))
-                .isInstanceOf(IllegalArgumentException.class)
-                .hasMessage(message);
+            .isInstanceOf(IllegalArgumentException.class)
+            .hasMessage(message);
     }
 
     @Test
@@ -89,7 +89,7 @@ public class ChecksTest
         Checks.Internal.checkThat(true);
 
         assertThrows(() -> Checks.Internal.checkThat(false))
-                .isInstanceOf(IllegalArgumentException.class);
+            .isInstanceOf(IllegalArgumentException.class);
     }
 
     @Test
@@ -100,8 +100,8 @@ public class ChecksTest
         Checks.Internal.checkThat(true, message);
 
         assertThrows(() -> Checks.Internal.checkThat(false, message))
-                .isInstanceOf(IllegalArgumentException.class)
-                .hasMessage(message);
+            .isInstanceOf(IllegalArgumentException.class)
+            .hasMessage(message);
     }
 
     @Test
@@ -111,8 +111,8 @@ public class ChecksTest
         Checks.Internal.checkState(true, message);
 
         assertThrows(() -> Checks.Internal.checkState(false, message))
-                .isInstanceOf(IllegalStateException.class)
-                .hasMessage(message);
+            .isInstanceOf(IllegalStateException.class)
+            .hasMessage(message);
     }
 
     @Test
@@ -138,6 +138,38 @@ public class ChecksTest
 
         assertThat(Checks.Internal.isNullOrEmpty(numbers), is(false));
         assertThat(Checks.Internal.isNullOrEmpty(strings), is(false));
+    }
+
+    @Test
+    public void testCheckNotNullOrEmpty()
+    {
+        String string = one(strings());
+        Checks.Internal.checkNotNullOrEmpty(string);
+
+        String emptyString = "";
+        assertThrows(() -> Checks.Internal.checkNotNullOrEmpty(emptyString))
+            .isInstanceOf(IllegalArgumentException.class);
+
+        String nullString = null;
+        assertThrows(() -> Checks.Internal.checkNotNullOrEmpty(nullString))
+            .isInstanceOf(IllegalArgumentException.class);
+    }
+
+    @Test
+    public void testCheckNotNullOrEmptyWithMessage()
+    {
+        String string = one(strings());
+        String message = one(alphabeticString());
+        Checks.Internal.checkNotNullOrEmpty(string, message);
+
+        assertThrows(() -> Checks.Internal.checkNotNullOrEmpty("", message))
+            .isInstanceOf(IllegalArgumentException.class)
+            .hasMessage(message);
+
+        assertThrows(() -> Checks.Internal.checkNotNullOrEmpty(null, message))
+            .isInstanceOf(IllegalArgumentException.class)
+            .hasMessage(message);
+
     }
 
 }
