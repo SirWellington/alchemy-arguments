@@ -24,6 +24,7 @@ import tech.sirwellington.alchemy.annotations.designs.FluidAPIDesign;
 import tech.sirwellington.alchemy.annotations.designs.patterns.StrategyPattern;
 
 import static tech.sirwellington.alchemy.annotations.designs.patterns.StrategyPattern.Role.CLIENT;
+import static tech.sirwellington.alchemy.arguments.Checks.Internal.isNullOrEmpty;
 import static tech.sirwellington.alchemy.arguments.ExceptionMapper.IDENTITY;
 
 /**
@@ -59,7 +60,7 @@ final class AssertionBuilderImpl<Argument, Ex extends Throwable> implements Asse
     @Override
     public AssertionBuilder<Argument, Ex> usingMessage(String message)
     {
-        Checks.checkThat(!Checks.isNullOrEmpty(message), "error message is empty");
+        Checks.Internal.checkThat(!isNullOrEmpty(message), "error message is empty");
 
         return new AssertionBuilderImpl<>(assertion, exceptionMapper, message, arguments);
     }
@@ -72,7 +73,7 @@ final class AssertionBuilderImpl<Argument, Ex extends Throwable> implements Asse
     @Override
     public <Ex extends Throwable> AssertionBuilderImpl<Argument, Ex> throwing(ExceptionMapper<Ex> exceptionMapper)
     {
-        Checks.checkNotNull(exceptionMapper, "exceptionMapper is null");
+        Checks.Internal.checkNotNull(exceptionMapper, "exceptionMapper is null");
 
         return new AssertionBuilderImpl<>(null, exceptionMapper, "", arguments);
     }
@@ -80,7 +81,7 @@ final class AssertionBuilderImpl<Argument, Ex extends Throwable> implements Asse
     @Override
     public AssertionBuilderImpl<Argument, Ex> is(AlchemyAssertion<Argument> assertion) throws Ex
     {
-        Checks.checkNotNull(assertion, "assertion is null");
+        Checks.Internal.checkNotNull(assertion, "assertion is null");
 
         AssertionBuilderImpl<Argument, Ex> newBuilder = new AssertionBuilderImpl<>(assertion, exceptionMapper, overrideMessage, arguments);
 
@@ -92,8 +93,8 @@ final class AssertionBuilderImpl<Argument, Ex extends Throwable> implements Asse
 
     private void checkAssertion() throws Ex
     {
-        Checks.checkState(assertion != null, "no assertion found");
-        Checks.checkState(exceptionMapper != null, "no exceptionMapper found");
+        Checks.Internal.checkState(assertion != null, "no assertion found");
+        Checks.Internal.checkState(exceptionMapper != null, "no exceptionMapper found");
 
         FailedAssertionException caught = null;
 
@@ -104,7 +105,7 @@ final class AssertionBuilderImpl<Argument, Ex extends Throwable> implements Asse
         catch (FailedAssertionException ex)
         {
             caught = ex;
-            if (!Checks.isNullOrEmpty(overrideMessage))
+            if (!Checks.Internal.isNullOrEmpty(overrideMessage))
             {
                 caught.changeMessage(overrideMessage);
             }

@@ -15,16 +15,17 @@
  */
 package tech.sirwellington.alchemy.arguments;
 
-import static java.util.Arrays.asList;
 import java.util.List;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.Spy;
+import tech.sirwellington.alchemy.test.junit.runners.AlchemyTestRunner;
+
+import static java.util.Arrays.asList;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.verify;
-import org.mockito.Spy;
-import org.mockito.runners.MockitoJUnitRunner;
 import static tech.sirwellington.alchemy.generator.AlchemyGenerator.one;
 import static tech.sirwellington.alchemy.generator.CollectionGenerators.listOf;
 import static tech.sirwellington.alchemy.generator.StringGenerators.alphabeticString;
@@ -34,7 +35,7 @@ import static tech.sirwellington.alchemy.test.junit.ThrowableAssertion.assertThr
  *
  * @author SirWellington
  */
-@RunWith(MockitoJUnitRunner.class)
+@RunWith(AlchemyTestRunner.class)
 public class AlchemyAssertionTest
 {
 
@@ -57,7 +58,6 @@ public class AlchemyAssertionTest
     @Test
     public void testOther()
     {
-        System.out.println("testOther");
         AlchemyAssertion<Object> assertion = first;
 
         for (AlchemyAssertion<Object> element : otherAssertions)
@@ -73,16 +73,12 @@ public class AlchemyAssertionTest
     @Test
     public void testOtherWithBadArgs()
     {
-        System.out.println("testOtherWithBadArgs");
-
         assertThrows(() -> first.and(null));
     }
 
     @Test
     public void testCombineWithMultiple()
     {
-        System.out.println("testCombineWithMultiple");
-
         AlchemyAssertion<Object> multipleAssertions = AlchemyAssertion.combine(first, otherAssertions);
 
         multipleAssertions.check(argument);
@@ -96,8 +92,6 @@ public class AlchemyAssertionTest
     @Test
     public void testCombineWithMultipleWithBadArgs()
     {
-        System.out.println("testCombineWithMultipleWithBadArgs");
-
         assertThrows(() -> AlchemyAssertion.combine(null, (AlchemyAssertion[]) null));
         assertThrows(() -> AlchemyAssertion.combine(first, (AlchemyAssertion[]) null));
 
@@ -106,8 +100,6 @@ public class AlchemyAssertionTest
     @Test
     public void testCombineWithSingle()
     {
-        System.out.println("testCombineWithSingle");
-
         AlchemyAssertion<Object> multipleAssertions = AlchemyAssertion.combine(first);
         multipleAssertions.check(argument);
 

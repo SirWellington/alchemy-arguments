@@ -13,21 +13,21 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package tech.sirwellington.alchemy.arguments;
 
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
-import static org.hamcrest.Matchers.is;
-import static org.junit.Assert.assertThat;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.mockito.runners.MockitoJUnitRunner;
-import static tech.sirwellington.alchemy.arguments.Checks.checkNotNull;
-import static tech.sirwellington.alchemy.arguments.Checks.checkState;
-import static tech.sirwellington.alchemy.arguments.Checks.checkThat;
-import static tech.sirwellington.alchemy.arguments.Checks.isNullOrEmpty;
+import tech.sirwellington.alchemy.test.junit.runners.AlchemyTestRunner;
+import tech.sirwellington.alchemy.test.junit.runners.DontRepeat;
+import tech.sirwellington.alchemy.test.junit.runners.Repeat;
+
+import static org.hamcrest.Matchers.is;
+import static org.junit.Assert.assertThat;
 import static tech.sirwellington.alchemy.generator.AlchemyGenerator.one;
 import static tech.sirwellington.alchemy.generator.CollectionGenerators.listOf;
 import static tech.sirwellington.alchemy.generator.NumberGenerators.positiveIntegers;
@@ -39,7 +39,8 @@ import static tech.sirwellington.alchemy.test.junit.ThrowableAssertion.assertThr
  *
  * @author SirWellington
  */
-@RunWith(MockitoJUnitRunner.class)
+@RunWith(AlchemyTestRunner.class)
+@Repeat
 public class ChecksTest
 {
 
@@ -48,97 +49,127 @@ public class ChecksTest
     {
     }
 
+    @DontRepeat
+    @Test
+    public void testCannotInstantiate()
+    {
+        assertThrows(() -> Checks.class.newInstance())
+            .isInstanceOf(IllegalAccessException.class);
+
+        assertThrows(() -> Checks.Internal.class.newInstance())
+            .isInstanceOf(IllegalAccessException.class);
+    }
+
+    @DontRepeat
     @Test
     public void testCheckNotNull()
     {
-        System.out.println("testCheckNotNull");
+        Checks.Internal.checkNotNull("");
+        Checks.Internal.checkNotNull(this);
 
-        checkNotNull("");
-        checkNotNull(this);
-
-        assertThrows(() -> checkNotNull(null))
-                .isInstanceOf(IllegalArgumentException.class);
+        assertThrows(() -> Checks.Internal.checkNotNull(null))
+            .isInstanceOf(IllegalArgumentException.class);
     }
 
     @Test
     public void testCheckNotNullWithMessage()
     {
-        System.out.println("testCheckNotNullWithMessage");
-
         String message = one(alphabeticString());
-        checkNotNull("", message);
-        checkNotNull(this, message);
+        Checks.Internal.checkNotNull("", message);
+        Checks.Internal.checkNotNull(this, message);
 
-        assertThrows(() -> checkNotNull(null, message))
-                .isInstanceOf(IllegalArgumentException.class)
-                .hasMessage(message);
+        assertThrows(() -> Checks.Internal.checkNotNull(null, message))
+            .isInstanceOf(IllegalArgumentException.class)
+            .hasMessage(message);
     }
 
     @Test
     public void testCheckThat()
     {
-        System.out.println("testCheckThat");
+        Checks.Internal.checkThat(true);
 
-        checkThat(true);
-
-        assertThrows(() -> checkThat(false))
-                .isInstanceOf(IllegalArgumentException.class);
+        assertThrows(() -> Checks.Internal.checkThat(false))
+            .isInstanceOf(IllegalArgumentException.class);
     }
 
     @Test
     public void testCheckThatWithMessage()
     {
-        System.out.println("testCheckThatWithMessage");
-
         String message = one(alphabeticString());
 
-        checkThat(true, message);
+        Checks.Internal.checkThat(true, message);
 
-        assertThrows(() -> checkThat(false, message))
-                .isInstanceOf(IllegalArgumentException.class)
-                .hasMessage(message);
+        assertThrows(() -> Checks.Internal.checkThat(false, message))
+            .isInstanceOf(IllegalArgumentException.class)
+            .hasMessage(message);
     }
 
     @Test
     public void testCheckState()
     {
-        System.out.println("testCheckState");
-
         String message = one(alphabeticString());
-        checkState(true, message);
+        Checks.Internal.checkState(true, message);
 
-        assertThrows(() -> checkState(false, message))
-                .isInstanceOf(IllegalStateException.class)
-                .hasMessage(message);
+        assertThrows(() -> Checks.Internal.checkState(false, message))
+            .isInstanceOf(IllegalStateException.class)
+            .hasMessage(message);
     }
 
     @Test
     public void testIsNullOrEmptyString()
     {
-        System.out.println("testIsNullOrEmptyString");
-
-        assertThat(isNullOrEmpty((String) null), is(true));
-        assertThat(isNullOrEmpty(""), is(true));
-        assertThat(isNullOrEmpty(" "), is(false));
+        assertThat(Checks.Internal.isNullOrEmpty((String) null), is(true));
+        assertThat(Checks.Internal.isNullOrEmpty(""), is(true));
+        assertThat(Checks.Internal.isNullOrEmpty(" "), is(false));
 
         String string = one(alphabeticString());
-        assertThat(isNullOrEmpty(string), is(false));
+        assertThat(Checks.Internal.isNullOrEmpty(string), is(false));
     }
 
     @Test
     public void testIsNullOrEmptyCollection()
     {
-        System.out.println("testIsNullOrEmptyCollection");
-
-        assertThat(isNullOrEmpty(Collections.EMPTY_LIST), is(true));
-        assertThat(isNullOrEmpty(Collections.EMPTY_SET), is(true));
-        assertThat(isNullOrEmpty((Collection) null), is(true));
+        assertThat(Checks.Internal.isNullOrEmpty(Collections.EMPTY_LIST), is(true));
+        assertThat(Checks.Internal.isNullOrEmpty(Collections.EMPTY_SET), is(true));
+        assertThat(Checks.Internal.isNullOrEmpty((Collection) null), is(true));
 
         List<Integer> numbers = listOf(positiveIntegers());
         List<String> strings = listOf(strings(10));
 
-        assertThat(isNullOrEmpty(numbers), is(false));
-        assertThat(isNullOrEmpty(strings), is(false));
+        assertThat(Checks.Internal.isNullOrEmpty(numbers), is(false));
+        assertThat(Checks.Internal.isNullOrEmpty(strings), is(false));
+    }
+
+    @Test
+    public void testCheckNotNullOrEmpty()
+    {
+        String string = one(strings());
+        Checks.Internal.checkNotNullOrEmpty(string);
+
+        String emptyString = "";
+        assertThrows(() -> Checks.Internal.checkNotNullOrEmpty(emptyString))
+            .isInstanceOf(IllegalArgumentException.class);
+
+        String nullString = null;
+        assertThrows(() -> Checks.Internal.checkNotNullOrEmpty(nullString))
+            .isInstanceOf(IllegalArgumentException.class);
+    }
+
+    @Test
+    public void testCheckNotNullOrEmptyWithMessage()
+    {
+        String string = one(strings());
+        String message = one(alphabeticString());
+        Checks.Internal.checkNotNullOrEmpty(string, message);
+
+        assertThrows(() -> Checks.Internal.checkNotNullOrEmpty("", message))
+            .isInstanceOf(IllegalArgumentException.class)
+            .hasMessage(message);
+
+        assertThrows(() -> Checks.Internal.checkNotNullOrEmpty(null, message))
+            .isInstanceOf(IllegalArgumentException.class)
+            .hasMessage(message);
+
     }
 
 }

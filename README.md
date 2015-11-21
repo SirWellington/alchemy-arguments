@@ -1,50 +1,35 @@
 Alchemy Arguments
 ==============================================
 
-<img src="https://raw.githubusercontent.com/SirWellington/alchemy/develop/Graphics/Logo/Alchemy-Logo-v3-name.png" width="200">
+[<img src="https://raw.githubusercontent.com/SirWellington/alchemy/develop/Graphics/Logo/Alchemy-Logo-v3-name.png" width="200">](https://github.com/SirWellington/alchemy)
 
 ## "Check Yoself!"
 
 [![Build Status](https://travis-ci.org/SirWellington/alchemy-arguments.svg)](https://travis-ci.org/SirWellington/alchemy-arguments)
 
-
+- [Purpose](#purpose)
+- [API](#api)
+  - [Multiple Arguments](#multiple-arguments)
+  - [Error Message](#error-message)
+  - [Custom Exceptions](#custom-exceptions)
+  - [Custom Assertions](#custom-assertions)
+- [Download](#download)
+  - [Release](#release)
+  - [Snapshot](#snapshot)
+- [[Javadocs](http://www.javadoc.io/doc/tech.sirwellington.alchemy/alchemy-arguments/)](#javadocshttpwwwjavadociodoctechsirwellingtonalchemyalchemy-arguments)
+- [Requirements](#requirements)
+- [Building](#building)
+- [Release Notes](#release-notes)
+  - [1.3](#13)
+  - [1.2](#12)
+  - [1.1](#11)
+  - [1.0.0](#100)
+- [Planned Features](#planned-features)
+  - [Assertions on multiple arguments simultaneously](#assertions-on-multiple-arguments-simultaneously)
+- [License](#license)
 
 # Purpose
-Part of the Alchemy Collection, **Alchemy Arguments** allows developers to perform fluid argument checking and validation.
-
-
-# Download
-
-To use, simply add the following maven dependency.
-
-## Release
-```xml
-<dependency>
-	<groupId>tech.sirwellington.alchemy</groupId>
-	<artifactId>alchemy-arguments</artifactId>
-	<version>1.2</version>
-</dependency>
-```
-
-## Snapshot
-
->First add the Snapshot Repository
-```xml
-<repository>
-	<id>ossrh</id>
-    <url>https://oss.sonatype.org/content/repositories/snapshots</url>
-</repository>
-```
-
-```xml
-<dependency>
-	<groupId>tech.sirwellington.alchemy</groupId>
-	<artifactId>alchemy-test</artifactId>
-	<version>1.3-SNAPSHOT</version>
-</dependency>
-```
-
-# [Javadocs](http://www.javadoc.io/doc/tech.sirwellington.alchemy/alchemy-arguments/)
+Part of the [Alchemy Collection](https://github.com/SirWellington/alchemy), **Alchemy Arguments** allows developers to perform fluid argument checking and validation.
 
 
 # API
@@ -75,37 +60,58 @@ checkThat(zipCode)
 	.is(lessThanOrEqualTo(99999));
 ```
 
-# Why use this
+## Multiple Arguments
 
-You might be wondering, _why would I use this over Guava's Preconditions_?
+You can also check multiple Arguments at the same time.
+
+```java
+checkThat(firstName, middleName, lastName)
+	.are(nonEmptyString())
+	.are(stringWithLengthAtLeast(1));
+```
+
+## Error Message
+
+Each Assertion includes a specific error message in the Exception, but sometimes you want to include a
+message more suited to the context.
+
+```java
+checkThat(responseCode)
+	.usingMessage("Server Response not OK")
+	.is(equalTo(200));
+```
 
 ## Custom Exceptions
 
-Guava's preconditions are great when throwing an `IllegalArgumentException` is an acceptable response for your program.
-Back-End Services, however, tend to throw their own custom exceptions, which are mapped to a proper response for the client.
+Sometimes an `IllegalArgumentException` is not the Exception you want to throw.
 
 For example,
 ```java
+@GET
+public Response getCoffee(String nameField)
 {
-	String nameField; //Part of the Request Object
-	//Throws IllegalArgumentException
-	Preconditions.checkArgument(!Strings.isNullOrEmpty(nameField));
+	String nameField;
+
+	checkThat(nameField)
+		.usingMessage("missing name")
+		.is(nonEmptyString());
 }
 ```
-In stock Jersey, this would cause a 500, and make it look like your Service failed.
+In stock Jersey, this would cause a 500, and make it seem like your Service failed.
 
-This library allows you to throw your own custom exceptions when making assertions.
+You can throw a more specific Exceptions when making assertions.
 
 ```java
 checkThat(password)
 	.throwing(BadPasswordException.class)
 	.is(nonEmptyString())
+	.is(alphanumericString())
 	.is(stringWithLengthBetween(10, 20));
 
 ```
+In the example above, if the password fails the checks, a `BadPasswordException` will be thrown.
 
-In the example above, if the password fails the checks, a `BadPasswordException` will be thrown. It is much cleaner writing:
-
+>Compare that to:
 ``` java
 if (Strings.isNullOrEmpty(password) &&
 	password.length() < MIN_LENGTH &&
@@ -127,16 +133,16 @@ checkThat(age)
 	.is(lessThan(150));
 ```
 
-This also allows you to decide what message to include in the exception, and whether to include or mask the causing exception.
+This also allows you to decide what message to include in the exception, and whether to include or mask the underlying assertion error.
 
 ## Custom Assertions
 
-You can create your own library of custom assertions and reuse them.
+You can create your own library of custom assertions and reuse them. In fact, **we encourage it**. It is common to perform the same argument checks in multiple parts of the Codebase.
 
 Thanks to the new Java 8 lambdas, it is much easier to create inline assertions in your code.
 
 ```java
-Assertion<Car> sedan = car ->
+AlchemyAssertion<Car> sedan = car ->
 {
 	if (!(car instanceof Sedan))
 	{
@@ -150,7 +156,7 @@ checkThat(car)
 ```
 
 ```java
-Assertion<Vehicle> truck = v ->
+AlchemyAssertion<Vehicle> truck = v ->
 {
 	if (!(v instanceof Truck))
 	{
@@ -165,6 +171,68 @@ checkThat(vehicle)
 
 ```
 
+Building on Existing assertions can make for powerful checks.
+
+```java
+
+public static AlchemyAssertion<Person> validPerson()
+{
+	return person ->
+	{
+		checkThat(person).is(notNull);
+
+		checkThat(person.firstName, person.lastName)
+			.usingMessage("person is missing names")
+			.are(nonEmptyString());
+
+		checkThat(person.birthday)
+			.is(beforeNow());
+	};
+}
+
+// Reuse the argument checks
+public String findUsername(Person person)
+{
+	checkThat(person)
+		.is(validPerson());
+
+	//Proceed safely
+}
+
+```
+
+# Download
+
+To use, simply add the following maven dependency.
+
+## Release
+```xml
+<dependency>
+	<groupId>tech.sirwellington.alchemy</groupId>
+	<artifactId>alchemy-arguments</artifactId>
+	<version>1.3</version>
+</dependency>
+```
+
+## Snapshot
+
+>First add the Snapshot Repository
+```xml
+<repository>
+	<id>ossrh</id>
+    <url>https://oss.sonatype.org/content/repositories/snapshots</url>
+</repository>
+```
+
+```xml
+<dependency>
+	<groupId>tech.sirwellington.alchemy</groupId>
+	<artifactId>alchemy-arguments</artifactId>
+	<version>1.4-SNAPSHOT</version>
+</dependency>
+```
+
+# [Javadocs](http://www.javadoc.io/doc/tech.sirwellington.alchemy/alchemy-arguments/)
 
 # Requirements
 
@@ -175,8 +243,24 @@ checkThat(vehicle)
 This project builds with maven. Just run a `mvn clean install` to compile and install to your local maven repository
 
 
-
 # Release Notes
+
+## 1.3
+New Assertions
++ `mapWithKey()`
++ `mapWithKeyAndValue()`
+
+New Assertions
+Dates and Times:
++ `inThePast()`
++ `inTheFuture()`
++ `before()`
++ `after()`
+Other
++ `stringBeginningWith()`
++ `stringContaining()`
++ `stringThatMatches()`
++ `listContaining()`
 
 ## 1.2
 Multiple Assertions
@@ -188,26 +272,10 @@ checkThat(firstName, middleName, lastName, password, description)
 
 New Assertions
 + `instanceOf()`
-+ `stringThatStartsWith()`
+
 
 ## 1.1
 + Initial Public Release
-
-
-## 1.0.0
-+ Initial Release
-
-# Planned Features
-
-## Assertions on multiple arguments simultaneously
-For example
-
-```java
-
-checkThat(firstName, middleName, lastName, password, description)
-.are(nonEmptyString());
-
-```
 
 # License
 
