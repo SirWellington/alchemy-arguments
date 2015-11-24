@@ -278,5 +278,28 @@ public final class StringAssertions
             }
         };
     }
+    
+    /**
+     * Checks that a String has All Upper-Cased characters (also known as ALL-CAPS).
+     * 
+     * @return 
+     */
+    public static AlchemyAssertion<String> allUpperCaseString()
+    {
+        return string ->
+        {
+            nonEmptyString().check(string);
+            
+            for(char character : string.toCharArray())
+            {
+                if(!Character.isUpperCase(character))
+                {
+                    throw new FailedAssertionException(format("Expected %s to be all upper-case, but %s isn't", 
+                                                              string, 
+                                                              character));
+                }
+            }
+        };
+    }
 
 }

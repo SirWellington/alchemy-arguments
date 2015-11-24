@@ -384,4 +384,32 @@ public class StringAssertionsTest
             .isInstanceOf(FailedAssertionException.class);
     }
 
+    @Test
+    public void testAllUpperCaseString()
+    {
+        String upperCase = one(alphabeticString(50)).toUpperCase();
+        
+        String lowerCase = lowerCasedRandomCharacter(upperCase);
+        
+        AlchemyAssertion<String> instance = StringAssertions.allUpperCaseString();
+        assertThat(instance, notNullValue());
+        
+        instance.check(upperCase);
+        
+        assertThrows(() -> instance.check(lowerCase))
+            .isInstanceOf(FailedAssertionException.class);
+        
+    }
+
+    private String lowerCasedRandomCharacter(String upperCase)
+    {
+        int index = one(integers(0, upperCase.length()));
+        Character character = upperCase.charAt(index);
+        
+        StringBuilder builder = new StringBuilder(upperCase);
+        builder.replace(index, index + 1, character.toString().toLowerCase());
+        
+        return builder.toString();
+    }
+
 }
