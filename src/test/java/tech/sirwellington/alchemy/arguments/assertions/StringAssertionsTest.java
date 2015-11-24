@@ -387,27 +387,53 @@ public class StringAssertionsTest
     @Test
     public void testAllUpperCaseString()
     {
-        String upperCase = one(alphabeticString(50)).toUpperCase();
+        String allUpperCase = one(alphabeticString(50)).toUpperCase();
         
-        String lowerCase = lowerCasedRandomCharacter(upperCase);
+        String oneLowerCaseCharacter = lowerCasedRandomCharacter(allUpperCase);
         
         AlchemyAssertion<String> instance = StringAssertions.allUpperCaseString();
         assertThat(instance, notNullValue());
         
-        instance.check(upperCase);
+        instance.check(allUpperCase);
         
-        assertThrows(() -> instance.check(lowerCase))
+        assertThrows(() -> instance.check(oneLowerCaseCharacter))
             .isInstanceOf(FailedAssertionException.class);
         
     }
 
-    private String lowerCasedRandomCharacter(String upperCase)
+    private String lowerCasedRandomCharacter(String string)
     {
-        int index = one(integers(0, upperCase.length()));
-        Character character = upperCase.charAt(index);
+        int index = one(integers(0, string.length()));
+        Character character = string.charAt(index);
         
-        StringBuilder builder = new StringBuilder(upperCase);
+        StringBuilder builder = new StringBuilder(string);
         builder.replace(index, index + 1, character.toString().toLowerCase());
+        
+        return builder.toString();
+    }
+
+    @Test
+    public void testAllLowerCaseString()
+    {
+        String allLowerCase = one(alphabeticString(50)).toLowerCase();
+        String oneUpperCaseCharacter = upperCaseRandomCharacter(allLowerCase);
+        
+        AlchemyAssertion<String> instance = StringAssertions.allLowerCaseString();
+        assertThat(instance, notNullValue());
+        
+        instance.check(allLowerCase);
+        
+        assertThrows(() -> instance.check(oneUpperCaseCharacter))
+            .isInstanceOf(FailedAssertionException.class);
+    }
+
+    private String upperCaseRandomCharacter(String string)
+    {
+        int index = one(integers(0, string.length()));
+        Character character = string.charAt(index);
+        
+        StringBuilder builder = new StringBuilder(string);
+        builder.replace(index, index + 1, character.toString().toUpperCase());
         
         return builder.toString();
     }

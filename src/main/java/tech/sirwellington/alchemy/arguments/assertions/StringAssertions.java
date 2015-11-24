@@ -289,17 +289,41 @@ public final class StringAssertions
         return string ->
         {
             nonEmptyString().check(string);
-            
-            for(char character : string.toCharArray())
+
+            for (char character : string.toCharArray())
             {
-                if(!Character.isUpperCase(character))
+                if (!Character.isUpperCase(character))
                 {
-                    throw new FailedAssertionException(format("Expected %s to be all upper-case, but %s isn't", 
-                                                              string, 
+                    throw new FailedAssertionException(format("Expected %s to be all upper-case, but %s isn't",
+                                                              string,
                                                               character));
                 }
             }
         };
+    }
+    
+    /**
+     * Checks that a String has All Lower-Cased characters.
+     * 
+     * @return 
+     */
+    public static AlchemyAssertion<String> allLowerCaseString()
+    {
+       return string -> 
+       {
+           nonEmptyString().check(string);
+
+           for (char character : string.toCharArray())
+           {
+               if (!Character.isLowerCase(character))
+               {
+                   throw new FailedAssertionException(format("Expected %s to be all lower-case, but %s isn't",
+                                                             string,
+                                                             character));
+               }
+           }
+         
+       };
     }
 
 }
