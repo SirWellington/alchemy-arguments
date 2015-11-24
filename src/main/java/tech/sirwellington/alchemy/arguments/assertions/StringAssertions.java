@@ -325,5 +325,29 @@ public final class StringAssertions
          
        };
     }
+    
+    /**
+     * Checks that a String ends with the specified non-empty string, as determined by
+     * {@link String#endsWith(java.lang.String)}. In other words, the Argument String must have this suffix.
+     *
+     * @param suffix The Argument String must end with this non-empty String.
+     * @return
+     * @throws IllegalArgumentException If {@code substring} is empty or null.
+     */
+    public static AlchemyAssertion<String> stringEndingWith(@NonEmpty String suffix) throws IllegalArgumentException
+    {
+        Checks.Internal.checkNotNullOrEmpty(suffix, "string should not be empty");
+        
+        return string ->
+        {
+            nonEmptyString().check(string);
+           
+            if(!string.endsWith(suffix))
+            {
+                throw new FailedAssertionException(format("Expected %s to end with %s", string, suffix));
+            }
+        };
+    }
+   
 
 }

@@ -248,7 +248,8 @@ This project builds with maven. Just run a `mvn clean install` to compile and in
 ## 1.4
 New String Assertions
 + `allUpperCaseString()`
-+ `allLowerCaseString()``
++ `allLowerCaseString()`
++ `stringEndingWith()`
 
 
 ## 1.3

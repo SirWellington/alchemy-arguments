@@ -438,4 +438,35 @@ public class StringAssertionsTest
         return builder.toString();
     }
 
+    @Test
+    public void testStringEndingWith()
+    {
+        //Edge Cases
+        assertThrows(() -> StringAssertions.stringEndingWith(null))
+            .isInstanceOf(IllegalArgumentException.class);
+
+        assertThrows(() -> StringAssertions.stringEndingWith(""))
+            .isInstanceOf(IllegalArgumentException.class);
+
+        //Happy Cases
+        String string = one(strings());
+        String suffix = randomSuffixFrom(string);
+
+        AlchemyAssertion<String> instance = StringAssertions.stringEndingWith(suffix);
+        assertThat(instance, notNullValue());
+        
+        instance.check(string);
+        
+        String anotherRandomString = one(strings());
+        assertThrows(() -> instance.check(anotherRandomString))
+            .isInstanceOf(FailedAssertionException.class);
+        
+    }
+
+    private String randomSuffixFrom(String string)
+    {
+        int suffixStartIndex = one(integers(0, string.length() / 2));
+        return string.substring(suffixStartIndex);
+    }
+
 }
