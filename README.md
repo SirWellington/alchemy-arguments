@@ -245,6 +245,12 @@ This project builds with maven. Just run a `mvn clean install` to compile and in
 
 # Release Notes
 
+## 1.4
+New String Assertions
++ `allUpperCaseString()`
++ `allLowerCaseString()``
+
+
 ## 1.3
 New Assertions
 + `mapWithKey()`
