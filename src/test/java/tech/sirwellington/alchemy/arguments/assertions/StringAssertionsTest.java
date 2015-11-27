@@ -27,13 +27,17 @@ import tech.sirwellington.alchemy.test.junit.runners.AlchemyTestRunner;
 import tech.sirwellington.alchemy.test.junit.runners.DontRepeat;
 import tech.sirwellington.alchemy.test.junit.runners.Repeat;
 
+import static java.lang.String.format;
 import static org.hamcrest.Matchers.notNullValue;
 import static org.junit.Assert.assertThat;
+import static tech.sirwellington.alchemy.arguments.Arguments.checkThat;
 import static tech.sirwellington.alchemy.generator.AlchemyGenerator.one;
 import static tech.sirwellington.alchemy.generator.NumberGenerators.integers;
 import static tech.sirwellington.alchemy.generator.NumberGenerators.negativeIntegers;
+import static tech.sirwellington.alchemy.generator.NumberGenerators.positiveIntegers;
 import static tech.sirwellington.alchemy.generator.NumberGenerators.smallPositiveIntegers;
 import static tech.sirwellington.alchemy.generator.StringGenerators.alphabeticString;
+import static tech.sirwellington.alchemy.generator.StringGenerators.alphanumericString;
 import static tech.sirwellington.alchemy.generator.StringGenerators.strings;
 import static tech.sirwellington.alchemy.generator.StringGenerators.stringsFromFixedList;
 import static tech.sirwellington.alchemy.generator.StringGenerators.uuids;
@@ -467,6 +471,40 @@ public class StringAssertionsTest
     {
         int suffixStartIndex = one(integers(0, string.length() / 2));
         return string.substring(suffixStartIndex);
+    }
+
+    @Test
+    public void testAlphabeticString()
+    {
+        AlchemyAssertion<String> instance = StringAssertions.alphabeticString();
+        checkThat(instance, notNullValue());
+            
+        String alphabetic = one(alphabeticString());
+        instance.check(alphabetic);
+        
+        String alphanumeric = format("%s-%d", alphabetic, one(positiveIntegers()));
+        assertThrows(() -> instance.check(alphanumeric))
+            .isInstanceOf(FailedAssertionException.class);
+        
+        assertThrows(() -> instance.check(""))
+            .isInstanceOf(FailedAssertionException.class);
+    }
+
+    @Test
+    public void testAlphanumericString()
+    {
+        AlchemyAssertion<String> instance = StringAssertions.alphanumericString();
+        checkThat(instance, notNullValue());
+           
+        String alphanumeric = one(alphanumericString());
+        instance.check(alphanumeric);
+        
+        String specialCharacters = alphanumeric + one(strings()) + "-!%$";
+        assertThrows(() -> instance.check(specialCharacters))
+            .isInstanceOf(FailedAssertionException.class);
+        
+        assertThrows(() -> instance.check(""))
+            .isInstanceOf(FailedAssertionException.class);
     }
 
 }

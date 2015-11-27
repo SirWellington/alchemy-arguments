@@ -349,5 +349,38 @@ public final class StringAssertions
         };
     }
    
+    public static AlchemyAssertion<String> alphabeticString() 
+    {
+        return string ->
+        {
+            nonEmptyString().check(string);
+            
+            for (char character : string.toCharArray())
+            {
+                if (!Character.isAlphabetic(character))
+                {
+                    throw new FailedAssertionException(format("Expected alphabetic string, but '%s' is not alphabetic",
+                                                              character));
+                }
+            }
+        };
+    }
+    
+    public static AlchemyAssertion<String> alphanumericString()
+    {
+        return string ->
+        {
+            nonEmptyString().check(string);
+            
+            for(char character : string.toCharArray())
+            {
+                if (!Character.isAlphabetic(character) && !Character.isDigit(character))
+                {
+                    throw new FailedAssertionException(format("Expected alphanumeric string, but chracter '%s' is not", 
+                                                              character));
+                }
+            }
+        };
+    }
 
 }
