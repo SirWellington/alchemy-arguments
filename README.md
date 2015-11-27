@@ -250,7 +250,8 @@ New String Assertions
 + `allUpperCaseString()`
 + `allLowerCaseString()`
 + `stringEndingWith()`
-
++ `alphanumericString()`
++ `alphabeticString()`
 
 ## 1.3
 New Assertions
