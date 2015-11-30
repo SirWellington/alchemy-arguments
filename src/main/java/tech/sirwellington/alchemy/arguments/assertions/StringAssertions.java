@@ -27,6 +27,8 @@ import tech.sirwellington.alchemy.arguments.FailedAssertionException;
 
 import static java.lang.String.format;
 import static tech.sirwellington.alchemy.arguments.Checks.Internal.isNullOrEmpty;
+import static java.lang.String.format;
+import static tech.sirwellington.alchemy.arguments.Checks.Internal.isNullOrEmpty;
 
 /**
  *
@@ -384,15 +386,61 @@ public final class StringAssertions
         {
             nonEmptyString().check(string);
             
-            for(char character : string.toCharArray())
+            for (char character : string.toCharArray())
             {
                 if (!Character.isAlphabetic(character) && !Character.isDigit(character))
                 {
-                    throw new FailedAssertionException(format("Expected alphanumeric string, but chracter '%s' is not", 
+                    throw new FailedAssertionException(format("Expected alphanumeric string, but chracter '%s' is not",
                                                               character));
                 }
             }
         };
+    }
+    
+    /**
+     * Checks that a String represents an {@link Integer}, as determined by {@link Integer#parseInt(java.lang.String) }.
+     * In other words, that it contains only Digits, as determined by 2
+     * {@link Character#isDigit(char) }, or the characters {@code -} (negative sign), 
+     * {@code +} (positive sign)
+     * <p>
+     * Valid examples include:
+     * <pre>
+     *      0
+     *      -054
+     *      954
+     *      -674572
+     * </pre>
+     * 
+     * @return 
+     */
+    public static AlchemyAssertion<String> stringRepresentingInteger()
+    {
+        return string ->
+        {
+            nonEmptyString().check(string);
+
+            for(int i = 0; i < string.length(); ++i)
+            {
+                char character = string.charAt(i);
+                
+                //The first character is allowed to be a sign character '-' or '+'
+                if (i == 0 && isSignCharacter(character))
+                {
+                    continue;
+                }
+
+                if (!Character.isDigit(character))
+                {
+                    throw new FailedAssertionException(format("Expected an Integer String, but %s is not a digi",
+                                                              character));
+                }
+            }
+        };
+    };
+
+    private static boolean isSignCharacter(char character)
+    {
+        return character == '-' || character == '+';
     }
 
 }
