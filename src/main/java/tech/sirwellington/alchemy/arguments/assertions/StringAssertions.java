@@ -349,6 +349,12 @@ public final class StringAssertions
         };
     }
    
+    /**
+     * Checks that a String is composed only of Alphabetic Characters, as determined by 
+     * {@link Character#isAlphabetic(int) }.
+     *
+     * @return
+     */
     public static AlchemyAssertion<String> alphabeticString() 
     {
         return string ->
@@ -366,6 +372,12 @@ public final class StringAssertions
         };
     }
     
+    /**
+     * Checks that a String is composed of only Alphanumeric Characters, as determined by
+     * {@link Character#isDigit(char) } and {@link Character#isAlphabetic(int) }.
+     *
+     * @return
+     */
     public static AlchemyAssertion<String> alphanumericString()
     {
         return string ->
