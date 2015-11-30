@@ -132,6 +132,16 @@ public final class NumberAssertions
             }
         };
     }
+    
+    /**
+     * Asserts that an integer is negative, or {@code < 0}.
+     * 
+     * @return 
+     */
+    public static AlchemyAssertion<Integer> negativeInteger()
+    {
+        return lessThan(0);
+    }
 
     /**
      * Asserts that an integer is {@code <=} the supplied value.
@@ -172,7 +182,7 @@ public final class NumberAssertions
     }
 
     /**
-     * Asserts that a long is positive, or {@code > 0}
+     * Asserts that a Long is positive, or {@code > 0}
      *
      * @return
      */
@@ -186,6 +196,16 @@ public final class NumberAssertions
                 throw new FailedAssertionException("Expected positive long: " + number);
             }
         };
+    }
+    
+    /**
+     * Asserts that a Long is negative, or {@code < 0}.
+     * 
+     * @return 
+     */
+    public static AlchemyAssertion<Long> negativeLong()
+    {
+        return lessThan(0L);
     }
 
     /**

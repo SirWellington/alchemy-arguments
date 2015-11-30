@@ -28,6 +28,7 @@ import tech.sirwellington.alchemy.test.junit.runners.Repeat;
 
 import static org.hamcrest.Matchers.notNullValue;
 import static org.junit.Assert.assertThat;
+import static tech.sirwellington.alchemy.arguments.Arguments.checkThat;
 import static tech.sirwellington.alchemy.generator.AlchemyGenerator.one;
 import static tech.sirwellington.alchemy.generator.NumberGenerators.integers;
 import static tech.sirwellington.alchemy.generator.NumberGenerators.longs;
@@ -329,6 +330,40 @@ public class NumberAssertionsTest
         Tests.runTests(instance, badNumbers, goodNumbers);
         goodNumbers = () -> lowerBound;
         Tests.runTests(instance, badNumbers, goodNumbers);
+    }
+
+    @Test
+    public void testNegativeInteger()
+    {
+        AlchemyAssertion<Integer> instance = NumberAssertions.negativeInteger();
+        assertThat(instance, notNullValue());
+    
+        int negative = one(negativeIntegers());
+        instance.check(negative);
+
+        int positive = one(positiveIntegers());
+        assertThrows(() -> instance.check(positive))
+            .isInstanceOf(FailedAssertionException.class);
+
+        assertThrows(() -> instance.check(null))
+            .isInstanceOf(FailedAssertionException.class);
+    }
+
+    @Test
+    public void testNegativeLong()
+    {
+        AlchemyAssertion<Long> instance = NumberAssertions.negativeLong();
+        checkThat(instance, notNullValue());
+
+        long negative = one(longs(Long.MIN_VALUE, 0));
+        instance.check(negative);
+
+        long positive = one(positiveLongs());
+        assertThrows(() -> instance.check(positive))
+            .isInstanceOf(FailedAssertionException.class);
+
+        assertThrows(() -> instance.check(null))
+            .isInstanceOf(FailedAssertionException.class);
     }
 
 }
