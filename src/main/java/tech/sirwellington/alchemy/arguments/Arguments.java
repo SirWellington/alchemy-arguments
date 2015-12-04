@@ -16,13 +16,14 @@
 package tech.sirwellington.alchemy.arguments;
 
 import java.util.ArrayList;
-import static java.util.Arrays.asList;
 import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import tech.sirwellington.alchemy.annotations.access.NonInstantiable;
 import tech.sirwellington.alchemy.annotations.arguments.Nullable;
 import tech.sirwellington.alchemy.annotations.designs.FluidAPIDesign;
+
+import static java.util.Arrays.asList;
 
 /**
  * This is the main entry-point for the Library.
