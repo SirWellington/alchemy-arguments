@@ -56,13 +56,6 @@
             <scope>test</scope>
         </dependency>
 
-        <!--=======================-->
-        <!--LOGGING-->
-        <!--=======================-->
-        <dependency>
-            <groupId>org.slf4j</groupId>
-            <artifactId>slf4j-api</artifactId>
-        </dependency>
 
         <!--=======================-->
         <!--ALCHEMY-->
@@ -79,12 +72,21 @@
             <version>1.2</version>
             <scope>test</scope>
         </dependency>
-        
+
         <dependency>
             <groupId>${project.groupId}</groupId>
             <artifactId>alchemy-test</artifactId>
             <version>1.2.1</version>
             <scope>test</scope>
+        </dependency>
+        
+        
+        <!--=======================-->
+        <!--LOGGING-->
+        <!--=======================-->
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-api</artifactId>
         </dependency>
 
     </dependencies>
