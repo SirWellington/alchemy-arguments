@@ -256,6 +256,7 @@ New String Assertions
 New Collection Assertions
 + `keyInMap()`
 + `valueInMap()`
++ `elementInCollection()`
 
 ## 1.3
 New Assertions
