@@ -246,4 +246,32 @@ public class CollectionAssertionsTest
             .isInstanceOf(IllegalArgumentException.class);
     }
 
+    @Test
+    public void testElementInCollection()
+    {
+        List<String> collection = listOf(alphabeticString());
+        
+        AlchemyAssertion<String> assertion = CollectionAssertions.elementInCollection(collection);
+        assertThat(assertion, notNullValue());
+        
+        String anyValue = collection.stream().findAny().get();
+        assertion.check(anyValue);
+        
+        String randomValue = one(hexadecimalString(20));
+        
+        assertThrows(() -> assertion.check(randomValue))
+            .isInstanceOf(FailedAssertionException.class);
+        
+        //Edge cases
+        assertThrows(() -> assertion.check(null))
+            .isInstanceOf(FailedAssertionException.class);
+        
+        assertThrows(() -> CollectionAssertions.elementInCollection(null))
+            .isInstanceOf(IllegalArgumentException.class);
+        
+        assertThrows(() -> CollectionAssertions.elementInCollection(Collections.emptyList()))
+            .isInstanceOf(IllegalArgumentException.class);
+        
+    }
+
 }

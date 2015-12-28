@@ -204,4 +204,20 @@ public final class CollectionAssertions
         };
     }
     
+    public static <E> AlchemyAssertion<E> elementInCollection(@NonEmpty Collection<E> collection) throws IllegalArgumentException
+    {
+        checkNotNull(collection, "collection cannot be null");
+        checkThat(!collection.isEmpty(), "collection cannot be empty");
+        
+        return element ->
+        {
+            notNull().check(element);
+            
+            if(!collection.contains(element))
+            {
+                throw new FailedAssertionException(format("Expected element [%s] to be in collection", element));
+            }
+        };
+    }
+    
 }
