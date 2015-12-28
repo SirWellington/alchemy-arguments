@@ -258,6 +258,10 @@ New Collection Assertions
 + `valueInMap()`
 + `elementInCollection()`
 
+New Boolean Assertions
++ `trueStatement()`
++ `falseStatement()`
+
 ## 1.3
 New Assertions
 + `mapWithKey()`
