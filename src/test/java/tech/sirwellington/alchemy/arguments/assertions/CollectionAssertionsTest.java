@@ -31,11 +31,13 @@ import tech.sirwellington.alchemy.test.junit.runners.Repeat;
 
 import static org.hamcrest.Matchers.notNullValue;
 import static org.junit.Assert.assertThat;
+import static tech.sirwellington.alchemy.generator.AlchemyGenerator.one;
 import static tech.sirwellington.alchemy.generator.CollectionGenerators.listOf;
 import static tech.sirwellington.alchemy.generator.CollectionGenerators.mapOf;
 import static tech.sirwellington.alchemy.generator.NumberGenerators.negativeIntegers;
 import static tech.sirwellington.alchemy.generator.NumberGenerators.positiveIntegers;
 import static tech.sirwellington.alchemy.generator.StringGenerators.alphabeticString;
+import static tech.sirwellington.alchemy.generator.StringGenerators.alphanumericString;
 import static tech.sirwellington.alchemy.generator.StringGenerators.hexadecimalString;
 import static tech.sirwellington.alchemy.test.junit.ThrowableAssertion.assertThrows;
 
@@ -60,7 +62,7 @@ public class CollectionAssertionsTest
         assertThrows(() -> CollectionAssertions.class.newInstance());
 
         assertThrows(() -> new CollectionAssertions())
-                .isInstanceOf(IllegalAccessException.class);
+            .isInstanceOf(IllegalAccessException.class);
     }
 
     @Test
@@ -74,10 +76,10 @@ public class CollectionAssertionsTest
         instance.check(strings);
 
         assertThrows(() -> instance.check(null))
-                .isInstanceOf(FailedAssertionException.class);
+            .isInstanceOf(FailedAssertionException.class);
 
         assertThrows(() -> instance.check(Collections.emptySet()))
-                .isInstanceOf(FailedAssertionException.class);
+            .isInstanceOf(FailedAssertionException.class);
 
     }
 
@@ -91,10 +93,10 @@ public class CollectionAssertionsTest
         instance.check(strings);
 
         assertThrows(() -> instance.check(null))
-                .isInstanceOf(FailedAssertionException.class);
+            .isInstanceOf(FailedAssertionException.class);
 
         assertThrows(() -> instance.check(Collections.emptyList()))
-                .isInstanceOf(FailedAssertionException.class);
+            .isInstanceOf(FailedAssertionException.class);
     }
 
     @Test
@@ -109,10 +111,10 @@ public class CollectionAssertionsTest
         instance.check(map);
 
         assertThrows(() -> instance.check(Collections.emptyMap()))
-                .isInstanceOf(FailedAssertionException.class);
+            .isInstanceOf(FailedAssertionException.class);
 
         assertThrows(() -> instance.check(null))
-                .isInstanceOf(FailedAssertionException.class);
+            .isInstanceOf(FailedAssertionException.class);
     }
 
     @Test
@@ -122,7 +124,7 @@ public class CollectionAssertionsTest
         assertThat(instance, notNullValue());
 
         assertThrows(() -> instance.check(null))
-                .isInstanceOf(FailedAssertionException.class);
+            .isInstanceOf(FailedAssertionException.class);
 
         List<String> strings = listOf(alphabeticString());
         String[] stringArray = strings.toArray(new String[0]);
@@ -134,7 +136,7 @@ public class CollectionAssertionsTest
         };
 
         assertThrows(() -> instance.check(emptyStringArray))
-                .isInstanceOf(FailedAssertionException.class);
+            .isInstanceOf(FailedAssertionException.class);
     }
 
     @Test
@@ -150,21 +152,21 @@ public class CollectionAssertionsTest
         List<String> hex = listOf(hexadecimalString(100));
 
         assertThrows(() -> instance.check(hex))
-                .isInstanceOf(FailedAssertionException.class);
+            .isInstanceOf(FailedAssertionException.class);
     }
 
     @Test
     public void testMapWithKey()
     {
         Map<Integer, String> map = mapOf(positiveIntegers(), hexadecimalString(100), 100);
-        
+
         Integer key = map.keySet().stream().findAny().get();
-        
+
         AlchemyAssertion<Map<Integer, String>> instance = CollectionAssertions.mapWithKey(key);
         assertThat(instance, notNullValue());
-        
+
         instance.check(map);
-        
+
         Map<Integer, String> badMap = mapOf(negativeIntegers(), hexadecimalString(100), 100);
         assertThrows(() -> instance.check(badMap));
     }
@@ -185,6 +187,63 @@ public class CollectionAssertionsTest
 
         Map<Integer, String> badMap = mapOf(negativeIntegers(), hexadecimalString(100), 100);
         assertThrows(() -> instance.check(badMap));
+    }
+
+    @Test
+    public void testKeyInMap()
+    {
+        Map<String, String> map = mapOf(alphabeticString(), alphanumericString(), 25);
+
+        AlchemyAssertion<String> assertion = CollectionAssertions.keyInMap(map);
+        assertThat(assertion, notNullValue());
+
+        String anyKey = map.keySet().stream().findAny().get();
+        assertion.check(anyKey);
+        
+        String randomKey = one(hexadecimalString(42));
+        assertThrows(() -> assertion.check(randomKey))
+            .isInstanceOf(FailedAssertionException.class);
+        
+        
+        //Edge cases
+        
+        assertThrows(() -> assertion.check(null))
+            .isInstanceOf(FailedAssertionException.class);
+        
+        assertThrows(() -> CollectionAssertions.keyInMap(null))
+            .isInstanceOf(IllegalArgumentException.class);
+        
+        assertThrows(() -> CollectionAssertions.keyInMap(Collections.emptyMap()))
+            .isInstanceOf(IllegalArgumentException.class);
+        
+    }
+
+    @Test
+    public void testValueInMap()
+    {
+        
+        Map<String,String> map = mapOf(alphanumericString(), alphabeticString(), 24);
+        
+        AlchemyAssertion<String> assertion = CollectionAssertions.valueInMap(map);
+        assertThat(assertion, notNullValue());
+        
+        String anyValue = map.values().stream().findAny().get();
+        assertion.check(anyValue);
+        
+        String randomValue = one(hexadecimalString(10));
+        assertThrows(() -> assertion.check(randomValue))
+            .isInstanceOf(FailedAssertionException.class);
+        
+         //Edge cases
+        
+        assertThrows(() -> assertion.check(null))
+            .isInstanceOf(FailedAssertionException.class);
+        
+        assertThrows(() -> CollectionAssertions.valueInMap(null))
+            .isInstanceOf(IllegalArgumentException.class);
+        
+        assertThrows(() -> CollectionAssertions.valueInMap(Collections.emptyMap()))
+            .isInstanceOf(IllegalArgumentException.class);
     }
 
 }

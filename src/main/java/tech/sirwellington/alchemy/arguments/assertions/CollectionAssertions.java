@@ -23,6 +23,7 @@ import java.util.Objects;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import tech.sirwellington.alchemy.annotations.access.NonInstantiable;
+import tech.sirwellington.alchemy.annotations.arguments.NonEmpty;
 import tech.sirwellington.alchemy.annotations.arguments.NonNull;
 import tech.sirwellington.alchemy.arguments.AlchemyAssertion;
 import tech.sirwellington.alchemy.arguments.Checks;
@@ -30,6 +31,7 @@ import tech.sirwellington.alchemy.arguments.FailedAssertionException;
 
 import static java.lang.String.format;
 import static tech.sirwellington.alchemy.arguments.Checks.Internal.checkNotNull;
+import static tech.sirwellington.alchemy.arguments.Checks.Internal.checkThat;
 import static tech.sirwellington.alchemy.arguments.assertions.Assertions.notNull;
 
 /**
@@ -169,5 +171,37 @@ public final class CollectionAssertions
 
         };
     }
-
+    
+    public static <K, V> AlchemyAssertion<K> keyInMap(@NonEmpty Map<K, V> map) throws IllegalArgumentException
+    {
+        checkNotNull(map, "map cannot be null");
+        checkThat(!map.isEmpty(), "map cannot be empty");
+        
+        return key ->
+        {
+            notNull().check(key);
+            
+            if (!map.containsKey(key))
+            {
+                throw new FailedAssertionException(format("Expected key [%s] to be in map", key));
+            }
+        };
+    }
+    
+    public static <K,V> AlchemyAssertion<V> valueInMap(@NonEmpty Map<K,V> map) throws IllegalArgumentException
+    {
+        checkNotNull(map, "map cannot be null");
+        checkThat(!map.isEmpty(), "map cannot be empty");
+        
+        return value ->
+        {
+            notNull().check(value);
+            
+            if (!map.containsValue(value))
+            {
+                throw new FailedAssertionException(format("Expected value [%s] to be in map", value));
+            }
+        };
+    }
+    
 }
