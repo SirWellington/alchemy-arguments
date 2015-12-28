@@ -253,6 +253,10 @@ New String Assertions
 + `alphanumericString()`
 + `alphabeticString()`
 
+New Collection Assertions
++ `keyInMap()`
++ `valueInMap()`
+
 ## 1.3
 New Assertions
 + `mapWithKey()`
