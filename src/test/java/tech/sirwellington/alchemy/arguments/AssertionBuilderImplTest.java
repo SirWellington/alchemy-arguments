@@ -15,13 +15,14 @@
  */
 package tech.sirwellington.alchemy.arguments;
 
-import tech.sirwellington.alchemy.arguments.assertions.StringAssertions;
+import java.io.IOException;
 import java.sql.SQLException;
 import java.util.List;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
+import tech.sirwellington.alchemy.arguments.assertions.StringAssertions;
 import tech.sirwellington.alchemy.test.junit.runners.AlchemyTestRunner;
 import tech.sirwellington.alchemy.test.junit.runners.Repeat;
 
@@ -44,8 +45,8 @@ import static tech.sirwellington.alchemy.test.junit.ThrowableAssertion.assertThr
  *
  * @author SirWellington
  */
+@Repeat(100)
 @RunWith(AlchemyTestRunner.class)
-@Repeat
 public class AssertionBuilderImplTest
 {
 
@@ -205,5 +206,39 @@ public class AssertionBuilderImplTest
         assertThrows(() -> AssertionBuilderImpl.checkThat(arguments).are(StringAssertions.nonEmptyString()))
                 .isInstanceOf(FailedAssertionException.class);
 
+    }
+    
+    @Test
+    public void testOverrideMessagePreservedWithCustomException()
+    {
+        doThrow(FailedAssertionException.class)
+                .when(assertion)
+                .check(argument);
+        
+        String overrideMessage = one(alphabeticString());
+        
+        AssertionBuilder<String, IOException> newInstance = instance.usingMessage(overrideMessage)
+            .throwing(IOException.class);
+        
+        assertThrows(() -> newInstance.is(assertion))
+            .isInstanceOf(IOException.class)
+            .hasMessage(overrideMessage);
+    }
+    
+    @Test
+    public void testOverrideMessagePreservedWithCustomExceptionReversed()
+    {
+        doThrow(FailedAssertionException.class)
+                .when(assertion)
+                .check(argument);
+        
+        String overrideMessage = one(alphabeticString());
+        
+        AssertionBuilder<String, IOException> newInstance = instance.throwing(IOException.class)
+            .usingMessage(overrideMessage);
+        
+        assertThrows(() -> newInstance.is(assertion))
+            .isInstanceOf(IOException.class)
+            .hasMessage(overrideMessage);
     }
 }

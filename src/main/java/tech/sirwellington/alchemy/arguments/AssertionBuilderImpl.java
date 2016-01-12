@@ -61,8 +61,18 @@ final class AssertionBuilderImpl<Argument, Ex extends Throwable> implements Asse
     public AssertionBuilder<Argument, Ex> usingMessage(String message)
     {
         Checks.Internal.checkThat(!isNullOrEmpty(message), "error message is empty");
-
-        return new AssertionBuilderImpl<>(assertion, exceptionMapper, message, arguments);
+        
+        ExceptionMapper<Ex> newExceptionMapper;
+        if(exceptionMapper instanceof  DynamicExceptionSupplier)
+        {
+            newExceptionMapper = createUpdatedDynamicExceptionMapperWithMessage(message);
+        }
+        else
+        {
+            newExceptionMapper = this.exceptionMapper;
+        }
+        
+        return new AssertionBuilderImpl<>(assertion, newExceptionMapper, message, arguments);
     }
 
     static <Argument> AssertionBuilderImpl<Argument, FailedAssertionException> checkThat(List<Argument> arguments)
@@ -75,9 +85,17 @@ final class AssertionBuilderImpl<Argument, Ex extends Throwable> implements Asse
     {
         Checks.Internal.checkNotNull(exceptionMapper, "exceptionMapper is null");
 
-        return new AssertionBuilderImpl<>(null, exceptionMapper, "", arguments);
+        return new AssertionBuilderImpl<>(null, exceptionMapper, overrideMessage, arguments);
     }
 
+    @Override
+    public <Ex extends Throwable> AssertionBuilder<Argument, Ex> throwing(Class<Ex> exceptionClass)
+    {
+        Checks.Internal.checkNotNull(exceptionClass);
+        
+        return this.throwing(new DynamicExceptionSupplier<>(exceptionClass, overrideMessage));
+    }
+    
     @Override
     public AssertionBuilderImpl<Argument, Ex> is(AlchemyAssertion<Argument> assertion) throws Ex
     {
@@ -150,6 +168,13 @@ final class AssertionBuilderImpl<Argument, Ex extends Throwable> implements Asse
         {
             LOG.warn("Exception Mapper did not return a throwable. Swallowing exception", caught);
         }
+    }
+
+    private ExceptionMapper<Ex> createUpdatedDynamicExceptionMapperWithMessage(String message)
+    {
+        DynamicExceptionSupplier<Ex> dynamicExceptionMapper = (DynamicExceptionSupplier<Ex>) exceptionMapper;
+        Class<Ex> exceptionClass = dynamicExceptionMapper.getExceptionClass();
+        return new DynamicExceptionSupplier<>(exceptionClass, message);
     }
 
 }
