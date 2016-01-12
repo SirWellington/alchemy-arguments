@@ -35,6 +35,9 @@ public final class NetworkAssertions
     
     private final static Logger LOG = LoggerFactory.getLogger(NetworkAssertions.class);
     
+    /** The maximum allowable Port number */
+    private static final int MAX_PORT = 65535;
+    
     NetworkAssertions() throws IllegalAccessException
     {
         throw new IllegalAccessException("cannot instantiate");
@@ -58,6 +61,29 @@ public final class NetworkAssertions
             catch (Exception ex)
             {
                 throw new FailedAssertionException("Invalid URL: " + string, ex);
+            }
+        };
+    }
+    
+    
+    /**
+     * Asserts that a Port number is valid and acceptable.
+     * 
+     * @return 
+     * @see <a href="https://en.wikipedia.org/wiki/List_of_TCP_and_UDP_port_numbers">https://en.wikipedia.org/wiki/List_of_TCP_and_UDP_port_numbers</a>
+     */
+    public static AlchemyAssertion<Integer> validPort()
+    {
+        return port ->
+        {
+            if (port <= 0)
+            {
+                throw new FailedAssertionException("Network port must be > 0");
+            }
+            
+            if (port > MAX_PORT)
+            {
+                throw new FailedAssertionException("Network port must <" + MAX_PORT);
             }
         };
     }

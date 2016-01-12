@@ -23,14 +23,18 @@ import org.junit.runner.RunWith;
 import tech.sirwellington.alchemy.arguments.AlchemyAssertion;
 import tech.sirwellington.alchemy.arguments.FailedAssertionException;
 import tech.sirwellington.alchemy.test.junit.runners.AlchemyTestRunner;
+import tech.sirwellington.alchemy.test.junit.runners.GenerateInteger;
 import tech.sirwellington.alchemy.test.junit.runners.GenerateURL;
 import tech.sirwellington.alchemy.test.junit.runners.Repeat;
 
 import static org.hamcrest.Matchers.notNullValue;
 import static org.junit.Assert.assertThat;
 import static tech.sirwellington.alchemy.generator.AlchemyGenerator.one;
+import static tech.sirwellington.alchemy.generator.NumberGenerators.integers;
+import static tech.sirwellington.alchemy.generator.NumberGenerators.negativeIntegers;
 import static tech.sirwellington.alchemy.generator.StringGenerators.alphanumericString;
 import static tech.sirwellington.alchemy.test.junit.ThrowableAssertion.assertThrows;
+import static tech.sirwellington.alchemy.test.junit.runners.GenerateInteger.Type.RANGE;
 
 
 /**
@@ -43,6 +47,11 @@ public class NetworkAssertionsTest
 {
     @GenerateURL
     private URL url;
+    
+    private static final int MAX_PORT = 65535;
+    
+    @GenerateInteger(value = RANGE, min = 1, max = MAX_PORT)
+    private int port;
     
     @Before
     public void setUp()
@@ -60,6 +69,23 @@ public class NetworkAssertionsTest
         String badUrl = one(alphanumericString(100));
         
         assertThrows(() -> assertion.check(badUrl))
+            .isInstanceOf(FailedAssertionException.class);
+    }
+
+    @Test
+    public void testValidPort()
+    {
+        AlchemyAssertion<Integer> assertion = NetworkAssertions.validPort();
+        assertThat(assertion, notNullValue());
+        
+        assertion.check(port);
+        
+        int negative = one(negativeIntegers());
+        assertThrows(() -> assertion.check(negative))
+            .isInstanceOf(FailedAssertionException.class);
+        
+        int tooHigh = one(integers(MAX_PORT + 1, Integer.MAX_VALUE));
+        assertThrows(() -> assertion.check(tooHigh))
             .isInstanceOf(FailedAssertionException.class);
     }
 
