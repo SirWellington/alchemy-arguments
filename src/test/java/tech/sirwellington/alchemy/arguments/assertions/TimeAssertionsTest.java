@@ -30,6 +30,9 @@ import tech.sirwellington.alchemy.test.junit.runners.Repeat;
 import static org.hamcrest.Matchers.notNullValue;
 import static org.junit.Assert.assertThat;
 import static tech.sirwellington.alchemy.generator.AlchemyGenerator.one;
+import static tech.sirwellington.alchemy.generator.NumberGenerators.negativeIntegers;
+import static tech.sirwellington.alchemy.generator.TimeGenerators.futureInstants;
+import static tech.sirwellington.alchemy.generator.TimeGenerators.pastInstants;
 import static tech.sirwellington.alchemy.test.junit.ThrowableAssertion.assertThrows;
 
 /**
@@ -152,6 +155,51 @@ public class TimeAssertionsTest
         //Edge case
         assertThrows(() -> TimeAssertions.after(null))
                 .isInstanceOf(IllegalArgumentException.class);
+    }
+
+    @Test
+    public void testRightNow()
+    {
+        AlchemyAssertion<Instant> assertion = TimeAssertions.rightNow();
+        assertThat(assertion, notNullValue());
+        
+        assertion.check(Instant.now());
+        
+        Instant past = one(pastInstants());
+        assertThrows(() -> assertion.check(past))
+            .isInstanceOf(FailedAssertionException.class);
+        
+        Instant future = one(futureInstants());
+        assertThrows(() -> assertion.check(future))
+            .isInstanceOf(FailedAssertionException.class);
+    }
+
+    @Test
+    public void testNowWithinDelta()
+    {
+        long marginOfErrorInMillis = 10L;
+        
+        AlchemyAssertion<Instant> assertion = TimeAssertions.nowWithinDelta(marginOfErrorInMillis);
+        assertThat(assertion, notNullValue());
+        
+        assertion.check(Instant.now());
+        
+        Instant past = one(pastInstants());
+        assertThrows(() -> assertion.check(past))
+            .isInstanceOf(FailedAssertionException.class);
+        
+        Instant future = one(futureInstants());
+        assertThrows(() -> assertion.check(future))
+            .isInstanceOf(FailedAssertionException.class);
+    }
+    
+    @DontRepeat
+    @Test
+    public void testNowWithinDeltaWithBadArguments()
+    {
+        int negative = one(negativeIntegers());
+        assertThrows(() -> TimeAssertions.nowWithinDelta(negative))
+            .isInstanceOf(IllegalArgumentException.class);
     }
 
 }

@@ -26,6 +26,8 @@ import tech.sirwellington.alchemy.arguments.FailedAssertionException;
 
 import static java.lang.String.format;
 import static tech.sirwellington.alchemy.arguments.Checks.Internal.checkNotNull;
+import static tech.sirwellington.alchemy.arguments.Checks.Internal.checkThat;
+import static tech.sirwellington.alchemy.arguments.assertions.Assertions.notNull;
 
 /**
  *
@@ -101,6 +103,50 @@ public final class TimeAssertions
             {
                 throw new FailedAssertionException(format("Expected Timestamp to be after %s", expected.toString()));
             }
+        };
+    }
+    
+    /**
+     * Ensures that the {@link Instant} represents exactly Right now, at the time of checking. It does so
+     * within a margin-of-error of 5 milliseconds. This should be acceptable for most modern processors.
+     * Use {@link #nowWithinDelta(long) } for more fine-grained deltas.
+     * 
+     * @return 
+     * @see #nowWithinDelta(long) 
+     */
+    public static AlchemyAssertion<Instant> rightNow() 
+    {
+        return nowWithinDelta(5);
+    }
+    
+    /**
+     * Ensures that an {@link Instant} is {@link Instant#now() }, within the specified margin of error.
+     * 
+     * @param marginOfErrorInMillis The Acceptable Margin-Of-Error, in Milliseconds. The instant must be within this delta.
+     * 
+     * @return
+     * 
+     * @throws IllegalArgumentException If the marginOfError is {@code < 0}.
+     * 
+     * @see #rightNow() 
+     */
+    public static AlchemyAssertion<Instant> nowWithinDelta(long marginOfErrorInMillis) throws IllegalArgumentException
+    {
+        checkThat(marginOfErrorInMillis >= 0, "millis must be non-negative.");
+        
+        return instant ->
+        {
+            long now = Instant.now().toEpochMilli();
+            notNull().check(instant);
+            
+            long epoch = instant.toEpochMilli();
+            long difference = Math.abs(epoch - now);
+            
+            if(difference > marginOfErrorInMillis)
+            {
+                throw new FailedAssertionException("Time difference of " + difference + " exceeded delta of " + marginOfErrorInMillis + "ms");
+            }
+            
         };
     }
 
