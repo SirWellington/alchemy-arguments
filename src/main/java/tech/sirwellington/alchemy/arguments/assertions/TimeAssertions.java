@@ -28,6 +28,7 @@ import static java.lang.String.format;
 import static tech.sirwellington.alchemy.arguments.Checks.Internal.checkNotNull;
 import static tech.sirwellington.alchemy.arguments.Checks.Internal.checkThat;
 import static tech.sirwellington.alchemy.arguments.assertions.Assertions.notNull;
+import static tech.sirwellington.alchemy.arguments.assertions.NumberAssertions.greaterThan;
 
 /**
  *
@@ -116,7 +117,7 @@ public final class TimeAssertions
      */
     public static AlchemyAssertion<Instant> rightNow() 
     {
-        return nowWithinDelta(5);
+        return nowWithinDelta(5L);
     }
     
     /**
@@ -142,9 +143,35 @@ public final class TimeAssertions
             long epoch = instant.toEpochMilli();
             long difference = Math.abs(epoch - now);
             
-            if(difference > marginOfErrorInMillis)
+            if (difference > marginOfErrorInMillis)
             {
-                throw new FailedAssertionException("Time difference of " + difference + " exceeded delta of " + marginOfErrorInMillis + "ms");
+                throw new FailedAssertionException(
+                    "Time difference of " + difference + " exceeded margin-of-error of " + marginOfErrorInMillis + "ms");
+            }
+            
+        };
+    }
+    
+    public static AlchemyAssertion<Long> epochRightNow()
+    {
+        return epochNowWithinDelta(5L);
+    }
+    
+    public static AlchemyAssertion<Long> epochNowWithinDelta(long marginOfErrorInMillis) throws IllegalArgumentException
+    {
+        checkThat(marginOfErrorInMillis >= 0, "millis must be non-negative.");
+        
+        return epoch ->
+        {
+            long now = Instant.now().toEpochMilli();
+            greaterThan(0L).check(epoch);
+            
+            long difference = Math.abs(epoch - now);
+            
+            if (difference > marginOfErrorInMillis)
+            {
+                throw new FailedAssertionException(
+                    "Time difference of " + difference + " exceeded margin-of-error of " + marginOfErrorInMillis + "ms");
             }
             
         };
