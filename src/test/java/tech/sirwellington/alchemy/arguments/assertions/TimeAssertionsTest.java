@@ -165,6 +165,11 @@ public class TimeAssertionsTest
         
         assertion.check(Instant.now());
         
+        Instant recentPast = Instant.now().minusMillis(50);
+        assertThrows(() -> assertion.check(recentPast))
+            .isInstanceOf(FailedAssertionException.class);
+        
+        
         Instant past = one(pastInstants());
         assertThrows(() -> assertion.check(past))
             .isInstanceOf(FailedAssertionException.class);
