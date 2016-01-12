@@ -246,6 +246,10 @@ This project builds with maven. Just run a `mvn clean install` to compile and in
 # Release Notes
 
 ## 1.4
+Network Assertions
++ `validPort()`
++ `validURL()`
+
 New String Assertions
 + `allUpperCaseString()`
 + `allLowerCaseString()`
