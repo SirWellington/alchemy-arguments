@@ -126,7 +126,6 @@ public final class TimeAssertions
      * @param marginOfErrorInMillis The Acceptable Margin-Of-Error, in Milliseconds. The instant must be within this delta.
      * 
      * @return
-     * 
      * @throws IllegalArgumentException If the marginOfError is {@code < 0}.
      * 
      * @see #rightNow() 
@@ -152,11 +151,24 @@ public final class TimeAssertions
         };
     }
     
+    /**
+     * Epoch version of {@link #rightNow() }.
+     * 
+     * @return 
+     */
     public static AlchemyAssertion<Long> epochRightNow()
     {
         return epochNowWithinDelta(5L);
     }
     
+    /**
+     * Epoch version of {@link #nowWithinDelta(long) }.
+     * 
+     * @param marginOfErrorInMillis The Acceptable Margin-Of-Error, in Milliseconds. The instant must be within this delta.
+     * 
+     * @return
+     * @throws IllegalArgumentException If the marginOfError is {@code < 0}.
+     */
     public static AlchemyAssertion<Long> epochNowWithinDelta(long marginOfErrorInMillis) throws IllegalArgumentException
     {
         checkThat(marginOfErrorInMillis >= 0, "millis must be non-negative.");
