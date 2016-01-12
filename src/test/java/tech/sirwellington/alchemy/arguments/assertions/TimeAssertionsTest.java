@@ -71,6 +71,10 @@ public class TimeAssertionsTest
         // The past is indeed in the past
         Instant past = TimeGenerators.pastInstants().get();
         instance.check(past);
+        
+        //The recent past should be fine too
+        Instant recentPast = Instant.now().minusMillis(1);
+        instance.check(recentPast);
 
         //The futureInstants is not in the pastInstants
         Instant future = TimeGenerators.futureInstants().get();
