@@ -27,12 +27,10 @@ import tech.sirwellington.alchemy.annotations.access.NonInstantiable;
 import tech.sirwellington.alchemy.annotations.arguments.NonEmpty;
 import tech.sirwellington.alchemy.annotations.arguments.NonNull;
 import tech.sirwellington.alchemy.arguments.AlchemyAssertion;
-import tech.sirwellington.alchemy.arguments.Checks;
 import tech.sirwellington.alchemy.arguments.FailedAssertionException;
 
 import static java.lang.String.format;
 import static tech.sirwellington.alchemy.arguments.Checks.Internal.checkNotNull;
-import static tech.sirwellington.alchemy.arguments.Checks.Internal.checkThat;
 import static tech.sirwellington.alchemy.arguments.assertions.Assertions.notNull;
 
 /**
@@ -128,7 +126,8 @@ public final class CollectionAssertions
 
     public static <T> AlchemyAssertion<List<T>> listContaining(@NonNull T element) throws IllegalArgumentException
     {
-        Checks.Internal.checkNotNull(element, "cannot check for null");
+        checkNotNull(element, "cannot check for null");
+        
         return list ->
         {
             notNull().check(list);
@@ -227,13 +226,12 @@ public final class CollectionAssertions
     public static <E> AlchemyAssertion<E> elementInCollection(@NonEmpty Collection<E> collection) throws IllegalArgumentException
     {
         checkNotNull(collection, "collection cannot be null");
-        checkThat(!collection.isEmpty(), "collection cannot be empty");
         
         return element ->
         {
             notNull().check(element);
             
-            if(!collection.contains(element))
+            if (!collection.contains(element))
             {
                 throw new FailedAssertionException(format("Expected element [%s] to be in collection", element));
             }
