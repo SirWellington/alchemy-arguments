@@ -255,12 +255,10 @@ public class CollectionAssertionsTest
     @Test
     public void testElementInCollection()
     {
-        List<String> collection = listOf(alphabeticString());
-        
-        AlchemyAssertion<String> assertion = CollectionAssertions.elementInCollection(collection);
+        AlchemyAssertion<String> assertion = CollectionAssertions.elementInCollection(strings);
         assertThat(assertion, notNullValue());
         
-        String anyValue = collection.stream().findAny().get();
+        String anyValue = strings.stream().findAny().get();
         assertion.check(anyValue);
         
         String randomValue = one(hexadecimalString(20));
