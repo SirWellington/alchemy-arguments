@@ -185,12 +185,6 @@ public final class CollectionAssertions
         {
             notNull().check(key);
             
-            if(map == null || map.isEmpty())
-            {
-                failAssertion.accept(key);
-                return;
-            }
-            
             if (!map.containsKey(key))
             {
                 failAssertion.accept(key);
@@ -211,10 +205,6 @@ public final class CollectionAssertions
         {
             notNull().check(value);
             
-            if(map.isEmpty())
-            {
-                failAssertion.accept(value);
-            }
             
             if (!map.containsValue(value))
             {
