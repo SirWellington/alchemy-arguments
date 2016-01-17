@@ -213,8 +213,8 @@ public class CollectionAssertionsTest
         assertThrows(() -> CollectionAssertions.keyInMap(null))
             .isInstanceOf(IllegalArgumentException.class);
         
-        assertThrows(() -> CollectionAssertions.keyInMap(Collections.emptyMap()))
-            .isInstanceOf(IllegalArgumentException.class);
+       //Empty map should be ok
+        CollectionAssertions.keyInMap(Collections.emptyMap());
         
     }
 
@@ -238,12 +238,12 @@ public class CollectionAssertionsTest
         
         assertThrows(() -> assertion.check(null))
             .isInstanceOf(FailedAssertionException.class);
-        
+
         assertThrows(() -> CollectionAssertions.valueInMap(null))
             .isInstanceOf(IllegalArgumentException.class);
-        
-        assertThrows(() -> CollectionAssertions.valueInMap(Collections.emptyMap()))
-            .isInstanceOf(IllegalArgumentException.class);
+
+        //Empty map should be ok
+        CollectionAssertions.valueInMap(Collections.emptyMap());
     }
 
     @Test

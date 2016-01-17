@@ -20,6 +20,7 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.function.Consumer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import tech.sirwellington.alchemy.annotations.access.NonInstantiable;
@@ -172,34 +173,53 @@ public final class CollectionAssertions
         };
     }
     
-    public static <K, V> AlchemyAssertion<K> keyInMap(@NonEmpty Map<K, V> map) throws IllegalArgumentException
+    public static <K, V> AlchemyAssertion<K> keyInMap(Map<K, V> map) throws IllegalArgumentException
     {
         checkNotNull(map, "map cannot be null");
-        checkThat(!map.isEmpty(), "map cannot be empty");
+        
+        Consumer<K> failAssertion = key ->
+        {
+            throw new FailedAssertionException(format("Expected key [%s] to be in map", key));
+        };
         
         return key ->
         {
             notNull().check(key);
             
+            if(map == null || map.isEmpty())
+            {
+                failAssertion.accept(key);
+                return;
+            }
+            
             if (!map.containsKey(key))
             {
-                throw new FailedAssertionException(format("Expected key [%s] to be in map", key));
+                failAssertion.accept(key);
             }
         };
     }
     
-    public static <K,V> AlchemyAssertion<V> valueInMap(@NonEmpty Map<K,V> map) throws IllegalArgumentException
+    public static <K,V> AlchemyAssertion<V> valueInMap(Map<K,V> map) throws IllegalArgumentException
     {
         checkNotNull(map, "map cannot be null");
-        checkThat(!map.isEmpty(), "map cannot be empty");
+        
+        Consumer<V> failAssertion = key ->
+        {
+            throw new FailedAssertionException(format("Expected value [%s] to be in map", key));
+        };
         
         return value ->
         {
             notNull().check(value);
             
+            if(map.isEmpty())
+            {
+                failAssertion.accept(value);
+            }
+            
             if (!map.containsValue(value))
             {
-                throw new FailedAssertionException(format("Expected value [%s] to be in map", value));
+                failAssertion.accept(value);
             }
         };
     }
