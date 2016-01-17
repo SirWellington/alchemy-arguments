@@ -205,7 +205,6 @@ public final class CollectionAssertions
         {
             notNull().check(value);
             
-            
             if (!map.containsValue(value))
             {
                 failAssertion.accept(value);
