@@ -268,10 +268,10 @@ public class CollectionAssertionsTest
         
         assertThrows(() -> CollectionAssertions.elementInCollection(null))
             .isInstanceOf(IllegalArgumentException.class);
-        
-        assertThrows(() -> CollectionAssertions.elementInCollection(Collections.emptyList()))
-            .isInstanceOf(IllegalArgumentException.class);
-        
+
+        //Empty Collections should be ok
+        CollectionAssertions.elementInCollection(Collections.emptyList());
+
     }
 
 }
