@@ -251,6 +251,19 @@ public class CollectionAssertionsTest
         //Empty map should be ok
         CollectionAssertions.valueInMap(Collections.emptyMap());
     }
+    
+    @Test
+    public void testValueInMapWithEmptyMap()
+    {
+        AlchemyAssertion<Object> assertion = CollectionAssertions.valueInMap(Collections.emptyMap());
+        assertThat(assertion, notNullValue());
+        
+        for(String string : strings)
+        {
+            assertThrows(() -> assertion.check(string))
+                .isInstanceOf(FailedAssertionException.class);
+        }
+    }
 
     @Test
     public void testElementInCollection()
