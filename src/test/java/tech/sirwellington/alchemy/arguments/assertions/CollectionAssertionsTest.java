@@ -27,6 +27,7 @@ import tech.sirwellington.alchemy.arguments.AlchemyAssertion;
 import tech.sirwellington.alchemy.arguments.FailedAssertionException;
 import tech.sirwellington.alchemy.test.junit.runners.AlchemyTestRunner;
 import tech.sirwellington.alchemy.test.junit.runners.DontRepeat;
+import tech.sirwellington.alchemy.test.junit.runners.GenerateList;
 import tech.sirwellington.alchemy.test.junit.runners.Repeat;
 
 import static org.hamcrest.Matchers.notNullValue;
@@ -46,10 +47,12 @@ import static tech.sirwellington.alchemy.test.junit.ThrowableAssertion.assertThr
  * @author SirWellington
  */
 @RunWith(AlchemyTestRunner.class)
-@Repeat
+@Repeat(50)
 public class CollectionAssertionsTest
 {
-
+    @GenerateList(String.class)
+    private List<String> strings;
+    
     @Before
     public void setUp()
     {
@@ -72,7 +75,6 @@ public class CollectionAssertionsTest
         AlchemyAssertion<Collection<String>> instance = CollectionAssertions.nonEmptyCollection();
         assertThat(instance, notNullValue());
 
-        List<String> strings = listOf(alphabeticString());
         instance.check(strings);
 
         assertThrows(() -> instance.check(null))
@@ -89,7 +91,6 @@ public class CollectionAssertionsTest
         AlchemyAssertion<List<String>> instance = CollectionAssertions.nonEmptyList();
         assertThat(instance, notNullValue());
 
-        List<String> strings = listOf(alphabeticString());
         instance.check(strings);
 
         assertThrows(() -> instance.check(null))
@@ -126,7 +127,6 @@ public class CollectionAssertionsTest
         assertThrows(() -> instance.check(null))
             .isInstanceOf(FailedAssertionException.class);
 
-        List<String> strings = listOf(alphabeticString());
         String[] stringArray = strings.toArray(new String[0]);
 
         instance.check(stringArray);
@@ -142,7 +142,6 @@ public class CollectionAssertionsTest
     @Test
     public void testListContaining()
     {
-        List<String> strings = listOf(alphabeticString());
         String string = strings.stream().findAny().orElseGet(alphabeticString());
 
         AlchemyAssertion<List<String>> instance = CollectionAssertions.listContaining(string);
@@ -204,7 +203,6 @@ public class CollectionAssertionsTest
         assertThrows(() -> assertion.check(randomKey))
             .isInstanceOf(FailedAssertionException.class);
         
-        
         //Edge cases
         
         assertThrows(() -> assertion.check(null))
@@ -212,10 +210,18 @@ public class CollectionAssertionsTest
         
         assertThrows(() -> CollectionAssertions.keyInMap(null))
             .isInstanceOf(IllegalArgumentException.class);
+    }
+    
+    @Test
+    public void testKeyInMapWithEmptyMap()
+    {
+        AlchemyAssertion<Object> assertion = CollectionAssertions.keyInMap(Collections.emptyMap());
         
-       //Empty map should be ok
-        CollectionAssertions.keyInMap(Collections.emptyMap());
-        
+        for(String string: strings)
+        {
+            assertThrows(() -> assertion.check(string))
+                .isInstanceOf(FailedAssertionException.class);
+        }
     }
 
     @Test
