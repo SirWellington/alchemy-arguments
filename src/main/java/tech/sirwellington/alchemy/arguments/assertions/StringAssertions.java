@@ -27,8 +27,6 @@ import tech.sirwellington.alchemy.arguments.FailedAssertionException;
 
 import static java.lang.String.format;
 import static tech.sirwellington.alchemy.arguments.Checks.Internal.isNullOrEmpty;
-import static java.lang.String.format;
-import static tech.sirwellington.alchemy.arguments.Checks.Internal.isNullOrEmpty;
 
 /**
  *
