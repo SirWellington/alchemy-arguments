@@ -18,6 +18,7 @@
 package tech.sirwellington.alchemy.arguments.assertions;
 
 
+import java.util.UUID;
 import java.util.regex.Pattern;
 import tech.sirwellington.alchemy.annotations.access.NonInstantiable;
 import tech.sirwellington.alchemy.annotations.arguments.NonEmpty;
@@ -391,6 +392,28 @@ public final class StringAssertions
                     throw new FailedAssertionException(format("Expected alphanumeric string, but chracter '%s' is not",
                                                               character));
                 }
+            }
+        };
+    }
+    
+    /**
+     * Checks that a String represents a valid {@linkplain UUID#fromString(java.lang.String) Type-4 UUID}.
+     * 
+     * @return 
+     */
+    public static AlchemyAssertion<String> validUUID()
+    {
+        return string ->
+        {
+            nonEmptyString().check(string);
+            
+            try 
+            {
+                UUID.fromString(string);
+            }
+            catch(Exception ex)
+            {
+                throw new FailedAssertionException("String is not a valid UUID: " + string);
             }
         };
     }

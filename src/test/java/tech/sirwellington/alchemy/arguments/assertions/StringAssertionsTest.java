@@ -531,4 +531,19 @@ public class StringAssertionsTest
             .isInstanceOf(FailedAssertionException.class);
     }
 
+    @Test
+    public void testValidUUID()
+    {
+        AlchemyAssertion<String> assertion = StringAssertions.validUUID();
+        assertThat(assertion, notNullValue());
+        
+        String uuid = one(uuids);
+        assertion.check(uuid);
+        
+        String nonUUID = one(alphabeticString(10));
+        assertThrows(() -> assertion.check(nonUUID))
+            .isInstanceOf(FailedAssertionException.class);
+        
+    }
+
 }
