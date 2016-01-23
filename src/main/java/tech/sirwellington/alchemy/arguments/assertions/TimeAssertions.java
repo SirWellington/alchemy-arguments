@@ -59,7 +59,7 @@ public final class TimeAssertions
             Instant present = Instant.now();
             if (!argument.isBefore(present))
             {
-                throw new FailedAssertionException(format("Expected Timestamp %s to be in the past", argument));
+                throw new FailedAssertionException(format("Expected Timestamp %s to be in the past. Now: %s", argument, present));
             }
         };
     }
@@ -87,7 +87,7 @@ public final class TimeAssertions
             Instant present = Instant.now();
             if (!argument.isAfter(present))
             {
-                throw new FailedAssertionException(format("Expected Timestamp %s to be in the future", argument));
+                throw new FailedAssertionException(format("Expected Timestamp %s to be in the future. Now: %s", argument, present));
             }
         };
     }
