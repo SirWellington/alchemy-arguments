@@ -57,17 +57,17 @@ final class DynamicExceptionSupplier<Ex extends Throwable> implements ExceptionM
         {
             if (haveBothAMessageAndACause(message, cause))
             {
-                if (hasMessageAndCauseConstructor())
+                if (throwableClassHasMessageAndCauseConstructor())
                 {
                     return exceptionClass.getConstructor(String.class, Throwable.class)
                             .newInstance(message, cause);
                 }
-                else if (hasCauseConstructor())
+                else if (throwableClassHasCauseConstructor())
                 {
                     return exceptionClass.getConstructor(Throwable.class)
                             .newInstance(cause);
                 }
-                else if (hasMessageConstructor())
+                else if (throwableClassHasMessageConstructor())
                 {
                     return exceptionClass.getConstructor(String.class)
                             .newInstance(message);
@@ -77,7 +77,7 @@ final class DynamicExceptionSupplier<Ex extends Throwable> implements ExceptionM
 
             if (haveOnlyACause(message, cause))
             {
-                if (hasCauseConstructor())
+                if (throwableClassHasCauseConstructor())
                 {
                     return exceptionClass.getConstructor(Throwable.class).newInstance(cause);
                 }
@@ -85,7 +85,7 @@ final class DynamicExceptionSupplier<Ex extends Throwable> implements ExceptionM
 
             if (haveOnlyAMessage(message, cause))
             {
-                if (hasMessageConstructor())
+                if (throwableClassHasMessageConstructor())
                 {
                     return exceptionClass.getConstructor(String.class).newInstance(message);
                 }
@@ -136,17 +136,17 @@ final class DynamicExceptionSupplier<Ex extends Throwable> implements ExceptionM
         return hasConstructorWithArguments();
     }
 
-    private boolean hasCauseConstructor() throws NoSuchMethodException, SecurityException
+    private boolean throwableClassHasCauseConstructor() throws NoSuchMethodException, SecurityException
     {
         return hasConstructorWithArguments(Throwable.class);
     }
 
-    private boolean hasMessageConstructor() throws NoSuchMethodException, SecurityException
+    private boolean throwableClassHasMessageConstructor() throws NoSuchMethodException, SecurityException
     {
         return hasConstructorWithArguments(String.class);
     }
 
-    private boolean hasMessageAndCauseConstructor() throws NoSuchMethodException, SecurityException
+    private boolean throwableClassHasMessageAndCauseConstructor() throws NoSuchMethodException, SecurityException
     {
         return hasConstructorWithArguments(String.class, Throwable.class);
     }
