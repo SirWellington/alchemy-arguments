@@ -20,6 +20,7 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Set;
 import java.util.function.Consumer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -124,7 +125,37 @@ public final class CollectionAssertions
             }
         };
     }
+   
+    public static <E> AlchemyAssertion<Collection<E>> emptyCollection()
+    {
+        return collection ->
+        {
+            notNull().check(collection);
+            
+            if(!collection.isEmpty())
+            {
+                throw new FailedAssertionException(format("Expected an empty collection, but it has size [%s]",
+                                                          collection.size()));
+            }
+        };
+    }
     
+    public static <E> AlchemyAssertion<List<E>> emptyList()
+    {
+        return list ->
+        {
+            CollectionAssertions.<E>emptyCollection().check(list);
+        };
+    }
+    
+    public static <E> AlchemyAssertion<Set<E>> emptySet()
+    {
+        return set ->
+        {
+            CollectionAssertions.<E>emptyCollection().check(set);
+        };
+    }
+
     public static <E> AlchemyAssertion<List<E>> listContaining(@NonNull E element) throws IllegalArgumentException
     {
         checkNotNull(element, "cannot check for null");

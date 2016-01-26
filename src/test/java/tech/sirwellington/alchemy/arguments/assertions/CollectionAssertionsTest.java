@@ -16,10 +16,14 @@
 
 package tech.sirwellington.alchemy.arguments.assertions;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.HashSet;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -52,9 +56,10 @@ import static tech.sirwellington.alchemy.test.junit.ThrowableAssertion.assertThr
 @Repeat(50)
 public class CollectionAssertionsTest
 {
+
     @GenerateList(String.class)
     private List<String> strings;
-    
+
     @Before
     public void setUp()
     {
@@ -200,26 +205,25 @@ public class CollectionAssertionsTest
 
         String anyKey = map.keySet().stream().findAny().get();
         assertion.check(anyKey);
-        
+
         String randomKey = one(hexadecimalString(42));
         assertThrows(() -> assertion.check(randomKey))
             .isInstanceOf(FailedAssertionException.class);
-        
+
         //Edge cases
-        
         assertThrows(() -> assertion.check(null))
             .isInstanceOf(FailedAssertionException.class);
-        
+
         assertThrows(() -> CollectionAssertions.keyInMap(null))
             .isInstanceOf(IllegalArgumentException.class);
     }
-    
+
     @Test
     public void testKeyInMapWithEmptyMap()
     {
         AlchemyAssertion<Object> assertion = CollectionAssertions.keyInMap(Collections.emptyMap());
-        
-        for(String string: strings)
+
+        for (String string : strings)
         {
             assertThrows(() -> assertion.check(string))
                 .isInstanceOf(FailedAssertionException.class);
@@ -229,21 +233,20 @@ public class CollectionAssertionsTest
     @Test
     public void testValueInMap()
     {
-        
-        Map<String,String> map = mapOf(alphanumericString(), alphabeticString(), 24);
-        
+
+        Map<String, String> map = mapOf(alphanumericString(), alphabeticString(), 24);
+
         AlchemyAssertion<String> assertion = CollectionAssertions.valueInMap(map);
         assertThat(assertion, notNullValue());
-        
+
         String anyValue = map.values().stream().findAny().get();
         assertion.check(anyValue);
-        
+
         String randomValue = one(hexadecimalString(10));
         assertThrows(() -> assertion.check(randomValue))
             .isInstanceOf(FailedAssertionException.class);
-        
-         //Edge cases
-        
+
+        //Edge cases
         assertThrows(() -> assertion.check(null))
             .isInstanceOf(FailedAssertionException.class);
 
@@ -253,14 +256,14 @@ public class CollectionAssertionsTest
         //Empty map should be ok
         CollectionAssertions.valueInMap(Collections.emptyMap());
     }
-    
+
     @Test
     public void testValueInMapWithEmptyMap()
     {
         AlchemyAssertion<Object> assertion = CollectionAssertions.valueInMap(Collections.emptyMap());
         assertThat(assertion, notNullValue());
-        
-        for(String string : strings)
+
+        for (String string : strings)
         {
             assertThrows(() -> assertion.check(string))
                 .isInstanceOf(FailedAssertionException.class);
@@ -272,19 +275,19 @@ public class CollectionAssertionsTest
     {
         AlchemyAssertion<String> assertion = CollectionAssertions.elementInCollection(strings);
         assertThat(assertion, notNullValue());
-        
+
         String anyValue = strings.stream().findAny().get();
         assertion.check(anyValue);
-        
+
         String randomValue = one(hexadecimalString(20));
-        
+
         assertThrows(() -> assertion.check(randomValue))
             .isInstanceOf(FailedAssertionException.class);
-        
+
         //Edge cases
         assertThrows(() -> assertion.check(null))
             .isInstanceOf(FailedAssertionException.class);
-        
+
         assertThrows(() -> CollectionAssertions.elementInCollection(null))
             .isInstanceOf(IllegalArgumentException.class);
 
@@ -299,15 +302,63 @@ public class CollectionAssertionsTest
         int size = strings.size();
         AlchemyAssertion<? super Collection<String>> instance = CollectionAssertions.collectionOfSize(size);
         instance.check(strings);
-        
+
         strings.add(one(alphabeticString()));
+
+        assertThrows(() -> instance.check(strings))
+            .isInstanceOf(FailedAssertionException.class);
+
+        checkThat(strings)
+            .is(collectionOfSize(strings.size()));
+
+    }
+
+    @DontRepeat
+    @Test
+    public void testCollectionOfSizeWithBadArgs()
+    {
+        int badSize = one(negativeIntegers());
+
+        assertThrows(() -> CollectionAssertions.collectionOfSize(badSize))
+            .isInstanceOf(IllegalArgumentException.class);
+    }
+
+    @Test
+    public void testEmptyCollection()
+    {
+        AlchemyAssertion<Collection<String>> instance = CollectionAssertions.emptyCollection();
+
+        Collection<String> emptyCollection = new ArrayList<>();
+
+        instance.check(emptyCollection);
+
+        assertThrows(() -> instance.check(strings))
+            .isInstanceOf(FailedAssertionException.class);
+    }
+
+    @Test
+    public void testEmptyList()
+    {
+        AlchemyAssertion<List<String>> instance = CollectionAssertions.emptyList();
+
+        List<String> emptyList = new LinkedList<>();
+        instance.check(emptyList);
         
         assertThrows(() -> instance.check(strings))
             .isInstanceOf(FailedAssertionException.class);
+    }
+
+    @Test
+    public void testEmptySet()
+    {
+        AlchemyAssertion<Set<String>> instance = CollectionAssertions.emptySet();
         
-        checkThat(strings)
-            .is(collectionOfSize(strings.size()));
+        Set<String> emptySet = new HashSet<>();
+        instance.check(emptySet);
         
+        Set<String> nonEmptySet = new HashSet<>(strings);
+        assertThrows(() -> instance.check(nonEmptySet))
+            .isInstanceOf(FailedAssertionException.class);
     }
 
 }
