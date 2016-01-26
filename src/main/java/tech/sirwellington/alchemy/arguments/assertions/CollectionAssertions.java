@@ -112,7 +112,7 @@ public final class CollectionAssertions
         };
     }
 
-    public static <T> AlchemyAssertion<T[]> nonEmptyArray()
+    public static <E> AlchemyAssertion<E[]> nonEmptyArray()
     {
         return (array) ->
         {
@@ -124,7 +124,7 @@ public final class CollectionAssertions
             }
         };
     }
-
+    
     public static <E> AlchemyAssertion<List<E>> listContaining(@NonNull E element) throws IllegalArgumentException
     {
         checkNotNull(element, "cannot check for null");
