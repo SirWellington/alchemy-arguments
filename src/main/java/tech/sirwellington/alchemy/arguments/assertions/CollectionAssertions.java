@@ -52,11 +52,11 @@ public final class CollectionAssertions
     /**
      * Asserts that the collection is not null and not empty.
      *
-     * @param <T>
+     * @param <E>
      *
      * @return
      */
-    public static <T> AlchemyAssertion<Collection<T>> nonEmptyCollection()
+    public static <E> AlchemyAssertion<Collection<E>> nonEmptyCollection()
     {
         return (collection) ->
         {
@@ -72,11 +72,11 @@ public final class CollectionAssertions
     /**
      * Asserts that the List is not null and not empty
      *
-     * @param <T>
+     * @param <E>
      *
      * @return
      */
-    public static <T> AlchemyAssertion<List<T>> nonEmptyList()
+    public static <E> AlchemyAssertion<List<E>> nonEmptyList()
     {
         return (list) ->
         {
@@ -125,7 +125,7 @@ public final class CollectionAssertions
         };
     }
 
-    public static <T> AlchemyAssertion<List<T>> listContaining(@NonNull T element) throws IllegalArgumentException
+    public static <E> AlchemyAssertion<List<E>> listContaining(@NonNull E element) throws IllegalArgumentException
     {
         checkNotNull(element, "cannot check for null");
         
