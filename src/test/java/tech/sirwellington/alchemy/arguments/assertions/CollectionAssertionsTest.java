@@ -32,6 +32,8 @@ import tech.sirwellington.alchemy.test.junit.runners.Repeat;
 
 import static org.hamcrest.Matchers.notNullValue;
 import static org.junit.Assert.assertThat;
+import static tech.sirwellington.alchemy.arguments.Arguments.checkThat;
+import static tech.sirwellington.alchemy.arguments.assertions.CollectionAssertions.collectionOfSize;
 import static tech.sirwellington.alchemy.generator.AlchemyGenerator.one;
 import static tech.sirwellington.alchemy.generator.CollectionGenerators.listOf;
 import static tech.sirwellington.alchemy.generator.CollectionGenerators.mapOf;
@@ -289,6 +291,23 @@ public class CollectionAssertionsTest
         //Empty Collections should be ok
         CollectionAssertions.elementInCollection(Collections.emptyList());
 
+    }
+
+    @Test
+    public void testCollectionOfSize()
+    {
+        int size = strings.size();
+        AlchemyAssertion<? super Collection<String>> instance = CollectionAssertions.collectionOfSize(size);
+        instance.check(strings);
+        
+        strings.add(one(alphabeticString()));
+        
+        assertThrows(() -> instance.check(strings))
+            .isInstanceOf(FailedAssertionException.class);
+        
+        checkThat(strings)
+            .is(collectionOfSize(strings.size()));
+        
     }
 
 }

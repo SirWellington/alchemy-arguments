@@ -27,6 +27,7 @@ import tech.sirwellington.alchemy.annotations.access.NonInstantiable;
 import tech.sirwellington.alchemy.annotations.arguments.NonEmpty;
 import tech.sirwellington.alchemy.annotations.arguments.NonNull;
 import tech.sirwellington.alchemy.arguments.AlchemyAssertion;
+import tech.sirwellington.alchemy.arguments.Checks;
 import tech.sirwellington.alchemy.arguments.FailedAssertionException;
 
 import static java.lang.String.format;
@@ -223,6 +224,25 @@ public final class CollectionAssertions
             if (!collection.contains(element))
             {
                 throw new FailedAssertionException(format("Expected element [%s] to be in collection", element));
+            }
+        };
+    }
+    
+    public static <C extends Collection> AlchemyAssertion<C> collectionOfSize(int size) throws IllegalArgumentException
+    {
+        Checks.Internal.checkThat(size >= 0, "size must be >= 0");
+        
+        return collection ->
+        {
+            CollectionAssertions.nonEmptyCollection().check(collection);
+            
+            int actualSize = collection.size();
+            
+            if(actualSize != size)
+            {
+                throw new FailedAssertionException(format("Expected collection with size [%s] but is instead [%s]",
+                                                          size, 
+                                                          actualSize));
             }
         };
     }
