@@ -90,6 +90,25 @@ public final class CollectionAssertions
         };
 
     }
+    
+    /**
+     * Asserts that the Set is not null and not empty.
+     * @param <E>
+     * 
+     * @return 
+     */
+    public static <E> AlchemyAssertion<Set<E>> nonEmptySet()
+    {
+        return set ->
+        {
+            notNull().check(set);
+            
+            if(set.isEmpty())
+            {
+                throw new FailedAssertionException("Set is empty");
+            }
+        };
+    }
 
     /**
      * Asserts that the Map is not null and not empty

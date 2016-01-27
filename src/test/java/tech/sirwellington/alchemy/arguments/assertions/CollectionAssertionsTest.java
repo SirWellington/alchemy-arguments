@@ -38,6 +38,7 @@ import static org.hamcrest.Matchers.notNullValue;
 import static org.junit.Assert.assertThat;
 import static tech.sirwellington.alchemy.arguments.Arguments.checkThat;
 import static tech.sirwellington.alchemy.arguments.assertions.CollectionAssertions.collectionOfSize;
+import static tech.sirwellington.alchemy.arguments.assertions.CollectionAssertions.nonEmptySet;
 import static tech.sirwellington.alchemy.generator.AlchemyGenerator.one;
 import static tech.sirwellington.alchemy.generator.CollectionGenerators.listOf;
 import static tech.sirwellington.alchemy.generator.CollectionGenerators.mapOf;
@@ -104,6 +105,25 @@ public class CollectionAssertionsTest
             .isInstanceOf(FailedAssertionException.class);
 
         assertThrows(() -> instance.check(Collections.emptyList()))
+            .isInstanceOf(FailedAssertionException.class);
+    }
+    
+      @Test
+    public void testNonEmptySet()
+    {
+        AlchemyAssertion<Set<String>> instance = CollectionAssertions.nonEmptySet();
+        assertThat(instance, notNullValue());
+        
+        Set<String> setOfStrings = new HashSet<>(strings);
+        instance.check(setOfStrings);
+        
+        checkThat(setOfStrings).is(nonEmptySet());
+        
+        Set<String> emptySet = new HashSet<>();
+        assertThrows(() -> instance.check(emptySet))
+            .isInstanceOf(FailedAssertionException.class);
+        
+        assertThrows(() -> instance.check(null))
             .isInstanceOf(FailedAssertionException.class);
     }
 
