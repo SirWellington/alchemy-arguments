@@ -23,6 +23,8 @@ import tech.sirwellington.alchemy.annotations.access.NonInstantiable;
 import tech.sirwellington.alchemy.arguments.AlchemyAssertion;
 import tech.sirwellington.alchemy.arguments.FailedAssertionException;
 
+import static tech.sirwellington.alchemy.arguments.Checks.Internal.isNullOrEmpty;
+
 
 /**
  * Assertions made on Data relating to people.
@@ -58,6 +60,11 @@ public final class PeopleAssertions
         
         return (String email) ->
         {
+            if (isNullOrEmpty(email))
+            {
+                throw new FailedAssertionException("Email is null or empty");
+            }
+            
             if (!PATTERN.matcher(email).matches())
             {
                 throw new FailedAssertionException("Invalid Email Address: " + PATTERN);

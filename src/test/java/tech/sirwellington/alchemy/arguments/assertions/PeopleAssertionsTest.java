@@ -84,4 +84,17 @@ public class PeopleAssertionsTest
             .isInstanceOf(FailedAssertionException.class);
     }
     
+    @DontRepeat
+    @Test
+    public void testValidEmailAddressWithEmptyArgs()
+    {
+        AlchemyAssertion<String> instance = PeopleAssertions.validEmailAddress();
+        
+        assertThrows(() -> instance.check(null))
+            .isInstanceOf(FailedAssertionException.class);
+        
+        assertThrows(() -> instance.check(""))
+            .isInstanceOf(FailedAssertionException.class);
+    }
+    
 }
