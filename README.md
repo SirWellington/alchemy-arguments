@@ -1,3 +1,30 @@
+<!-- START doctoc generated TOC please keep comment here to allow auto update -->
+<!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
+**Table of Contents**  *generated with [DocToc](https://github.com/thlorenz/doctoc)*
+
+- [Alchemy Arguments](#alchemy-arguments)
+  - ["Check Yo'self!"](#check-yoself)
+- [Purpose](#purpose)
+- [API](#api)
+  - [Multiple Arguments](#multiple-arguments)
+  - [Error Message](#error-message)
+  - [Custom Exceptions](#custom-exceptions)
+  - [Custom Assertions](#custom-assertions)
+- [Download](#download)
+  - [Release](#release)
+  - [Snapshot](#snapshot)
+- [[Javadocs](http://www.javadoc.io/doc/tech.sirwellington.alchemy/alchemy-arguments/)](#javadocshttpwwwjavadociodoctechsirwellingtonalchemyalchemy-arguments)
+- [Requirements](#requirements)
+- [Building](#building)
+- [Release Notes](#release-notes)
+  - [1.4](#14)
+  - [1.3](#13)
+  - [1.2](#12)
+  - [1.1](#11)
+- [License](#license)
+
+<!-- END doctoc generated TOC please keep comment here to allow auto update -->
+
 Alchemy Arguments
 ==============================================
 
