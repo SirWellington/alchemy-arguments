@@ -1,6 +1,18 @@
+Alchemy Arguments
+==============================================
+
+[<img src="https://raw.githubusercontent.com/SirWellington/alchemy/develop/Graphics/Logo/Alchemy-Logo-v7-name.png" width="200">](https://github.com/SirWellington/alchemy)
+
+## "Check Yo'self!"
+
+[![Build Status](https://travis-ci.org/SirWellington/alchemy-arguments.svg)](https://travis-ci.org/SirWellington/alchemy-arguments)
+
+# Purpose
+Part of the [Alchemy Collection](https://github.com/SirWellington/alchemy), **Alchemy Arguments** allows developers to perform fluid argument checking and validation.
+
 <!-- START doctoc generated TOC please keep comment here to allow auto update -->
 <!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
-**Table of Contents**  *generated with [DocToc](https://github.com/thlorenz/doctoc)*
+**Table of Contents**
 
 - [Alchemy Arguments](#alchemy-arguments)
   - ["Check Yo'self!"](#check-yoself)
@@ -24,39 +36,6 @@
 - [License](#license)
 
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
-
-Alchemy Arguments
-==============================================
-
-[<img src="https://raw.githubusercontent.com/SirWellington/alchemy/develop/Graphics/Logo/Alchemy-Logo-v7-name.png" width="200">](https://github.com/SirWellington/alchemy)
-
-## "Check Yo'self!"
-
-[![Build Status](https://travis-ci.org/SirWellington/alchemy-arguments.svg)](https://travis-ci.org/SirWellington/alchemy-arguments)
-
-- [Purpose](#purpose)
-- [API](#api)
-  - [Multiple Arguments](#multiple-arguments)
-  - [Error Message](#error-message)
-  - [Custom Exceptions](#custom-exceptions)
-  - [Custom Assertions](#custom-assertions)
-- [Download](#download)
-  - [Release](#release)
-  - [Snapshot](#snapshot)
-- [[Javadocs](http://www.javadoc.io/doc/tech.sirwellington.alchemy/alchemy-arguments/)](#javadocshttpwwwjavadociodoctechsirwellingtonalchemyalchemy-arguments)
-- [Requirements](#requirements)
-- [Building](#building)
-- [Release Notes](#release-notes)
-  - [1.3](#13)
-  - [1.2](#12)
-  - [1.1](#11)
-  - [1.0.0](#100)
-- [Planned Features](#planned-features)
-  - [Assertions on multiple arguments simultaneously](#assertions-on-multiple-arguments-simultaneously)
-- [License](#license)
-
-# Purpose
-Part of the [Alchemy Collection](https://github.com/SirWellington/alchemy), **Alchemy Arguments** allows developers to perform fluid argument checking and validation.
 
 
 # API
