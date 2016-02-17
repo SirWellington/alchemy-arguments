@@ -7,6 +7,15 @@ Alchemy Arguments
 
 [![Build Status](https://travis-ci.org/SirWellington/alchemy-arguments.svg)](https://travis-ci.org/SirWellington/alchemy-arguments)
 
+# Purpose
+Part of the [Alchemy Collection](https://github.com/SirWellington/alchemy), **Alchemy Arguments** allows developers to perform fluid argument checking and validation.
+
+<!-- START doctoc generated TOC please keep comment here to allow auto update -->
+<!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
+**Table of Contents**
+
+- [Alchemy Arguments](#alchemy-arguments)
+  - ["Check Yo'self!"](#check-yoself)
 - [Purpose](#purpose)
 - [API](#api)
   - [Multiple Arguments](#multiple-arguments)
@@ -20,16 +29,44 @@ Alchemy Arguments
 - [Requirements](#requirements)
 - [Building](#building)
 - [Release Notes](#release-notes)
+  - [1.4](#14)
   - [1.3](#13)
   - [1.2](#12)
   - [1.1](#11)
-  - [1.0.0](#100)
-- [Planned Features](#planned-features)
-  - [Assertions on multiple arguments simultaneously](#assertions-on-multiple-arguments-simultaneously)
 - [License](#license)
 
-# Purpose
-Part of the [Alchemy Collection](https://github.com/SirWellington/alchemy), **Alchemy Arguments** allows developers to perform fluid argument checking and validation.
+<!-- END doctoc generated TOC please keep comment here to allow auto update -->
+
+# Download
+
+To use, simply add the following maven dependency.
+
+## Release
+```xml
+<dependency>
+	<groupId>tech.sirwellington.alchemy</groupId>
+	<artifactId>alchemy-arguments</artifactId>
+	<version>1.4</version>
+</dependency>
+```
+
+## Snapshot
+
+>First add the Snapshot Repository
+```xml
+<repository>
+	<id>ossrh</id>
+    <url>https://oss.sonatype.org/content/repositories/snapshots</url>
+</repository>
+```
+
+```xml
+<dependency>
+	<groupId>tech.sirwellington.alchemy</groupId>
+	<artifactId>alchemy-arguments</artifactId>
+	<version>1.5-SNAPSHOT</version>
+</dependency>
+```
 
 
 # API
@@ -199,37 +236,6 @@ public String findUsername(Person person)
 	//Proceed safely
 }
 
-```
-
-# Download
-
-To use, simply add the following maven dependency.
-
-## Release
-```xml
-<dependency>
-	<groupId>tech.sirwellington.alchemy</groupId>
-	<artifactId>alchemy-arguments</artifactId>
-	<version>1.3</version>
-</dependency>
-```
-
-## Snapshot
-
->First add the Snapshot Repository
-```xml
-<repository>
-	<id>ossrh</id>
-    <url>https://oss.sonatype.org/content/repositories/snapshots</url>
-</repository>
-```
-
-```xml
-<dependency>
-	<groupId>tech.sirwellington.alchemy</groupId>
-	<artifactId>alchemy-arguments</artifactId>
-	<version>1.4-SNAPSHOT</version>
-</dependency>
 ```
 
 # [Javadocs](http://www.javadoc.io/doc/tech.sirwellington.alchemy/alchemy-arguments/)
