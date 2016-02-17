@@ -37,6 +37,37 @@ Part of the [Alchemy Collection](https://github.com/SirWellington/alchemy), **Al
 
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
 
+# Download
+
+To use, simply add the following maven dependency.
+
+## Release
+```xml
+<dependency>
+	<groupId>tech.sirwellington.alchemy</groupId>
+	<artifactId>alchemy-arguments</artifactId>
+	<version>1.4</version>
+</dependency>
+```
+
+## Snapshot
+
+>First add the Snapshot Repository
+```xml
+<repository>
+	<id>ossrh</id>
+    <url>https://oss.sonatype.org/content/repositories/snapshots</url>
+</repository>
+```
+
+```xml
+<dependency>
+	<groupId>tech.sirwellington.alchemy</groupId>
+	<artifactId>alchemy-arguments</artifactId>
+	<version>1.5-SNAPSHOT</version>
+</dependency>
+```
+
 
 # API
 
@@ -205,37 +236,6 @@ public String findUsername(Person person)
 	//Proceed safely
 }
 
-```
-
-# Download
-
-To use, simply add the following maven dependency.
-
-## Release
-```xml
-<dependency>
-	<groupId>tech.sirwellington.alchemy</groupId>
-	<artifactId>alchemy-arguments</artifactId>
-	<version>1.3</version>
-</dependency>
-```
-
-## Snapshot
-
->First add the Snapshot Repository
-```xml
-<repository>
-	<id>ossrh</id>
-    <url>https://oss.sonatype.org/content/repositories/snapshots</url>
-</repository>
-```
-
-```xml
-<dependency>
-	<groupId>tech.sirwellington.alchemy</groupId>
-	<artifactId>alchemy-arguments</artifactId>
-	<version>1.4-SNAPSHOT</version>
-</dependency>
 ```
 
 # [Javadocs](http://www.javadoc.io/doc/tech.sirwellington.alchemy/alchemy-arguments/)
