@@ -20,6 +20,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import tech.sirwellington.alchemy.annotations.access.Internal;
 import tech.sirwellington.alchemy.test.junit.runners.AlchemyTestRunner;
+import tech.sirwellington.alchemy.test.junit.runners.Repeat;
 
 import static org.hamcrest.Matchers.instanceOf;
 import static org.hamcrest.Matchers.is;
@@ -27,6 +28,7 @@ import static org.hamcrest.Matchers.isEmptyOrNullString;
 import static org.hamcrest.Matchers.not;
 import static org.hamcrest.Matchers.notNullValue;
 import static org.hamcrest.Matchers.nullValue;
+import static org.hamcrest.Matchers.sameInstance;
 import static org.junit.Assert.assertThat;
 import static tech.sirwellington.alchemy.generator.AlchemyGenerator.one;
 import static tech.sirwellington.alchemy.generator.StringGenerators.alphabeticString;
@@ -35,6 +37,7 @@ import static tech.sirwellington.alchemy.generator.StringGenerators.alphabeticSt
  *
  * @author SirWellington
  */
+@Repeat(10)
 @RunWith(AlchemyTestRunner.class)
 public class DynamicExceptionSupplierTest
 {
@@ -59,8 +62,6 @@ public class DynamicExceptionSupplierTest
     @Test
     public void testApplyWithNoMessageOrCause()
     {
-        System.out.println("testApplyWithNoMessageOrCause");
-
         DynamicExceptionSupplier<FakeException> instance = new DynamicExceptionSupplier<>(FakeException.class, null);
 
         FakeException result = instance.apply(assertionException);
@@ -78,8 +79,6 @@ public class DynamicExceptionSupplierTest
     @Test
     public void testApplyWithMessage()
     {
-        System.out.println("testApplyWithMessage");
-
         FakeExceptionWithMessage result = instance.apply(assertionException);
         assertThat(result, notNullValue());
         assertThat(result.getCause(), nullValue());
@@ -101,8 +100,6 @@ public class DynamicExceptionSupplierTest
     @Test
     public void testApplyWithCause()
     {
-        System.out.println("testApplyWithCause");
-
         DynamicExceptionSupplier<FakeExceptionWithThrowable> instance;
         instance = new DynamicExceptionSupplier<>(FakeExceptionWithThrowable.class, message);
 
@@ -127,8 +124,6 @@ public class DynamicExceptionSupplierTest
     @Test
     public void testApplyWithMessageAndCause()
     {
-        System.out.println("testApplyWithMessageAndCause");
-
         DynamicExceptionSupplier<FakeExceptionWithBoth> instance;
         instance = new DynamicExceptionSupplier<>(FakeExceptionWithBoth.class, message);
 
@@ -149,20 +144,23 @@ public class DynamicExceptionSupplierTest
     @Test
     public void testWhenInvokationFails() throws Exception
     {
-        System.out.println("testWhenInvokationFails");
-
         DynamicExceptionSupplier<FakeExceptionThatThrowsOnConstruct> instance;
         instance = new DynamicExceptionSupplier<>(FakeExceptionThatThrowsOnConstruct.class, message);
 
         FakeExceptionThatThrowsOnConstruct result = instance.apply(assertionException);
         assertThat(result, nullValue());
     }
+   
+    @Test
+    public void testGetExceptionClass()
+    {
+        Class<FakeExceptionWithMessage> result = instance.getExceptionClass();
+        assertThat(result, is(sameInstance(exceptionClass)));
+    }
 
     @Test
     public void testToString()
     {
-        System.out.println("testToString");
-
         assertThat(instance.toString(), notNullValue());
         assertThat(instance.toString(), not(isEmptyOrNullString()));
 

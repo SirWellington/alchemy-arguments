@@ -18,6 +18,7 @@
 package tech.sirwellington.alchemy.arguments.assertions;
 
 
+import java.util.UUID;
 import java.util.regex.Pattern;
 import tech.sirwellington.alchemy.annotations.access.NonInstantiable;
 import tech.sirwellington.alchemy.annotations.arguments.NonEmpty;
@@ -277,6 +278,190 @@ public final class StringAssertions
                 throw new FailedAssertionException(format("Expected %s to contain %s", string, substring));
             }
         };
+    }
+    
+    /**
+     * Checks that a String has All Upper-Cased characters (also known as ALL-CAPS).
+     * 
+     * @return 
+     */
+    public static AlchemyAssertion<String> allUpperCaseString()
+    {
+        return string ->
+        {
+            nonEmptyString().check(string);
+
+            for (char character : string.toCharArray())
+            {
+                if (!Character.isUpperCase(character))
+                {
+                    throw new FailedAssertionException(format("Expected %s to be all upper-case, but %s isn't",
+                                                              string,
+                                                              character));
+                }
+            }
+        };
+    }
+    
+    /**
+     * Checks that a String has All Lower-Cased characters.
+     * 
+     * @return 
+     */
+    public static AlchemyAssertion<String> allLowerCaseString()
+    {
+       return string -> 
+       {
+           nonEmptyString().check(string);
+
+           for (char character : string.toCharArray())
+           {
+               if (!Character.isLowerCase(character))
+               {
+                   throw new FailedAssertionException(format("Expected %s to be all lower-case, but %s isn't",
+                                                             string,
+                                                             character));
+               }
+           }
+         
+       };
+    }
+    
+    /**
+     * Checks that a String ends with the specified non-empty string, as determined by
+     * {@link String#endsWith(java.lang.String)}. In other words, the Argument String must have this suffix.
+     *
+     * @param suffix The Argument String must end with this non-empty String.
+     * @return
+     * @throws IllegalArgumentException If {@code substring} is empty or null.
+     */
+    public static AlchemyAssertion<String> stringEndingWith(@NonEmpty String suffix) throws IllegalArgumentException
+    {
+        Checks.Internal.checkNotNullOrEmpty(suffix, "string should not be empty");
+        
+        return string ->
+        {
+            nonEmptyString().check(string);
+           
+            if(!string.endsWith(suffix))
+            {
+                throw new FailedAssertionException(format("Expected %s to end with %s", string, suffix));
+            }
+        };
+    }
+   
+    /**
+     * Checks that a String is composed only of Alphabetic Characters, as determined by 
+     * {@link Character#isAlphabetic(int) }.
+     *
+     * @return
+     */
+    public static AlchemyAssertion<String> alphabeticString() 
+    {
+        return string ->
+        {
+            nonEmptyString().check(string);
+            
+            for (char character : string.toCharArray())
+            {
+                if (!Character.isAlphabetic(character))
+                {
+                    throw new FailedAssertionException(format("Expected alphabetic string, but '%s' is not alphabetic",
+                                                              character));
+                }
+            }
+        };
+    }
+    
+    /**
+     * Checks that a String is composed of only Alphanumeric Characters, as determined by
+     * {@link Character#isDigit(char) } and {@link Character#isAlphabetic(int) }.
+     *
+     * @return
+     */
+    public static AlchemyAssertion<String> alphanumericString()
+    {
+        return string ->
+        {
+            nonEmptyString().check(string);
+            
+            for (char character : string.toCharArray())
+            {
+                if (!Character.isAlphabetic(character) && !Character.isDigit(character))
+                {
+                    throw new FailedAssertionException(format("Expected alphanumeric string, but chracter '%s' is not",
+                                                              character));
+                }
+            }
+        };
+    }
+    
+    /**
+     * Checks that a String represents a valid {@linkplain UUID#fromString(java.lang.String) Type-4 UUID}.
+     * 
+     * @return 
+     */
+    public static AlchemyAssertion<String> validUUID()
+    {
+        return string ->
+        {
+            nonEmptyString().check(string);
+            
+            try 
+            {
+                UUID.fromString(string);
+            }
+            catch(Exception ex)
+            {
+                throw new FailedAssertionException("String is not a valid UUID: " + string);
+            }
+        };
+    }
+    
+    /**
+     * Checks that a String represents an {@link Integer}, as determined by {@link Integer#parseInt(java.lang.String) }.
+     * In other words, that it contains only Digits, as determined by 2
+     * {@link Character#isDigit(char) }, or the characters {@code -} (negative sign), 
+     * {@code +} (positive sign)
+     * <p>
+     * Valid examples include:
+     * <pre>
+     *      0
+     *      -054
+     *      954
+     *      -674572
+     * </pre>
+     * 
+     * @return 
+     */
+    public static AlchemyAssertion<String> stringRepresentingInteger()
+    {
+        return string ->
+        {
+            nonEmptyString().check(string);
+
+            for(int i = 0; i < string.length(); ++i)
+            {
+                char character = string.charAt(i);
+                
+                //The first character is allowed to be a sign character '-' or '+'
+                if (i == 0 && isSignCharacter(character))
+                {
+                    continue;
+                }
+
+                if (!Character.isDigit(character))
+                {
+                    throw new FailedAssertionException(format("Expected an Integer String, but %s is not a digi",
+                                                              character));
+                }
+            }
+        };
+    };
+
+    private static boolean isSignCharacter(char character)
+    {
+        return character == '-' || character == '+';
     }
 
 }

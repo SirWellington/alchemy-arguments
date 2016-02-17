@@ -20,9 +20,12 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Set;
+import java.util.function.Consumer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import tech.sirwellington.alchemy.annotations.access.NonInstantiable;
+import tech.sirwellington.alchemy.annotations.arguments.NonEmpty;
 import tech.sirwellington.alchemy.annotations.arguments.NonNull;
 import tech.sirwellington.alchemy.arguments.AlchemyAssertion;
 import tech.sirwellington.alchemy.arguments.Checks;
@@ -50,11 +53,11 @@ public final class CollectionAssertions
     /**
      * Asserts that the collection is not null and not empty.
      *
-     * @param <T>
+     * @param <E>
      *
      * @return
      */
-    public static <T> AlchemyAssertion<Collection<T>> nonEmptyCollection()
+    public static <E> AlchemyAssertion<Collection<E>> nonEmptyCollection()
     {
         return (collection) ->
         {
@@ -70,11 +73,11 @@ public final class CollectionAssertions
     /**
      * Asserts that the List is not null and not empty
      *
-     * @param <T>
+     * @param <E>
      *
      * @return
      */
-    public static <T> AlchemyAssertion<List<T>> nonEmptyList()
+    public static <E> AlchemyAssertion<List<E>> nonEmptyList()
     {
         return (list) ->
         {
@@ -86,6 +89,25 @@ public final class CollectionAssertions
             }
         };
 
+    }
+    
+    /**
+     * Asserts that the Set is not null and not empty.
+     * @param <E>
+     * 
+     * @return 
+     */
+    public static <E> AlchemyAssertion<Set<E>> nonEmptySet()
+    {
+        return set ->
+        {
+            notNull().check(set);
+            
+            if(set.isEmpty())
+            {
+                throw new FailedAssertionException("Set is empty");
+            }
+        };
     }
 
     /**
@@ -110,7 +132,7 @@ public final class CollectionAssertions
         };
     }
 
-    public static <T> AlchemyAssertion<T[]> nonEmptyArray()
+    public static <E> AlchemyAssertion<E[]> nonEmptyArray()
     {
         return (array) ->
         {
@@ -122,10 +144,41 @@ public final class CollectionAssertions
             }
         };
     }
-
-    public static <T> AlchemyAssertion<List<T>> listContaining(@NonNull T element) throws IllegalArgumentException
+   
+    public static <E> AlchemyAssertion<Collection<E>> emptyCollection()
     {
-        Checks.Internal.checkNotNull(element, "cannot check for null");
+        return collection ->
+        {
+            notNull().check(collection);
+            
+            if(!collection.isEmpty())
+            {
+                throw new FailedAssertionException(format("Expected an empty collection, but it has size [%s]",
+                                                          collection.size()));
+            }
+        };
+    }
+    
+    public static <E> AlchemyAssertion<List<E>> emptyList()
+    {
+        return list ->
+        {
+            CollectionAssertions.<E>emptyCollection().check(list);
+        };
+    }
+    
+    public static <E> AlchemyAssertion<Set<E>> emptySet()
+    {
+        return set ->
+        {
+            CollectionAssertions.<E>emptyCollection().check(set);
+        };
+    }
+
+    public static <E> AlchemyAssertion<List<E>> listContaining(@NonNull E element) throws IllegalArgumentException
+    {
+        checkNotNull(element, "cannot check for null");
+        
         return list ->
         {
             notNull().check(list);
@@ -169,5 +222,79 @@ public final class CollectionAssertions
 
         };
     }
-
+    
+    public static <K, V> AlchemyAssertion<K> keyInMap(Map<K, V> map) throws IllegalArgumentException
+    {
+        checkNotNull(map, "map cannot be null");
+        
+        Consumer<K> failAssertion = key ->
+        {
+            throw new FailedAssertionException(format("Expected key [%s] to be in map", key));
+        };
+        
+        return key ->
+        {
+            notNull().check(key);
+            
+            if (!map.containsKey(key))
+            {
+                failAssertion.accept(key);
+            }
+        };
+    }
+    
+    public static <K,V> AlchemyAssertion<V> valueInMap(Map<K,V> map) throws IllegalArgumentException
+    {
+        checkNotNull(map, "map cannot be null");
+        
+        Consumer<V> failAssertion = key ->
+        {
+            throw new FailedAssertionException(format("Expected value [%s] to be in map", key));
+        };
+        
+        return value ->
+        {
+            notNull().check(value);
+            
+            if (!map.containsValue(value))
+            {
+                failAssertion.accept(value);
+            }
+        };
+    }
+    
+    public static <E> AlchemyAssertion<E> elementInCollection(@NonEmpty Collection<E> collection) throws IllegalArgumentException
+    {
+        checkNotNull(collection, "collection cannot be null");
+        
+        return element ->
+        {
+            notNull().check(element);
+            
+            if (!collection.contains(element))
+            {
+                throw new FailedAssertionException(format("Expected element [%s] to be in collection", element));
+            }
+        };
+    }
+    
+    public static <C extends Collection> AlchemyAssertion<C> collectionOfSize(int size) throws IllegalArgumentException
+    {
+        Checks.Internal.checkThat(size >= 0, "size must be >= 0");
+        
+        return collection ->
+        {
+            CollectionAssertions.nonEmptyCollection().check(collection);
+            
+            int actualSize = collection.size();
+            
+            if(actualSize != size)
+            {
+                throw new FailedAssertionException(format("Expected collection with size [%s] but is instead [%s]",
+                                                          size, 
+                                                          actualSize));
+            }
+        };
+    }
+    
 }
