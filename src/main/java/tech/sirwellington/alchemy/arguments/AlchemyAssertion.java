@@ -16,14 +16,27 @@
 package tech.sirwellington.alchemy.arguments;
 
 import tech.sirwellington.alchemy.annotations.arguments.NonNull;
-import tech.sirwellington.alchemy.annotations.arguments.Nullable;
+import tech.sirwellington.alchemy.annotations.arguments.Optional;
 import tech.sirwellington.alchemy.annotations.designs.patterns.StrategyPattern;
+
 import static tech.sirwellington.alchemy.annotations.designs.patterns.StrategyPattern.Role.INTERFACE;
 
 /**
- * {@linkplain AlchemyAssertion Alchemy Assertions} analyze arguments for validity. It is very easy
- * to write your own assertions, making for powerful custom argument checks.
- *
+ * {@linkplain AlchemyAssertion Alchemy Assertions} analyze arguments for validity. 
+ * <p>
+ * Creating your own {@link AlchemyAssertion} is as simple as implementing this functional interface, which can be done in a
+ * lambda.
+ * <p>
+ * Alchemy Assertions do have a naming convention:
+ * 
+ * <pre>
+ * 
+ * + Do <b>not</b> begin with "is". For example, isPosition(), isEmpty().
+ * + Named after the condition that is expected to be true. For example, greaterThan(5), nonEmptyString().
+ * + As long as necessary to allow for an English-legible translation. For example, lessThanOrEqualTo(40). Don't use abbreviations.
+ * 
+ * </pre>
+ * 
  * @param <A> The type of argument an assertion checks
  *
  * @author SirWellington
@@ -40,11 +53,10 @@ public interface AlchemyAssertion<A>
      *
      * @throws FailedAssertionException When the argument-check fails. Note that
      *                                  {@link FailedAssertionException} already extends
-     *                                  {@link IllegalArgumentException}. Any other types of
-     *                                  {@linkplain Exception Exceptions} thrown will be wrapped in
-     *                                  a {@link FailedAssertionException}.
+     *                                  {@link IllegalArgumentException}, allowing you to write a {@code catch} clause for
+     *                                  {@code IllegalArgumentException}.
      */
-    void check(@Nullable A argument) throws FailedAssertionException;
+    void check(@Optional A argument) throws FailedAssertionException;
 
     /**
      * Allows combinations of multiple {@linkplain AlchemyAssertion assertions} in one.
