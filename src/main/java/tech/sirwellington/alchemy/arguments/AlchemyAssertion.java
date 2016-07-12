@@ -15,8 +15,8 @@
  */
 package tech.sirwellington.alchemy.arguments;
 
-import tech.sirwellington.alchemy.annotations.arguments.NonNull;
 import tech.sirwellington.alchemy.annotations.arguments.Optional;
+import tech.sirwellington.alchemy.annotations.arguments.Required;
 import tech.sirwellington.alchemy.annotations.designs.patterns.StrategyPattern;
 
 import static tech.sirwellington.alchemy.annotations.designs.patterns.StrategyPattern.Role.INTERFACE;
@@ -99,8 +99,8 @@ public interface AlchemyAssertion<A>
      * 
      * @see #combine(tech.sirwellington.alchemy.arguments.AlchemyAssertion, tech.sirwellington.alchemy.arguments.AlchemyAssertion...) 
      */
-    @NonNull
-    default AlchemyAssertion<A> and(@NonNull AlchemyAssertion<A> other) throws IllegalArgumentException
+    @Required
+    default AlchemyAssertion<A> and(@Required AlchemyAssertion<A> other) throws IllegalArgumentException
     {
         Checks.Internal.checkNotNull(other, "assertion cannot be null");
 
@@ -143,7 +143,7 @@ public interface AlchemyAssertion<A>
      * 
      * @see #and(tech.sirwellington.alchemy.arguments.AlchemyAssertion) 
      */
-    static <T> AlchemyAssertion<T> combine(@NonNull AlchemyAssertion<T> first, AlchemyAssertion<T>... other)
+    static <T> AlchemyAssertion<T> combine(@Required AlchemyAssertion<T> first, AlchemyAssertion<T>... other)
     {
         Checks.Internal.checkNotNull(first, "the first AlchemyAssertion cannot be null");
         Checks.Internal.checkNotNull(other, "null varargs");
