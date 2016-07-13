@@ -59,8 +59,8 @@ public interface AlchemyAssertion<A>
     void check(@Optional A argument) throws FailedAssertionException;
 
     /**
-     * Allows combinations of multiple {@linkplain AlchemyAssertion assertions} in one.
-     *
+     * Allows the combination of multiple {@linkplain AlchemyAssertion assertions} in one.
+     *<p>
      * For example, a {@code validAge} assertion could be constructed dynamically using:
      * <pre>
      *
@@ -69,8 +69,8 @@ public interface AlchemyAssertion<A>
      *      .and(greaterThanOrEqualTo(1))
      *      .and(lessThanOrEqualTo(120))
      *
-     * checkThat(age)
-     * .is(validAge);
+     *  checkThat(age)
+     *      .is(validAge);
      * }
      *
      * </pre>
@@ -79,8 +79,9 @@ public interface AlchemyAssertion<A>
      * argument checks, and to do so at runtime.
      * <p>
      * Note that due to limitations of the Java Compiler, the first
-     * {@linkplain AlchemyAssertion Assertion} that you make must match the type of the argument. So
-     * for example,
+     * {@linkplain AlchemyAssertion Assertion} that you make must match the type of the argument.
+     * <p>
+     * For example,
      * <pre>
      * {@code
      *  notNull()
@@ -90,8 +91,8 @@ public interface AlchemyAssertion<A>
      * </pre>
      * would not work because notNull references a vanilla {@code Object}.
      * <p>
-     * {@link #combine(tech.sirwellington.alchemy.arguments.AlchemyAssertion, tech.sirwellington.alchemy.arguments.AlchemyAssertion...)} 
-     * does not have these limitations.
+     * The {@linkplain #combine(tech.sirwellington.alchemy.arguments.AlchemyAssertion, tech.sirwellington.alchemy.arguments.AlchemyAssertion...) combine} 
+     * function does not have these limitations.
      *
      * @param other
      *
