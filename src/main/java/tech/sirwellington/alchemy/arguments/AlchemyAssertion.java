@@ -114,18 +114,18 @@ public interface AlchemyAssertion<A>
 
     /**
      * Combines multiple {@linkplain AlchemyAssertion assertions} into one.
-     *
+     * <p>
      * For example, a {@code validAge} assertion could be constructed dynamically using:
      * <pre>
      *
      * {@code
      *   AlchemyAssertion<Integer> validAge = combine
-     * (
+     *   (
      *      notNull(),
      *      greaterThanOrEqualTo(1),
      *      lessThanOrEqualTo(120),
      *      positiveInteger()
-     * );
+     *   );
      *
      * checkThat(age)
      *      .is(validAge);
