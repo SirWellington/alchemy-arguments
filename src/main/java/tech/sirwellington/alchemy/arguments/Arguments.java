@@ -30,14 +30,15 @@ import static java.util.Arrays.asList;
  * <br>
  * From here you can do:
  * <pre>
+ * 
  * {@code
  * checkThat(zipCode)
- .throwing(ex -> new InvalidZipCodeException(zipCode))
- .is(notNull())
- .is(positiveInteger())
- .is(intAtLeast(10000))
- .is(intAtMost(99999));
- }
+ *      .throwing(ex -> new InvalidZipCodeException(zipCode))
+ *      .is(notNull())
+ *      .is(positiveInteger())
+ *      .is(greaterThanOrEqualTo(10000))
+ *      .is(lessThan(99999));
+ * }
  * </pre>
  *
  * @author SirWellington
