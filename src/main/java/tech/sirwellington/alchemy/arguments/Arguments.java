@@ -20,7 +20,7 @@ import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import tech.sirwellington.alchemy.annotations.access.NonInstantiable;
-import tech.sirwellington.alchemy.annotations.arguments.Nullable;
+import tech.sirwellington.alchemy.annotations.arguments.Optional;
 import tech.sirwellington.alchemy.annotations.designs.FluidAPIDesign;
 
 import static java.util.Arrays.asList;
@@ -59,11 +59,11 @@ public final class Arguments
      * Begin assertions on a single argument.
      *
      * @param <Argument> The type of the argument
-     * @param argument   The argument itself
+     * @param argument   The argument itself, which may be {@code null}.
      *
      * @return An object that allows building assertions on the argument.
      */
-    public static <Argument> AssertionBuilder<Argument, FailedAssertionException> checkThat(@Nullable Argument argument)
+    public static <Argument> AssertionBuilder<Argument, FailedAssertionException> checkThat(@Optional Argument argument)
     {
         return AssertionBuilderImpl.checkThat(asList(argument));
     }
@@ -72,19 +72,22 @@ public final class Arguments
      * Begin assertions on multiple arguments.
      *
      * @param <Argument> The type of the arguments
-     * @param argument   The first argument.
+     * @param argument   The first argument, which may be {@code null}.
      * @param others     The rest of the argument to perform checks on.
      *
      * @return An object that allows building assertions on the arguments.
      */
-    public static <Argument> AssertionBuilder<Argument, FailedAssertionException> checkThat(@Nullable Argument argument, Argument... others)
+    public static <Argument> AssertionBuilder<Argument, FailedAssertionException> checkThat(@Optional Argument argument, Argument... others)
     {
         List<Argument> listOfArguments = new ArrayList<>();
+        //Argument may be null, but an Array List permits null values.
         listOfArguments.add(argument);
-        if (others != null)
+        
+        if (others != null && others.length > 0)
         {
             listOfArguments.addAll(asList(others));
         }
+        
         return AssertionBuilderImpl.checkThat(listOfArguments);
     }
 
