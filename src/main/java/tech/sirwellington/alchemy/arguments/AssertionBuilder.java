@@ -27,6 +27,7 @@ import tech.sirwellington.alchemy.annotations.designs.FluidAPIDesign;
  * {@code
  * checkThat(password)
  *      .usingMessage("Invalid Password")
+ *      .throwing(InvalidCredentialsException.class)
  *      .is(notNull())
  *      .is(nonEmptyString())
  *      .is(stringIsAtLeastOfLength(10));
@@ -44,8 +45,7 @@ import tech.sirwellington.alchemy.annotations.designs.FluidAPIDesign;
  }
  * </pre>
  *
- * With no {@link ExceptionMapper} provided, an
- * {@linkplain ExceptionMapper#IDENTITY identity mapper} is used.
+ * If no {@link ExceptionMapper} is used, the original {@link FailedAssertionException} is thrown.
  *
  * @param <Argument> The type of the argument being checked
  * @param <Ex>       The type of {@link Exception} that will be thrown if the given assertion fails.
