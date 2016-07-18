@@ -59,7 +59,7 @@ public interface AlchemyAssertion<A>
     void check(@Optional A argument) throws FailedAssertionException;
 
     /**
-     * Allows the combination of multiple {@linkplain AlchemyAssertion assertions} in one.
+     * Chains two {@linkplain AlchemyAssertion assertions} together.
      *<p>
      * For example, a {@code validAge} assertion could be constructed dynamically using:
      * <pre>
@@ -98,7 +98,8 @@ public interface AlchemyAssertion<A>
      *
      * @return
      * 
-     * @see #combine(tech.sirwellington.alchemy.arguments.AlchemyAssertion, tech.sirwellington.alchemy.arguments.AlchemyAssertion...) 
+     * @see #combine(tech.sirwellington.alchemy.arguments.AlchemyAssertion, tech.sirwellington.alchemy.arguments.AlchemyAssertion...)  
+     * @see Arguments#checkThat(java.lang.Object) 
      */
     @Required
     default AlchemyAssertion<A> and(@Required AlchemyAssertion<A> other) throws IllegalArgumentException
@@ -155,7 +156,10 @@ public interface AlchemyAssertion<A>
             
             for (AlchemyAssertion<T> assertion : other)
             {
-                assertion.check(argument);
+                if (assertion != null)
+                {
+                    assertion.check(argument);
+                }
             }
         };
     }
