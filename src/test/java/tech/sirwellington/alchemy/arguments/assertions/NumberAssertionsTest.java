@@ -103,23 +103,6 @@ public class NumberAssertionsTest
     }
 
     @Test
-    public void testNegativeInteger()
-    {
-        AlchemyAssertion<Integer> instance = NumberAssertions.negativeInteger();
-        assertThat(instance, notNullValue());
-
-        int negative = one(negativeIntegers());
-        instance.check(negative);
-
-        int positive = one(positiveIntegers());
-        assertThrows(() -> instance.check(positive))
-            .isInstanceOf(FailedAssertionException.class);
-
-        assertThrows(() -> instance.check(null))
-            .isInstanceOf(FailedAssertionException.class);
-    }
-
-    @Test
     public void testIntLessThan()
     {
         int upperBound = one(integers(-1000, 1000));
@@ -137,7 +120,6 @@ public class NumberAssertionsTest
     {
         assertThrows(() -> NumberAssertions.lessThan(Integer.MIN_VALUE))
             .isInstanceOf(IllegalArgumentException.class);
-
     }
 
     @Test
@@ -174,7 +156,7 @@ public class NumberAssertionsTest
             .isInstanceOf(IllegalArgumentException.class);
     }
 
-    public void testGreaterThanOrEqualToInt() throws Exception
+    public void testIntGreaterThanOrEqualTo() throws Exception
     {
         int inclusiveLowerBound = one(integers(-1000, 1000));
         AlchemyAssertion<Integer> instance = NumberAssertions.greaterThanOrEqualTo(inclusiveLowerBound);
@@ -206,9 +188,58 @@ public class NumberAssertionsTest
         assertThrows(() -> instance.check(badNumber)).isInstanceOf(FailedAssertionException.class);
     }
 
+    @Test
+    public void testNegativeInteger()
+    {
+        AlchemyAssertion<Integer> instance = NumberAssertions.negativeInteger();
+        assertThat(instance, notNullValue());
+
+        int negative = one(negativeIntegers());
+        instance.check(negative);
+
+        int positive = one(positiveIntegers());
+        assertThrows(() -> instance.check(positive))
+            .isInstanceOf(FailedAssertionException.class);
+
+        assertThrows(() -> instance.check(null))
+            .isInstanceOf(FailedAssertionException.class);
+    }
+
     //==============================
     //LONG TESTS
     //==============================
+    @Test
+    public void testLongGreaterThan()
+    {
+        long lowerBound = one(longs(-100000L, 100000L));
+        AlchemyAssertion<Long> instance = NumberAssertions.greaterThan(lowerBound);
+        Tests.checkForNullCase(instance);
+        AlchemyGenerator<Long> badNumbers = () -> lowerBound - one(longs(0, 1000L));
+        AlchemyGenerator<Long> goodNumbers = () -> lowerBound + one(smallPositiveLongs());
+        Tests.runTests(instance, badNumbers, goodNumbers);
+    }
+
+    @Test
+    public void testLongGreaterThanEdgeCases()
+    {
+        assertThrows(() -> NumberAssertions.greaterThan(Long.MAX_VALUE))
+            .isInstanceOf(IllegalArgumentException.class);
+    }
+
+    @Test
+    public void testLongGreaterThanOrEqualTo() throws Exception
+    {
+        long inclusiveLowerBound = one(longs(-10_000L, 10_000L));
+        AlchemyAssertion<Long> instance = NumberAssertions.greaterThanOrEqualTo(inclusiveLowerBound);
+
+        assertThat(instance, notNullValue());
+        Tests.checkForNullCase(instance);
+
+        AlchemyGenerator<Long> goodArguments = longs(inclusiveLowerBound, Long.MAX_VALUE);
+        AlchemyGenerator<Long> badArguments = longs(Long.MIN_VALUE, inclusiveLowerBound);
+        Tests.runTests(instance, badArguments, goodArguments);
+    }
+
     @Test
     public void testLongLessThan()
     {
@@ -232,55 +263,6 @@ public class NumberAssertionsTest
     {
         assertThrows(() -> NumberAssertions.lessThan(Long.MIN_VALUE))
             .isInstanceOf(IllegalArgumentException.class);
-    }
-
-    @Test
-    public void testLongGreaterThan()
-    {
-        long lowerBound = one(longs(-100000L, 100000L));
-        AlchemyAssertion<Long> instance = NumberAssertions.greaterThan(lowerBound);
-        Tests.checkForNullCase(instance);
-        AlchemyGenerator<Long> badNumbers = () -> lowerBound - one(longs(0, 1000L));
-        AlchemyGenerator<Long> goodNumbers = () -> lowerBound + one(smallPositiveLongs());
-        Tests.runTests(instance, badNumbers, goodNumbers);
-    }
-
-    @Test
-    public void testLongGreaterThanEdgeCases()
-    {
-        assertThrows(() -> NumberAssertions.greaterThan(Long.MAX_VALUE))
-            .isInstanceOf(IllegalArgumentException.class);
-    }
-
-    @Test
-    public void testGreaterThanOrEqualToLong() throws Exception
-    {
-        long inclusiveLowerBound = one(longs(-10_000L, 10_000L));
-        AlchemyAssertion<Long> instance = NumberAssertions.greaterThanOrEqualTo(inclusiveLowerBound);
-
-        assertThat(instance, notNullValue());
-        Tests.checkForNullCase(instance);
-
-        AlchemyGenerator<Long> goodArguments = longs(inclusiveLowerBound, Long.MAX_VALUE);
-        AlchemyGenerator<Long> badArguments = longs(Long.MIN_VALUE, inclusiveLowerBound);
-        Tests.runTests(instance, badArguments, goodArguments);
-    }
-
-    @Test
-    public void testNegativeLong()
-    {
-        AlchemyAssertion<Long> instance = NumberAssertions.negativeLong();
-        checkThat(instance, notNullValue());
-
-        long negative = one(longs(Long.MIN_VALUE, 0));
-        instance.check(negative);
-
-        long positive = one(positiveLongs());
-        assertThrows(() -> instance.check(positive))
-            .isInstanceOf(FailedAssertionException.class);
-
-        assertThrows(() -> instance.check(null))
-            .isInstanceOf(FailedAssertionException.class);
     }
 
     @Test
@@ -343,6 +325,23 @@ public class NumberAssertionsTest
         AlchemyGenerator<Long> badNumbers = longs(Long.MIN_VALUE, 0L);
 
         Tests.runTests(instance, badNumbers, goodNumbers);
+    }
+
+    @Test
+    public void testNegativeLong()
+    {
+        AlchemyAssertion<Long> instance = NumberAssertions.negativeLong();
+        checkThat(instance, notNullValue());
+
+        long negative = one(longs(Long.MIN_VALUE, 0));
+        instance.check(negative);
+
+        long positive = one(positiveLongs());
+        assertThrows(() -> instance.check(positive))
+            .isInstanceOf(FailedAssertionException.class);
+
+        assertThrows(() -> instance.check(null))
+            .isInstanceOf(FailedAssertionException.class);
     }
 
     //==============================
