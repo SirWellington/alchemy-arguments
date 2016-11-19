@@ -546,4 +546,49 @@ public class StringAssertionsTest
         
     }
 
+    @Test
+    public void testIntegerStringWithGoodString()
+    {
+        int value = one(integers(Integer.MIN_VALUE, Integer.MAX_VALUE));
+        String string = String.valueOf(value);
+        
+        AlchemyAssertion<String> assertion = StringAssertions.integerString();
+        assertThat(assertion, notNullValue());
+        
+        assertion.check(string);
+    }
+    
+    @Test
+    public void testIntegerStringWithBadString()
+    {
+        AlchemyAssertion<String> assertion = StringAssertions.integerString();
+        
+        String alphabetic =  one(alphabeticString());
+        assertThrows(() -> assertion.check(alphabetic)).isInstanceOf(FailedAssertionException.class);
+        
+        double value = one(doubles(-Double.MAX_VALUE, Double.MAX_VALUE));
+        String decimalString = String.valueOf(value);
+        assertThrows(() -> assertion.check(decimalString)).isInstanceOf(FailedAssertionException.class);
+    }
+
+    @Test
+    public void testDecimalString()
+    {
+        AlchemyAssertion<String> assertion = StringAssertions.decimalString();
+        assertThat(assertion, notNullValue());
+        
+        double value = one(doubles(-Double.MAX_VALUE, Double.MAX_VALUE));
+        assertion.check(String.valueOf(value));
+    }
+    
+    @Test
+    public void testDecimalStringWithBadString()
+    {
+        AlchemyAssertion<String> assertion = StringAssertions.decimalString();
+        assertThat(assertion, notNullValue());
+        
+        String value = one(alphanumericString());
+        assertThrows(() -> assertion.check(String.valueOf(value)));
+    }
+
 }
