@@ -383,7 +383,8 @@ public final class NumberAssertions
         {
             Assertions.notNull().check(number);
             
-            if (number - abs(delta) >= exclusiveUpperBound)
+            boolean isWithinBounds = number - abs(delta) < exclusiveUpperBound;
+            if(!isWithinBounds)
             {
                 throw new FailedAssertionException("Number must be < " + exclusiveUpperBound);
             }
