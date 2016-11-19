@@ -23,6 +23,8 @@ import tech.sirwellington.alchemy.arguments.AlchemyAssertion;
 import tech.sirwellington.alchemy.arguments.Checks;
 import tech.sirwellington.alchemy.arguments.FailedAssertionException;
 
+import static java.lang.Math.abs;
+
 /**
  *
  * @author SirWellington
@@ -39,7 +41,7 @@ public final class NumberAssertions
     }
 
     /**
-     * Asserts than an integer is {@code >} the supplied value.
+     * Asserts that an integer is {@code >} the supplied value.
      *
      * @param exclusiveLowerBound The argument must be {@code > exclusiveLowerBound}.
      *
@@ -59,7 +61,7 @@ public final class NumberAssertions
     }
 
     /**
-     * Asserts than a long is {@code > exclusiveLowerBound}.
+     * Asserts that a long is {@code > exclusiveLowerBound}.
      *
      * @param exclusiveLowerBound The argument must be {@code >} this value.
      *
@@ -77,22 +79,59 @@ public final class NumberAssertions
             }
         };
     }
+    
+    /**
+     * Asserts that a double is {@code > exclusiveLowerBound}, with no allowable margin of error.
+     * 
+     * @param exclusiveLowerBound The argument is expected to be {@code >} this value.
+     * 
+     * @return 
+     */
+    public static AlchemyAssertion<Double> greaterThan(double exclusiveLowerBound)
+    {
+        return greaterThan(exclusiveLowerBound, 0.0);
+    }
+    
+    /**
+     * Asserts that a double is {@code > exclusiveLowerBound} within {@code delta} margin of error.
+     * 
+     * @param exclusiveLowerBound The argument is expected to be {@code >} this value.
+     * @param delta The allowable margin of error for the {@code >} operation.
+     * 
+     * @return 
+     */
+    public static AlchemyAssertion<Double> greaterThan(double exclusiveLowerBound, double delta)
+    {
+        Checks.Internal.checkThat(exclusiveLowerBound < Double.MAX_VALUE, "Doubles cannot exceed " + Double.MAX_VALUE);
+        
+        return number ->
+        {
+            Assertions.notNull().check(number);
+            
+            boolean isWithinBounds = number + abs(delta) > exclusiveLowerBound;
+            if (!isWithinBounds)
+            {
+                throw new FailedAssertionException("Number must be > " + exclusiveLowerBound + " +- " + delta);
+            }
+        };
+    }
+    
 
     /**
      * Asserts that an integer is {@code >=} the supplied value.
      *
-     * @param lowerBound The argument integer must be {@code >= inclusiveLowerBound}
+     * @param inclusiveLowerBound The argument integer must be {@code >= inclusiveLowerBound}
      *
      * @return
      */
-    public static AlchemyAssertion<Integer> greaterThanOrEqualTo(int lowerBound)
+    public static AlchemyAssertion<Integer> greaterThanOrEqualTo(int inclusiveLowerBound)
     {
         return (Integer number) ->
         {
             Assertions.notNull().check(number);
-            if (number < lowerBound)
+            if (number < inclusiveLowerBound)
             {
-                throw new FailedAssertionException("Number must be greater than or equal to " + lowerBound);
+                throw new FailedAssertionException("Number must be greater than or equal to " + inclusiveLowerBound);
             }
         };
     }
@@ -100,18 +139,52 @@ public final class NumberAssertions
     /**
      * Asserts that a long is {@code >= inclusiveLowerBound}.
      *
-     * @param lowerBound The argument integer must be {@code >= inclusiveUpperBound}
+     * @param inclusiveLowerBound The argument integer must be {@code >= inclusiveUpperBound}
      *
      * @return
      */
-    public static AlchemyAssertion<Long> greaterThanOrEqualTo(long lowerBound)
+    public static AlchemyAssertion<Long> greaterThanOrEqualTo(long inclusiveLowerBound)
     {
         return (Long number) ->
         {
             Assertions.notNull().check(number);
-            if (number < lowerBound)
+            if (number < inclusiveLowerBound)
             {
-                throw new FailedAssertionException("Number must be greater than or equal to " + lowerBound);
+                throw new FailedAssertionException("Number must be greater than or equal to " + inclusiveLowerBound);
+            }
+        };
+    }
+    
+    /**
+     * Asserts that a double is {@code >= inclusiveLowerBound} with no allowable margin of error.
+     * 
+     * @param inclusiveLowerBound The argument double must be {@code >= inclusiveLowerBound}
+     * 
+     * @return 
+     */
+    public static AlchemyAssertion<Double> greaterThanOrEqualTo(double inclusiveLowerBound)
+    {
+        return greaterThanOrEqualTo(inclusiveLowerBound, 0.0);
+    }
+    
+    /**
+     * Asserts that a double is {@code >= inclusiveLowerBound} within {@code delta} margin-of-error.
+     * 
+     * @param inclusiveLowerBound The argument double must be {@code >= inclusiveLowerBound} within the margin of error.
+     * @param delta The allowable margin-of-error for the {@code >= } comparison.
+     * 
+     * @return 
+     */
+    public static AlchemyAssertion<Double> greaterThanOrEqualTo(double inclusiveLowerBound, double delta)
+    {
+        return (Double number) ->
+        {
+            Assertions.notNull().check(number);
+            
+            boolean isWithinBounds = number + abs(delta) >= inclusiveLowerBound;
+            if(!isWithinBounds)
+            {
+                throw new FailedAssertionException("Number must be >= " + inclusiveLowerBound + " +- " + delta);
             }
         };
     }
@@ -180,6 +253,40 @@ public final class NumberAssertions
             }
         };
     }
+    
+    /**
+     * Asserts that a double is {@code <=} the supplied value, with no allowable margin-of-error.
+     *
+     * @param inclusiveUpperBound The argument must be {@code <= inclusiveUpperBound}.
+     *
+     * @return
+     */
+    public static AlchemyAssertion<Double> lessThanOrEqualTo(double inclusiveUpperBound)
+    {
+        return lessThanOrEqualTo(inclusiveUpperBound, 0.0);
+    }
+    
+    /**
+     * Asserts that a double is {@code <=} the supplied value, within a {@code delta} margin-of-error.
+     * 
+     * @param inclusiveUpperBound
+     * @param delta The allowable margin-of-error in the {@code <= } comparison
+     *
+     * @return
+     */
+    public static AlchemyAssertion<Double> lessThanOrEqualTo(double inclusiveUpperBound, double delta)
+    {
+        return number ->
+        {
+            Assertions.notNull().check(number);
+            
+            boolean isWithinBounds = number - abs(delta) <= inclusiveUpperBound;
+            if(!isWithinBounds)
+            {
+                throw new FailedAssertionException("Number must be <= " + inclusiveUpperBound + " +- " + delta);
+            }
+        };
+    }
 
     /**
      * Asserts that a Long is positive, or {@code > 0}
@@ -242,6 +349,41 @@ public final class NumberAssertions
         {
             Assertions.notNull().check(number);
             if (number >= exclusiveUpperBound)
+            {
+                throw new FailedAssertionException("Number must be < " + exclusiveUpperBound);
+            }
+        };
+    }
+  
+    /**
+     * Asserts that a double is {@code <} the supplied value, with no allowable margin-of-error.
+     * 
+     * @param exclusiveUpperBound The argument must be {@code < exclusiveUpperBound}
+     * 
+     * @return 
+     */
+    public static AlchemyAssertion<Double> lessThan(double exclusiveUpperBound)
+    {
+        return lessThan(exclusiveUpperBound, 0.0);
+    }
+    
+    /**
+     * Asserts that a double is {@code <} the supplied value, within {@code delta} margin-of-error.
+     * 
+     * @param exclusiveUpperBound The argument must be {@code < exclusiveUpperBound}.
+     * @param delta The allowable margin-of-error.
+     * 
+     * @return 
+     */
+    public static AlchemyAssertion<Double> lessThan(double exclusiveUpperBound, double delta)
+    {
+        Checks.Internal.checkThat(exclusiveUpperBound > -Double.MAX_VALUE, "Doubles cannot be less than " + -Double.MAX_VALUE);
+        
+        return (Double number) ->
+        {
+            Assertions.notNull().check(number);
+            
+            if (number - abs(delta) >= exclusiveUpperBound)
             {
                 throw new FailedAssertionException("Number must be < " + exclusiveUpperBound);
             }
