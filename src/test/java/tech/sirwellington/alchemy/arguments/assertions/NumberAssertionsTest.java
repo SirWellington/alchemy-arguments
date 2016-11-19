@@ -1,3 +1,4 @@
+
 /*
  * Copyright 2015 SirWellington Tech.
  *
@@ -13,7 +14,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package tech.sirwellington.alchemy.arguments.assertions;
 
 import org.junit.Before;
@@ -61,125 +61,11 @@ public class NumberAssertionsTest
         assertThrows(() -> NumberAssertions.class.newInstance());
 
         assertThrows(() -> new NumberAssertions())
-                .isInstanceOf(IllegalAccessException.class);
+            .isInstanceOf(IllegalAccessException.class);
     }
-
-    @Test
-    public void testLongLessThan()
-    {
-        long upperBound = one(longs(-10000L, 100000));
-        AlchemyAssertion<Long> instance = NumberAssertions.lessThan(upperBound);
-
-        Tests.checkForNullCase(instance);
-
-        AlchemyGenerator<Long> badNumbers = () -> upperBound + one(longs(0, 10000L));
-        AlchemyGenerator<Long> goodNumbers = () -> upperBound - one(smallPositiveLongs());
-        Tests.runTests(instance, badNumbers, goodNumbers);
-
-        badNumbers = () -> upperBound;
-        Tests.runTests(instance, badNumbers, goodNumbers);
-    }
-
-    @DontRepeat
-    @Test
-    public void testLongLessThanEdgeCases()
-
-    {
-        assertThrows(() -> NumberAssertions.lessThan(Long.MIN_VALUE))
-                .isInstanceOf(IllegalArgumentException.class);
-    }
-
-    @Test
-    public void testDoubleLessThan()
-    {
-        double upperBound = one(doubles(-10000, 100000));
-        AlchemyAssertion<Double> instance = NumberAssertions.lessThan(upperBound);
-
-        Tests.checkForNullCase(instance);
-
-        AlchemyGenerator<Double> badNumbers = () -> upperBound + one(doubles(0, 10000L));
-        AlchemyGenerator<Double> goodNumbers = () -> upperBound - one(doubles(1.0, 100.0));
-        Tests.runTests(instance, badNumbers, goodNumbers);
-
-        badNumbers = () -> upperBound;
-        Tests.runTests(instance, badNumbers, goodNumbers);
-    }
-
-    @DontRepeat
-    @Test
-    public void testDoubleLessThanEdgeCases()
-
-    {
-        assertThrows(() -> NumberAssertions.lessThan(-Double.MAX_VALUE))
-                .isInstanceOf(IllegalArgumentException.class);
-    }
-
-    @Test
-    public void testLongGreaterThan()
-    {
-        long lowerBound = one(longs(-100000L, 100000L));
-        AlchemyAssertion<Long> instance = NumberAssertions.greaterThan(lowerBound);
-        Tests.checkForNullCase(instance);
-        AlchemyGenerator<Long> badNumbers = () -> lowerBound - one(longs(0, 1000L));
-        AlchemyGenerator<Long> goodNumbers = () -> lowerBound + one(smallPositiveLongs());
-        Tests.runTests(instance, badNumbers, goodNumbers);
-    }
-
-    @Test
-    public void testLongGreaterThanEdgeCases()
-    {
-        assertThrows(() -> NumberAssertions.greaterThan(Long.MAX_VALUE))
-                .isInstanceOf(IllegalArgumentException.class);
-    }
-
-    @Test
-    public void testDoubleGreaterThan()
-    {
-        double lowerBound = one(doubles(-100000, 100000));
-        AlchemyAssertion<Double> instance = NumberAssertions.greaterThan(lowerBound);
-        Tests.checkForNullCase(instance);
-        
-        AlchemyGenerator<Double> badNumbers = () -> lowerBound - one(longs(0, 1000));
-        AlchemyGenerator<Double> goodNumbers = () -> lowerBound + one(doubles(1, 100));
-        Tests.runTests(instance, badNumbers, goodNumbers);
-    }
-
-    @Test
-    public void testDoubleGreaterThanEdgeCases()
-    {
-        assertThrows(() -> NumberAssertions.greaterThan(Double.MAX_VALUE))
-                .isInstanceOf(IllegalArgumentException.class);
-    }
-
-    @Test
-    public void testGreaterThanOrEqualToDouble() throws Exception
-    {
-        double inclusiveLowerBound = one(doubles(-10_000, 10_000));
-        AlchemyAssertion<Double> instance = NumberAssertions.greaterThanOrEqualTo(inclusiveLowerBound);
-
-        assertThat(instance, notNullValue());
-        Tests.checkForNullCase(instance);
-
-        AlchemyGenerator<Double> goodArguments = doubles(inclusiveLowerBound, Double.MAX_VALUE);
-        AlchemyGenerator<Double> badArguments = doubles(-Double.MAX_VALUE, inclusiveLowerBound);
-        Tests.runTests(instance, badArguments, goodArguments);
-    }
-
-    @Test
-    public void testGreaterThanOrEqualToLong() throws Exception
-    {
-        long inclusiveLowerBound = one(longs(-10_000L, 10_000L));
-        AlchemyAssertion<Long> instance = NumberAssertions.greaterThanOrEqualTo(inclusiveLowerBound);
-
-        assertThat(instance, notNullValue());
-        Tests.checkForNullCase(instance);
-
-        AlchemyGenerator<Long> goodArguments = longs(inclusiveLowerBound, Long.MAX_VALUE);
-        AlchemyGenerator<Long> badArguments = longs(Long.MIN_VALUE, inclusiveLowerBound);
-        Tests.runTests(instance, badArguments, goodArguments);
-    }
-
-   
+    //==============================
+    //INTEGER TESTS
+    //==============================
 
     @Test
     public void testNumberBetweenInts() throws Exception
@@ -213,20 +99,24 @@ public class NumberAssertionsTest
         int max = one(integers(min, Integer.MAX_VALUE));
 
         assertThrows(() -> NumberAssertions.numberBetween(max, min))
-                .isInstanceOf(IllegalArgumentException.class);
+            .isInstanceOf(IllegalArgumentException.class);
     }
 
     @Test
-    public void testPositiveLong()
+    public void testNegativeInteger()
     {
-        AlchemyAssertion<Long> instance = NumberAssertions.positiveLong();
+        AlchemyAssertion<Integer> instance = NumberAssertions.negativeInteger();
         assertThat(instance, notNullValue());
-        Tests.checkForNullCase(instance);
 
-        AlchemyGenerator<Long> goodNumbers = positiveLongs();
-        AlchemyGenerator<Long> badNumbers = longs(Long.MIN_VALUE, 0L);
+        int negative = one(negativeIntegers());
+        instance.check(negative);
 
-        Tests.runTests(instance, badNumbers, goodNumbers);
+        int positive = one(positiveIntegers());
+        assertThrows(() -> instance.check(positive))
+            .isInstanceOf(FailedAssertionException.class);
+
+        assertThrows(() -> instance.check(null))
+            .isInstanceOf(FailedAssertionException.class);
     }
 
     @Test
@@ -246,7 +136,7 @@ public class NumberAssertionsTest
     public void testIntLessThanEdgeCases()
     {
         assertThrows(() -> NumberAssertions.lessThan(Integer.MIN_VALUE))
-                .isInstanceOf(IllegalArgumentException.class);
+            .isInstanceOf(IllegalArgumentException.class);
 
     }
 
@@ -263,7 +153,7 @@ public class NumberAssertionsTest
         Tests.runTests(instance, badNumbers, goodNumbers);
     }
 
-     @Test
+    @Test
     public void testIntGreaterThan()
     {
         int lowerBound = one(integers(-1000, 1000));
@@ -275,13 +165,13 @@ public class NumberAssertionsTest
         AlchemyGenerator<Integer> goodNumbers = integers(lowerBound + 1, lowerBound + one(integers(2, 1000)));
         Tests.runTests(instance, badNumbers, goodNumbers);
     }
- 
+
     @DontRepeat
     @Test
     public void testIntGreaterThanEdgeCases()
     {
         assertThrows(() -> NumberAssertions.greaterThan(Integer.MAX_VALUE))
-                .isInstanceOf(IllegalArgumentException.class);
+            .isInstanceOf(IllegalArgumentException.class);
     }
 
     public void testGreaterThanOrEqualToInt() throws Exception
@@ -299,6 +189,113 @@ public class NumberAssertionsTest
         int amountToSubtract = one(integers(50, 100));
         int badValue = inclusiveLowerBound - amountToSubtract;
         assertThrows(() -> instance.check(badValue)).isInstanceOf(FailedAssertionException.class);
+    }
+
+    @Test
+    public void testPositiveInteger()
+    {
+        AlchemyAssertion<Integer> instance = NumberAssertions.positiveInteger();
+
+        assertThat(instance, notNullValue());
+        Tests.checkForNullCase(instance);
+
+        int goodNumber = one(positiveIntegers());
+        instance.check(goodNumber);
+
+        int badNumber = one(negativeIntegers());
+        assertThrows(() -> instance.check(badNumber)).isInstanceOf(FailedAssertionException.class);
+    }
+
+    //==============================
+    //LONG TESTS
+    //==============================
+    @Test
+    public void testLongLessThan()
+    {
+        long upperBound = one(longs(-10000L, 100000));
+        AlchemyAssertion<Long> instance = NumberAssertions.lessThan(upperBound);
+
+        Tests.checkForNullCase(instance);
+
+        AlchemyGenerator<Long> badNumbers = () -> upperBound + one(longs(0, 10000L));
+        AlchemyGenerator<Long> goodNumbers = () -> upperBound - one(smallPositiveLongs());
+        Tests.runTests(instance, badNumbers, goodNumbers);
+
+        badNumbers = () -> upperBound;
+        Tests.runTests(instance, badNumbers, goodNumbers);
+    }
+
+    @DontRepeat
+    @Test
+    public void testLongLessThanEdgeCases()
+
+    {
+        assertThrows(() -> NumberAssertions.lessThan(Long.MIN_VALUE))
+            .isInstanceOf(IllegalArgumentException.class);
+    }
+
+    @Test
+    public void testLongGreaterThan()
+    {
+        long lowerBound = one(longs(-100000L, 100000L));
+        AlchemyAssertion<Long> instance = NumberAssertions.greaterThan(lowerBound);
+        Tests.checkForNullCase(instance);
+        AlchemyGenerator<Long> badNumbers = () -> lowerBound - one(longs(0, 1000L));
+        AlchemyGenerator<Long> goodNumbers = () -> lowerBound + one(smallPositiveLongs());
+        Tests.runTests(instance, badNumbers, goodNumbers);
+    }
+
+    @Test
+    public void testLongGreaterThanEdgeCases()
+    {
+        assertThrows(() -> NumberAssertions.greaterThan(Long.MAX_VALUE))
+            .isInstanceOf(IllegalArgumentException.class);
+    }
+
+    @Test
+    public void testGreaterThanOrEqualToLong() throws Exception
+    {
+        long inclusiveLowerBound = one(longs(-10_000L, 10_000L));
+        AlchemyAssertion<Long> instance = NumberAssertions.greaterThanOrEqualTo(inclusiveLowerBound);
+
+        assertThat(instance, notNullValue());
+        Tests.checkForNullCase(instance);
+
+        AlchemyGenerator<Long> goodArguments = longs(inclusiveLowerBound, Long.MAX_VALUE);
+        AlchemyGenerator<Long> badArguments = longs(Long.MIN_VALUE, inclusiveLowerBound);
+        Tests.runTests(instance, badArguments, goodArguments);
+    }
+
+    @Test
+    public void testNegativeLong()
+    {
+        AlchemyAssertion<Long> instance = NumberAssertions.negativeLong();
+        checkThat(instance, notNullValue());
+
+        long negative = one(longs(Long.MIN_VALUE, 0));
+        instance.check(negative);
+
+        long positive = one(positiveLongs());
+        assertThrows(() -> instance.check(positive))
+            .isInstanceOf(FailedAssertionException.class);
+
+        assertThrows(() -> instance.check(null))
+            .isInstanceOf(FailedAssertionException.class);
+    }
+
+    @Test
+    public void testLongLessThanOrEqualTo()
+    {
+        long lowerBound = one(longs(-10000L, 100000L));
+        AlchemyAssertion<Long> instance = NumberAssertions.lessThanOrEqualTo(lowerBound);
+        Tests.checkForNullCase(instance);
+
+        AlchemyGenerator<Long> badNumbers = () -> lowerBound + one(smallPositiveLongs());
+        AlchemyGenerator<Long> goodNumbers = () -> lowerBound - one(longs(0, 1000L));
+
+        Tests.runTests(instance, badNumbers, goodNumbers);
+        goodNumbers = () -> lowerBound;
+        Tests.runTests(instance, badNumbers, goodNumbers);
     }
 
     @Test
@@ -336,67 +333,77 @@ public class NumberAssertionsTest
     }
 
     @Test
-    public void testPositiveInteger()
+    public void testPositiveLong()
     {
-        AlchemyAssertion<Integer> instance = NumberAssertions.positiveInteger();
+        AlchemyAssertion<Long> instance = NumberAssertions.positiveLong();
+        assertThat(instance, notNullValue());
+        Tests.checkForNullCase(instance);
+
+        AlchemyGenerator<Long> goodNumbers = positiveLongs();
+        AlchemyGenerator<Long> badNumbers = longs(Long.MIN_VALUE, 0L);
+
+        Tests.runTests(instance, badNumbers, goodNumbers);
+    }
+
+    //==============================
+    //DOUBLE TESTS
+    //==============================
+    @Test
+    public void testDoubleLessThan()
+    {
+        double upperBound = one(doubles(-10000, 100000));
+        AlchemyAssertion<Double> instance = NumberAssertions.lessThan(upperBound);
+
+        Tests.checkForNullCase(instance);
+
+        AlchemyGenerator<Double> badNumbers = () -> upperBound + one(doubles(0, 10000L));
+        AlchemyGenerator<Double> goodNumbers = () -> upperBound - one(doubles(1.0, 100.0));
+        Tests.runTests(instance, badNumbers, goodNumbers);
+
+        badNumbers = () -> upperBound;
+        Tests.runTests(instance, badNumbers, goodNumbers);
+    }
+
+    @DontRepeat
+    @Test
+    public void testDoubleLessThanEdgeCases()
+
+    {
+        assertThrows(() -> NumberAssertions.lessThan(-Double.MAX_VALUE))
+            .isInstanceOf(IllegalArgumentException.class);
+    }
+
+    @Test
+    public void testDoubleGreaterThan()
+    {
+        double lowerBound = one(doubles(-100000, 100000));
+        AlchemyAssertion<Double> instance = NumberAssertions.greaterThan(lowerBound);
+        Tests.checkForNullCase(instance);
+
+        AlchemyGenerator<Double> badNumbers = () -> lowerBound - one(longs(0, 1000));
+        AlchemyGenerator<Double> goodNumbers = () -> lowerBound + one(doubles(1, 100));
+        Tests.runTests(instance, badNumbers, goodNumbers);
+    }
+
+    @Test
+    public void testDoubleGreaterThanEdgeCases()
+    {
+        assertThrows(() -> NumberAssertions.greaterThan(Double.MAX_VALUE))
+            .isInstanceOf(IllegalArgumentException.class);
+    }
+
+    @Test
+    public void testGreaterThanOrEqualToDouble() throws Exception
+    {
+        double inclusiveLowerBound = one(doubles(-10_000, 10_000));
+        AlchemyAssertion<Double> instance = NumberAssertions.greaterThanOrEqualTo(inclusiveLowerBound);
 
         assertThat(instance, notNullValue());
         Tests.checkForNullCase(instance);
 
-        int goodNumber = one(positiveIntegers());
-        instance.check(goodNumber);
-
-        int badNumber = one(negativeIntegers());
-        assertThrows(() -> instance.check(badNumber)).isInstanceOf(FailedAssertionException.class);
-    }
-
-    @Test
-    public void testLongLessThanOrEqualTo()
-    {
-        long lowerBound = one(longs(-10000L, 100000L));
-        AlchemyAssertion<Long> instance = NumberAssertions.lessThanOrEqualTo(lowerBound);
-        Tests.checkForNullCase(instance);
-
-        AlchemyGenerator<Long> badNumbers = () -> lowerBound + one(smallPositiveLongs());
-        AlchemyGenerator<Long> goodNumbers = () -> lowerBound - one(longs(0, 1000L));
-
-        Tests.runTests(instance, badNumbers, goodNumbers);
-        goodNumbers = () -> lowerBound;
-        Tests.runTests(instance, badNumbers, goodNumbers);
-    }
-
-    @Test
-    public void testNegativeInteger()
-    {
-        AlchemyAssertion<Integer> instance = NumberAssertions.negativeInteger();
-        assertThat(instance, notNullValue());
-    
-        int negative = one(negativeIntegers());
-        instance.check(negative);
-
-        int positive = one(positiveIntegers());
-        assertThrows(() -> instance.check(positive))
-            .isInstanceOf(FailedAssertionException.class);
-
-        assertThrows(() -> instance.check(null))
-            .isInstanceOf(FailedAssertionException.class);
-    }
-
-    @Test
-    public void testNegativeLong()
-    {
-        AlchemyAssertion<Long> instance = NumberAssertions.negativeLong();
-        checkThat(instance, notNullValue());
-
-        long negative = one(longs(Long.MIN_VALUE, 0));
-        instance.check(negative);
-
-        long positive = one(positiveLongs());
-        assertThrows(() -> instance.check(positive))
-            .isInstanceOf(FailedAssertionException.class);
-
-        assertThrows(() -> instance.check(null))
-            .isInstanceOf(FailedAssertionException.class);
+        AlchemyGenerator<Double> goodArguments = doubles(inclusiveLowerBound, Double.MAX_VALUE);
+        AlchemyGenerator<Double> badArguments = doubles(-Double.MAX_VALUE, inclusiveLowerBound);
+        Tests.runTests(instance, badArguments, goodArguments);
     }
 
 }
