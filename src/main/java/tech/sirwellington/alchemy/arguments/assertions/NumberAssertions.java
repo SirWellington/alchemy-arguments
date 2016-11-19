@@ -50,10 +50,12 @@ public final class NumberAssertions
     public static AlchemyAssertion<Integer> greaterThan(int exclusiveLowerBound)
     {
         Checks.Internal.checkThat(exclusiveLowerBound != Integer.MAX_VALUE, "Integers cannot exceed " + Integer.MAX_VALUE);
-        return (Integer integer) ->
+        return (Integer number) ->
         {
-            Assertions.notNull().check(integer);
-            if (integer <= exclusiveLowerBound)
+            Assertions.notNull().check(number);
+            
+            boolean isWithinBounds = number > exclusiveLowerBound;
+            if (!isWithinBounds)
             {
                 throw new FailedAssertionException("Number must be > " + exclusiveLowerBound);
             }
@@ -73,7 +75,9 @@ public final class NumberAssertions
         return (Long number) ->
         {
             Assertions.notNull().check(number);
-            if (number <= exclusiveLowerBound)
+            
+            boolean isWithinBounds = number > exclusiveLowerBound;
+            if(!isWithinBounds)
             {
                 throw new FailedAssertionException("Number must be > " + exclusiveLowerBound);
             }
@@ -129,7 +133,9 @@ public final class NumberAssertions
         return (Integer number) ->
         {
             Assertions.notNull().check(number);
-            if (number < inclusiveLowerBound)
+            
+            boolean isWithinBounds = number >= inclusiveLowerBound;
+            if (!isWithinBounds)
             {
                 throw new FailedAssertionException("Number must be greater than or equal to " + inclusiveLowerBound);
             }
@@ -148,7 +154,9 @@ public final class NumberAssertions
         return (Long number) ->
         {
             Assertions.notNull().check(number);
-            if (number < inclusiveLowerBound)
+            
+            boolean isWithinBounds = number >= inclusiveLowerBound;
+            if (!isWithinBounds)
             {
                 throw new FailedAssertionException("Number must be greater than or equal to " + inclusiveLowerBound);
             }
@@ -228,7 +236,9 @@ public final class NumberAssertions
         return (Integer number) ->
         {
             Assertions.notNull().check(number);
-            if (number > inclusiveUpperBound)
+            
+            boolean isWithinBounds = number <= inclusiveUpperBound;
+            if (!isWithinBounds)
             {
                 throw new FailedAssertionException("Number must be less than or equal to " + inclusiveUpperBound);
             }
@@ -247,7 +257,9 @@ public final class NumberAssertions
         return (Long number) ->
         {
             Assertions.notNull().check(number);
-            if (number > inclusiveUpperBound)
+            
+            boolean isWithinBounds = number <= inclusiveUpperBound;
+            if (!isWithinBounds)
             {
                 throw new FailedAssertionException("Number must be less than or equal to " + inclusiveUpperBound);
             }
@@ -328,7 +340,9 @@ public final class NumberAssertions
         return (Integer number) ->
         {
             Assertions.notNull().check(number);
-            if (number >= exclusiveUpperBound)
+            
+            boolean isWithinBounds = number < exclusiveUpperBound;
+            if (!isWithinBounds)
             {
                 throw new FailedAssertionException("Number must be < " + exclusiveUpperBound);
             }
@@ -348,7 +362,9 @@ public final class NumberAssertions
         return (Long number) ->
         {
             Assertions.notNull().check(number);
-            if (number >= exclusiveUpperBound)
+            
+            boolean isWithinBounds = number < exclusiveUpperBound;
+            if (!isWithinBounds)
             {
                 throw new FailedAssertionException("Number must be < " + exclusiveUpperBound);
             }
@@ -407,7 +423,10 @@ public final class NumberAssertions
         return (Integer number) ->
         {
             Assertions.notNull().check(number);
-            if (number < min || number > max)
+            
+            boolean isWithinRange = number >= min && number <= max;
+            
+            if (!isWithinRange)
             {
                 String message = String.format("Expected a number between %d and %d but got %d instead", min, max, number);
                 throw new FailedAssertionException(message);
@@ -431,7 +450,9 @@ public final class NumberAssertions
         return (Long number) ->
         {
             Assertions.notNull().check(number);
-            if (number < min || number > max)
+            
+            boolean isWithinRange = number >= min && number <= max;
+            if (!isWithinRange)
             {
                 String message = String.format("Expected a number between %d and %d but got %d instead", min, max, number);
                 throw new FailedAssertionException(message);
