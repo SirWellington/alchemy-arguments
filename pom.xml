@@ -80,7 +80,7 @@
         <dependency>
             <groupId>${project.groupId}</groupId>
             <artifactId>alchemy-generator</artifactId>
-            <version>1.4</version>
+            <version>1.5</version>
             <scope>test</scope>
         </dependency>
 
