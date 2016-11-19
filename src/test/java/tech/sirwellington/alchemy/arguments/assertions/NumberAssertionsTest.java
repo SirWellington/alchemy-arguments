@@ -371,6 +371,18 @@ public class NumberAssertionsTest
         assertThrows(() -> NumberAssertions.lessThan(-Double.MAX_VALUE))
             .isInstanceOf(IllegalArgumentException.class);
     }
+    
+    @Test
+    public void testDoubleLessThanOrEqualTo()
+    {
+        double upperBound = one(doubles(0.0, Double.MAX_VALUE / 2));
+        AlchemyAssertion<Double> instance = NumberAssertions.lessThanOrEqualTo(upperBound);
+        Tests.checkForNullCase(instance);
+        
+        AlchemyGenerator<Double> badNumbers = doubles(upperBound + 0.1, Double.MAX_VALUE);
+        AlchemyGenerator<Double> goodNumber = doubles(-Double.MAX_VALUE, upperBound);
+        Tests.runTests(instance, badNumbers, goodNumber);
+    }
 
     @Test
     public void testDoubleGreaterThan()
