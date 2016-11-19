@@ -397,6 +397,28 @@ public final class StringAssertions
     }
     
     /**
+     * Checks that a String can be represented as a Java Integer, as determined by 
+     * {@link Integer#valueOf(java.lang.String) }.
+     * 
+     * @return 
+     */
+    public static AlchemyAssertion<String> integerString()
+    {
+        return string ->
+        {
+            nonEmptyString().check(string);
+            
+            try 
+            {
+                Integer.valueOf(string);
+            }
+            catch(NumberFormatException ex)
+            {
+                throw new FailedAssertionException("Expecting a number, instead: " + string);
+            }
+        };
+    }
+    
      * Checks that a String represents a valid {@linkplain UUID#fromString(java.lang.String) Type-4 UUID}.
      * 
      * @return 
