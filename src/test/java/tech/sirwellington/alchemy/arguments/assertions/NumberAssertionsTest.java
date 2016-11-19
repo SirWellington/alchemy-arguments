@@ -404,7 +404,7 @@ public class NumberAssertionsTest
     }
 
     @Test
-    public void testGreaterThanOrEqualToDouble() throws Exception
+    public void testDoubleGreaterThanOrEqualTo() throws Exception
     {
         double inclusiveLowerBound = one(doubles(-10_000, 10_000));
         AlchemyAssertion<Double> instance = NumberAssertions.greaterThanOrEqualTo(inclusiveLowerBound);
