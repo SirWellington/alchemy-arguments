@@ -399,14 +399,27 @@ public class NumberAssertionsTest
     }
     
     @Test
+    public void testDoubleLessThanOrEqualToWithDelta()
+    {
+        double upperBound = one(doubles(0.0, Double.MAX_VALUE / 2));
+        double delta = one(doubles(1.0, 100.0));
+        AlchemyAssertion<Double> instance = NumberAssertions.lessThanOrEqualTo(upperBound, delta);
+        Tests.checkForNullCase(instance);
+        
+        AlchemyGenerator<Double> badNumbers = doubles(upperBound + delta + 0.1, Double.MAX_VALUE);
+        AlchemyGenerator<Double> goodNumber = doubles(-Double.MAX_VALUE, upperBound);
+        Tests.runTests(instance, badNumbers, goodNumber);
+    }
+    
+    @Test
     public void testDoubleGreaterThan()
     {
         double lowerBound = one(doubles(-100000, 100000));
         AlchemyAssertion<Double> instance = NumberAssertions.greaterThan(lowerBound);
         Tests.checkForNullCase(instance);
         
-        AlchemyGenerator<Double> badNumbers = () -> lowerBound - one(longs(0, 1000));
-        AlchemyGenerator<Double> goodNumbers = () -> lowerBound + one(doubles(1, 100));
+        AlchemyGenerator<Double> badNumbers = doubles(-Double.MAX_VALUE, lowerBound);
+        AlchemyGenerator<Double> goodNumbers = doubles(lowerBound + 0.1, Double.MAX_VALUE);
         Tests.runTests(instance, badNumbers, goodNumbers);
     }
     
@@ -416,6 +429,20 @@ public class NumberAssertionsTest
         assertThrows(() -> NumberAssertions.greaterThan(Double.MAX_VALUE))
             .isInstanceOf(IllegalArgumentException.class);
     }
+    
+     @Test
+    public void testDoubleGreaterThanWithDelta()
+    {
+        double lowerBound = one(doubles(-100000, 100000));
+        double delta = one(doubles(1.0, 100.0));
+        AlchemyAssertion<Double> instance = NumberAssertions.greaterThan(lowerBound, delta);
+        Tests.checkForNullCase(instance);
+        
+        AlchemyGenerator<Double> badNumbers = doubles(-Double.MAX_VALUE, lowerBound - delta);
+        AlchemyGenerator<Double> goodNumbers = doubles(lowerBound, Double.MAX_VALUE);
+        Tests.runTests(instance, badNumbers, goodNumbers);
+    }
+    
     
     @Test
     public void testDoubleGreaterThanOrEqualTo() throws Exception
