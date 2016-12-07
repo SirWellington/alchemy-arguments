@@ -46,7 +46,7 @@ To use, simply add the following maven dependency.
 <dependency>
 	<groupId>tech.sirwellington.alchemy</groupId>
 	<artifactId>alchemy-arguments</artifactId>
-	<version>1.4</version>
+	<version>1.5</version>
 </dependency>
 ```
 
@@ -64,7 +64,7 @@ To use, simply add the following maven dependency.
 <dependency>
 	<groupId>tech.sirwellington.alchemy</groupId>
 	<artifactId>alchemy-arguments</artifactId>
-	<version>1.5-SNAPSHOT</version>
+	<version>1.6-SNAPSHOT</version>
 </dependency>
 ```
 
@@ -250,6 +250,8 @@ This project builds with maven. Just run a `mvn clean install` to compile and in
 
 
 # Release Notes
+
+## 1.6
 
 ## 1.5
 + Adds `GeolocationAssertions`
