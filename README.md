@@ -1,7 +1,7 @@
 Alchemy Arguments
 ==============================================
 
-[<img src="https://raw.githubusercontent.com/SirWellington/alchemy/develop/Graphics/Logo/Alchemy-Logo-v7-name.png" width="200">](https://github.com/SirWellington/alchemy)
+[<img src="https://raw.githubusercontent.com/SirWellington/alchemy/develop/Graphics/Logo/Alchemy-Logo-v7-name.png" width="500">](https://github.com/SirWellington/alchemy)
 
 ## "Check Yo'self!"
 
@@ -46,7 +46,7 @@ To use, simply add the following maven dependency.
 <dependency>
 	<groupId>tech.sirwellington.alchemy</groupId>
 	<artifactId>alchemy-arguments</artifactId>
-	<version>1.4</version>
+	<version>1.5</version>
 </dependency>
 ```
 
@@ -64,7 +64,7 @@ To use, simply add the following maven dependency.
 <dependency>
 	<groupId>tech.sirwellington.alchemy</groupId>
 	<artifactId>alchemy-arguments</artifactId>
-	<version>1.5-SNAPSHOT</version>
+	<version>1.6-SNAPSHOT</version>
 </dependency>
 ```
 
@@ -251,7 +251,11 @@ This project builds with maven. Just run a `mvn clean install` to compile and in
 
 # Release Notes
 
+## 1.6
+
 ## 1.5
++ Adds `GeolocationAssertions`
++ Adds `AddressAssertions`
 
 ## 1.4
 Network Assertions
