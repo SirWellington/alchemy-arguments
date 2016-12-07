@@ -252,6 +252,8 @@ This project builds with maven. Just run a `mvn clean install` to compile and in
 # Release Notes
 
 ## 1.5
++ Adds `GeolocationAssertions`
++ Adds `AddressAssertions`
 
 ## 1.4
 Network Assertions
