@@ -20,8 +20,8 @@ import java.util.Objects;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import tech.sirwellington.alchemy.annotations.access.NonInstantiable;
-import tech.sirwellington.alchemy.annotations.arguments.NonNull;
-import tech.sirwellington.alchemy.annotations.arguments.Nullable;
+import tech.sirwellington.alchemy.annotations.arguments.Optional;
+import tech.sirwellington.alchemy.annotations.arguments.Required;
 import tech.sirwellington.alchemy.annotations.designs.patterns.StrategyPattern;
 import tech.sirwellington.alchemy.arguments.AlchemyAssertion;
 import tech.sirwellington.alchemy.arguments.Checks;
@@ -73,7 +73,7 @@ public final class Assertions
      *
      * @return
      */
-    public static <A> AlchemyAssertion<A> sameInstanceAs(@Nullable Object other)
+    public static <A> AlchemyAssertion<A> sameInstanceAs(@Optional Object other)
     {
         return (argument) ->
         {
@@ -137,7 +137,7 @@ public final class Assertions
      *
      * @return
      */
-    public static <A> AlchemyAssertion<A> equalTo(@Nullable A other)
+    public static <A> AlchemyAssertion<A> equalTo(@Optional A other)
     {
         return (argument) ->
         {
@@ -164,7 +164,7 @@ public final class Assertions
      *
      * @return
      */
-    public static <A> AlchemyAssertion<A> not(@NonNull AlchemyAssertion<A> assertion)
+    public static <A> AlchemyAssertion<A> not(@Required AlchemyAssertion<A> assertion)
     {
         Checks.Internal.checkNotNull(assertion, "missing assertion");
 
