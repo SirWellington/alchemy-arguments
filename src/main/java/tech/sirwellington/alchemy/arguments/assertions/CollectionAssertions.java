@@ -26,7 +26,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import tech.sirwellington.alchemy.annotations.access.NonInstantiable;
 import tech.sirwellington.alchemy.annotations.arguments.NonEmpty;
-import tech.sirwellington.alchemy.annotations.arguments.NonNull;
+import tech.sirwellington.alchemy.annotations.arguments.Positive;
+import tech.sirwellington.alchemy.annotations.arguments.Required;
 import tech.sirwellington.alchemy.arguments.AlchemyAssertion;
 import tech.sirwellington.alchemy.arguments.Checks;
 import tech.sirwellington.alchemy.arguments.FailedAssertionException;
@@ -175,7 +176,7 @@ public final class CollectionAssertions
         };
     }
 
-    public static <E> AlchemyAssertion<List<E>> listContaining(@NonNull E element) throws IllegalArgumentException
+    public static <E> AlchemyAssertion<List<E>> listContaining(@Required E element) throws IllegalArgumentException
     {
         checkNotNull(element, "cannot check for null");
         
@@ -189,7 +190,7 @@ public final class CollectionAssertions
         };
     }
 
-    public static <K, V> AlchemyAssertion<Map<K, V>> mapWithKey(@NonNull K key) throws IllegalArgumentException
+    public static <K, V> AlchemyAssertion<Map<K, V>> mapWithKey(@Required K key) throws IllegalArgumentException
     {
         checkNotNull(key, "key cannot be null");
 
@@ -204,7 +205,7 @@ public final class CollectionAssertions
         };
     }
 
-    public static <K, V> AlchemyAssertion<Map<K, V>> mapWithKeyValue(@NonNull K key, V value) throws IllegalArgumentException
+    public static <K, V> AlchemyAssertion<Map<K, V>> mapWithKeyValue(@Required K key, V value) throws IllegalArgumentException
     {
         checkNotNull(key, "key cannot be null");
 
@@ -223,7 +224,7 @@ public final class CollectionAssertions
         };
     }
     
-    public static <K, V> AlchemyAssertion<K> keyInMap(Map<K, V> map) throws IllegalArgumentException
+    public static <K, V> AlchemyAssertion<K> keyInMap(@Required Map<K, V> map) throws IllegalArgumentException
     {
         checkNotNull(map, "map cannot be null");
         
@@ -243,7 +244,7 @@ public final class CollectionAssertions
         };
     }
     
-    public static <K,V> AlchemyAssertion<V> valueInMap(Map<K,V> map) throws IllegalArgumentException
+    public static <K,V> AlchemyAssertion<V> valueInMap(@Required Map<K,V> map) throws IllegalArgumentException
     {
         checkNotNull(map, "map cannot be null");
         
@@ -278,7 +279,7 @@ public final class CollectionAssertions
         };
     }
     
-    public static <C extends Collection> AlchemyAssertion<C> collectionOfSize(int size) throws IllegalArgumentException
+    public static <C extends Collection> AlchemyAssertion<C> collectionOfSize(@Positive int size) throws IllegalArgumentException
     {
         Checks.Internal.checkThat(size >= 0, "size must be >= 0");
         
