@@ -80,6 +80,19 @@ public class AssertionsTest
         verifyZeroInteractions(mock);
     }
     
+      @Test
+    public void testNullObject()
+    {
+        AlchemyAssertion<Object> instance = Assertions.nullObject();
+        assertThat(instance, notNullValue());
+        
+        instance.check(null);
+        
+        String string = one(strings());
+        assertThrows(() -> instance.check(string))
+            .isInstanceOf(FailedAssertionException.class);
+    }
+    
     @Test
     public void testSameInstanceAs()
     {
@@ -171,4 +184,5 @@ public class AssertionsTest
                 .isInstanceOf(FailedAssertionException.class);
         
     }
+
 }

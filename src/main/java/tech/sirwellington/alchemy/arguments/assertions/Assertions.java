@@ -53,6 +53,7 @@ public final class Assertions
      * @param <A>
      *
      * @return
+     * @see #nullObject() 
      */
     public static <A> AlchemyAssertion<A> notNull()
     {
@@ -61,6 +62,25 @@ public final class Assertions
             if (reference == null)
             {
                 throw new FailedAssertionException("Argument is null");
+            }
+        };
+    }
+    
+    /**
+     * Asserts that the argument is null. 
+     * This is the opposite of {@link #notNull() }.
+     * 
+     * @param <A>
+     * @return 
+     * @see #notNull() 
+     */
+    public static <A> AlchemyAssertion<A> nullObject()
+    {
+        return reference ->
+        {
+            if (reference != null)
+            {
+                throw new FailedAssertionException("Argument is not null: " + reference);
             }
         };
     }
