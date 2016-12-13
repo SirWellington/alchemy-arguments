@@ -189,6 +189,21 @@ public final class CollectionAssertions
             }
         };
     }
+    
+    public static <E> AlchemyAssertion<Collection<E>> collectionContaining(@Required E element) throws IllegalArgumentException
+    {
+        checkNotNull(element, "cannot check for null");
+        
+        return collection ->
+        {
+            notNull().check(collection);
+            
+            if (!collection.contains(element))
+            {
+                throw new FailedAssertionException(element + " not found in Collection");
+            }
+        };
+    }
 
     public static <K, V> AlchemyAssertion<Map<K, V>> mapWithKey(@Required K key) throws IllegalArgumentException
     {

@@ -180,7 +180,37 @@ public class CollectionAssertionsTest
         assertThrows(() -> instance.check(hex))
             .isInstanceOf(FailedAssertionException.class);
     }
+    
+    @Test
+    public void testListContainingWithBadArgs() throws Exception
+    {
+        assertThrows(() -> CollectionAssertions.listContaining(null))
+            .isInstanceOf(IllegalArgumentException.class);
+    }
 
+    @Test
+    public void testCollectionContaining()
+    {
+        String string = strings.stream().findAny().orElseGet(alphabeticString());
+
+        AlchemyAssertion<Collection<String>> instance = CollectionAssertions.collectionContaining(string);
+        assertThat(instance, notNullValue());
+        instance.check(strings);
+
+        List<String> hex = listOf(hexadecimalString(100));
+
+        assertThrows(() -> instance.check(hex))
+            .isInstanceOf(FailedAssertionException.class);
+    }
+
+    @DontRepeat
+    @Test
+    public void testCollectionContainingWithBadArgs() throws Exception
+    {
+        assertThrows(() -> CollectionAssertions.collectionContaining(null))
+            .isInstanceOf(IllegalArgumentException.class);
+    }
+    
     @Test
     public void testMapWithKey()
     {
