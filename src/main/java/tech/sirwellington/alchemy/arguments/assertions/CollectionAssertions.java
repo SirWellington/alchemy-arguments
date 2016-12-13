@@ -190,7 +190,7 @@ public final class CollectionAssertions
         };
     }
     
-    public static <E> AlchemyAssertion<Collection<E>> collectionContaining(@Required E element) throws IllegalArgumentException
+    public static <E, C extends Collection<E>> AlchemyAssertion<C> collectionContaining(@Required E element) throws IllegalArgumentException
     {
         checkNotNull(element, "cannot check for null");
         
