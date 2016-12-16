@@ -22,16 +22,20 @@ import java.util.List;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import tech.sirwellington.alchemy.generator.AlchemyGenerator;
 import tech.sirwellington.alchemy.test.junit.runners.AlchemyTestRunner;
 import tech.sirwellington.alchemy.test.junit.runners.DontRepeat;
 import tech.sirwellington.alchemy.test.junit.runners.Repeat;
 
 import static org.hamcrest.Matchers.is;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertThat;
+import static org.junit.Assert.assertTrue;
 import static tech.sirwellington.alchemy.generator.AlchemyGenerator.one;
 import static tech.sirwellington.alchemy.generator.CollectionGenerators.listOf;
 import static tech.sirwellington.alchemy.generator.NumberGenerators.positiveIntegers;
 import static tech.sirwellington.alchemy.generator.StringGenerators.alphabeticString;
+import static tech.sirwellington.alchemy.generator.StringGenerators.alphanumericString;
 import static tech.sirwellington.alchemy.generator.StringGenerators.strings;
 import static tech.sirwellington.alchemy.test.junit.ThrowableAssertion.assertThrows;
 
@@ -44,9 +48,21 @@ import static tech.sirwellington.alchemy.test.junit.ThrowableAssertion.assertThr
 public class ChecksTest
 {
 
+    private AlchemyGenerator<String> strings;
+    
+    private String string;
+    private Object object;
+    private String[] varArgs;
+    
     @Before
     public void setUp()
     {
+        strings = alphanumericString();
+        string = one(strings);
+        object = one(strings);
+        
+        List<String> listOfStrings = listOf(strings);
+        varArgs = listOfStrings.toArray(new String[0]);
     }
 
     @DontRepeat
@@ -170,6 +186,96 @@ public class ChecksTest
             .isInstanceOf(IllegalArgumentException.class)
             .hasMessage(message);
 
+    }
+
+    @Test
+    public void testIsNull()
+    {
+        assertTrue(Checks.isNull(null));
+        assertFalse(Checks.isNull(string));
+        assertFalse(Checks.isNull(object));
+    }
+
+    @Test
+    public void testNotNull()
+    {
+        assertTrue(Checks.notNull(object));
+        assertTrue(Checks.notNull(string));
+        assertFalse(Checks.notNull(null));
+    }
+
+    @Test
+    public void testAnyAreNull()
+    {
+        assertTrue(Checks.anyAreNull());
+        assertTrue(Checks.anyAreNull((Object) null));
+        assertTrue(Checks.anyAreNull(string, null));
+        assertTrue(Checks.anyAreNull(one(strings), one(strings), null));
+        
+        assertFalse(Checks.anyAreNull((Object) varArgs));
+        assertFalse(Checks.anyAreNull(varArgs[0], varArgs[1], varArgs[2]));
+        
+    }
+
+    @Test
+    public void testAllAreNull()
+    {
+        assertTrue(Checks.allAreNull());
+        assertTrue(Checks.allAreNull((Object) null));
+        assertTrue(Checks.allAreNull(null, null));
+        assertTrue(Checks.allAreNull(null, null, null));
+        
+        assertFalse(Checks.allAreNull((Object) varArgs));
+        assertFalse(Checks.allAreNull(null, string));
+        assertFalse(Checks.allAreNull(null, string, string));
+        assertFalse(Checks.allAreNull(null, string, string, object));
+    }
+
+    @Test
+    public void testIsNullOrEmpty()
+    {
+        assertTrue(Checks.isNullOrEmpty(""));
+        assertTrue(Checks.isNullOrEmpty(null));
+        
+        assertFalse(Checks.isNullOrEmpty(string));
+    }
+
+    @Test
+    public void testNotNullOrEmpty()
+    {
+        assertTrue(Checks.notNullOrEmpty(string));
+        
+        assertFalse(Checks.notNullOrEmpty(null));
+        assertFalse(Checks.notNullOrEmpty(""));
+    }
+
+    @Test
+    public void testAnyAreNullOrEmpty()
+    {
+        assertTrue(Checks.anyAreNullOrEmpty(string, null));
+        assertTrue(Checks.anyAreNullOrEmpty(null, string, string));
+        assertTrue(Checks.anyAreNullOrEmpty(null, string, one(strings)));
+        assertTrue(Checks.anyAreNullOrEmpty(null, null, null));
+        
+        assertFalse(Checks.anyAreNullOrEmpty(varArgs));
+        assertFalse(Checks.anyAreNullOrEmpty(string, string, string));
+    }
+
+    @Test
+    public void testAllAreNullOrEmpty()
+    {
+        assertTrue(Checks.allAreNullOrEmpty());
+        assertTrue(Checks.allAreNullOrEmpty(""));
+        assertTrue(Checks.allAreNullOrEmpty("", ""));
+        assertTrue(Checks.allAreNullOrEmpty("", "", null));
+        assertTrue(Checks.allAreNullOrEmpty((String) null));
+        assertTrue(Checks.allAreNullOrEmpty(null, null, null));
+        assertTrue(Checks.allAreNullOrEmpty(null, null, null, ""));
+        
+        assertFalse(Checks.allAreNullOrEmpty(string, null));
+        assertFalse(Checks.allAreNullOrEmpty(string, ""));
+        assertFalse(Checks.allAreNullOrEmpty(string, string, string, string, ""));
+        assertFalse(Checks.allAreNullOrEmpty(string, string, string, object.toString(), ""));
     }
 
 }
