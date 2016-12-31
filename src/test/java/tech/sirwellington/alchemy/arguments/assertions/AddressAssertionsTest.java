@@ -22,13 +22,13 @@ import org.junit.runner.RunWith;
 import tech.sirwellington.alchemy.arguments.AlchemyAssertion;
 import tech.sirwellington.alchemy.arguments.FailedAssertionException;
 import tech.sirwellington.alchemy.test.junit.runners.AlchemyTestRunner;
-import tech.sirwellington.alchemy.test.junit.runners.GenerateInteger;
 import tech.sirwellington.alchemy.test.junit.runners.Repeat;
 
 import static org.hamcrest.Matchers.notNullValue;
 import static org.junit.Assert.assertThat;
+import static tech.sirwellington.alchemy.generator.AlchemyGenerator.one;
+import static tech.sirwellington.alchemy.generator.NumberGenerators.integers;
 import static tech.sirwellington.alchemy.test.junit.ThrowableAssertion.assertThrows;
-import static tech.sirwellington.alchemy.test.junit.runners.GenerateInteger.Type.RANGE;
 
 /**
  *
@@ -39,11 +39,10 @@ import static tech.sirwellington.alchemy.test.junit.runners.GenerateInteger.Type
 public class AddressAssertionsTest 
 {
     
-    @GenerateInteger(value = RANGE, min = 0, max = 99_999)
-    private Integer zip;
+    private String zip;
     
-    @GenerateInteger(value = RANGE, min = 100_000, max = Integer.MAX_VALUE)
-    private Integer badZip;
+    private String badZip;
+    
     
 
     @Before
@@ -56,12 +55,13 @@ public class AddressAssertionsTest
 
     private void setupData() throws Exception
     {
-        
+        zip = zipToString(one(integers(0, 100_000)));
+        badZip = zipToString(one(integers(100_000, Integer.MAX_VALUE)));
     }
 
     private String zipToString(int zip)
     {
-        if (zip < 90_000)
+        if (zip < 99_999)
         {
             return String.format("%05d", zip);
         }
@@ -74,7 +74,7 @@ public class AddressAssertionsTest
     @Test
     public void testValidZipCode()
     {
-        AlchemyAssertion<Integer> assertion = AddressAssertions.validZipCode();
+        AlchemyAssertion<String> assertion = AddressAssertions.validZipCode();
         assertThat(assertion, notNullValue());
         
         assertion.check(zip);
@@ -83,9 +83,10 @@ public class AddressAssertionsTest
     @Test
     public void testInvalidZipCode()
     {
-        AlchemyAssertion<Integer> assertion = AddressAssertions.validZipCode();
+        AlchemyAssertion<String> assertion = AddressAssertions.validZipCode();
         
-        assertThrows(() -> assertion.check(badZip)).isInstanceOf(FailedAssertionException.class);
+        assertThrows(() -> assertion.check(badZip))
+            .isInstanceOf(FailedAssertionException.class);
     }
 
     @Test
@@ -94,8 +95,7 @@ public class AddressAssertionsTest
         AlchemyAssertion<String> assertion = AddressAssertions.validZipCodeString();
         assertThat(assertion, notNullValue());
 
-        String string = zipToString(zip);
-        assertion.check(string);
+        assertion.check(zip);
     }
 
     @Test
@@ -103,8 +103,7 @@ public class AddressAssertionsTest
     {
         AlchemyAssertion<String> assertion = AddressAssertions.validZipCodeString();
 
-        String string = zipToString(badZip);
-        assertThrows(() -> assertion.check(string));
+        assertThrows(() -> assertion.check(badZip));
     }
 
 }

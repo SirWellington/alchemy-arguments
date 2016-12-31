@@ -22,7 +22,11 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import tech.sirwellington.alchemy.annotations.access.NonInstantiable;
 import tech.sirwellington.alchemy.arguments.AlchemyAssertion;
-import tech.sirwellington.alchemy.arguments.FailedAssertionException;
+
+import static tech.sirwellington.alchemy.arguments.Arguments.checkThat;
+import static tech.sirwellington.alchemy.arguments.assertions.StringAssertions.stringWithLengthGreaterThanOrEqualTo;
+import static tech.sirwellington.alchemy.arguments.assertions.StringAssertions.stringWithLengthLessThanOrEqualTo;
+
 
 /**
  * A Library assertion intended to check the validity of address components.
@@ -47,22 +51,18 @@ public final class AddressAssertions
     
     /**
      * Checks that a number can represent a valid zip code.
+     * Apparently a Zip Code does not necessarily have to be a digit.
      *
      * @return
      */
-    public static AlchemyAssertion<Integer> validZipCode()
+    public static AlchemyAssertion<String> validZipCode()
     {
         return zip ->
         {
-            if (zip <= 0)
-            {
-                throw new FailedAssertionException("Zip Code must be > 0");
-            }
-            
-            if (zip >= 100_000)
-            {
-                throw new FailedAssertionException("Zip Code must be a 5 digit number");
-            }
+            checkThat(zip)
+                .usingMessage("zip must consist of 4-5 characters")
+                .is(stringWithLengthGreaterThanOrEqualTo(4))
+                .is(stringWithLengthLessThanOrEqualTo(5));
         };
     }
     
@@ -84,7 +84,7 @@ public final class AddressAssertions
             StringAssertions.nonEmptyString().check(zip);
             StringAssertions.integerString().check(zip);
             StringAssertions.stringWithLength(5);
-            validZipCode().check(Integer.valueOf(zip));
+            validZipCode().check(zip);
         };
     }
     
