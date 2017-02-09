@@ -259,7 +259,7 @@ public class CollectionAssertionsTest
     
     @DontRepeat
     @Test
-    public void testCollectionContainingAtLeastOnceOf() throws Exception
+    public void testCollectionContainingAtLeastOnceOfWithBadArgs() throws Exception
     {
         assertThrows(() -> CollectionAssertions.collectionContainingAtLeastOnceOf(null)).isInstanceOf(IllegalArgumentException.class);
     }
