@@ -230,8 +230,9 @@ public final class CollectionAssertions
         {
             notNull().check(collection);
             
+            collectionContaining(first).check(collection);
+            
             List<E> arguments = Arrays.asList(andOther);
-            arguments.add(0, first);
             
             for (E argument : arguments)
             {
