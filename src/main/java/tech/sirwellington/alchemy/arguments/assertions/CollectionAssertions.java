@@ -16,6 +16,7 @@
 
 package tech.sirwellington.alchemy.arguments.assertions;
 
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
@@ -26,6 +27,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import tech.sirwellington.alchemy.annotations.access.NonInstantiable;
 import tech.sirwellington.alchemy.annotations.arguments.NonEmpty;
+import tech.sirwellington.alchemy.annotations.arguments.Optional;
 import tech.sirwellington.alchemy.annotations.arguments.Positive;
 import tech.sirwellington.alchemy.annotations.arguments.Required;
 import tech.sirwellington.alchemy.arguments.AlchemyAssertion;
@@ -201,6 +203,42 @@ public final class CollectionAssertions
             if (!collection.contains(element))
             {
                 throw new FailedAssertionException(element + " not found in Collection");
+            }
+        };
+    }
+    
+    /**
+     * Checks that the {@link Collection} contains ALL of the specified values.
+     * 
+     * @param <E>
+     * @param <C>
+     * @param first
+     * @param andOther
+     * @return
+     * @throws IllegalArgumentException
+     */
+    public static <E, C extends Collection<E>> AlchemyAssertion<C> collectionContainingAll(@Required E first, @Optional E... andOther) throws IllegalArgumentException
+    {
+        checkNotNull(first, "first argument cannot be null");
+        
+        if (andOther == null || andOther.length == 0)
+        {
+            return collectionContaining(first);
+        }
+        
+        return collection ->
+        {
+            notNull().check(collection);
+            
+            List<E> arguments = Arrays.asList(andOther);
+            arguments.add(0, first);
+            
+            for (E argument : arguments)
+            {
+                if (!collection.contains(argument))
+                {
+                    throw new FailedAssertionException("Element not found in Collection: " + argument);
+                }
             }
         };
     }

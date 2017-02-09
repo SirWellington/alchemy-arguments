@@ -212,6 +212,31 @@ public class CollectionAssertionsTest
     }
     
     @Test
+    public void testCollectionContainingAll() throws Exception
+    {
+        List<String> args = listOf(alphabeticString());
+        List<String> collection = listOf(alphabeticString());
+        collection.addAll(args);
+        
+        String first = args.get(0);
+        String[] others = args.subList(1, args.size()).toArray(new String[0]);
+        
+        AlchemyAssertion<Collection<String>> instance = CollectionAssertions.collectionContainingAll(first, others);
+        assertThat(instance, notNullValue());
+        instance.check(collection);
+        
+        List<String> otherCollection = listOf(alphabeticString());
+        assertThrows(() -> instance.check(otherCollection)).isInstanceOf(FailedAssertionException.class);
+    }
+    
+    @DontRepeat
+    @Test
+    public void testCollectionContainingAllWithBadArgs() throws Exception
+    {
+        assertThrows(() -> CollectionAssertions.collectionContainingAll(null)).isInstanceOf(IllegalArgumentException.class);
+    }
+    
+    @Test
     public void testMapWithKey()
     {
         Map<Integer, String> map = mapOf(positiveIntegers(), hexadecimalString(100), 100);
