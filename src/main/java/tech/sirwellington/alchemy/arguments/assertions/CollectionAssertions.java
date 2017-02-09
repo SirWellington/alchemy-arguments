@@ -242,6 +242,44 @@ public final class CollectionAssertions
             }
         };
     }
+    
+    /**
+     * Checks whether a collection contains at least one of the specified parameters.
+     * 
+     * @param <E>
+     * @param <C>
+     * @param first
+     * @param orOthers
+     * @return
+     * @throws IllegalArgumentException 
+     */
+    public static <E, C extends Collection<E>> AlchemyAssertion<C> collectionContainingAtLeastOnceOf(@Required E first, @Optional E... orOthers) throws IllegalArgumentException
+    {
+        checkNotNull(first, "first argument cannot be null");
+        
+        if (orOthers == null || orOthers.length == 0)
+        {
+            return collectionContaining(first);
+        }
+        
+        return collection ->
+        {
+           if (collection.contains(first))
+           {
+               return;
+           }
+           
+           for (E argument : orOthers)
+           {
+               if (collection.contains(argument))
+               {
+                   return;
+               }
+           }
+           
+           throw new FailedAssertionException("Collection does not contain any of : " + first + ", " + Arrays.toString(orOthers));
+        };
+    }
 
     public static <K, V> AlchemyAssertion<Map<K, V>> mapWithKey(@Required K key) throws IllegalArgumentException
     {

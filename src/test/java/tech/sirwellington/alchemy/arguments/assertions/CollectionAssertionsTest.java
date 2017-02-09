@@ -237,6 +237,34 @@ public class CollectionAssertionsTest
     }
     
     @Test
+    public void testCollectionContainingAtLeastOnceOf() throws Exception
+    {
+        List<String> args = listOf(alphanumericString());
+        List<String> collection = listOf(alphanumericString());
+        collection.addAll(args);
+        
+        String first = collection.get(0);
+        String[] others = args.subList(1, args.size()).toArray(new String[0]);
+        
+        AlchemyAssertion<Collection<String>> instance = CollectionAssertions.collectionContainingAtLeastOnceOf(first, others);
+        instance.check(collection);
+        
+        List<String> otherCollection = listOf(alphabeticString());
+        assertThrows(() -> instance.check(otherCollection));
+        
+        //With at least one, it should pass.
+        otherCollection.add(first);
+        instance.check(otherCollection);
+    }
+    
+    @DontRepeat
+    @Test
+    public void testCollectionContainingAtLeastOnceOf() throws Exception
+    {
+        assertThrows(() -> CollectionAssertions.collectionContainingAtLeastOnceOf(null)).isInstanceOf(IllegalArgumentException.class);
+    }
+    
+    @Test
     public void testMapWithKey()
     {
         Map<Integer, String> map = mapOf(positiveIntegers(), hexadecimalString(100), 100);
