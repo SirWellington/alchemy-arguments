@@ -30,7 +30,9 @@ import tech.sirwellington.alchemy.test.junit.runners.Repeat;
 import static org.hamcrest.Matchers.notNullValue;
 import static org.junit.Assert.assertThat;
 import static tech.sirwellington.alchemy.generator.AlchemyGenerator.one;
+import static tech.sirwellington.alchemy.generator.NumberGenerators.longs;
 import static tech.sirwellington.alchemy.generator.NumberGenerators.negativeIntegers;
+import static tech.sirwellington.alchemy.generator.TimeGenerators.anytime;
 import static tech.sirwellington.alchemy.generator.TimeGenerators.futureInstants;
 import static tech.sirwellington.alchemy.generator.TimeGenerators.pastInstants;
 import static tech.sirwellington.alchemy.test.junit.ThrowableAssertion.assertThrows;
@@ -209,6 +211,52 @@ public class TimeAssertionsTest
         int negative = one(negativeIntegers());
         assertThrows(() -> TimeAssertions.nowWithinDelta(negative))
             .isInstanceOf(IllegalArgumentException.class);
+    }
+
+    @Test
+    public void testEqualToInstantWithinDelta() throws Exception
+    {
+        long delta = one(longs(1_000, 100_000));
+
+        Instant instant = one(anytime());
+
+        AlchemyAssertion<Instant> assertion = TimeAssertions.equalToInstantWithinDelta(instant, delta);
+        assertThat(assertion, notNullValue());
+
+        Instant argument = instant.plusMillis(delta);
+        assertion.check(argument);
+
+        argument = instant.minusMillis(delta);
+        assertion.check(argument);
+    }
+
+    @Test
+    public void testEqualToInstantWithinDeltaWhenDifferenceExceeded() throws Exception
+    {
+        long delta = one(longs(1_000, 1_000_000));
+        Instant instant = one(anytime());
+
+        AlchemyAssertion<Instant> assertion = TimeAssertions.equalToInstantWithinDelta(instant, delta);
+        assertThat(assertion, notNullValue());
+
+        Instant argumentAfter = instant.plusMillis(delta + 10);
+        assertThrows(() -> assertion.check(argumentAfter)).isInstanceOf(FailedAssertionException.class);
+
+        Instant argumentBefore = instant.minusMillis(delta + 10);
+        assertThrows(() -> assertion.check(argumentBefore)).isInstanceOf(FailedAssertionException.class);
+    }
+
+    @DontRepeat
+    @Test
+    public void testEqualToInstantWithinDeltaWithBadArgs() throws Exception
+    {
+        assertThrows(() -> TimeAssertions.equalToInstantWithinDelta(null, 10))
+                .isInstanceOf(IllegalArgumentException.class);
+
+        //Check with null argument
+        AlchemyAssertion<Instant> assertion = TimeAssertions.equalToInstantWithinDelta(Instant.now(), 10);
+        assertThrows(() -> assertion.check(null))
+                .isInstanceOf(FailedAssertionException.class);
     }
 
     @Test

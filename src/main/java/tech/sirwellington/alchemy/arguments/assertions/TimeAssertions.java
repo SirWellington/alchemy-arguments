@@ -17,10 +17,12 @@
 package tech.sirwellington.alchemy.arguments.assertions;
 
 import java.time.Instant;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import tech.sirwellington.alchemy.annotations.access.NonInstantiable;
 import tech.sirwellington.alchemy.annotations.arguments.NonNull;
+import tech.sirwellington.alchemy.annotations.arguments.Required;
 import tech.sirwellington.alchemy.arguments.AlchemyAssertion;
 import tech.sirwellington.alchemy.arguments.FailedAssertionException;
 
@@ -148,6 +150,32 @@ public final class TimeAssertions
                     "Time difference of " + difference + " exceeded margin-of-error of " + marginOfErrorInMillis + "ms");
             }
             
+        };
+    }
+
+    /**
+     * Asserts that the {@link Instant} is equal to another, within the acceptable boundaries.
+     *
+     * @param instant The instant to compare against
+     * @param deltaMillis The acceptable delta, in milliseconds.
+     * @return
+     */
+    public static AlchemyAssertion<Instant> equalToInstantWithinDelta(@Required Instant instant, long deltaMillis)
+    {
+        checkNotNull(instant, "instant cannot be null");
+        long delta = Math.abs(deltaMillis);
+
+        return argument ->
+        {
+            notNull().check(argument);
+
+            long difference = argument.toEpochMilli() - instant.toEpochMilli();
+            difference = Math.abs(difference);
+
+            if (difference > delta)
+            {
+                throw new FailedAssertionException("Delta should not exceed " + delta + "ms, but is " + difference + "ms");
+            }
         };
     }
     

@@ -13,3 +13,7 @@ nb-actions.xml
 
 nbactions.xml
 /nbproject/
+
+#IntelliJ
+/.idea
+*.iml
