@@ -111,7 +111,7 @@ checkThat(firstName, middleName, lastName)
 ## Error Message
 
 Each Assertion includes a specific error message in the Exception, but sometimes you want to include a
-message more suited to the context.
+`overrideMessage` more suited to the context.
 
 ```java
 checkThat(responseCode)
@@ -202,7 +202,7 @@ AlchemyAssertion<Vehicle> truck = v ->
 	}
 };
 
-//This masks the causing FailedAssertionException message.
+//This masks the causing FailedAssertionException with a different exception and message.
 checkThat(vehicle)
 	.throwing(ex -> new UnauthorizedException("Trucks only"))
 	.is(truck);
