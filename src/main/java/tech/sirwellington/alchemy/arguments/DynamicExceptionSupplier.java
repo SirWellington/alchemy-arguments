@@ -34,14 +34,14 @@ final class DynamicExceptionSupplier<Ex extends Throwable> implements ExceptionM
     private static final Logger LOG = LoggerFactory.getLogger(DynamicExceptionSupplier.class);
 
     private final Class<Ex> exceptionClass;
-    private final String message;
+    private final String overrideMessage;
 
-    DynamicExceptionSupplier(Class<Ex> exceptionClass, String message)
+    DynamicExceptionSupplier(Class<Ex> exceptionClass, String overrideMessage)
     {
         Checks.Internal.checkNotNull(exceptionClass, "missing exceptionClass");
         
         this.exceptionClass = exceptionClass;
-        this.message = message;
+        this.overrideMessage = overrideMessage;
     }
 
     @Override
@@ -55,12 +55,12 @@ final class DynamicExceptionSupplier<Ex extends Throwable> implements ExceptionM
     {
         try
         {
-            if (haveBothAMessageAndACause(message, cause))
+            if (haveOverrideMessageAndACause(overrideMessage, cause))
             {
                 if (throwableClassHasMessageAndCauseConstructor())
                 {
                     return exceptionClass.getConstructor(String.class, Throwable.class)
-                            .newInstance(message, cause);
+                            .newInstance(overrideMessage, cause);
                 }
                 else if (throwableClassHasCauseConstructor())
                 {
@@ -70,24 +70,30 @@ final class DynamicExceptionSupplier<Ex extends Throwable> implements ExceptionM
                 else if (throwableClassHasMessageConstructor())
                 {
                     return exceptionClass.getConstructor(String.class)
-                            .newInstance(message);
+                            .newInstance(overrideMessage);
                 }
 
             }
 
-            if (haveOnlyACause(message, cause))
+            if (haveOnlyACause(overrideMessage, cause))
             {
                 if (throwableClassHasCauseConstructor())
                 {
                     return exceptionClass.getConstructor(Throwable.class).newInstance(cause);
                 }
+
+                if (throwableClassHasMessageConstructor())
+                {
+                    String message = cause.getMessage();
+                    return exceptionClass.getConstructor(String.class).newInstance(message);
+                }
             }
 
-            if (haveOnlyAMessage(message, cause))
+            if (haveOnlyAnOverrideMessage(overrideMessage, cause))
             {
                 if (throwableClassHasMessageConstructor())
                 {
-                    return exceptionClass.getConstructor(String.class).newInstance(message);
+                    return exceptionClass.getConstructor(String.class).newInstance(overrideMessage);
                 }
             }
 
@@ -115,7 +121,7 @@ final class DynamicExceptionSupplier<Ex extends Throwable> implements ExceptionM
     @Override
     public String toString()
     {
-        return "DynamicExceptionSupplier{" + "exceptionClass=" + exceptionClass + ", message=" + message + '}';
+        return "DynamicExceptionSupplier{" + "exceptionClass=" + exceptionClass + ", overrideMessage=" + overrideMessage + '}';
     }
 
     private boolean hasConstructorWithArguments(Class<?>... classes) throws NoSuchMethodException, SecurityException
@@ -151,7 +157,7 @@ final class DynamicExceptionSupplier<Ex extends Throwable> implements ExceptionM
         return hasConstructorWithArguments(String.class, Throwable.class);
     }
 
-    private boolean haveOnlyAMessage(String message, FailedAssertionException cause)
+    private boolean haveOnlyAnOverrideMessage(String message, FailedAssertionException cause)
     {
         return !Checks.Internal.isNullOrEmpty(message) && cause == null;
     }
@@ -161,7 +167,7 @@ final class DynamicExceptionSupplier<Ex extends Throwable> implements ExceptionM
         return cause != null && Checks.Internal.isNullOrEmpty(message);
     }
 
-    private boolean haveBothAMessageAndACause(String message, FailedAssertionException cause)
+    private boolean haveOverrideMessageAndACause(String message, FailedAssertionException cause)
     {
         return cause != null && !Checks.Internal.isNullOrEmpty(message);
     }

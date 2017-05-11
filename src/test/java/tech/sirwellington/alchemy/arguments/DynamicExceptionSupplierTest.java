@@ -37,13 +37,13 @@ import static tech.sirwellington.alchemy.generator.StringGenerators.alphabeticSt
  *
  * @author SirWellington
  */
-@Repeat(10)
+@Repeat(25)
 @RunWith(AlchemyTestRunner.class)
 public class DynamicExceptionSupplierTest
 {
 
     private Class<FakeExceptionWithMessage> exceptionClass;
-    private String message;
+    private String overrideMessage;
 
     private DynamicExceptionSupplier<FakeExceptionWithMessage> instance;
 
@@ -52,11 +52,11 @@ public class DynamicExceptionSupplierTest
     @Before
     public void setUp()
     {
-        message = one(alphabeticString());
+        overrideMessage = one(alphabeticString());
         assertionException = new FailedAssertionException(one(alphabeticString()));
         exceptionClass = FakeExceptionWithMessage.class;
 
-        instance = new DynamicExceptionSupplier<>(exceptionClass, message);
+        instance = new DynamicExceptionSupplier<>(exceptionClass, overrideMessage);
     }
 
     @Test
@@ -69,7 +69,7 @@ public class DynamicExceptionSupplierTest
         assertThat(result.getCause(), nullValue());
         assertThat(result.getMessage(), isEmptyOrNullString());
 
-        instance = new DynamicExceptionSupplier<>(FakeException.class, message);
+        instance = new DynamicExceptionSupplier<>(FakeException.class, overrideMessage);
         result = instance.apply(assertionException);
         assertThat(result, notNullValue());
         assertThat(result.getMessage(), isEmptyOrNullString());
@@ -82,18 +82,18 @@ public class DynamicExceptionSupplierTest
         FakeExceptionWithMessage result = instance.apply(assertionException);
         assertThat(result, notNullValue());
         assertThat(result.getCause(), nullValue());
-        assertThat(result.getMessage(), is(message));
+        assertThat(result.getMessage(), is(overrideMessage));
 
         result = instance.apply(null);
         assertThat(result, notNullValue());
         assertThat(result.getCause(), nullValue());
-        assertThat(result.getMessage(), is(message));
+        assertThat(result.getMessage(), is(overrideMessage));
 
         instance = new DynamicExceptionSupplier<>(FakeExceptionWithMessage.class, null);
         result = instance.apply(assertionException);
         assertThat(result, notNullValue());
         assertThat(result.getCause(), nullValue());
-        assertThat(result.getMessage(), isEmptyOrNullString());
+        assertThat(result.getMessage(), is(assertionException.getMessage()));
 
     }
 
@@ -101,7 +101,7 @@ public class DynamicExceptionSupplierTest
     public void testApplyWithCause()
     {
         DynamicExceptionSupplier<FakeExceptionWithThrowable> instance;
-        instance = new DynamicExceptionSupplier<>(FakeExceptionWithThrowable.class, message);
+        instance = new DynamicExceptionSupplier<>(FakeExceptionWithThrowable.class, overrideMessage);
 
         FakeExceptionWithThrowable result = instance.apply(assertionException);
         assertThat(result, notNullValue());
@@ -125,11 +125,11 @@ public class DynamicExceptionSupplierTest
     public void testApplyWithMessageAndCause()
     {
         DynamicExceptionSupplier<FakeExceptionWithBoth> instance;
-        instance = new DynamicExceptionSupplier<>(FakeExceptionWithBoth.class, message);
+        instance = new DynamicExceptionSupplier<>(FakeExceptionWithBoth.class, overrideMessage);
 
         FakeExceptionWithBoth result = instance.apply(assertionException);
         assertThat(result, notNullValue());
-        assertThat(result.getMessage(), is(message));
+        assertThat(result.getMessage(), is(overrideMessage));
         assertThat(result.getCause(), notNullValue());
         assertThat(result.getCause(), instanceOf(FailedAssertionException.class));
 
@@ -142,10 +142,25 @@ public class DynamicExceptionSupplierTest
     }
 
     @Test
-    public void testWhenInvokationFails() throws Exception
+    public void testApplyWithCauseButNoMessageConstructor() throws Exception
+    {
+        String expectedMessage = assertionException.getMessage();
+
+        DynamicExceptionSupplier<FakeExceptionWithMessage> instance;
+        instance = new DynamicExceptionSupplier<>(FakeExceptionWithMessage.class, "");
+
+        FakeExceptionWithMessage result = instance.apply(assertionException);
+
+        assertThat(result, notNullValue());
+        assertThat(result.getMessage(), is(expectedMessage));
+        assertThat(result.getCause(), nullValue());
+    }
+
+    @Test
+    public void testWhenInvocationFails() throws Exception
     {
         DynamicExceptionSupplier<FakeExceptionThatThrowsOnConstruct> instance;
-        instance = new DynamicExceptionSupplier<>(FakeExceptionThatThrowsOnConstruct.class, message);
+        instance = new DynamicExceptionSupplier<>(FakeExceptionThatThrowsOnConstruct.class, overrideMessage);
 
         FakeExceptionThatThrowsOnConstruct result = instance.apply(assertionException);
         assertThat(result, nullValue());
