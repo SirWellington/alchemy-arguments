@@ -223,4 +223,27 @@ public final class Assertions
         };
     }
 
+    @SafeVarargs
+    public static <A> AlchemyAssertion<A> combinationOf(final AlchemyAssertion<A>...assertions)
+    {
+
+        return new AlchemyAssertion<A>()
+        {
+            @Override
+            public void check(A argument) throws FailedAssertionException
+            {
+
+                for (AlchemyAssertion<A> assertion : assertions)
+                {
+                    if (assertion == null)
+                    {
+                        continue;
+                    }
+
+                    assertion.check(argument);
+                }
+            }
+        };
+
+    }
 }

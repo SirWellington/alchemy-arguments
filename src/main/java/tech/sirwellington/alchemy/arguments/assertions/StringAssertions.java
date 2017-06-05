@@ -215,7 +215,7 @@ public final class StringAssertions
      * @param maximumLength The length of the argument must be {@code <= maximumLength}
      * @return
      */
-    public static AlchemyAssertion<String> stringWithLengthLessThanOrEqualTo(int maximumLength)
+    public static AlchemyAssertion<String> stringWithLengthLessThanOrEqualTo(final int maximumLength)
     {
         Checks.Internal.checkThat(maximumLength >= 0);
 
@@ -292,15 +292,9 @@ public final class StringAssertions
         Checks.Internal.checkThat(minimumLength >= 0, "Minimum length must be at least 0");
         Checks.Internal.checkThat(minimumLength < maximumLength, "Minimum length must be < maximum length.");
 
-        return string ->
-        {
-            Assertions.notNull().check(string);
-            if (string.length() < minimumLength || string.length() > maximumLength)
-            {
-                String message = String.format("Argument size is not between acceptable range of [%d -> %d]", minimumLength, maximumLength);
-                throw new FailedAssertionException(message);
-            }
-        };
+        return Assertions.combinationOf(stringWithLengthGreaterThanOrEqualTo(minimumLength),
+                                        stringWithLengthLessThanOrEqualTo(maximumLength));
+
     }
 
     /**
@@ -309,17 +303,21 @@ public final class StringAssertions
      * @param substring
      * @throws IllegalArgumentException If {@code substring} is null or empty.
      */
-    public static AlchemyAssertion<String> stringContaining(@NonEmpty String substring) throws IllegalArgumentException
+    public static AlchemyAssertion<String> stringContaining(@NonEmpty final String substring) throws IllegalArgumentException
     {
         Checks.Internal.checkNotNullOrEmpty(substring, "substring cannot be empty");
 
-        return string ->
+        return new AlchemyAssertion<String>()
         {
-            nonEmptyString().check(string);
-
-            if (!string.contains(substring))
+            @Override
+            public void check(String string) throws FailedAssertionException
             {
-                throw new FailedAssertionException(format("Expected %s to contain %s", string, substring));
+                nonEmptyString().check(string);
+
+                if (!string.contains(substring))
+                {
+                    throw new FailedAssertionException(format("Expected %s to contain %s", string, substring));
+                }
             }
         };
     }
@@ -331,17 +329,21 @@ public final class StringAssertions
      */
     public static AlchemyAssertion<String> allUpperCaseString()
     {
-        return string ->
+        return new AlchemyAssertion<String>()
         {
-            nonEmptyString().check(string);
-
-            for (char character : string.toCharArray())
+            @Override
+            public void check(String string) throws FailedAssertionException
             {
-                if (!Character.isUpperCase(character))
+                nonEmptyString().check(string);
+
+                for (char character : string.toCharArray())
                 {
-                    throw new FailedAssertionException(format("Expected %s to be all upper-case, but %s isn't",
-                                                              string,
-                                                              character));
+                    if (!Character.isUpperCase(character))
+                    {
+                        throw new FailedAssertionException(format("Expected %s to be all upper-case, but %s isn't",
+                                                                  string,
+                                                                  character));
+                    }
                 }
             }
         };
@@ -354,20 +356,23 @@ public final class StringAssertions
      */
     public static AlchemyAssertion<String> allLowerCaseString()
     {
-        return string ->
+        return new AlchemyAssertion<String>()
         {
-            nonEmptyString().check(string);
-
-            for (char character : string.toCharArray())
+            @Override
+            public void check(String string) throws FailedAssertionException
             {
-                if (!Character.isLowerCase(character))
+                nonEmptyString().check(string);
+
+                for (char character : string.toCharArray())
                 {
-                    throw new FailedAssertionException(format("Expected %s to be all lower-case, but %s isn't",
-                                                              string,
-                                                              character));
+                    if (!Character.isLowerCase(character))
+                    {
+                        throw new FailedAssertionException(format("Expected %s to be all lower-case, but %s isn't",
+                                                                  string,
+                                                                  character));
+                    }
                 }
             }
-
         };
     }
 
@@ -379,17 +384,21 @@ public final class StringAssertions
      * @return
      * @throws IllegalArgumentException If {@code substring} is empty or null.
      */
-    public static AlchemyAssertion<String> stringEndingWith(@NonEmpty String suffix) throws IllegalArgumentException
+    public static AlchemyAssertion<String> stringEndingWith(@NonEmpty final String suffix) throws IllegalArgumentException
     {
         Checks.Internal.checkNotNullOrEmpty(suffix, "string should not be empty");
 
-        return string ->
+        return new AlchemyAssertion<String>()
         {
-            nonEmptyString().check(string);
-
-            if (!string.endsWith(suffix))
+            @Override
+            public void check(String string) throws FailedAssertionException
             {
-                throw new FailedAssertionException(format("Expected %s to end with %s", string, suffix));
+                nonEmptyString().check(string);
+
+                if (!string.endsWith(suffix))
+                {
+                    throw new FailedAssertionException(format("Expected %s to end with %s", string, suffix));
+                }
             }
         };
     }
