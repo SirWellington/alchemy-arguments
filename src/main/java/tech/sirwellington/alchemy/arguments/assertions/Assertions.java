@@ -143,17 +143,21 @@ public final class Assertions
      * @param classOfExpectedType
      * @return
      */
-    public static <A> AlchemyAssertion<A> instanceOf(Class<?> classOfExpectedType)
+    public static <A> AlchemyAssertion<A> instanceOf(final Class<?> classOfExpectedType)
     {
         Checks.Internal.checkNotNull(classOfExpectedType, "class cannot be null");
 
-        return (argument) ->
+        return new AlchemyAssertion<A>()
         {
-            notNull().check(argument);
-
-            if (!classOfExpectedType.isInstance(argument))
+            @Override
+            public void check(A argument) throws FailedAssertionException
             {
-                throw new FailedAssertionException("Expected Object of type: " + classOfExpectedType);
+                notNull().check(argument);
+
+                if (!classOfExpectedType.isInstance(argument))
+                {
+                    throw new FailedAssertionException("Expected Object of type: " + classOfExpectedType);
+                }
             }
         };
     }
@@ -165,13 +169,17 @@ public final class Assertions
      * @param other
      * @return
      */
-    public static <A> AlchemyAssertion<A> equalTo(@Optional A other)
+    public static <A> AlchemyAssertion<A> equalTo(@Optional final A other)
     {
-        return (argument) ->
+        return new AlchemyAssertion<A>()
         {
-            if (!Objects.equals(argument, other))
+            @Override
+            public void check(A argument) throws FailedAssertionException
             {
-                throw new FailedAssertionException(format("Expected %s to be equal to %s", argument, other));
+                if (!Objects.equals(argument, other))
+                {
+                    throw new FailedAssertionException(format("Expected %s to be equal to %s", argument, other));
+                }
             }
         };
     }
@@ -191,23 +199,27 @@ public final class Assertions
      * @param assertion
      * @return
      */
-    public static <A> AlchemyAssertion<A> not(@Required AlchemyAssertion<A> assertion)
+    public static <A> AlchemyAssertion<A> not(@Required final AlchemyAssertion<A> assertion)
     {
         Checks.Internal.checkNotNull(assertion, "missing assertion");
 
-        return (argument) ->
+        return new AlchemyAssertion<A>()
         {
-            try
+            @Override
+            public void check(A argument) throws FailedAssertionException
             {
-                assertion.check(argument);
-            }
-            catch (FailedAssertionException ex)
-            {
-                return;
-            }
+                try
+                {
+                    assertion.check(argument);
+                }
+                catch (FailedAssertionException ex)
+                {
+                    return;
+                }
 
-            throw new FailedAssertionException("Expected assertion to fail, but it passed: " + assertion);
+                throw new FailedAssertionException("Expected assertion to fail, but it passed: " + assertion);
 
+            }
         };
     }
 
