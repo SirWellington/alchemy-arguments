@@ -64,7 +64,7 @@
         <dependency>
             <groupId>${project.groupId}</groupId>
             <artifactId>alchemy-test</artifactId>
-            <version>1.5</version>
+            <version>1.6</version>
             <scope>test</scope>
         </dependency>
 
@@ -80,7 +80,7 @@
         <dependency>
             <groupId>${project.groupId}</groupId>
             <artifactId>alchemy-generator</artifactId>
-            <version>1.5</version>
+            <version>1.6</version>
             <scope>test</scope>
         </dependency>
 
