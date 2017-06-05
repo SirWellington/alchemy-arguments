@@ -110,10 +110,7 @@ public interface AssertionBuilder<Argument, Ex extends Throwable>
      * @return
      * @throws Ex
      */
-    default AssertionBuilder<Argument, Ex> are(@NonNull AlchemyAssertion<Argument> assertion) throws Ex
-    {
-        return is(assertion);
-    }
+    AssertionBuilder<Argument, Ex> are(@NonNull AlchemyAssertion<Argument> assertion) throws Ex;
 
     /**
      * This is an alternate way to specify an Exception, using instead a class. The library will
@@ -126,9 +123,6 @@ public interface AssertionBuilder<Argument, Ex extends Throwable>
      *
      * @return
      */
-    default <Ex extends Throwable> AssertionBuilder<Argument, Ex> throwing(@NonNull Class<Ex> exceptionClass)
-    {
-        return AssertionBuilder.this.throwing(new DynamicExceptionSupplier<>(exceptionClass, ""));
-    }
+    <Ex extends Throwable> AssertionBuilder<Argument, Ex> throwing(@NonNull Class<Ex> exceptionClass);
 
 }

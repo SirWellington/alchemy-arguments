@@ -16,6 +16,7 @@
 package tech.sirwellington.alchemy.arguments;
 
 import java.util.List;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import tech.sirwellington.alchemy.annotations.access.Internal;
@@ -109,6 +110,12 @@ final class AssertionBuilderImpl<Argument, Ex extends Throwable> implements Asse
         return newBuilder;
     }
 
+    @Override
+    public AssertionBuilder<Argument, Ex> are(AlchemyAssertion<Argument> assertion) throws Ex
+    {
+        return is(assertion);
+    }
+
     private void checkAssertion() throws Ex
     {
         Checks.Internal.checkState(assertion != null, "no assertion found");
@@ -118,7 +125,10 @@ final class AssertionBuilderImpl<Argument, Ex extends Throwable> implements Asse
 
         try
         {
-            arguments.forEach(assertion::check);
+            for (Argument argument : arguments)
+            {
+                assertion.check(argument);
+            }
         }
         catch (FailedAssertionException ex)
         {
