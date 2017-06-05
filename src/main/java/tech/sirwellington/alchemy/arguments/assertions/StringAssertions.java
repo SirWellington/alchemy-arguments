@@ -14,23 +14,21 @@
  * limitations under the License.
  */
 
- 
+
 package tech.sirwellington.alchemy.arguments.assertions;
 
 
 import java.util.UUID;
 import java.util.regex.Pattern;
+
 import tech.sirwellington.alchemy.annotations.access.NonInstantiable;
 import tech.sirwellington.alchemy.annotations.arguments.NonEmpty;
-import tech.sirwellington.alchemy.arguments.AlchemyAssertion;
-import tech.sirwellington.alchemy.arguments.Checks;
-import tech.sirwellington.alchemy.arguments.FailedAssertionException;
+import tech.sirwellington.alchemy.arguments.*;
 
 import static java.lang.String.format;
 import static tech.sirwellington.alchemy.arguments.Checks.Internal.isNullOrEmpty;
 
 /**
- *
  * @author SirWellington
  */
 @NonInstantiable
@@ -45,17 +43,21 @@ public final class StringAssertions
      * Asserts that the argument String matches the specified pattern.
      *
      * @param pattern The pattern to match against.
-     *
      * @return
      */
-    public static AlchemyAssertion<String> stringThatMatches(Pattern pattern)
+    public static AlchemyAssertion<String> stringThatMatches(final Pattern pattern)
     {
         Checks.Internal.checkNotNull(pattern, "missing pattern");
-        return (String string) ->
+
+        return new AlchemyAssertion<String>()
         {
-            if (!pattern.matcher(string).matches())
+            @Override
+            public void check(String string) throws FailedAssertionException
             {
-                throw new FailedAssertionException("Expected String to match pattern: " + pattern);
+                if (!pattern.matcher(string).matches())
+                {
+                    throw new FailedAssertionException("Expected String to match pattern: " + pattern);
+                }
             }
         };
     }
@@ -67,11 +69,15 @@ public final class StringAssertions
      */
     public static AlchemyAssertion<String> emptyString()
     {
-        return (String string) ->
+        return new AlchemyAssertion<String>()
         {
-            if (!Checks.Internal.isNullOrEmpty(string))
+            @Override
+            public void check(String string) throws FailedAssertionException
             {
-                throw new FailedAssertionException("Expected empty string but got: " + string);
+                if (!Checks.Internal.isNullOrEmpty(string))
+                {
+                    throw new FailedAssertionException("Expected empty string but got: " + string);
+                }
             }
         };
     }
@@ -80,20 +86,25 @@ public final class StringAssertions
      * Asserts that the argument string has a length {@code >= minimumLength}.
      *
      * @param minimumLength The length of the argument string must {@code >= minimumLength}
-     *
      * @return
      */
-    public static AlchemyAssertion<String> stringWithLengthGreaterThanOrEqualTo(int minimumLength)
+    public static AlchemyAssertion<String> stringWithLengthGreaterThanOrEqualTo(final int minimumLength)
     {
         Checks.Internal.checkThat(minimumLength >= 0);
-        return (String string) ->
+
+        return new AlchemyAssertion<String>()
         {
-            Assertions.notNull().check(string);
-            if (string.length() < minimumLength)
+            @Override
+            public void check(String string) throws FailedAssertionException
             {
-                throw new FailedAssertionException("Expecting a String with length >= " + minimumLength);
+                Assertions.notNull().check(string);
+                if (string.length() < minimumLength)
+                {
+                    throw new FailedAssertionException("Expecting a String with length >= " + minimumLength);
+                }
             }
         };
+
     }
 
     /**
@@ -103,55 +114,71 @@ public final class StringAssertions
      */
     public static AlchemyAssertion<String> stringWithNoWhitespace()
     {
-        return (String string) ->
+        return new AlchemyAssertion<String>()
         {
-            Assertions.notNull().check(string);
-            for (char character : string.toCharArray())
+            @Override
+            public void check(String string) throws FailedAssertionException
             {
-                if (Character.isWhitespace(character))
+                Assertions.notNull().check(string);
+
+                for (char character : string.toCharArray())
                 {
-                    throw new FailedAssertionException("Argument should not have whitespace.");
+                    if (Character.isWhitespace(character))
+                    {
+                        throw new FailedAssertionException("Argument should not have whitespace.");
+                    }
                 }
             }
         };
+
     }
 
     /**
      * Asserts that the argument string has a length of exactly {@code expectedLength}
      *
      * @param expectedLength The expected length of the string.
-     *
      * @return
      */
-    public static AlchemyAssertion<String> stringWithLength(int expectedLength)
+    public static AlchemyAssertion<String> stringWithLength(final int expectedLength)
     {
         Checks.Internal.checkThat(expectedLength >= 0, "expectedLength must be >= 0");
-        return (String string) ->
+
+        return new AlchemyAssertion<String>()
         {
-            Assertions.notNull().check(string);
-            if (string.length() != expectedLength)
+            @Override
+            public void check(String string) throws FailedAssertionException
             {
-                throw new FailedAssertionException("Expecting a String with length " + expectedLength);
+                Assertions.notNull().check(string);
+                if (string.length() != expectedLength)
+                {
+                    throw new FailedAssertionException("Expecting a String with length " + expectedLength);
+                }
             }
         };
+
     }
 
     /**
      * Asserts that the length of the argument string is less than the specified upper bound.
      *
      * @param upperBound The length of the string must be {@code <upperBound}
-     *
      * @return
      */
-    public static AlchemyAssertion<String> stringWithLengthLessThan(int upperBound)
+    public static AlchemyAssertion<String> stringWithLengthLessThan(final int upperBound)
     {
         Checks.Internal.checkThat(upperBound > 0, "upperBound must be > 0");
-        return (String string) ->
+
+        return new AlchemyAssertion<String>()
         {
-            nonEmptyString().check(string);
-            if (string.length() >= upperBound)
+            @Override
+            public void check(String string) throws FailedAssertionException
             {
-                throw new FailedAssertionException("Expecting a String with length < " + upperBound);
+                nonEmptyString().check(string);
+
+                if (string.length() >= upperBound)
+                {
+                    throw new FailedAssertionException("Expecting a String with length < " + upperBound);
+                }
             }
         };
     }
@@ -160,61 +187,75 @@ public final class StringAssertions
      * Assert that the argument String starts with a particular prefix.
      *
      * @param prefix The prefix to check that argument against.
-     *
      * @return
      */
-    public static AlchemyAssertion<String> stringBeginningWith(String prefix)
+    public static AlchemyAssertion<String> stringBeginningWith(final String prefix)
     {
         Checks.Internal.checkThat(!isNullOrEmpty(prefix), "missing prefix");
 
-        return (String string) ->
+        return new AlchemyAssertion<String>()
         {
-            nonEmptyString().check(string);
-            if (!string.startsWith(prefix))
+            @Override
+            public void check(String string) throws FailedAssertionException
             {
-                String message = String.format("Expected \"%s\" to start with \"%s\"", string, prefix);
-                throw new FailedAssertionException(message);
+                nonEmptyString().check(string);
+                if (!string.startsWith(prefix))
+                {
+                    String message = String.format("Expected \"%s\" to start with \"%s\"", string, prefix);
+                    throw new FailedAssertionException(message);
+                }
             }
         };
+
     }
 
     /**
      * Asserts that the length of the argument string is at most maximumLength.
      *
      * @param maximumLength The length of the argument must be {@code <= maximumLength}
-     *
      * @return
      */
     public static AlchemyAssertion<String> stringWithLengthLessThanOrEqualTo(int maximumLength)
     {
         Checks.Internal.checkThat(maximumLength >= 0);
-        return (String string) ->
+
+        return new AlchemyAssertion<String>()
         {
-            Assertions.notNull().check(string);
-            if (string == null || string.length() > maximumLength)
+            @Override
+            public void check(String string) throws FailedAssertionException
             {
-                throw new FailedAssertionException("Argument exceeds the maximum string length of: " + maximumLength);
+                Assertions.notNull().check(string);
+                if (string == null || string.length() > maximumLength)
+                {
+                    throw new FailedAssertionException("Argument exceeds the maximum string length of: " + maximumLength);
+                }
             }
         };
+
     }
 
     /**
      * Asserts that the argument string has a length {@code > minimumLength}
      *
      * @param minimumLength The exclusive lower bound for the size of the argument string.
-     *
      * @return
      */
-    public static AlchemyAssertion<String> stringWithLengthGreaterThan(int minimumLength)
+    public static AlchemyAssertion<String> stringWithLengthGreaterThan(final int minimumLength)
     {
         Checks.Internal.checkThat(minimumLength > 0, "minimumLength must be > 0");
         Checks.Internal.checkThat(minimumLength < Integer.MAX_VALUE, "not possible to have a String larger than Integer.MAX_VALUE");
-        return (String string) ->
+
+        return new AlchemyAssertion<String>()
         {
-            nonEmptyString().check(string);
-            if (string.length() <= minimumLength)
+            @Override
+            public void check(String string) throws FailedAssertionException
             {
-                throw new FailedAssertionException("Expected a String with length > " + minimumLength);
+                nonEmptyString().check(string);
+
+                if (string.length() <= minimumLength)
+                {
+                    throw new FailedAssertionException("Expected a String with length > " + minimumLength);
+                }
             }
         };
     }
@@ -226,11 +267,15 @@ public final class StringAssertions
      */
     public static AlchemyAssertion<String> nonEmptyString()
     {
-        return (String string) ->
+        return new AlchemyAssertion<String>()
         {
-            if (Checks.Internal.isNullOrEmpty(string))
+            @Override
+            public void check(String string) throws FailedAssertionException
             {
-                throw new FailedAssertionException("String argument is empty");
+                if (Checks.Internal.isNullOrEmpty(string))
+                {
+                    throw new FailedAssertionException("String argument is empty");
+                }
             }
         };
     }
@@ -240,7 +285,6 @@ public final class StringAssertions
      *
      * @param minimumLength Minimum String Length, inclusive.
      * @param maximumLength Maximum String Length, inclusive.
-     *
      * @return
      */
     public static AlchemyAssertion<String> stringWithLengthBetween(int minimumLength, int maximumLength)
@@ -258,32 +302,32 @@ public final class StringAssertions
             }
         };
     }
-    
+
     /**
      * Checks that a string contains another.
-     * 
+     *
      * @param substring
      * @throws IllegalArgumentException If {@code substring} is null or empty.
      */
     public static AlchemyAssertion<String> stringContaining(@NonEmpty String substring) throws IllegalArgumentException
     {
         Checks.Internal.checkNotNullOrEmpty(substring, "substring cannot be empty");
-        
+
         return string ->
         {
             nonEmptyString().check(string);
-            
+
             if (!string.contains(substring))
             {
                 throw new FailedAssertionException(format("Expected %s to contain %s", string, substring));
             }
         };
     }
-    
+
     /**
      * Checks that a String has All Upper-Cased characters (also known as ALL-CAPS).
-     * 
-     * @return 
+     *
+     * @return
      */
     public static AlchemyAssertion<String> allUpperCaseString()
     {
@@ -302,31 +346,31 @@ public final class StringAssertions
             }
         };
     }
-    
+
     /**
      * Checks that a String has All Lower-Cased characters.
-     * 
-     * @return 
+     *
+     * @return
      */
     public static AlchemyAssertion<String> allLowerCaseString()
     {
-       return string -> 
-       {
-           nonEmptyString().check(string);
+        return string ->
+        {
+            nonEmptyString().check(string);
 
-           for (char character : string.toCharArray())
-           {
-               if (!Character.isLowerCase(character))
-               {
-                   throw new FailedAssertionException(format("Expected %s to be all lower-case, but %s isn't",
-                                                             string,
-                                                             character));
-               }
-           }
-         
-       };
+            for (char character : string.toCharArray())
+            {
+                if (!Character.isLowerCase(character))
+                {
+                    throw new FailedAssertionException(format("Expected %s to be all lower-case, but %s isn't",
+                                                              string,
+                                                              character));
+                }
+            }
+
+        };
     }
-    
+
     /**
      * Checks that a String ends with the specified non-empty string, as determined by
      * {@link String#endsWith(java.lang.String)}. In other words, the Argument String must have this suffix.
@@ -338,30 +382,30 @@ public final class StringAssertions
     public static AlchemyAssertion<String> stringEndingWith(@NonEmpty String suffix) throws IllegalArgumentException
     {
         Checks.Internal.checkNotNullOrEmpty(suffix, "string should not be empty");
-        
+
         return string ->
         {
             nonEmptyString().check(string);
-           
-            if(!string.endsWith(suffix))
+
+            if (!string.endsWith(suffix))
             {
                 throw new FailedAssertionException(format("Expected %s to end with %s", string, suffix));
             }
         };
     }
-   
+
     /**
-     * Checks that a String is composed only of Alphabetic Characters, as determined by 
+     * Checks that a String is composed only of Alphabetic Characters, as determined by
      * {@link Character#isAlphabetic(int) }.
      *
      * @return
      */
-    public static AlchemyAssertion<String> alphabeticString() 
+    public static AlchemyAssertion<String> alphabeticString()
     {
         return string ->
         {
             nonEmptyString().check(string);
-            
+
             for (char character : string.toCharArray())
             {
                 if (!Character.isAlphabetic(character))
@@ -372,7 +416,7 @@ public final class StringAssertions
             }
         };
     }
-    
+
     /**
      * Checks that a String is composed of only Alphanumeric Characters, as determined by
      * {@link Character#isDigit(char) } and {@link Character#isAlphabetic(int) }.
@@ -384,7 +428,7 @@ public final class StringAssertions
         return string ->
         {
             nonEmptyString().check(string);
-            
+
             for (char character : string.toCharArray())
             {
                 if (!Character.isAlphabetic(character) && !Character.isDigit(character))
@@ -395,79 +439,79 @@ public final class StringAssertions
             }
         };
     }
-    
+
     /**
-     * Checks that a String can be represented as a Java Integer, as determined by 
+     * Checks that a String can be represented as a Java Integer, as determined by
      * {@link Integer#valueOf(java.lang.String) }.
-     * 
-     * @return 
+     *
+     * @return
      */
     public static AlchemyAssertion<String> integerString()
     {
         return string ->
         {
             nonEmptyString().check(string);
-            
-            try 
+
+            try
             {
                 Integer.valueOf(string);
             }
-            catch(NumberFormatException ex)
+            catch (NumberFormatException ex)
             {
                 throw new FailedAssertionException("Expecting a number, instead: " + string);
             }
         };
     }
-    
+
     /**
      * Checks that a String can be represented as a Java Double, as determined by
      * {@link Double#valueOf(java.lang.String) }.
-     * 
-     * @return 
+     *
+     * @return
      */
     public static AlchemyAssertion<String> decimalString()
     {
         return string ->
         {
             nonEmptyString().check(string);
-            
-            try 
+
+            try
             {
                 Double.valueOf(string);
             }
-            catch(NumberFormatException ex)
+            catch (NumberFormatException ex)
             {
                 throw new FailedAssertionException("Expecting a decimal number, instead: " + string);
             }
         };
     }
-    
+
     /**
      * Checks that a String represents a valid {@linkplain UUID#fromString(java.lang.String) Type-4 UUID}.
-     * 
-     * @return 
+     *
+     * @return
      */
     public static AlchemyAssertion<String> validUUID()
     {
         return string ->
         {
             nonEmptyString().check(string);
-            
-            try 
+
+            try
             {
                 UUID.fromString(string);
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 throw new FailedAssertionException("String is not a valid UUID: " + string);
             }
         };
     }
-    
+
     /**
      * Checks that a String represents an {@link Integer}, as determined by {@link Integer#parseInt(java.lang.String) }.
      * In other words, that it contains only Digits, as determined by 2
-     * {@link Character#isDigit(char) }, or the characters {@code -} (negative sign), 
+     * {@link Character#isDigit(char) }, or the characters {@code -} (negative sign),
      * {@code +} (positive sign)
      * <p>
      * Valid examples include:
@@ -477,8 +521,8 @@ public final class StringAssertions
      *      954
      *      -674572
      * </pre>
-     * 
-     * @return 
+     *
+     * @return
      */
     public static AlchemyAssertion<String> stringRepresentingInteger()
     {
@@ -486,10 +530,10 @@ public final class StringAssertions
         {
             nonEmptyString().check(string);
 
-            for(int i = 0; i < string.length(); ++i)
+            for (int i = 0; i < string.length(); ++i)
             {
                 char character = string.charAt(i);
-                
+
                 //The first character is allowed to be a sign character '-' or '+'
                 if (i == 0 && isSignCharacter(character))
                 {
@@ -503,7 +547,9 @@ public final class StringAssertions
                 }
             }
         };
-    };
+    }
+
+    ;
 
     private static boolean isSignCharacter(char character)
     {
