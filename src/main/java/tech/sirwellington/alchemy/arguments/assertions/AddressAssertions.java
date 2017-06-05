@@ -22,6 +22,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import tech.sirwellington.alchemy.annotations.access.NonInstantiable;
 import tech.sirwellington.alchemy.arguments.AlchemyAssertion;
+import tech.sirwellington.alchemy.arguments.FailedAssertionException;
 
 import static tech.sirwellington.alchemy.arguments.Arguments.checkThat;
 import static tech.sirwellington.alchemy.arguments.assertions.StringAssertions.stringWithLengthGreaterThanOrEqualTo;
@@ -57,12 +58,16 @@ public final class AddressAssertions
      */
     public static AlchemyAssertion<String> validZipCode()
     {
-        return zip ->
+        return new AlchemyAssertion<String>()
         {
-            checkThat(zip)
-                .usingMessage("zip must consist of 4-5 characters")
-                .is(stringWithLengthGreaterThanOrEqualTo(4))
-                .is(stringWithLengthLessThanOrEqualTo(5));
+            @Override
+            public void check(String zip) throws FailedAssertionException
+            {
+                checkThat(zip)
+                        .usingMessage("zip must consist of 4-5 characters")
+                        .is(stringWithLengthGreaterThanOrEqualTo(4))
+                        .is(stringWithLengthLessThanOrEqualTo(5));
+            }
         };
     }
     
@@ -79,12 +84,16 @@ public final class AddressAssertions
      */
     public static AlchemyAssertion<String> validZipCodeString()
     {
-        return zip ->
+        return new AlchemyAssertion<String>()
         {
-            StringAssertions.nonEmptyString().check(zip);
-            StringAssertions.integerString().check(zip);
-            StringAssertions.stringWithLength(5);
-            validZipCode().check(zip);
+            @Override
+            public void check(String zip) throws FailedAssertionException
+            {
+                StringAssertions.nonEmptyString().check(zip);
+                StringAssertions.integerString().check(zip);
+                StringAssertions.stringWithLength(5);
+                validZipCode().check(zip);
+            }
         };
     }
     
