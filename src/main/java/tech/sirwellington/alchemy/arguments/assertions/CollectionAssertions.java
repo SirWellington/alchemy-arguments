@@ -16,30 +16,20 @@
 
 package tech.sirwellington.alchemy.arguments.assertions;
 
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Set;
-import java.util.function.Consumer;
+import java.util.*;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import tech.sirwellington.alchemy.annotations.access.NonInstantiable;
-import tech.sirwellington.alchemy.annotations.arguments.NonEmpty;
+import tech.sirwellington.alchemy.annotations.arguments.*;
 import tech.sirwellington.alchemy.annotations.arguments.Optional;
-import tech.sirwellington.alchemy.annotations.arguments.Positive;
-import tech.sirwellington.alchemy.annotations.arguments.Required;
-import tech.sirwellington.alchemy.arguments.AlchemyAssertion;
-import tech.sirwellington.alchemy.arguments.Checks;
-import tech.sirwellington.alchemy.arguments.FailedAssertionException;
+import tech.sirwellington.alchemy.arguments.*;
 
 import static java.lang.String.format;
 import static tech.sirwellington.alchemy.arguments.Checks.Internal.checkNotNull;
 import static tech.sirwellington.alchemy.arguments.assertions.Assertions.notNull;
 
 /**
- *
  * @author SirWellington
  */
 @NonInstantiable
@@ -57,18 +47,21 @@ public final class CollectionAssertions
      * Asserts that the collection is not null and not empty.
      *
      * @param <E>
-     *
      * @return
      */
     public static <E> AlchemyAssertion<Collection<E>> nonEmptyCollection()
     {
-        return (collection) ->
+        return new AlchemyAssertion<Collection<E>>()
         {
-            notNull().check(collection);
-
-            if (collection.isEmpty())
+            @Override
+            public void check(Collection<E> collection) throws FailedAssertionException
             {
-                throw new FailedAssertionException("Collection is empty");
+                notNull().check(collection);
+
+                if (collection.isEmpty())
+                {
+                    throw new FailedAssertionException("Collection is empty");
+                }
             }
         };
     }
@@ -77,38 +70,45 @@ public final class CollectionAssertions
      * Asserts that the List is not null and not empty
      *
      * @param <E>
-     *
      * @return
      */
     public static <E> AlchemyAssertion<List<E>> nonEmptyList()
     {
-        return (list) ->
-        {
-            notNull().check(list);
 
-            if (list.isEmpty())
+        return new AlchemyAssertion<List<E>>()
+        {
+            @Override
+            public void check(List<E> list) throws FailedAssertionException
             {
-                throw new FailedAssertionException("List is empty");
+                notNull().check(list);
+
+                if (list.isEmpty())
+                {
+                    throw new FailedAssertionException("List is empty");
+                }
             }
         };
-
     }
-    
+
     /**
      * Asserts that the Set is not null and not empty.
+     *
      * @param <E>
-     * 
-     * @return 
+     * @return
      */
     public static <E> AlchemyAssertion<Set<E>> nonEmptySet()
     {
-        return set ->
+        return new AlchemyAssertion<Set<E>>()
         {
-            notNull().check(set);
-            
-            if(set.isEmpty())
+            @Override
+            public void check(Set<E> set) throws FailedAssertionException
             {
-                throw new FailedAssertionException("Set is empty");
+                notNull().check(set);
+
+                if (set.isEmpty())
+                {
+                    throw new FailedAssertionException("Set is empty");
+                }
             }
         };
     }
@@ -118,98 +118,126 @@ public final class CollectionAssertions
      *
      * @param <K>
      * @param <V>
-     *
      * @return
      */
     public static <K, V> AlchemyAssertion<Map<K, V>> nonEmptyMap()
     {
-        return (map) ->
+        return new AlchemyAssertion<Map<K, V>>()
         {
-            notNull().check(map);
-
-            if (map.isEmpty())
+            @Override
+            public void check(Map<K, V> map) throws FailedAssertionException
             {
-                throw new FailedAssertionException("Map is empty");
-            }
+                notNull().check(map);
 
+                if (map.isEmpty())
+                {
+                    throw new FailedAssertionException("Map is empty");
+                }
+            }
         };
     }
 
     public static <E> AlchemyAssertion<E[]> nonEmptyArray()
     {
-        return (array) ->
+        return new AlchemyAssertion<E[]>()
         {
-            notNull().check(array);
-
-            if (array.length == 0)
+            @Override
+            public void check(E[] array) throws FailedAssertionException
             {
-                throw new FailedAssertionException("Array is empty");
+                notNull().check(array);
+
+                if (array.length == 0)
+                {
+                    throw new FailedAssertionException("Array is empty");
+                }
             }
         };
     }
-   
+
     public static <E> AlchemyAssertion<Collection<E>> emptyCollection()
     {
-        return collection ->
+        return new AlchemyAssertion<Collection<E>>()
         {
-            notNull().check(collection);
-            
-            if(!collection.isEmpty())
+            @Override
+            public void check(Collection<E> collection) throws FailedAssertionException
             {
-                throw new FailedAssertionException(format("Expected an empty collection, but it has size [%s]",
-                                                          collection.size()));
+                notNull().check(collection);
+
+                if (!collection.isEmpty())
+                {
+                    throw new FailedAssertionException(format("Expected an empty collection, but it has size [%s]",
+                                                              collection.size()));
+                }
             }
-        };
-    }
-    
-    public static <E> AlchemyAssertion<List<E>> emptyList()
-    {
-        return list ->
-        {
-            CollectionAssertions.<E>emptyCollection().check(list);
-        };
-    }
-    
-    public static <E> AlchemyAssertion<Set<E>> emptySet()
-    {
-        return set ->
-        {
-            CollectionAssertions.<E>emptyCollection().check(set);
         };
     }
 
-    public static <E> AlchemyAssertion<List<E>> listContaining(@Required E element) throws IllegalArgumentException
+
+    public static <E> AlchemyAssertion<List<E>> emptyList()
     {
-        checkNotNull(element, "cannot check for null");
-        
-        return list ->
+        return new AlchemyAssertion<List<E>>()
         {
-            notNull().check(list);
-            if (!list.contains(element))
+            @Override
+            public void check(List<E> list) throws FailedAssertionException
             {
-                throw new FailedAssertionException(element + " not found in List");
+                CollectionAssertions.<E>emptyCollection().check(list);
             }
         };
     }
-    
-    public static <E, C extends Collection<E>> AlchemyAssertion<C> collectionContaining(@Required E element) throws IllegalArgumentException
+
+    public static <E> AlchemyAssertion<Set<E>> emptySet()
     {
-        checkNotNull(element, "cannot check for null");
-        
-        return collection ->
+        return new AlchemyAssertion<Set<E>>()
         {
-            notNull().check(collection);
-            
-            if (!collection.contains(element))
+            @Override
+            public void check(Set<E> set) throws FailedAssertionException
             {
-                throw new FailedAssertionException(element + " not found in Collection");
+                CollectionAssertions.<E>emptyCollection().check(set);
+
             }
         };
     }
-    
+
+    public static <E> AlchemyAssertion<List<E>> listContaining(@Required final E element) throws IllegalArgumentException
+    {
+        checkNotNull(element, "cannot check for null");
+
+        return new AlchemyAssertion<List<E>>()
+        {
+            @Override
+            public void check(List<E> list) throws FailedAssertionException
+            {
+                notNull().check(list);
+                if (!list.contains(element))
+                {
+                    throw new FailedAssertionException(element + " not found in List");
+                }
+            }
+        };
+    }
+
+    public static <E, C extends Collection<E>> AlchemyAssertion<C> collectionContaining(@Required final E element) throws IllegalArgumentException
+    {
+        checkNotNull(element, "cannot check for null");
+
+        return new AlchemyAssertion<C>()
+        {
+            @Override
+            public void check(C collection) throws FailedAssertionException
+            {
+                notNull().check(collection);
+
+                if (!collection.contains(element))
+                {
+                    throw new FailedAssertionException(element + " not found in Collection");
+                }
+            }
+        };
+    }
+
     /**
      * Checks that the {@link Collection} contains ALL of the specified values.
-     * 
+     *
      * @param <E>
      * @param <C>
      * @param first
@@ -217,177 +245,210 @@ public final class CollectionAssertions
      * @return
      * @throws IllegalArgumentException
      */
-    public static <E, C extends Collection<E>> AlchemyAssertion<C> collectionContainingAll(@Required E first, @Optional E... andOther) throws IllegalArgumentException
+    public static <E, C extends Collection<E>> AlchemyAssertion<C> collectionContainingAll(@Required final E first, @Optional final E... andOther) throws IllegalArgumentException
     {
         checkNotNull(first, "first argument cannot be null");
-        
+
         if (andOther == null || andOther.length == 0)
         {
             return collectionContaining(first);
         }
-        
-        return collection ->
+
+        return new AlchemyAssertion<C>()
         {
-            notNull().check(collection);
-            
-            collectionContaining(first).check(collection);
-            
-            List<E> arguments = Arrays.asList(andOther);
-            
-            for (E argument : arguments)
+            @Override
+            public void check(C collection) throws FailedAssertionException
             {
-                if (!collection.contains(argument))
+                notNull().check(collection);
+
+                collectionContaining(first).check(collection);
+
+                List<E> arguments = Arrays.asList(andOther);
+
+                for (E argument : arguments)
                 {
-                    throw new FailedAssertionException("Element not found in Collection: " + argument);
+                    if (!collection.contains(argument))
+                    {
+                        throw new FailedAssertionException("Element not found in Collection: " + argument);
+                    }
                 }
             }
         };
     }
-    
+
     /**
      * Checks whether a collection contains at least one of the specified parameters.
-     * 
+     *
      * @param <E>
      * @param <C>
      * @param first
      * @param orOthers
      * @return
-     * @throws IllegalArgumentException 
+     * @throws IllegalArgumentException
      */
-    public static <E, C extends Collection<E>> AlchemyAssertion<C> collectionContainingAtLeastOnceOf(@Required E first, @Optional E... orOthers) throws IllegalArgumentException
+    public static <E, C extends Collection<E>> AlchemyAssertion<C> collectionContainingAtLeastOnceOf(@Required final E first, @Optional final E... orOthers) throws IllegalArgumentException
     {
         checkNotNull(first, "first argument cannot be null");
-        
+
         if (orOthers == null || orOthers.length == 0)
         {
             return collectionContaining(first);
         }
-        
-        return collection ->
+
+        return new AlchemyAssertion<C>()
         {
-           if (collection.contains(first))
-           {
-               return;
-           }
-           
-           for (E argument : orOthers)
-           {
-               if (collection.contains(argument))
-               {
-                   return;
-               }
-           }
-           
-           throw new FailedAssertionException("Collection does not contain any of : " + first + ", " + Arrays.toString(orOthers));
+            @Override
+            public void check(C collection) throws FailedAssertionException
+            {
+                if (collection.contains(first))
+                {
+                    return;
+                }
+
+                for (E argument : orOthers)
+                {
+                    if (collection.contains(argument))
+                    {
+                        return;
+                    }
+                }
+
+                throw new FailedAssertionException("Collection does not contain any of : " + first + ", " + Arrays.toString(orOthers));
+
+            }
         };
     }
 
-    public static <K, V> AlchemyAssertion<Map<K, V>> mapWithKey(@Required K key) throws IllegalArgumentException
+    public static <K, V> AlchemyAssertion<Map<K, V>> mapWithKey(@Required final K key) throws IllegalArgumentException
     {
         checkNotNull(key, "key cannot be null");
 
-        return map ->
+        return new AlchemyAssertion<Map<K, V>>()
         {
-            notNull().check(map);
-
-            if (!map.containsKey(key))
+            @Override
+            public void check(Map<K, V> map) throws FailedAssertionException
             {
-                throw new FailedAssertionException(format("Expected Key %s in Map", key));
+                notNull().check(map);
+
+                if (!map.containsKey(key))
+                {
+                    throw new FailedAssertionException(format("Expected Key %s in Map", key));
+                }
             }
         };
     }
 
-    public static <K, V> AlchemyAssertion<Map<K, V>> mapWithKeyValue(@Required K key, V value) throws IllegalArgumentException
+    public static <K, V> AlchemyAssertion<Map<K, V>> mapWithKeyValue(@Required final K key, final V value) throws IllegalArgumentException
     {
         checkNotNull(key, "key cannot be null");
 
-        return map ->
+        return new AlchemyAssertion<Map<K, V>>()
         {
-            CollectionAssertions.<K, V>mapWithKey(key)
-                    .check(map);
-
-            V valueInMap = map.get(key);
-
-            if (!Objects.equals(value, valueInMap))
+            @Override
+            public void check(Map<K, V> map) throws FailedAssertionException
             {
-                throw new FailedAssertionException(format("Value in Map [%s] does not match expcted value %s", valueInMap, value));
-            }
+                CollectionAssertions.<K, V>mapWithKey(key).check(map);
 
+                V valueInMap = map.get(key);
+
+                if (!Objects.equals(value, valueInMap))
+                {
+                    throw new FailedAssertionException(format("Value in Map [%s] does not match expcted value %s", valueInMap, value));
+                }
+            }
         };
     }
-    
-    public static <K, V> AlchemyAssertion<K> keyInMap(@Required Map<K, V> map) throws IllegalArgumentException
+
+    public static <K, V> AlchemyAssertion<K> keyInMap(@Required final Map<K, V> map) throws IllegalArgumentException
     {
         checkNotNull(map, "map cannot be null");
-        
-        Consumer<K> failAssertion = key ->
+
+        final Consumer<K> failAssertion = new Consumer<>();
+
+        return new AlchemyAssertion<K>()
         {
-            throw new FailedAssertionException(format("Expected key [%s] to be in map", key));
-        };
-        
-        return key ->
-        {
-            notNull().check(key);
-            
-            if (!map.containsKey(key))
+            @Override
+            public void check(K key) throws FailedAssertionException
             {
-                failAssertion.accept(key);
+                notNull().check(key);
+
+                if (!map.containsKey(key))
+                {
+                    failAssertion.accept(key);
+                }
             }
         };
     }
-    
-    public static <K,V> AlchemyAssertion<V> valueInMap(@Required Map<K,V> map) throws IllegalArgumentException
+
+    public static <K, V> AlchemyAssertion<V> valueInMap(@Required final Map<K, V> map) throws IllegalArgumentException
     {
         checkNotNull(map, "map cannot be null");
-        
-        Consumer<V> failAssertion = key ->
+
+        final Consumer<V> failAssertion = new Consumer<>();
+
+        return new AlchemyAssertion<V>()
         {
-            throw new FailedAssertionException(format("Expected value [%s] to be in map", key));
-        };
-        
-        return value ->
-        {
-            notNull().check(value);
-            
-            if (!map.containsValue(value))
+            @Override
+            public void check(V value) throws FailedAssertionException
             {
-                failAssertion.accept(value);
+                notNull().check(value);
+
+                if (!map.containsValue(value))
+                {
+                    failAssertion.accept(value);
+                }
             }
         };
     }
-    
-    public static <E> AlchemyAssertion<E> elementInCollection(@NonEmpty Collection<E> collection) throws IllegalArgumentException
+
+    public static <E> AlchemyAssertion<E> elementInCollection(@NonEmpty final Collection<E> collection) throws IllegalArgumentException
     {
         checkNotNull(collection, "collection cannot be null");
-        
-        return element ->
+
+        return new AlchemyAssertion<E>()
         {
-            notNull().check(element);
-            
-            if (!collection.contains(element))
+            @Override
+            public void check(E element) throws FailedAssertionException
             {
-                throw new FailedAssertionException(format("Expected element [%s] to be in collection", element));
+                notNull().check(element);
+
+                if (!collection.contains(element))
+                {
+                    throw new FailedAssertionException(format("Expected element [%s] to be in collection", element));
+                }
             }
         };
     }
-    
-    public static <C extends Collection> AlchemyAssertion<C> collectionOfSize(@Positive int size) throws IllegalArgumentException
+
+    public static <C extends Collection> AlchemyAssertion<C> collectionOfSize(@Positive final int size) throws IllegalArgumentException
     {
         Checks.Internal.checkThat(size >= 0, "size must be >= 0");
-        
-        return collection ->
+
+        return new AlchemyAssertion<C>()
         {
-            CollectionAssertions.nonEmptyCollection().check(collection);
-            
-            int actualSize = collection.size();
-            
-            if(actualSize != size)
+            @Override
+            public void check(C collection) throws FailedAssertionException
             {
-                throw new FailedAssertionException(format("Expected collection with size [%s] but is instead [%s]",
-                                                          size, 
-                                                          actualSize));
+                CollectionAssertions.nonEmptyCollection().check(collection);
+
+                int actualSize = collection.size();
+
+                if (actualSize != size)
+                {
+                    throw new FailedAssertionException(format("Expected collection with size [%s] but is instead [%s]",
+                                                              size,
+                                                              actualSize));
+                }
             }
         };
     }
-    
+
+
+    private static class Consumer<K>
+    {
+        void accept(K key)
+        {
+            throw new FailedAssertionException(format("Expected key [%s] to be in map", key));
+        }
+    }
 }
