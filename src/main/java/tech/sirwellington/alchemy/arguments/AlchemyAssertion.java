@@ -41,7 +41,7 @@ import static tech.sirwellington.alchemy.annotations.designs.patterns.StrategyPa
  *
  * @author SirWellington
  */
-@FunctionalInterface
+//@FunctionalInterface
 @StrategyPattern(role = INTERFACE)
 public interface AlchemyAssertion<A>
 {
@@ -101,17 +101,21 @@ public interface AlchemyAssertion<A>
      * @see #combine(tech.sirwellington.alchemy.arguments.AlchemyAssertion, tech.sirwellington.alchemy.arguments.AlchemyAssertion...)  
      * @see Arguments#checkThat(java.lang.Object) 
      */
-    @Required
-    default AlchemyAssertion<A> and(@Required AlchemyAssertion<A> other) throws IllegalArgumentException
-    {
-        Checks.Internal.checkNotNull(other, "assertion cannot be null");
-
-        return argument ->
-        {
-            this.check(argument);
-            other.check(argument);
-        };
-    }
+//    @Required
+//    default AlchemyAssertion<A> and(@Required AlchemyAssertion<A> other) throws IllegalArgumentException
+//    {
+//        Checks.Internal.checkNotNull(other, "assertion cannot be null");
+//
+//        return new AlchemyAssertion<A>()
+//        {
+//            @Override
+//            public void check(A argument) throws FailedAssertionException
+//            {
+//                this.check(argument);
+//                other.check(argument);
+//            }
+//        };
+//    }
 
     /**
      * Combines multiple {@linkplain AlchemyAssertion assertions} into one.
@@ -143,25 +147,25 @@ public interface AlchemyAssertion<A>
      *
      * @return
      * 
-     * @see #and(tech.sirwellington.alchemy.arguments.AlchemyAssertion) 
+//     * @see #and(tech.sirwellington.alchemy.arguments.AlchemyAssertion)
      */
-    static <T> AlchemyAssertion<T> combine(@Required AlchemyAssertion<T> first, AlchemyAssertion<T>... other)
-    {
-        Checks.Internal.checkNotNull(first, "the first AlchemyAssertion cannot be null");
-        Checks.Internal.checkNotNull(other, "null varargs");
-
-        return (argument) ->
-        {
-            first.check(argument);
-            
-            for (AlchemyAssertion<T> assertion : other)
-            {
-                if (assertion != null)
-                {
-                    assertion.check(argument);
-                }
-            }
-        };
-    }
+//    static <T> AlchemyAssertion<T> combine(@Required AlchemyAssertion<T> first, AlchemyAssertion<T>... other)
+//    {
+//        Checks.Internal.checkNotNull(first, "the first AlchemyAssertion cannot be null");
+//        Checks.Internal.checkNotNull(other, "null varargs");
+//
+//        return (argument) ->
+//        {
+//            first.check(argument);
+//
+//            for (AlchemyAssertion<T> assertion : other)
+//            {
+//                if (assertion != null)
+//                {
+//                    assertion.check(argument);
+//                }
+//            }
+//        };
+//    }
 
 }
