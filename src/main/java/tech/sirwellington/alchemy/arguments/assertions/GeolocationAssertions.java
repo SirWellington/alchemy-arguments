@@ -20,6 +20,7 @@ package tech.sirwellington.alchemy.arguments.assertions;
 
 import tech.sirwellington.alchemy.annotations.access.NonInstantiable;
 import tech.sirwellington.alchemy.arguments.AlchemyAssertion;
+import tech.sirwellington.alchemy.arguments.FailedAssertionException;
 
 import static tech.sirwellington.alchemy.arguments.Arguments.checkThat;
 import static tech.sirwellington.alchemy.arguments.assertions.NumberAssertions.greaterThanOrEqualTo;
@@ -46,14 +47,18 @@ public final class GeolocationAssertions
      */
     public static AlchemyAssertion<Double> validLatitude()
     {
-        return lat ->
+        return new AlchemyAssertion<Double>()
         {
-            checkThat(lat)
-                .usingMessage("Latitude must be between -90 and 90, but was " + lat)
-                .is(lessThanOrEqualTo(90.0))
-                .is(greaterThanOrEqualTo(-90.0));
+            @Override
+            public void check(Double latitude) throws FailedAssertionException
+            {
+                checkThat(latitude)
+                        .usingMessage("Latitude must be between -90 and 90, but was " + latitude)
+                        .is(lessThanOrEqualTo(90.0))
+                        .is(greaterThanOrEqualTo(-90.0));
+            }
         };
-        
+
     }
     
     /**
@@ -63,12 +68,16 @@ public final class GeolocationAssertions
      */
     public static AlchemyAssertion<Double> validLongitude()
     {
-        return lon ->
+        return new AlchemyAssertion<Double>()
         {
-            checkThat(lon)
-                .usingMessage("Longitude must be between -180 and 180, but was " + lon)
-                .is(greaterThanOrEqualTo(-180.0))
-                .is(lessThanOrEqualTo(180.0));
+            @Override
+            public void check(Double longitude) throws FailedAssertionException
+            {
+                checkThat(longitude)
+                        .usingMessage("Longitude must be between -180 and 180, but was " + longitude)
+                        .is(greaterThanOrEqualTo(-180.0))
+                        .is(lessThanOrEqualTo(180.0));
+            }
         };
     }
     
