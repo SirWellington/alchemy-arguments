@@ -16,20 +16,13 @@
 
 package tech.sirwellington.alchemy.arguments.assertions;
 
-import java.time.Instant;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import tech.sirwellington.alchemy.annotations.access.NonInstantiable;
-import tech.sirwellington.alchemy.annotations.arguments.NonNull;
-import tech.sirwellington.alchemy.annotations.arguments.Required;
 import tech.sirwellington.alchemy.arguments.AlchemyAssertion;
 import tech.sirwellington.alchemy.arguments.FailedAssertionException;
 
-import static java.lang.String.format;
-import static tech.sirwellington.alchemy.arguments.Checks.Internal.checkNotNull;
 import static tech.sirwellington.alchemy.arguments.Checks.Internal.checkThat;
-import static tech.sirwellington.alchemy.arguments.assertions.Assertions.notNull;
 import static tech.sirwellington.alchemy.arguments.assertions.NumberAssertions.greaterThan;
 
 /**
@@ -47,141 +40,141 @@ public final class TimeAssertions
         throw new IllegalAccessException("cannot instantiate");
     }
 
+//    /**
+//     * Asserts that the {@link Instant} is in the past. Note that the present is constantly recalculated in order to
+//     * stay current.
+//     *
+//     * @return
+//     */
+//    public static AlchemyAssertion<Instant> inThePast()
+//    {
+//        return argument ->
+//        {
+//            //Recalculate the present on each call to stay current
+//            Instant present = Instant.now();
+//            if (!argument.isBefore(present))
+//            {
+//                throw new FailedAssertionException(format("Expected Timestamp %s to be in the past. Now: %s", argument, present));
+//            }
+//        };
+//    }
+//
+//    public static AlchemyAssertion<Instant> before(@NonNull Instant expected)
+//    {
+//        checkNotNull(expected, "time cannot be null");
+//
+//        return argument ->
+//        {
+//            Assertions.notNull().check(argument);
+//
+//            if (!argument.isBefore(expected))
+//            {
+//                throw new FailedAssertionException(format("Expected Timestamp to be before %s", expected.toString()));
+//            }
+//        };
+//    }
+//
+//    public static AlchemyAssertion<Instant> inTheFuture()
+//    {
+//        return argument ->
+//        {
+//            //Recalculate the present on each call to stay current
+//            Instant present = Instant.now();
+//            if (!argument.isAfter(present))
+//            {
+//                throw new FailedAssertionException(format("Expected Timestamp %s to be in the future. Now: %s", argument, present));
+//            }
+//        };
+//    }
+//
+//    public static AlchemyAssertion<Instant> after(@NonNull Instant expected)
+//    {
+//        checkNotNull(expected, "time cannot be null");
+//
+//        return argument ->
+//        {
+//            Assertions.notNull().check(argument);
+//
+//            if (!argument.isAfter(expected))
+//            {
+//                throw new FailedAssertionException(format("Expected Timestamp to be after %s", expected.toString()));
+//            }
+//        };
+//    }
+//
+//    /**
+//     * Ensures that the {@link Instant} represents exactly Right now, at the time of checking. It does so
+//     * within a margin-of-error of 5 milliseconds. This should be acceptable for most modern processors.
+//     * Use {@link #nowWithinDelta(long) } for more fine-grained deltas.
+//     *
+//     * @return
+//     * @see #nowWithinDelta(long)
+//     */
+//    public static AlchemyAssertion<Instant> rightNow()
+//    {
+//        return nowWithinDelta(5L);
+//    }
+//
+//    /**
+//     * Ensures that an {@link Instant} is {@link Instant#now() }, within the specified margin of error.
+//     *
+//     * @param marginOfErrorInMillis The Acceptable Margin-Of-Error, in Milliseconds. The instant must be within this delta.
+//     *
+//     * @return
+//     * @throws IllegalArgumentException If the marginOfError is {@code < 0}.
+//     *
+//     * @see #rightNow()
+//     */
+//    public static AlchemyAssertion<Instant> nowWithinDelta(long marginOfErrorInMillis) throws IllegalArgumentException
+//    {
+//        checkThat(marginOfErrorInMillis >= 0, "millis must be non-negative.");
+//
+//        return instant ->
+//        {
+//            long now = Instant.now().toEpochMilli();
+//            notNull().check(instant);
+//
+//            long epoch = instant.toEpochMilli();
+//            long difference = Math.abs(epoch - now);
+//
+//            if (difference > marginOfErrorInMillis)
+//            {
+//                throw new FailedAssertionException(
+//                    "Time difference of " + difference + " exceeded margin-of-error of " + marginOfErrorInMillis + "ms");
+//            }
+//
+//        };
+//    }
+//
+//    /**
+//     * Asserts that the {@link Instant} is equal to another, within the acceptable boundaries.
+//     *
+//     * @param instant The instant to compare against
+//     * @param deltaMillis The acceptable delta, in milliseconds.
+//     * @return
+//     */
+//    public static AlchemyAssertion<Instant> equalToInstantWithinDelta(@Required Instant instant, long deltaMillis)
+//    {
+//        checkNotNull(instant, "instant cannot be null");
+//        long delta = Math.abs(deltaMillis);
+//
+//        return argument ->
+//        {
+//            notNull().check(argument);
+//
+//            long difference = argument.toEpochMilli() - instant.toEpochMilli();
+//            difference = Math.abs(difference);
+//
+//            if (difference > delta)
+//            {
+//                throw new FailedAssertionException("Delta should not exceed " + delta + "ms, but is " + difference + "ms");
+//            }
+//        };
+//    }
+    
     /**
-     * Asserts that the {@link Instant} is in the past. Note that the present is constantly recalculated in order to
-     * stay current.
+     * Asserts that the Epoch Timestamp is within {@code 5 milliseconds} of the present moment.
      *
-     * @return
-     */
-    public static AlchemyAssertion<Instant> inThePast()
-    {
-        return argument ->
-        {
-            //Recalculate the present on each call to stay current
-            Instant present = Instant.now();
-            if (!argument.isBefore(present))
-            {
-                throw new FailedAssertionException(format("Expected Timestamp %s to be in the past. Now: %s", argument, present));
-            }
-        };
-    }
-
-    public static AlchemyAssertion<Instant> before(@NonNull Instant expected)
-    {
-        checkNotNull(expected, "time cannot be null");
-
-        return argument ->
-        {
-            Assertions.notNull().check(argument);
-
-            if (!argument.isBefore(expected))
-            {
-                throw new FailedAssertionException(format("Expected Timestamp to be before %s", expected.toString()));
-            }
-        };
-    }
-
-    public static AlchemyAssertion<Instant> inTheFuture()
-    {
-        return argument ->
-        {
-            //Recalculate the present on each call to stay current
-            Instant present = Instant.now();
-            if (!argument.isAfter(present))
-            {
-                throw new FailedAssertionException(format("Expected Timestamp %s to be in the future. Now: %s", argument, present));
-            }
-        };
-    }
-
-    public static AlchemyAssertion<Instant> after(@NonNull Instant expected)
-    {
-        checkNotNull(expected, "time cannot be null");
-
-        return argument ->
-        {
-            Assertions.notNull().check(argument);
-
-            if (!argument.isAfter(expected))
-            {
-                throw new FailedAssertionException(format("Expected Timestamp to be after %s", expected.toString()));
-            }
-        };
-    }
-    
-    /**
-     * Ensures that the {@link Instant} represents exactly Right now, at the time of checking. It does so
-     * within a margin-of-error of 5 milliseconds. This should be acceptable for most modern processors.
-     * Use {@link #nowWithinDelta(long) } for more fine-grained deltas.
-     * 
-     * @return 
-     * @see #nowWithinDelta(long) 
-     */
-    public static AlchemyAssertion<Instant> rightNow() 
-    {
-        return nowWithinDelta(5L);
-    }
-    
-    /**
-     * Ensures that an {@link Instant} is {@link Instant#now() }, within the specified margin of error.
-     * 
-     * @param marginOfErrorInMillis The Acceptable Margin-Of-Error, in Milliseconds. The instant must be within this delta.
-     * 
-     * @return
-     * @throws IllegalArgumentException If the marginOfError is {@code < 0}.
-     * 
-     * @see #rightNow() 
-     */
-    public static AlchemyAssertion<Instant> nowWithinDelta(long marginOfErrorInMillis) throws IllegalArgumentException
-    {
-        checkThat(marginOfErrorInMillis >= 0, "millis must be non-negative.");
-        
-        return instant ->
-        {
-            long now = Instant.now().toEpochMilli();
-            notNull().check(instant);
-            
-            long epoch = instant.toEpochMilli();
-            long difference = Math.abs(epoch - now);
-            
-            if (difference > marginOfErrorInMillis)
-            {
-                throw new FailedAssertionException(
-                    "Time difference of " + difference + " exceeded margin-of-error of " + marginOfErrorInMillis + "ms");
-            }
-            
-        };
-    }
-
-    /**
-     * Asserts that the {@link Instant} is equal to another, within the acceptable boundaries.
-     *
-     * @param instant The instant to compare against
-     * @param deltaMillis The acceptable delta, in milliseconds.
-     * @return
-     */
-    public static AlchemyAssertion<Instant> equalToInstantWithinDelta(@Required Instant instant, long deltaMillis)
-    {
-        checkNotNull(instant, "instant cannot be null");
-        long delta = Math.abs(deltaMillis);
-
-        return argument ->
-        {
-            notNull().check(argument);
-
-            long difference = argument.toEpochMilli() - instant.toEpochMilli();
-            difference = Math.abs(difference);
-
-            if (difference > delta)
-            {
-                throw new FailedAssertionException("Delta should not exceed " + delta + "ms, but is " + difference + "ms");
-            }
-        };
-    }
-    
-    /**
-     * Epoch version of {@link #rightNow() }.
-     * 
      * @return 
      */
     public static AlchemyAssertion<Long> epochRightNow()
@@ -190,30 +183,33 @@ public final class TimeAssertions
     }
     
     /**
-     * Epoch version of {@link #nowWithinDelta(long) }.
-     * 
+     * Asserts that the Epoch Timestamp is within {@code marginOfErrorInMillis} of the present moment.
+     *
      * @param marginOfErrorInMillis The Acceptable Margin-Of-Error, in Milliseconds. The instant must be within this delta.
      * 
      * @return
      * @throws IllegalArgumentException If the marginOfError is {@code < 0}.
      */
-    public static AlchemyAssertion<Long> epochNowWithinDelta(long marginOfErrorInMillis) throws IllegalArgumentException
+    public static AlchemyAssertion<Long> epochNowWithinDelta(final long marginOfErrorInMillis) throws IllegalArgumentException
     {
         checkThat(marginOfErrorInMillis >= 0, "millis must be non-negative.");
-        
-        return epoch ->
+
+        return new AlchemyAssertion<Long>()
         {
-            long now = Instant.now().toEpochMilli();
-            greaterThan(0L).check(epoch);
-            
-            long difference = Math.abs(epoch - now);
-            
-            if (difference > marginOfErrorInMillis)
+            @Override
+            public void check(Long epoch) throws FailedAssertionException
             {
-                throw new FailedAssertionException(
-                    "Time difference of " + difference + " exceeded margin-of-error of " + marginOfErrorInMillis + "ms");
+                long now = System.currentTimeMillis();
+                greaterThan(0L).check(epoch);
+
+                long difference = Math.abs(epoch - now);
+
+                if (difference > marginOfErrorInMillis)
+                {
+                    throw new FailedAssertionException(
+                            "Time difference of " + difference + " exceeded margin-of-error of " + marginOfErrorInMillis + "ms");
+                }
             }
-            
         };
     }
 
