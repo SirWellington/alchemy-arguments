@@ -17,15 +17,14 @@
 package tech.sirwellington.alchemy.arguments.assertions;
 
 import java.util.Objects;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import tech.sirwellington.alchemy.annotations.access.NonInstantiable;
 import tech.sirwellington.alchemy.annotations.arguments.Optional;
 import tech.sirwellington.alchemy.annotations.arguments.Required;
 import tech.sirwellington.alchemy.annotations.designs.patterns.StrategyPattern;
-import tech.sirwellington.alchemy.arguments.AlchemyAssertion;
-import tech.sirwellington.alchemy.arguments.Checks;
-import tech.sirwellington.alchemy.arguments.FailedAssertionException;
+import tech.sirwellington.alchemy.arguments.*;
 
 import static java.lang.String.format;
 import static tech.sirwellington.alchemy.annotations.designs.patterns.StrategyPattern.Role.CONCRETE_BEHAVIOR;
@@ -51,9 +50,8 @@ public final class Assertions
      * Asserts that the argument is not null.
      *
      * @param <A>
-     *
      * @return
-     * @see #nullObject() 
+     * @see #nullObject()
      */
     public static <A> AlchemyAssertion<A> notNull()
     {
@@ -69,22 +67,26 @@ public final class Assertions
             }
         };
     }
-    
+
     /**
-     * Asserts that the argument is null. 
+     * Asserts that the argument is null.
      * This is the opposite of {@link #notNull() }.
-     * 
+     *
      * @param <A>
-     * @return 
-     * @see #notNull() 
+     * @return
+     * @see #notNull()
      */
     public static <A> AlchemyAssertion<A> nullObject()
     {
-        return reference ->
+        return new AlchemyAssertion<A>()
         {
-            if (reference != null)
+            @Override
+            public void check(A argument) throws FailedAssertionException
             {
-                throw new FailedAssertionException("Argument is not null: " + reference);
+                if (argument != null)
+                {
+                    throw new FailedAssertionException("Argument is not null: " + argument);
+                }
             }
         };
     }
@@ -94,21 +96,24 @@ public final class Assertions
      *
      * @param <A>
      * @param other
-     *
      * @return
      */
-    public static <A> AlchemyAssertion<A> sameInstanceAs(@Optional Object other)
+    public static <A> AlchemyAssertion<A> sameInstanceAs(@Optional final Object other)
     {
-        return (argument) ->
+        return new AlchemyAssertion<A>()
         {
-            if (argument == null && other == null)
+            @Override
+            public void check(A argument) throws FailedAssertionException
             {
-                return;
-            }
+                if (argument == null && other == null)
+                {
+                    return;
+                }
 
-            if (argument != other)
-            {
-                throw new FailedAssertionException("Expected " + argument + " to be the same instance as " + other);
+                if (argument != other)
+                {
+                    throw new FailedAssertionException("Expected " + argument + " to be the same instance as " + other);
+                }
             }
         };
     }
@@ -116,22 +121,22 @@ public final class Assertions
     /**
      * Asserts that an argument is an {@code instanceOf} the specified class. This Assertion respects the inheritance
      * hierarchy, so
-     *
+     * <p>
      * <pre>
      *
      * Integer instanceOf Object
      * Integer instanceOf Number
      * Integer instanceOf Integer
      * </pre>
-     *
+     * <p>
      * will pass, but
-     *
+     * <p>
      * <pre>
      *
      * Integer instanceOf Double
      * Integer instanceOf String
      * </pre>
-     *
+     * <p>
      * will fail.
      *
      * @param <A>
@@ -158,7 +163,6 @@ public final class Assertions
      *
      * @param <A>
      * @param other
-     *
      * @return
      */
     public static <A> AlchemyAssertion<A> equalTo(@Optional A other)
@@ -174,7 +178,7 @@ public final class Assertions
 
     /**
      * Runs the inverse on another {@link AlchemyAssertion}. This allows you to create expressions such as:
-     *
+     * <p>
      * <pre>
      * {@code
      * checkThat(filename)
@@ -185,7 +189,6 @@ public final class Assertions
      *
      * @param <A>
      * @param assertion
-     *
      * @return
      */
     public static <A> AlchemyAssertion<A> not(@Required AlchemyAssertion<A> assertion)
