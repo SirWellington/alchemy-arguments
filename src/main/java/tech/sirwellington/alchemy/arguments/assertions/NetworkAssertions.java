@@ -33,8 +33,6 @@ import static tech.sirwellington.alchemy.arguments.assertions.StringAssertions.n
 public final class NetworkAssertions
 {
     
-    private final static Logger LOG = LoggerFactory.getLogger(NetworkAssertions.class);
-    
     /** The maximum allowable Port number */
     private static final int MAX_PORT = 65535;
     
@@ -50,17 +48,21 @@ public final class NetworkAssertions
      */
     public static AlchemyAssertion<String> validURL()
     {
-        return string ->
+        return new AlchemyAssertion<String>()
         {
-            nonEmptyString().check(string);
-            
-            try
+            @Override
+            public void check(String string) throws FailedAssertionException
             {
-                URL url = new URL(string);
-            }
-            catch (Exception ex)
-            {
-                throw new FailedAssertionException("Invalid URL: " + string, ex);
+                nonEmptyString().check(string);
+
+                try
+                {
+                    URL url = new URL(string);
+                }
+                catch (Exception ex)
+                {
+                    throw new FailedAssertionException("Invalid URL: " + string, ex);
+                }
             }
         };
     }
@@ -74,16 +76,20 @@ public final class NetworkAssertions
      */
     public static AlchemyAssertion<Integer> validPort()
     {
-        return port ->
+        return new AlchemyAssertion<Integer>()
         {
-            if (port <= 0)
+            @Override
+            public void check(Integer port) throws FailedAssertionException
             {
-                throw new FailedAssertionException("Network port must be > 0");
-            }
-            
-            if (port > MAX_PORT)
-            {
-                throw new FailedAssertionException("Network port must <" + MAX_PORT);
+                if (port <= 0)
+                {
+                    throw new FailedAssertionException("Network port must be > 0");
+                }
+
+                if (port > MAX_PORT)
+                {
+                    throw new FailedAssertionException("Network port must <" + MAX_PORT);
+                }
             }
         };
     }
