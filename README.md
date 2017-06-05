@@ -47,7 +47,7 @@ To use, simply add the following maven dependency.
 <dependency>
 	<groupId>tech.sirwellington.alchemy</groupId>
 	<artifactId>alchemy-arguments</artifactId>
-	<version>1.5</version>
+	<version>1.6</version>
 </dependency>
 ```
 
@@ -65,7 +65,7 @@ To use, simply add the following maven dependency.
 <dependency>
 	<groupId>tech.sirwellington.alchemy</groupId>
 	<artifactId>alchemy-arguments</artifactId>
-	<version>1.6-SNAPSHOT</version>
+	<version>2.0-SNAPSHOT</version>
 </dependency>
 ```
 
@@ -249,67 +249,6 @@ public String findUsername(Person person)
 # Building
 This project builds with maven. Just run a `mvn clean install` to compile and install to your local maven repository
 
-
-# Release Notes
-
-## 1.6
-
-## 1.5
-+ Adds `GeolocationAssertions`
-+ Adds `AddressAssertions`
-
-## 1.4
-Network Assertions
-+ `validPort()`
-+ `validURL()`
-
-New String Assertions
-+ `allUpperCaseString()`
-+ `allLowerCaseString()`
-+ `stringEndingWith()`
-+ `alphanumericString()`
-+ `alphabeticString()`
-
-New Collection Assertions
-+ `keyInMap()`
-+ `valueInMap()`
-+ `elementInCollection()`
-
-New Boolean Assertions
-+ `trueStatement()`
-+ `falseStatement()`
-
-## 1.3
-New Assertions
-+ `mapWithKey()`
-+ `mapWithKeyAndValue()`
-
-New Assertions
-Dates and Times:
-+ `inThePast()`
-+ `inTheFuture()`
-+ `before()`
-+ `after()`
-Other
-+ `stringBeginningWith()`
-+ `stringContaining()`
-+ `stringThatMatches()`
-+ `listContaining()`
-
-## 1.2
-Multiple Assertions
-```java
-
-checkThat(firstName, middleName, lastName, password, description)
-.are(nonEmptyString());
-```
-
-New Assertions
-+ `instanceOf()`
-
-
-## 1.1
-+ Initial Public Release
 
 # License
 
