@@ -47,17 +47,22 @@ public final class NumberAssertions
      *
      * @return
      */
-    public static AlchemyAssertion<Integer> greaterThan(int exclusiveLowerBound)
+    public static AlchemyAssertion<Integer> greaterThan(final int exclusiveLowerBound)
     {
         Checks.Internal.checkThat(exclusiveLowerBound != Integer.MAX_VALUE, "Integers cannot exceed " + Integer.MAX_VALUE);
-        return (Integer number) ->
+
+        return new AlchemyAssertion<Integer>()
         {
-            Assertions.notNull().check(number);
-            
-            boolean isWithinBounds = number > exclusiveLowerBound;
-            if (!isWithinBounds)
+            @Override
+            public void check(Integer number) throws FailedAssertionException
             {
-                throw new FailedAssertionException("Number must be > " + exclusiveLowerBound);
+                Assertions.notNull().check(number);
+
+                boolean isWithinBounds = number > exclusiveLowerBound;
+                if (!isWithinBounds)
+                {
+                    throw new FailedAssertionException("Number must be > " + exclusiveLowerBound);
+                }
             }
         };
     }
@@ -69,17 +74,22 @@ public final class NumberAssertions
      *
      * @return
      */
-    public static AlchemyAssertion<Long> greaterThan(long exclusiveLowerBound)
+    public static AlchemyAssertion<Long> greaterThan(final long exclusiveLowerBound)
     {
         Checks.Internal.checkThat(exclusiveLowerBound != Long.MAX_VALUE, "Longs cannot exceed " + Long.MAX_VALUE);
-        return (Long number) ->
+
+        return new AlchemyAssertion<Long>()
         {
-            Assertions.notNull().check(number);
-            
-            boolean isWithinBounds = number > exclusiveLowerBound;
-            if(!isWithinBounds)
+            @Override
+            public void check(Long number) throws FailedAssertionException
             {
-                throw new FailedAssertionException("Number must be > " + exclusiveLowerBound);
+                Assertions.notNull().check(number);
+
+                boolean isWithinBounds = number > exclusiveLowerBound;
+                if(!isWithinBounds)
+                {
+                    throw new FailedAssertionException("Number must be > " + exclusiveLowerBound);
+                }
             }
         };
     }
@@ -104,18 +114,22 @@ public final class NumberAssertions
      * 
      * @return 
      */
-    public static AlchemyAssertion<Double> greaterThan(double exclusiveLowerBound, double delta)
+    public static AlchemyAssertion<Double> greaterThan(final double exclusiveLowerBound, final double delta)
     {
         Checks.Internal.checkThat(exclusiveLowerBound < Double.MAX_VALUE, "Doubles cannot exceed " + Double.MAX_VALUE);
-        
-        return number ->
+
+        return new AlchemyAssertion<Double>()
         {
-            Assertions.notNull().check(number);
-            
-            boolean isWithinBounds = number + abs(delta) > exclusiveLowerBound;
-            if (!isWithinBounds)
+            @Override
+            public void check(Double number) throws FailedAssertionException
             {
-                throw new FailedAssertionException("Number must be > " + exclusiveLowerBound + " +- " + delta);
+                Assertions.notNull().check(number);
+
+                boolean isWithinBounds = number + abs(delta) > exclusiveLowerBound;
+                if (!isWithinBounds)
+                {
+                    throw new FailedAssertionException("Number must be > " + exclusiveLowerBound + " +- " + delta);
+                }
             }
         };
     }
@@ -128,16 +142,20 @@ public final class NumberAssertions
      *
      * @return
      */
-    public static AlchemyAssertion<Integer> greaterThanOrEqualTo(int inclusiveLowerBound)
+    public static AlchemyAssertion<Integer> greaterThanOrEqualTo(final int inclusiveLowerBound)
     {
-        return (Integer number) ->
+        return new AlchemyAssertion<Integer>()
         {
-            Assertions.notNull().check(number);
-            
-            boolean isWithinBounds = number >= inclusiveLowerBound;
-            if (!isWithinBounds)
+            @Override
+            public void check(Integer number) throws FailedAssertionException
             {
-                throw new FailedAssertionException("Number must be greater than or equal to " + inclusiveLowerBound);
+                Assertions.notNull().check(number);
+
+                boolean isWithinBounds = number >= inclusiveLowerBound;
+                if (!isWithinBounds)
+                {
+                    throw new FailedAssertionException("Number must be greater than or equal to " + inclusiveLowerBound);
+                }
             }
         };
     }
@@ -149,16 +167,20 @@ public final class NumberAssertions
      *
      * @return
      */
-    public static AlchemyAssertion<Long> greaterThanOrEqualTo(long inclusiveLowerBound)
+    public static AlchemyAssertion<Long> greaterThanOrEqualTo(final long inclusiveLowerBound)
     {
-        return (Long number) ->
+        return new AlchemyAssertion<Long>()
         {
-            Assertions.notNull().check(number);
-            
-            boolean isWithinBounds = number >= inclusiveLowerBound;
-            if (!isWithinBounds)
+            @Override
+            public void check(Long number) throws FailedAssertionException
             {
-                throw new FailedAssertionException("Number must be greater than or equal to " + inclusiveLowerBound);
+                Assertions.notNull().check(number);
+
+                boolean isWithinBounds = number >= inclusiveLowerBound;
+                if (!isWithinBounds)
+                {
+                    throw new FailedAssertionException("Number must be greater than or equal to " + inclusiveLowerBound);
+                }
             }
         };
     }
@@ -183,16 +205,20 @@ public final class NumberAssertions
      * 
      * @return 
      */
-    public static AlchemyAssertion<Double> greaterThanOrEqualTo(double inclusiveLowerBound, double delta)
+    public static AlchemyAssertion<Double> greaterThanOrEqualTo(final double inclusiveLowerBound, final double delta)
     {
-        return (Double number) ->
+        return new AlchemyAssertion<Double>()
         {
-            Assertions.notNull().check(number);
-            
-            boolean isWithinBounds = number + abs(delta) >= inclusiveLowerBound;
-            if(!isWithinBounds)
+            @Override
+            public void check(Double number) throws FailedAssertionException
             {
-                throw new FailedAssertionException("Number must be >= " + inclusiveLowerBound + " +- " + delta);
+                Assertions.notNull().check(number);
+
+                boolean isWithinBounds = number + abs(delta) >= inclusiveLowerBound;
+                if(!isWithinBounds)
+                {
+                    throw new FailedAssertionException("Number must be >= " + inclusiveLowerBound + " +- " + delta);
+                }
             }
         };
     }
@@ -204,12 +230,16 @@ public final class NumberAssertions
      */
     public static AlchemyAssertion<Integer> positiveInteger()
     {
-        return (Integer number) ->
+        return new AlchemyAssertion<Integer>()
         {
-            Assertions.notNull().check(number);
-            if (number <= 0)
+            @Override
+            public void check(Integer number) throws FailedAssertionException
             {
-                throw new FailedAssertionException("Expected positive integer: " + number);
+                Assertions.notNull().check(number);
+                if (number <= 0)
+                {
+                    throw new FailedAssertionException("Expected positive integer: " + number);
+                }
             }
         };
     }
@@ -231,16 +261,20 @@ public final class NumberAssertions
      *
      * @return
      */
-    public static AlchemyAssertion<Integer> lessThanOrEqualTo(int inclusiveUpperBound)
+    public static AlchemyAssertion<Integer> lessThanOrEqualTo(final int inclusiveUpperBound)
     {
-        return (Integer number) ->
+        return new AlchemyAssertion<Integer>()
         {
-            Assertions.notNull().check(number);
-            
-            boolean isWithinBounds = number <= inclusiveUpperBound;
-            if (!isWithinBounds)
+            @Override
+            public void check(Integer number) throws FailedAssertionException
             {
-                throw new FailedAssertionException("Number must be less than or equal to " + inclusiveUpperBound);
+                Assertions.notNull().check(number);
+
+                boolean isWithinBounds = number <= inclusiveUpperBound;
+                if (!isWithinBounds)
+                {
+                    throw new FailedAssertionException("Number must be less than or equal to " + inclusiveUpperBound);
+                }
             }
         };
     }
@@ -252,16 +286,20 @@ public final class NumberAssertions
      *
      * @return
      */
-    public static AlchemyAssertion<Long> lessThanOrEqualTo(long inclusiveUpperBound)
+    public static AlchemyAssertion<Long> lessThanOrEqualTo(final long inclusiveUpperBound)
     {
-        return (Long number) ->
+        return new AlchemyAssertion<Long>()
         {
-            Assertions.notNull().check(number);
-            
-            boolean isWithinBounds = number <= inclusiveUpperBound;
-            if (!isWithinBounds)
+            @Override
+            public void check(Long number) throws FailedAssertionException
             {
-                throw new FailedAssertionException("Number must be less than or equal to " + inclusiveUpperBound);
+                Assertions.notNull().check(number);
+
+                boolean isWithinBounds = number <= inclusiveUpperBound;
+                if (!isWithinBounds)
+                {
+                    throw new FailedAssertionException("Number must be less than or equal to " + inclusiveUpperBound);
+                }
             }
         };
     }
@@ -286,16 +324,20 @@ public final class NumberAssertions
      *
      * @return
      */
-    public static AlchemyAssertion<Double> lessThanOrEqualTo(double inclusiveUpperBound, double delta)
+    public static AlchemyAssertion<Double> lessThanOrEqualTo(final double inclusiveUpperBound, final double delta)
     {
-        return number ->
+        return new AlchemyAssertion<Double>()
         {
-            Assertions.notNull().check(number);
-            
-            boolean isWithinBounds = number - abs(delta) <= inclusiveUpperBound;
-            if(!isWithinBounds)
+            @Override
+            public void check(Double number) throws FailedAssertionException
             {
-                throw new FailedAssertionException("Number must be <= " + inclusiveUpperBound + " +- " + delta);
+                Assertions.notNull().check(number);
+
+                boolean isWithinBounds = number - abs(delta) <= inclusiveUpperBound;
+                if(!isWithinBounds)
+                {
+                    throw new FailedAssertionException("Number must be <= " + inclusiveUpperBound + " +- " + delta);
+                }
             }
         };
     }
@@ -307,12 +349,17 @@ public final class NumberAssertions
      */
     public static AlchemyAssertion<Long> positiveLong()
     {
-        return (Long number) ->
+        return new AlchemyAssertion<Long>()
         {
-            Assertions.notNull().check(number);
-            if (number <= 0)
+            @Override
+            public void check(Long number) throws FailedAssertionException
             {
-                throw new FailedAssertionException("Expected positive long: " + number);
+                Assertions.notNull().check(number);
+
+                if (number <= 0)
+                {
+                    throw new FailedAssertionException("Expected positive long: " + number);
+                }
             }
         };
     }
@@ -334,17 +381,22 @@ public final class NumberAssertions
      *
      * @return
      */
-    public static AlchemyAssertion<Integer> lessThan(int exclusiveUpperBound)
+    public static AlchemyAssertion<Integer> lessThan(final int exclusiveUpperBound)
     {
         Checks.Internal.checkThat(exclusiveUpperBound != Integer.MIN_VALUE, "Ints cannot be less than " + Integer.MIN_VALUE);
-        return (Integer number) ->
+
+        return new AlchemyAssertion<Integer>()
         {
-            Assertions.notNull().check(number);
-            
-            boolean isWithinBounds = number < exclusiveUpperBound;
-            if (!isWithinBounds)
+            @Override
+            public void check(Integer number) throws FailedAssertionException
             {
-                throw new FailedAssertionException("Number must be < " + exclusiveUpperBound);
+                Assertions.notNull().check(number);
+
+                boolean isWithinBounds = number < exclusiveUpperBound;
+                if (!isWithinBounds)
+                {
+                    throw new FailedAssertionException("Number must be < " + exclusiveUpperBound);
+                }
             }
         };
     }
@@ -356,17 +408,22 @@ public final class NumberAssertions
      *
      * @return
      */
-    public static AlchemyAssertion<Long> lessThan(long exclusiveUpperBound)
+    public static AlchemyAssertion<Long> lessThan(final long exclusiveUpperBound)
     {
         Checks.Internal.checkThat(exclusiveUpperBound != Long.MIN_VALUE, "Longs cannot be less than " + Long.MIN_VALUE);
-        return (Long number) ->
+
+        return new AlchemyAssertion<Long>()
         {
-            Assertions.notNull().check(number);
-            
-            boolean isWithinBounds = number < exclusiveUpperBound;
-            if (!isWithinBounds)
+            @Override
+            public void check(Long number) throws FailedAssertionException
             {
-                throw new FailedAssertionException("Number must be < " + exclusiveUpperBound);
+                Assertions.notNull().check(number);
+
+                boolean isWithinBounds = number < exclusiveUpperBound;
+                if (!isWithinBounds)
+                {
+                    throw new FailedAssertionException("Number must be < " + exclusiveUpperBound);
+                }
             }
         };
     }
@@ -391,18 +448,22 @@ public final class NumberAssertions
      * 
      * @return 
      */
-    public static AlchemyAssertion<Double> lessThan(double exclusiveUpperBound, double delta)
+    public static AlchemyAssertion<Double> lessThan(final double exclusiveUpperBound, final double delta)
     {
         Checks.Internal.checkThat(exclusiveUpperBound > -Double.MAX_VALUE, "Doubles cannot be less than " + -Double.MAX_VALUE);
-        
-        return (Double number) ->
+
+        return new AlchemyAssertion<Double>()
         {
-            Assertions.notNull().check(number);
-            
-            boolean isWithinBounds = number - abs(delta) < exclusiveUpperBound;
-            if(!isWithinBounds)
+            @Override
+            public void check(Double number) throws FailedAssertionException
             {
-                throw new FailedAssertionException("Number must be < " + exclusiveUpperBound);
+                Assertions.notNull().check(number);
+
+                boolean isWithinBounds = number - abs(delta) < exclusiveUpperBound;
+                if(!isWithinBounds)
+                {
+                    throw new FailedAssertionException("Number must be < " + exclusiveUpperBound);
+                }
             }
         };
     }
@@ -417,19 +478,24 @@ public final class NumberAssertions
      *
      * @throws IllegalArgumentException If {@code min >= max}. {@code min} should always be less than {@code max}.
      */
-    public static AlchemyAssertion<Integer> numberBetween(int min, int max) throws IllegalArgumentException
+    public static AlchemyAssertion<Integer> numberBetween(final int min, final int max) throws IllegalArgumentException
     {
         Checks.Internal.checkThat(min < max, "Minimum must be less than Max.");
-        return (Integer number) ->
+
+        return new AlchemyAssertion<Integer>()
         {
-            Assertions.notNull().check(number);
-            
-            boolean isWithinRange = number >= min && number <= max;
-            
-            if (!isWithinRange)
+            @Override
+            public void check(Integer number) throws FailedAssertionException
             {
-                String message = String.format("Expected a number between %d and %d but got %d instead", min, max, number);
-                throw new FailedAssertionException(message);
+                Assertions.notNull().check(number);
+
+                boolean isWithinRange = number >= min && number <= max;
+
+                if (!isWithinRange)
+                {
+                    String message = String.format("Expected a number between %d and %d but got %d instead", min, max, number);
+                    throw new FailedAssertionException(message);
+                }
             }
         };
     }
@@ -444,18 +510,23 @@ public final class NumberAssertions
      *
      * @throws IllegalArgumentException If {@code min >= max}. {@code min} should always be less
      */
-    public static AlchemyAssertion<Long> numberBetween(long min, long max) throws IllegalArgumentException
+    public static AlchemyAssertion<Long> numberBetween(final long min, final long max) throws IllegalArgumentException
     {
         Checks.Internal.checkThat(min < max, "Minimum must be less than Max.");
-        return (Long number) ->
+
+        return new AlchemyAssertion<Long>()
         {
-            Assertions.notNull().check(number);
-            
-            boolean isWithinRange = number >= min && number <= max;
-            if (!isWithinRange)
+            @Override
+            public void check(Long number) throws FailedAssertionException
             {
-                String message = String.format("Expected a number between %d and %d but got %d instead", min, max, number);
-                throw new FailedAssertionException(message);
+                Assertions.notNull().check(number);
+
+                boolean isWithinRange = number >= min && number <= max;
+                if (!isWithinRange)
+                {
+                    String message = String.format("Expected a number between %d and %d but got %d instead", min, max, number);
+                    throw new FailedAssertionException(message);
+                }
             }
         };
     }
