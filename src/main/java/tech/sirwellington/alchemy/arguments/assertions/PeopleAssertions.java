@@ -14,11 +14,12 @@
  * limitations under the License.
  */
 
- 
+
 package tech.sirwellington.alchemy.arguments.assertions;
 
 
 import java.util.regex.Pattern;
+
 import tech.sirwellington.alchemy.annotations.access.NonInstantiable;
 import tech.sirwellington.alchemy.arguments.AlchemyAssertion;
 import tech.sirwellington.alchemy.arguments.FailedAssertionException;
@@ -32,13 +33,13 @@ import static tech.sirwellington.alchemy.arguments.Checks.Internal.isNullOrEmpty
  * + Addresses
  * + Names
  * + Etc.
- * 
+ *
  * @author SirWellington
  */
 @NonInstantiable
 public final class PeopleAssertions
 {
-    
+
     private static final Pattern PATTERN = Pattern.compile("^.+@.+\\..+$");
 
     PeopleAssertions() throws IllegalAccessException
@@ -49,7 +50,7 @@ public final class PeopleAssertions
     /**
      * This Assertion performs basic validation of Emails
      * using the following pattern:
-     * {@code "^.+@.+\\..+$"}. The intent of this Assertion is too keep it simple and 
+     * {@code "^.+@.+\\..+$"}. The intent of this Assertion is too keep it simple and
      * prevent flagrant violations. The only way to truly know whether an email is valid is to send
      * a message to it.
      *
@@ -57,17 +58,21 @@ public final class PeopleAssertions
      */
     public static AlchemyAssertion<String> validEmailAddress()
     {
-        
-        return (String email) ->
+
+        return new AlchemyAssertion<String>()
         {
-            if (isNullOrEmpty(email))
+            @Override
+            public void check(String email) throws FailedAssertionException
             {
-                throw new FailedAssertionException("Email is null or empty");
-            }
-            
-            if (!PATTERN.matcher(email).matches())
-            {
-                throw new FailedAssertionException("Invalid Email Address: " + PATTERN);
+                if (isNullOrEmpty(email))
+                {
+                    throw new FailedAssertionException("Email is null or empty");
+                }
+
+                if (!PATTERN.matcher(email).matches())
+                {
+                    throw new FailedAssertionException("Invalid Email Address: " + PATTERN);
+                }
             }
         };
     }
