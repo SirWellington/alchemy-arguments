@@ -34,14 +34,21 @@ import java.util.function.Function;
  *
  * @param <Ex>
  */
-public interface ExceptionMapper<Ex extends Throwable> extends Function<FailedAssertionException, Ex>
+public interface ExceptionMapper<Ex extends Throwable>
 {
 
     /**
      * This identity instance passes the same {@link FailedAssertionException} thrown by the
      * {@link AlchemyAssertion}.
      */
-    ExceptionMapper<FailedAssertionException> IDENTITY = ex -> ex;
+    ExceptionMapper<FailedAssertionException> IDENTITY = new ExceptionMapper<FailedAssertionException>()
+    {
+        @Override
+        public FailedAssertionException apply(FailedAssertionException cause)
+        {
+            return cause;
+        }
+    };
 
     /**
      * Decide how to map the causing exception. You can either return a new Exception that wraps the
@@ -54,7 +61,6 @@ public interface ExceptionMapper<Ex extends Throwable> extends Function<FailedAs
      *
      * @see #IDENTITY
      */
-    @Override
     public Ex apply(FailedAssertionException cause);
 
 }
