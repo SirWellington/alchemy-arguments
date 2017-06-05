@@ -57,11 +57,15 @@ public final class Assertions
      */
     public static <A> AlchemyAssertion<A> notNull()
     {
-        return (reference) ->
+        return new AlchemyAssertion<A>()
         {
-            if (reference == null)
+            @Override
+            public void check(A argument) throws FailedAssertionException
             {
-                throw new FailedAssertionException("Argument is null");
+                if (argument == null)
+                {
+                    throw new FailedAssertionException("Argument is null");
+                }
             }
         };
     }
