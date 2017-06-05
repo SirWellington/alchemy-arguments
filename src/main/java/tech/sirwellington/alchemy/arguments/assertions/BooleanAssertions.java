@@ -43,13 +43,17 @@ public final class BooleanAssertions
 
     public static AlchemyAssertion<Boolean> trueStatement()
     {
-        return b ->
+        return new AlchemyAssertion<Boolean>()
         {
-            notNull().check(b);
-            
-            if (!b)
+            @Override
+            public void check(Boolean argument) throws FailedAssertionException
             {
-                throw new FailedAssertionException("Condition not met");
+                notNull().check(argument);
+
+                if (!argument)
+                {
+                    throw new FailedAssertionException("Condition not met");
+                }
             }
         };
     }
@@ -57,11 +61,15 @@ public final class BooleanAssertions
     
     public static AlchemyAssertion<Boolean> falseStatement()
     {
-        return b ->
+        return new AlchemyAssertion<Boolean>()
         {
-            notNull().check(b);
-            
-            trueStatement().check(!b);
+            @Override
+            public void check(Boolean argument) throws FailedAssertionException
+            {
+                notNull().check(argument);
+
+                trueStatement().check(!argument);
+            }
         };
     }
     

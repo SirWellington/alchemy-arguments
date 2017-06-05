@@ -411,16 +411,20 @@ public final class StringAssertions
      */
     public static AlchemyAssertion<String> alphabeticString()
     {
-        return string ->
+        return new AlchemyAssertion<String>()
         {
-            nonEmptyString().check(string);
-
-            for (char character : string.toCharArray())
+            @Override
+            public void check(String string) throws FailedAssertionException
             {
-                if (!Character.isAlphabetic(character))
+                nonEmptyString().check(string);
+
+                for (char character : string.toCharArray())
                 {
-                    throw new FailedAssertionException(format("Expected alphabetic string, but '%s' is not alphabetic",
-                                                              character));
+                    if (!Character.isAlphabetic(character))
+                    {
+                        throw new FailedAssertionException(format("Expected alphabetic string, but '%s' is not alphabetic",
+                                                                  character));
+                    }
                 }
             }
         };
@@ -434,16 +438,20 @@ public final class StringAssertions
      */
     public static AlchemyAssertion<String> alphanumericString()
     {
-        return string ->
+        return new AlchemyAssertion<String>()
         {
-            nonEmptyString().check(string);
-
-            for (char character : string.toCharArray())
+            @Override
+            public void check(String string) throws FailedAssertionException
             {
-                if (!Character.isAlphabetic(character) && !Character.isDigit(character))
+                nonEmptyString().check(string);
+
+                for (char character : string.toCharArray())
                 {
-                    throw new FailedAssertionException(format("Expected alphanumeric string, but chracter '%s' is not",
-                                                              character));
+                    if (!Character.isAlphabetic(character) && !Character.isDigit(character))
+                    {
+                        throw new FailedAssertionException(format("Expected alphanumeric string, but chracter '%s' is not",
+                                                                  character));
+                    }
                 }
             }
         };
@@ -457,17 +465,21 @@ public final class StringAssertions
      */
     public static AlchemyAssertion<String> integerString()
     {
-        return string ->
+        return new AlchemyAssertion<String>()
         {
-            nonEmptyString().check(string);
+            @Override
+            public void check(String string) throws FailedAssertionException
+            {
+                nonEmptyString().check(string);
 
-            try
-            {
-                Integer.valueOf(string);
-            }
-            catch (NumberFormatException ex)
-            {
-                throw new FailedAssertionException("Expecting a number, instead: " + string);
+                try
+                {
+                    Integer.valueOf(string);
+                }
+                catch (NumberFormatException ex)
+                {
+                    throw new FailedAssertionException("Expecting a number, instead: " + string);
+                }
             }
         };
     }
@@ -480,17 +492,21 @@ public final class StringAssertions
      */
     public static AlchemyAssertion<String> decimalString()
     {
-        return string ->
+        return new AlchemyAssertion<String>()
         {
-            nonEmptyString().check(string);
+            @Override
+            public void check(String string) throws FailedAssertionException
+            {
+                nonEmptyString().check(string);
 
-            try
-            {
-                Double.valueOf(string);
-            }
-            catch (NumberFormatException ex)
-            {
-                throw new FailedAssertionException("Expecting a decimal number, instead: " + string);
+                try
+                {
+                    Double.valueOf(string);
+                }
+                catch (NumberFormatException ex)
+                {
+                    throw new FailedAssertionException("Expecting a decimal number, instead: " + string);
+                }
             }
         };
     }
@@ -502,17 +518,21 @@ public final class StringAssertions
      */
     public static AlchemyAssertion<String> validUUID()
     {
-        return string ->
+        return new AlchemyAssertion<String>()
         {
-            nonEmptyString().check(string);
+            @Override
+            public void check(String string) throws FailedAssertionException
+            {
+                nonEmptyString().check(string);
 
-            try
-            {
-                UUID.fromString(string);
-            }
-            catch (Exception ex)
-            {
-                throw new FailedAssertionException("String is not a valid UUID: " + string);
+                try
+                {
+                    UUID.fromString(string);
+                }
+                catch (Exception ex)
+                {
+                    throw new FailedAssertionException("String is not a valid UUID: " + string);
+                }
             }
         };
     }
@@ -535,30 +555,33 @@ public final class StringAssertions
      */
     public static AlchemyAssertion<String> stringRepresentingInteger()
     {
-        return string ->
+
+        return new AlchemyAssertion<String>()
         {
-            nonEmptyString().check(string);
-
-            for (int i = 0; i < string.length(); ++i)
+            @Override
+            public void check(String string) throws FailedAssertionException
             {
-                char character = string.charAt(i);
+                nonEmptyString().check(string);
 
-                //The first character is allowed to be a sign character '-' or '+'
-                if (i == 0 && isSignCharacter(character))
+                for (int i = 0; i < string.length(); ++i)
                 {
-                    continue;
-                }
+                    char character = string.charAt(i);
 
-                if (!Character.isDigit(character))
-                {
-                    throw new FailedAssertionException(format("Expected an Integer String, but %s is not a digi",
-                                                              character));
+                    //The first character is allowed to be a sign character '-' or '+'
+                    if (i == 0 && isSignCharacter(character))
+                    {
+                        continue;
+                    }
+
+                    if (!Character.isDigit(character))
+                    {
+                        throw new FailedAssertionException(format("Expected an Integer String, but %s is not a digi",
+                                                                  character));
+                    }
                 }
             }
         };
     }
-
-    ;
 
     private static boolean isSignCharacter(char character)
     {
