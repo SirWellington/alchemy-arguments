@@ -21,6 +21,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import tech.sirwellington.alchemy.annotations.access.NonInstantiable;
 import tech.sirwellington.alchemy.annotations.arguments.NonNull;
+import tech.sirwellington.alchemy.annotations.arguments.Required;
 import tech.sirwellington.alchemy.arguments.AlchemyAssertion;
 import tech.sirwellington.alchemy.arguments.FailedAssertionException;
 
@@ -44,60 +45,76 @@ public final class DateAssertions
 
     public static AlchemyAssertion<Date> inThePast()
     {
-        return argument ->
+        return new AlchemyAssertion<Date>()
         {
-            //Recalculate now each time we are called
-            Date present = new Date();
-            //Check that argument is before present
-            if (!argument.before(present))
+            @Override
+            public void check(Date argument) throws FailedAssertionException
             {
-                throw new FailedAssertionException(format("Expected Date %s to be in the past", argument));
+                //Recalculate now each time we are called
+                Date present = new Date();
+                //Check that argument is before present
+                if (!argument.before(present))
+                {
+                    throw new FailedAssertionException(format("Expected Date %s to be in the past", argument));
+                }
             }
         };
     }
 
-    public static AlchemyAssertion<Date> before(@NonNull Date expected)
+    public static AlchemyAssertion<Date> before(@NonNull final Date expected)
     {
         checkNotNull(expected, "date cannot be null");
 
-        return argument ->
+        return new AlchemyAssertion<Date>()
         {
-            Assertions.notNull().check(argument);
-
-            if (!argument.before(expected))
+            @Override
+            public void check(Date argument) throws FailedAssertionException
             {
-                throw new FailedAssertionException(format("Expected Date to be before %s",
-                                                          expected.toInstant().toString()));
+                Assertions.notNull().check(argument);
+
+                if (!argument.before(expected))
+                {
+                    throw new FailedAssertionException(format("Expected Date to be before %s",
+                                                              expected.toString()));
+                }
             }
         };
     }
 
     public static AlchemyAssertion<Date> inTheFuture()
     {
-        return argument ->
+        return new AlchemyAssertion<Date>()
         {
-            //Now must stay current
-            Date present = new Date();
-
-            //Check that argument is after present
-            if (!argument.after(present))
+            @Override
+            public void check(Date argument) throws FailedAssertionException
             {
-                throw new FailedAssertionException(format("Expected Date to be in the future", argument));
+                //Now must stay current
+                Date present = new Date();
+
+                //Check that argument is after present
+                if (!argument.after(present))
+                {
+                    throw new FailedAssertionException(format("Expected Date to be in the future", argument));
+                }
             }
         };
     }
 
-    public static AlchemyAssertion<Date> after(@NonNull Date expected)
+    public static AlchemyAssertion<Date> after(@Required final Date expected)
     {
         checkNotNull(expected, "date cannot be null");
 
-        return date ->
+        return new AlchemyAssertion<Date>()
         {
-            Assertions.notNull().check(date);
-
-            if (!date.after(expected))
+            @Override
+            public void check(Date date) throws FailedAssertionException
             {
-                throw new FailedAssertionException(format("Expected Date to be after %s", expected.toInstant().toString()));
+                Assertions.notNull().check(date);
+
+                if (!date.after(expected))
+                {
+                    throw new FailedAssertionException(format("Expected Date to be after %s", expected.toString()));
+                }
             }
         };
     }
