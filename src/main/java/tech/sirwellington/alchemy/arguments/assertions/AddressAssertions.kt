@@ -21,9 +21,7 @@ package tech.sirwellington.alchemy.arguments.assertions
 
 import tech.sirwellington.alchemy.annotations.access.NonInstantiable
 import tech.sirwellington.alchemy.arguments.AlchemyAssertion
-import tech.sirwellington.alchemy.arguments.Arguments.checkThat
-import tech.sirwellington.alchemy.arguments.assertions.StringAssertions.Companion.stringWithLengthGreaterThanOrEqualTo
-import tech.sirwellington.alchemy.arguments.assertions.StringAssertions.Companion.stringWithLengthLessThanOrEqualTo
+import tech.sirwellington.alchemy.arguments.checkThat
 
 
 /**
@@ -39,18 +37,6 @@ import tech.sirwellington.alchemy.arguments.assertions.StringAssertions.Companio
  *
  * @author SirWellington
  */
-@NonInstantiable
-class AddressAssertions
-@Throws(IllegalAccessException::class)
-internal constructor()
-{
-
-    init
-    {
-        throw IllegalAccessException("cannot instantiate")
-    }
-
-}
 
 /**
  * Checks that a number can represent a valid zip code.
@@ -58,7 +44,6 @@ internal constructor()
  *
  * @return
  */
-
 fun validZipCode(): AlchemyAssertion<String>
 {
     return AlchemyAssertion { zip ->
@@ -85,9 +70,9 @@ fun validZipCodeString(): AlchemyAssertion<String>
 {
     return AlchemyAssertion { zip ->
 
-        StringAssertions.nonEmptyString().check(zip)
-        StringAssertions.integerString().check(zip)
-        StringAssertions.stringWithLength(5)
+        nonEmptyString().check(zip)
+        integerString().check(zip)
+        stringWithLength(5)
 
         validZipCode().check(zip)
     }

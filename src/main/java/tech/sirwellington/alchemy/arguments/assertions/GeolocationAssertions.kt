@@ -20,7 +20,7 @@ package tech.sirwellington.alchemy.arguments.assertions
 
 import tech.sirwellington.alchemy.annotations.access.NonInstantiable
 import tech.sirwellington.alchemy.arguments.AlchemyAssertion
-import tech.sirwellington.alchemy.arguments.Arguments.checkThat
+import tech.sirwellington.alchemy.arguments.checkThat
 
 /**
  * Assertions for testing Geo-Location data, like latitude and longitude.
@@ -49,10 +49,11 @@ internal constructor()
         fun validLatitude(): AlchemyAssertion<Double>
         {
             return AlchemyAssertion { lat ->
+
                 checkThat<Double>(lat)
                         .usingMessage("Latitude must be between -90 and 90, but was " + lat!!)
-                        .`is`(lessThanOrEqualTo(90.0))
-                        .`is`(greaterThanOrEqualTo(-90.0))
+                        .isA(lessThanOrEqualTo(90.0))
+                        .isA(greaterThanOrEqualTo(-90.0))
             }
 
         }
@@ -66,10 +67,11 @@ internal constructor()
         fun validLongitude(): AlchemyAssertion<Double>
         {
             return AlchemyAssertion { lon ->
+
                 checkThat<Double>(lon)
                         .usingMessage("Longitude must be between -180 and 180, but was " + lon!!)
-                        .`is`(greaterThanOrEqualTo(-180.0))
-                        .`is`(lessThanOrEqualTo(180.0))
+                        .isA(greaterThanOrEqualTo(-180.0))
+                        .isA(lessThanOrEqualTo(180.0))
             }
         }
     }

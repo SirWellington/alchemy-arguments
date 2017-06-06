@@ -21,9 +21,9 @@ package tech.sirwellington.alchemy.arguments.assertions
 import tech.sirwellington.alchemy.annotations.arguments.NonNull
 import tech.sirwellington.alchemy.annotations.arguments.Required
 import tech.sirwellington.alchemy.arguments.AlchemyAssertion
-import tech.sirwellington.alchemy.arguments.Checks.Internal.checkNotNull
-import tech.sirwellington.alchemy.arguments.Checks.Internal.checkThat
 import tech.sirwellington.alchemy.arguments.FailedAssertionException
+import tech.sirwellington.alchemy.arguments.checkThat
+import tech.sirwellington.alchemy.arguments.checkNotNull
 import java.lang.String.format
 import java.time.Instant
 

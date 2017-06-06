@@ -18,32 +18,16 @@
 
 package tech.sirwellington.alchemy.arguments.assertions
 
-import tech.sirwellington.alchemy.annotations.access.NonInstantiable
 import tech.sirwellington.alchemy.annotations.arguments.NonEmpty
 import tech.sirwellington.alchemy.annotations.arguments.Optional
 import tech.sirwellington.alchemy.annotations.arguments.Positive
 import tech.sirwellington.alchemy.annotations.arguments.Required
 import tech.sirwellington.alchemy.arguments.AlchemyAssertion
-import tech.sirwellington.alchemy.arguments.Checks.Internal
-import tech.sirwellington.alchemy.arguments.Checks.Internal.checkNotNull
 import tech.sirwellington.alchemy.arguments.FailedAssertionException
+import tech.sirwellington.alchemy.arguments.checkNotNull
+import tech.sirwellington.alchemy.arguments.checkThat
 import java.util.*
 
-/**
-
- * @author SirWellington
- */
-@NonInstantiable
-class CollectionAssertions
-@Throws(IllegalAccessException::class)
-internal constructor()
-{
-
-    init
-    {
-        throw IllegalAccessException("cannot instantiate")
-    }
-}
 
 /**
  * Asserts that the collection is not null and not empty.
@@ -150,6 +134,7 @@ fun <E> nonEmptyArray(): AlchemyAssertion<Array<E>>
 fun <E> emptyCollection(): AlchemyAssertion<Collection<E>>
 {
     return AlchemyAssertion { collection ->
+
         notNull<Any>().check(collection)
 
         if (!collection.isEmpty())
@@ -160,9 +145,11 @@ fun <E> emptyCollection(): AlchemyAssertion<Collection<E>>
 }
 
 
-fun <E> emptyList(): AlchemyAssertion<List<E>>
+inline fun <reified E> emptyList(): AlchemyAssertion<List<E>>
 {
-    return AlchemyAssertion { list -> emptyCollection<E>().check(list) }
+    return AlchemyAssertion {
+        emptyCollection<E>().check(it)
+    }
 }
 
 
@@ -178,10 +165,12 @@ fun <E> listContaining(@Required element: E): AlchemyAssertion<List<E>>
     checkNotNull(element, "cannot check for null")
 
     return AlchemyAssertion { list ->
+
         notNull<Any>().check(list)
+
         if (!list.contains(element))
         {
-            throw FailedAssertionException(element.toString() + " not found in List")
+            throw FailedAssertionException("$element not found in List")
         }
     }
 }
@@ -197,7 +186,7 @@ fun <E, C : Collection<E>> collectionContaining(@Required element: E): AlchemyAs
 
         if (!collection.contains(element))
         {
-            throw FailedAssertionException(element.toString() + " not found in Collection")
+            throw FailedAssertionException("$element not found in Collection")
         }
     }
 }
@@ -223,25 +212,21 @@ fun <E, C : Collection<E>> collectionContainingAll(@Required first: E, @Optional
 {
     checkNotNull(first, "first argument cannot be null")
 
-    if (andOther == null || andOther.size == 0)
+    if (andOther.isEmpty())
     {
         return collectionContaining(first)
     }
 
     return AlchemyAssertion { collection ->
+
         notNull<Any>().check(collection)
 
         collectionContaining(first).check(collection)
 
         val arguments = Arrays.asList(*andOther)
 
-        for (argument in arguments)
-        {
-            if (!collection.contains(argument))
-            {
-                throw FailedAssertionException("Element not found in Collection: " + argument)
-            }
-        }
+        arguments.filterNot { collection.contains(it) }
+                 .forEach { throw FailedAssertionException("Element not found in Collection: $it") }
     }
 }
 
@@ -384,7 +369,7 @@ fun <E> elementInCollection(@NonEmpty collection: Collection<E>): AlchemyAsserti
 
 fun <C : Collection<Any>> collectionOfSize(@Positive size: Int): AlchemyAssertion<C>
 {
-    Internal.checkThat(size >= 0, "size must be >= 0")
+    checkThat(size >= 0, "size must be >= 0")
 
     return AlchemyAssertion { collection ->
 

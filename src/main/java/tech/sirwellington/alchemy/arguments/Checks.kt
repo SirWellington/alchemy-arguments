@@ -18,6 +18,7 @@
 
 package tech.sirwellington.alchemy.arguments
 
+import tech.sirwellington.alchemy.annotations.access.Internal
 import tech.sirwellington.alchemy.annotations.arguments.Optional
 
 /**
@@ -32,23 +33,33 @@ import tech.sirwellington.alchemy.annotations.arguments.Optional
 /**
  * Checks if the provided [string] is null or empty
  */
+@Internal
 internal fun isNullOrEmpty(string: String?): Boolean
 {
     return string?.isNullOrEmpty() ?: true
 }
 
+/**
+ * Checks if the provided [collection] is null or empty
+ */
+@Internal
 internal fun isNullOrEmpty(collection: Collection<*>?): Boolean
 {
     return collection?.isEmpty() ?: true
 }
 
+/**
+ * Ensures the reference is not null, and throws an exception otherwise.
+ */
 @Throws(IllegalArgumentException::class)
-@JvmOverloads internal fun checkNotNull(reference: Any?, message: String = "")
+@JvmOverloads
+internal fun checkNotNull(reference: Any?, message: String = "")
 {
     checkThat(reference != null, message)
 }
 
 @Throws(IllegalStateException::class)
+@Internal
 internal fun checkState(predicate: Boolean, message: String)
 {
     if (!predicate)
@@ -58,7 +69,9 @@ internal fun checkState(predicate: Boolean, message: String)
 }
 
 @Throws(IllegalArgumentException::class)
-@JvmOverloads internal fun checkThat(predicate: Boolean, message: String = "")
+@JvmOverloads
+@Internal
+internal fun checkThat(predicate: Boolean, message: String = "")
 {
     if (!predicate)
     {
@@ -67,12 +80,14 @@ internal fun checkState(predicate: Boolean, message: String)
 }
 
 @Throws(IllegalArgumentException::class)
+@Internal
 internal fun checkNotNullOrEmpty(string: String)
 {
     checkThat(!isNullOrEmpty(string))
 }
 
 @Throws(IllegalArgumentException::class)
+@Internal
 internal fun checkNotNullOrEmpty(string: String, message: String)
 {
     checkThat(!isNullOrEmpty(string), message)
@@ -85,9 +100,10 @@ internal fun checkNotNullOrEmpty(string: String, message: String)
  * *
  * @return true if `object` is null, false otherwise.
  * *
- * @see .anyAreNull
- * @see .allAreNull
+ * @see anyAreNull
+ * @see allAreNull
  */
+@Internal
 internal fun isNull(@Optional `object`: Any?): Boolean
 {
     return `object` == null
@@ -97,9 +113,10 @@ internal fun isNull(@Optional `object`: Any?): Boolean
  * Checks if the argument object has a valid reference (it is not null).
 
  * @param object
- * *
+ *
  * @return true if object is not null, false if it is.
  */
+@Internal
 internal fun notNull(@Optional `object`: Any): Boolean
 {
     return !isNull(`object`)
@@ -109,9 +126,10 @@ internal fun notNull(@Optional `object`: Any): Boolean
  * Checks if any of the argument objects are null.
 
  * @param objects
- * *
+ *
  * @return true if any of the argument objects are null, false otherwise.
  */
+@Internal
 internal fun anyAreNull(vararg objects: Any): Boolean
 {
     if (isNull(objects) || objects.size == 0)
@@ -134,9 +152,10 @@ internal fun anyAreNull(vararg objects: Any): Boolean
  * Checks if all of the objects are null.
 
  * @param objects
- * *
+ *
  * @return true if all the argument objects are null, false otherwise.
  */
+@Internal
 internal fun allAreNull(vararg objects: Any): Boolean
 {
     if (isNull(objects))
@@ -159,11 +178,12 @@ internal fun allAreNull(vararg objects: Any): Boolean
 /**
 
  * @param string
- * *
+ *
  * @return
- * *
- * @see .isNullOrEmpty
+ *
+ * @see isNullOrEmpty
  */
+@Internal
 internal fun notNullOrEmpty(@Optional string: String): Boolean
 {
     return !isNullOrEmpty(string)
@@ -174,12 +194,13 @@ internal fun notNullOrEmpty(@Optional string: String): Boolean
  * strings are null or empty.
 
  * @param strings
- * *
+ *
  * @return
- * *
- * @see .isNullOrEmpty
- * @see .allAreNullOrEmpty
+ *
+ * @see isNullOrEmpty
+ * @see allAreNullOrEmpty
  */
+@Internal
 internal fun anyAreNullOrEmpty(@Optional vararg strings: String): Boolean
 {
     if (isNull(strings))
@@ -203,11 +224,12 @@ internal fun anyAreNullOrEmpty(@Optional vararg strings: String): Boolean
  * null or empty, than this returns false.
 
  * @param strings
- * *
+ *
  * @return true if all of the argument strings are empty or null, false otherwise.
- * *
- * @see .anyAreNullOrEmpty
+ *
+ * @see anyAreNullOrEmpty
  */
+@Internal
 internal fun allAreNullOrEmpty(@Optional vararg strings: String): Boolean
 {
     if (isNull(strings))

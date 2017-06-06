@@ -21,8 +21,8 @@ package tech.sirwellington.alchemy.arguments.assertions
 import tech.sirwellington.alchemy.annotations.arguments.Optional
 import tech.sirwellington.alchemy.annotations.arguments.Required
 import tech.sirwellington.alchemy.arguments.AlchemyAssertion
-import tech.sirwellington.alchemy.arguments.Checks
 import tech.sirwellington.alchemy.arguments.FailedAssertionException
+import tech.sirwellington.alchemy.arguments.checkNotNull
 
 /**
  * Common [Alchemy Assertions][AlchemyAssertion].
@@ -129,7 +129,7 @@ fun <A> sameInstanceAs(@Optional other: Any?): AlchemyAssertion<A>
 
 fun <A> instanceOf(classOfExpectedType: Class<*>): AlchemyAssertion<A>
 {
-    Checks.Internal.checkNotNull(classOfExpectedType, "class cannot be null")
+    checkNotNull(classOfExpectedType, "class cannot be null")
 
     return AlchemyAssertion { argument ->
 
@@ -183,7 +183,7 @@ fun <A> equalTo(@Optional other: A): AlchemyAssertion<A>
  */
 fun <A> not(@Required assertion: AlchemyAssertion<A>): AlchemyAssertion<A>
 {
-    Checks.Internal.checkNotNull(assertion, "missing assertion")
+    checkNotNull(assertion, "missing assertion")
 
     return AlchemyAssertion block@ { argument ->
 
@@ -198,5 +198,84 @@ fun <A> not(@Required assertion: AlchemyAssertion<A>): AlchemyAssertion<A>
 
         throw FailedAssertionException("Expected assertion to fail, but it passed: $assertion")
 
+    }
+}
+
+/**
+ * Chains two [assertions][AlchemyAssertion] together.
+ *
+ * For example a `validAge` assertion could be constructed dynamically using:
+ *
+ * ```
+ * AlchemyAssertion<Integer> validAge = positiveInteger()
+ *                                      .and(greaterThanOrEqualTo(1))
+ *                                      .and(lessThanOrEqualTo(120))l
+ *
+ * checkThat(age).isA(validAge);
+ *
+ * ```
+ *
+ * Note that due to the limitations of the type-inference in the Java Compiler, the first
+ * [assertion][AlchemyAssertion] that you make must match the type of the argument.
+ *
+ * For example,
+ * ```
+ * notNull().and(positiveInteger())
+ *      .check(age);
+ * ```
+ *
+ * would not work because `notNull` references a vanilla `Object`.
+ *
+ * @param other The other assertion to check against
+ *
+ * @see combine
+ * @see checkThat
+ */
+@Required
+@Throws(IllegalArgumentException::class)
+fun <A> AlchemyAssertion<A>.and(@Required other: AlchemyAssertion<A>): AlchemyAssertion<A>
+{
+    checkNotNull(other, "assertion cannot be null")
+
+    return AlchemyAssertion { argument ->
+        this.check(argument)
+        other.check(argument)
+    }
+}
+
+
+/**
+ * Combines multiple [assertions][AlchemyAssertion] into one.
+ *
+ * For example, a `validAge` assertion could be constructed dynamically using:
+ * ```
+ * AlchemyAssertion<Integer> validAge = combine(notNull(),
+ *                                              greaterThanOrEqualTo(1),
+ *                                              lessThanOrEqualTo(120),
+ *                                              positiveInteger());
+ *
+ * checkThat(age).is(validAge);
+ * ```
+ *
+ * This allows you to **combine and store** [assertions][AlchemyAssertion] that are commonly
+ * used together ot perform argument checks.
+ *
+ * @param first The first assertion to include.
+ * @param others The rest of the assertions to include.
+ *
+ * @see .and
+ */
+fun <T> combine(@Required first: AlchemyAssertion<T>, vararg others: AlchemyAssertion<T>): AlchemyAssertion<T>
+{
+    checkNotNull(first, "the first AlchemyAssertion cannot be null")
+    checkNotNull(others, "null varargs")
+
+    return AlchemyAssertion { argument ->
+        first.check(argument)
+
+        for (assertion in others)
+        {
+            assertion.check(argument)
+        }
     }
 }

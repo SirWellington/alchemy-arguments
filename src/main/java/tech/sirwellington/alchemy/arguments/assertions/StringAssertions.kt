@@ -21,9 +21,11 @@ package tech.sirwellington.alchemy.arguments.assertions
 
 import tech.sirwellington.alchemy.annotations.arguments.NonEmpty
 import tech.sirwellington.alchemy.arguments.AlchemyAssertion
-import tech.sirwellington.alchemy.arguments.Checks
-import tech.sirwellington.alchemy.arguments.Checks.Internal.isNullOrEmpty
+import tech.sirwellington.alchemy.arguments.checkNotNull
 import tech.sirwellington.alchemy.arguments.FailedAssertionException
+import tech.sirwellington.alchemy.arguments.checkNotNullOrEmpty
+import tech.sirwellington.alchemy.arguments.checkThat
+import tech.sirwellington.alchemy.arguments.isNullOrEmpty
 import java.lang.String.format
 import java.util.*
 import java.util.regex.Pattern
@@ -45,7 +47,7 @@ import java.util.regex.Pattern
 
 fun stringThatMatches(pattern: Pattern): AlchemyAssertion<String>
 {
-    Checks.Internal.checkNotNull(pattern, "missing pattern")
+    checkNotNull(pattern, "missing pattern")
 
     return AlchemyAssertion { string: String ->
 
@@ -66,7 +68,7 @@ fun emptyString(): AlchemyAssertion<String>
 {
     return AlchemyAssertion { string: String ->
 
-        if (!Checks.Internal.isNullOrEmpty(string))
+        if (!isNullOrEmpty(string))
         {
             throw FailedAssertionException("Expected empty string but got: $string")
         }
@@ -84,7 +86,7 @@ fun emptyString(): AlchemyAssertion<String>
 
 fun stringWithLengthGreaterThanOrEqualTo(minimumLength: Int): AlchemyAssertion<String>
 {
-    Checks.Internal.checkThat(minimumLength >= 0)
+    checkThat(minimumLength >= 0)
 
     return AlchemyAssertion { string: String ->
 
@@ -126,7 +128,7 @@ fun stringWithNoWhitespace(): AlchemyAssertion<String>
 
 fun stringWithLength(expectedLength: Int): AlchemyAssertion<String>
 {
-    Checks.Internal.checkThat(expectedLength >= 0, "expectedLength must be >= 0")
+    checkThat(expectedLength >= 0, "expectedLength must be >= 0")
 
     return AlchemyAssertion { string: String ->
 
@@ -150,7 +152,7 @@ fun stringWithLength(expectedLength: Int): AlchemyAssertion<String>
 
 fun stringWithLengthLessThan(upperBound: Int): AlchemyAssertion<String>
 {
-    Checks.Internal.checkThat(upperBound > 0, "upperBound must be > 0")
+    checkThat(upperBound > 0, "upperBound must be > 0")
 
     return AlchemyAssertion { string: String ->
 
@@ -174,7 +176,7 @@ fun stringWithLengthLessThan(upperBound: Int): AlchemyAssertion<String>
 
 fun stringBeginningWith(prefix: String): AlchemyAssertion<String>
 {
-    Checks.Internal.checkThat(!isNullOrEmpty(prefix), "missing prefix")
+    checkThat(!isNullOrEmpty(prefix), "missing prefix")
 
     return AlchemyAssertion { string: String ->
 
@@ -198,7 +200,7 @@ fun stringBeginningWith(prefix: String): AlchemyAssertion<String>
 
 fun stringWithLengthLessThanOrEqualTo(maximumLength: Int): AlchemyAssertion<String>
 {
-    Checks.Internal.checkThat(maximumLength >= 0)
+    checkThat(maximumLength >= 0)
     return AlchemyAssertion { string: String ->
 
         notNull<Any>().check(string)
@@ -221,8 +223,8 @@ fun stringWithLengthLessThanOrEqualTo(maximumLength: Int): AlchemyAssertion<Stri
 
 fun stringWithLengthGreaterThan(minimumLength: Int): AlchemyAssertion<String>
 {
-    Checks.Internal.checkThat(minimumLength > 0, "minimumLength must be > 0")
-    Checks.Internal.checkThat(minimumLength < Integer.MAX_VALUE, "not possible to have a String larger than ${Integer.MAX_VALUE}")
+    checkThat(minimumLength > 0, "minimumLength must be > 0")
+    checkThat(minimumLength < Integer.MAX_VALUE, "not possible to have a String larger than ${Integer.MAX_VALUE}")
 
     return AlchemyAssertion { string: String ->
 
@@ -245,7 +247,7 @@ fun nonEmptyString(): AlchemyAssertion<String>
 {
     return AlchemyAssertion { string: String ->
 
-        if (Checks.Internal.isNullOrEmpty(string))
+        if (isNullOrEmpty(string))
         {
             throw FailedAssertionException("String argument is empty")
         }
@@ -264,8 +266,8 @@ fun nonEmptyString(): AlchemyAssertion<String>
 
 fun stringWithLengthBetween(minimumLength: Int, maximumLength: Int): AlchemyAssertion<String>
 {
-    Checks.Internal.checkThat(minimumLength >= 0, "Minimum length must be at least 0")
-    Checks.Internal.checkThat(minimumLength < maximumLength, "Minimum length must be < maximum length.")
+    checkThat(minimumLength >= 0, "Minimum length must be at least 0")
+    checkThat(minimumLength < maximumLength, "Minimum length must be < maximum length.")
 
     return AlchemyAssertion { string ->
         notNull<Any>().check(string)
@@ -288,7 +290,7 @@ fun stringWithLengthBetween(minimumLength: Int, maximumLength: Int): AlchemyAsse
 
 fun stringContaining(@NonEmpty substring: String): AlchemyAssertion<String>
 {
-    Checks.Internal.checkNotNullOrEmpty(substring, "substring cannot be empty")
+    checkNotNullOrEmpty(substring, "substring cannot be empty")
 
     return AlchemyAssertion { string ->
         nonEmptyString().check(string)
@@ -361,7 +363,7 @@ fun allLowerCaseString(): AlchemyAssertion<String>
 
 fun stringEndingWith(@NonEmpty suffix: String): AlchemyAssertion<String>
 {
-    Checks.Internal.checkNotNullOrEmpty(suffix, "string should not be empty")
+    checkNotNullOrEmpty(suffix, "string should not be empty")
 
     return AlchemyAssertion { string ->
         nonEmptyString().check(string)

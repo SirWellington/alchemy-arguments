@@ -20,8 +20,8 @@ package tech.sirwellington.alchemy.arguments.assertions
 
 import tech.sirwellington.alchemy.annotations.access.NonInstantiable
 import tech.sirwellington.alchemy.arguments.AlchemyAssertion
-import tech.sirwellington.alchemy.arguments.Checks.Internal.isNullOrEmpty
 import tech.sirwellington.alchemy.arguments.FailedAssertionException
+import tech.sirwellington.alchemy.arguments.isNullOrEmpty
 import java.util.regex.Pattern
 
 
@@ -63,6 +63,7 @@ internal constructor()
         {
 
             return AlchemyAssertion { email: String ->
+
                 if (isNullOrEmpty(email))
                 {
                     throw FailedAssertionException("Email is null or empty")

@@ -16,7 +16,6 @@
 package tech.sirwellington.alchemy.arguments;
 
 import tech.sirwellington.alchemy.annotations.arguments.Optional;
-import tech.sirwellington.alchemy.annotations.arguments.Required;
 import tech.sirwellington.alchemy.annotations.designs.patterns.StrategyPattern;
 
 import static tech.sirwellington.alchemy.annotations.designs.patterns.StrategyPattern.Role.INTERFACE;
@@ -56,111 +55,5 @@ public interface AlchemyAssertion<A>
      *                                  {@code IllegalArgumentException}.
      */
     void check(@Optional A argument) throws FailedAssertionException;
-
-    /**
-     * Chains two {@linkplain AlchemyAssertion assertions} together.
-     *<p>
-     * For example, a {@code validAge} assertion could be constructed dynamically using:
-     * <pre>
-     *
-     * {@code
-     * AlchemyAssertion<Integer> validAge = positiveInteger()
-     *      .and(greaterThanOrEqualTo(1))
-     *      .and(lessThanOrEqualTo(120))
-     *
-     *  checkThat(age)
-     *      .is(validAge);
-     * }
-     *
-     * </pre>
-     *
-     * This allows you to save and store Assertions that are commonly used together to perform
-     * argument checks, and to do so at runtime.
-     * <p>
-     * Note that due to limitations of the Java Compiler, the first
-     * {@linkplain AlchemyAssertion Assertion} that you make must match the type of the argument.
-     * <p>
-     * For example,
-     * <pre>
-     * {@code
-     *  notNull()
-     *      .and(positiveInteger())
-     *      .check(age);
-     * }
-     * </pre>
-     * would not work because notNull references a vanilla {@code Object}.
-     * <p>
-     * The {@linkplain #combine(tech.sirwellington.alchemy.arguments.AlchemyAssertion, tech.sirwellington.alchemy.arguments.AlchemyAssertion...) combine} 
-     * function does not have these limitations.
-     *
-     * @param other
-     *
-     * @return
-     * 
-     * @see #combine(tech.sirwellington.alchemy.arguments.AlchemyAssertion, tech.sirwellington.alchemy.arguments.AlchemyAssertion...)  
-     * @see Arguments#checkThat(java.lang.Object) 
-     */
-    @Required
-    default AlchemyAssertion<A> and(@Required AlchemyAssertion<A> other) throws IllegalArgumentException
-    {
-        Checks.checkNotNull(other, "assertion cannot be null");
-
-        return argument ->
-        {
-            this.check(argument);
-            other.check(argument);
-        };
-    }
-
-    /**
-     * Combines multiple {@linkplain AlchemyAssertion assertions} into one.
-     * <p>
-     * For example, a {@code validAge} assertion could be constructed dynamically using:
-     * <pre>
-     *
-     * {@code
-     *   AlchemyAssertion<Integer> validAge = combine
-     *   (
-     *      notNull(),
-     *      greaterThanOrEqualTo(1),
-     *      lessThanOrEqualTo(120),
-     *      positiveInteger()
-     *   );
-     *
-     * checkThat(age)
-     *      .is(validAge);
-     * }
-     *
-     * </pre>
-     *
-     * This allows you to <b>combine and store</b> Assertions that are commonly used together to perform
-     * argument checks.
-     *
-     * @param first
-     * @param other
-     * @param <T>
-     *
-     * @return
-     * 
-     * @see #and(tech.sirwellington.alchemy.arguments.AlchemyAssertion) 
-     */
-    static <T> AlchemyAssertion<T> combine(@Required AlchemyAssertion<T> first, AlchemyAssertion<T>... other)
-    {
-        Checks.checkNotNull(first, "the first AlchemyAssertion cannot be null");
-        Checks.checkNotNull(other, "null varargs");
-
-        return (argument) ->
-        {
-            first.check(argument);
-            
-            for (AlchemyAssertion<T> assertion : other)
-            {
-                if (assertion != null)
-                {
-                    assertion.check(argument);
-                }
-            }
-        };
-    }
 
 }
