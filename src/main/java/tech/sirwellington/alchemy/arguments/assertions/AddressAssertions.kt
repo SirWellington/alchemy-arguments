@@ -19,7 +19,6 @@
 package tech.sirwellington.alchemy.arguments.assertions
 
 
-import tech.sirwellington.alchemy.annotations.access.NonInstantiable
 import tech.sirwellington.alchemy.arguments.AlchemyAssertion
 import tech.sirwellington.alchemy.arguments.checkThat
 

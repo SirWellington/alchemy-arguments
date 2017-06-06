@@ -27,6 +27,7 @@ import tech.sirwellington.alchemy.arguments.FailedAssertionException
 import tech.sirwellington.alchemy.arguments.checkNotNull
 import tech.sirwellington.alchemy.arguments.checkThat
 import java.util.*
+import java.util.Collection
 
 
 /**

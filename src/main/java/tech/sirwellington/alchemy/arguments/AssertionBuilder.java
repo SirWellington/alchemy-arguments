@@ -16,7 +16,7 @@
 package tech.sirwellington.alchemy.arguments;
 
 import tech.sirwellington.alchemy.annotations.arguments.NonEmpty;
-import tech.sirwellington.alchemy.annotations.arguments.NonNull;
+import tech.sirwellington.alchemy.annotations.arguments.Required;
 import tech.sirwellington.alchemy.annotations.designs.FluidAPIDesign;
 
 /**
@@ -79,7 +79,7 @@ public interface AssertionBuilder<Argument, Ex extends Throwable>
      *
      * @see ExceptionMapper
      */
-    <Ex extends Throwable> AssertionBuilder<Argument, Ex> throwing(@NonNull ExceptionMapper<Ex> exceptionMapper);
+    <Ex extends Throwable> AssertionBuilder<Argument, Ex> throwing(@Required ExceptionMapper<Ex> exceptionMapper);
 
     /**
      * This operation runs the specified assertion on the {@code Argument}. This operation is
@@ -91,14 +91,14 @@ public interface AssertionBuilder<Argument, Ex extends Throwable>
      *
      * @throws Ex Throws the desired exception if the assertion fails.
      */
-    AssertionBuilder<Argument, Ex> is(@NonNull AlchemyAssertion<Argument> assertion) throws Ex;
+    AssertionBuilder<Argument, Ex> is(@Required AlchemyAssertion<Argument> assertion) throws Ex;
 
     /**
      * Kotlin-friendly alias for {@link #is(AlchemyAssertion)}.
      *
      * @see #is(AlchemyAssertion)
      */
-    AssertionBuilder<Argument, Ex> isA(@NonNull AlchemyAssertion<Argument> assertion) throws Ex;
+    AssertionBuilder<Argument, Ex> isA(@Required AlchemyAssertion<Argument> assertion) throws Ex;
 
     /**
      * Grammatical sugar in case multiple arguments are used.
@@ -117,7 +117,7 @@ public interface AssertionBuilder<Argument, Ex extends Throwable>
      * @return
      * @throws Ex
      */
-    AssertionBuilder<Argument, Ex> are(@NonNull AlchemyAssertion<Argument> assertion) throws Ex;
+    AssertionBuilder<Argument, Ex> are(@Required AlchemyAssertion<Argument> assertion) throws Ex;
 
     /**
      * This is an alternate way to specify an Exception, using instead a class. The library will
@@ -130,6 +130,6 @@ public interface AssertionBuilder<Argument, Ex extends Throwable>
      *
      * @return
      */
-    <Ex extends Throwable> AssertionBuilder<Argument, Ex> throwing(@NonNull Class<Ex> exceptionClass);
+    <Ex extends Throwable> AssertionBuilder<Argument, Ex> throwing(@Required Class<Ex> exceptionClass);
 
 }

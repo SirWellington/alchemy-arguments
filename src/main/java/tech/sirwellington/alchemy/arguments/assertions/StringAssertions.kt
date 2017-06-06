@@ -21,8 +21,8 @@ package tech.sirwellington.alchemy.arguments.assertions
 
 import tech.sirwellington.alchemy.annotations.arguments.NonEmpty
 import tech.sirwellington.alchemy.arguments.AlchemyAssertion
-import tech.sirwellington.alchemy.arguments.checkNotNull
 import tech.sirwellington.alchemy.arguments.FailedAssertionException
+import tech.sirwellington.alchemy.arguments.checkNotNull
 import tech.sirwellington.alchemy.arguments.checkNotNullOrEmpty
 import tech.sirwellington.alchemy.arguments.checkThat
 import tech.sirwellington.alchemy.arguments.isNullOrEmpty

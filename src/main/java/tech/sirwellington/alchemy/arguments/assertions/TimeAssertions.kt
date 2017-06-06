@@ -18,12 +18,11 @@
 
 package tech.sirwellington.alchemy.arguments.assertions
 
-import tech.sirwellington.alchemy.annotations.arguments.NonNull
 import tech.sirwellington.alchemy.annotations.arguments.Required
 import tech.sirwellington.alchemy.arguments.AlchemyAssertion
 import tech.sirwellington.alchemy.arguments.FailedAssertionException
-import tech.sirwellington.alchemy.arguments.checkThat
 import tech.sirwellington.alchemy.arguments.checkNotNull
+import tech.sirwellington.alchemy.arguments.checkThat
 import java.lang.String.format
 import java.time.Instant
 
@@ -53,7 +52,7 @@ fun inThePast(): AlchemyAssertion<Instant>
 }
 
 
-fun before(@NonNull expected: Instant): AlchemyAssertion<Instant>
+fun before(@Required expected: Instant): AlchemyAssertion<Instant>
 {
     checkNotNull(expected, "time cannot be null")
 
@@ -83,7 +82,7 @@ fun inTheFuture(): AlchemyAssertion<Instant>
 }
 
 
-fun after(@NonNull expected: Instant): AlchemyAssertion<Instant>
+fun after(@Required expected: Instant): AlchemyAssertion<Instant>
 {
     checkNotNull(expected, "time cannot be null")
 
