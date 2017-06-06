@@ -51,7 +51,6 @@ import java.util.Collections
 class CollectionAssertionsTest
 {
 
-    private val emptyMap = mapOf<Any, Any>()
     private val emptySet = setOf<Any>()
     private val emptyList = listOf<Any>()
 

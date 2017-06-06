@@ -191,12 +191,8 @@ class DynamicExceptionSupplierTest
     {
 
         constructor()
-        {
-        }
 
         constructor(message: String) : super(message)
-        {
-        }
 
     }
 
@@ -205,12 +201,8 @@ class DynamicExceptionSupplierTest
     {
 
         constructor()
-        {
-        }
 
         constructor(cause: Throwable) : super(cause)
-        {
-        }
 
     }
 
@@ -219,20 +211,12 @@ class DynamicExceptionSupplierTest
     {
 
         constructor()
-        {
-        }
 
         constructor(message: String) : super(message)
-        {
-        }
 
         constructor(message: String, cause: Throwable) : super(message, cause)
-        {
-        }
 
         constructor(cause: Throwable) : super(cause)
-        {
-        }
 
     }
 
