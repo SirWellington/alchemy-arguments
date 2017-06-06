@@ -240,9 +240,9 @@ class TimeAssertionsTest
 
         val past = one(pastInstants())
         assertThrows { assertion.check(past.toEpochMilli()) }.failedAssertion()
+
         val future = one(futureInstants())
-        assertThrows { assertion.check(future.toEpochMilli()) }
-                .failedAssertion()
+        assertThrows { assertion.check(future.toEpochMilli()) }.failedAssertion()
     }
 
     @Test
@@ -257,9 +257,9 @@ class TimeAssertionsTest
 
         val past = one(pastInstants())
         assertThrows { assertion.check(past.toEpochMilli()) }.failedAssertion()
+
         val future = one(futureInstants())
-        assertThrows { assertion.check(future.toEpochMilli()) }
-                .failedAssertion()
+        assertThrows { assertion.check(future.toEpochMilli()) }.failedAssertion()
     }
 
     @DontRepeat
@@ -267,8 +267,7 @@ class TimeAssertionsTest
     fun testEpochNowWithinDeltaBadArguments()
     {
         val negative = one(negativeIntegers())
-        assertThrows { epochNowWithinDelta(negative.toLong()) }
-                .illegalArgument()
+        assertThrows { epochNowWithinDelta(negative.toLong()) }.illegalArgument()
     }
 
 }

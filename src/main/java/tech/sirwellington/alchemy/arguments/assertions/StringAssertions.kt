@@ -26,7 +26,6 @@ import tech.sirwellington.alchemy.arguments.checkNotNull
 import tech.sirwellington.alchemy.arguments.checkNotNullOrEmpty
 import tech.sirwellington.alchemy.arguments.checkThat
 import tech.sirwellington.alchemy.arguments.isNullOrEmpty
-import java.lang.String.format
 import java.util.UUID
 import java.util.regex.Pattern
 
@@ -364,7 +363,7 @@ fun stringEndingWith(@NonEmpty suffix: String): AlchemyAssertion<String>
 
         if (!string.endsWith(suffix))
         {
-            throw FailedAssertionException(format("Expected %s to end with %s", string, suffix))
+            throw FailedAssertionException("Expected $string to end with $suffix")
         }
     }
 }
@@ -385,8 +384,7 @@ fun alphabeticString(): AlchemyAssertion<String>
         {
             if (!Character.isAlphabetic(character.toInt()))
             {
-                throw FailedAssertionException(format("Expected alphabetic string, but '%s' is not alphabetic",
-                                                      character))
+                throw FailedAssertionException("Expected alphabetic string, but '$character' is not alphabetic")
             }
         }
     }
@@ -409,8 +407,7 @@ fun alphanumericString(): AlchemyAssertion<String>
         {
             if (!Character.isAlphabetic(character.toInt()) && !Character.isDigit(character))
             {
-                throw FailedAssertionException(format("Expected alphanumeric string, but chracter '%s' is not",
-                                                      character))
+                throw FailedAssertionException("Expected alphanumeric string, but character '$character' is not")
             }
         }
     }

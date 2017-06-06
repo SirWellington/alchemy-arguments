@@ -46,7 +46,7 @@ fun inThePast(): AlchemyAssertion<Instant>
         val present = Instant.now()
         if (!argument.isBefore(present))
         {
-            throw FailedAssertionException(format("Expected Timestamp %s to be in the past. Now: %s", argument, present))
+            throw FailedAssertionException("Expected Timestamp [$argument] to be in the past. Now: [$present]")
         }
     }
 }
