@@ -212,18 +212,17 @@ class CollectionAssertionsTest
     @Throws(Exception::class)
     fun testCollectionContainingAtLeastOnceOf()
     {
-        val args = listOf(alphanumericString())
-        val collection = listOf(alphanumericString()).toMutableList()
-        collection.addAll(args)
+        val arguments = listOf(alphanumericString())
+        val collection = listOf(alphanumericString()) + arguments
 
-        val first = collection[0]
-        val others = args.subList(1, args.size).toTypedArray()
+        val first = collection.first()
+        val others = arguments.subList(1, arguments.size).toTypedArray()
 
-        val instance = CollectionAssertions.collectionContainingAtLeastOnceOf(first, *others)
+        val instance = CollectionAssertions.collectionContainingAtLeastOneOf(first, *others)
         instance.check(collection)
 
         val otherCollection = listOf(alphabeticString()).toMutableList()
-        assertThrows { instance.check(otherCollection) }
+        assertThrows { instance.check(otherCollection) }.failedAssertion()
 
         //With at least one, it should pass.
         otherCollection.add(first)
@@ -235,7 +234,7 @@ class CollectionAssertionsTest
     @Throws(Exception::class)
     fun testCollectionContainingAtLeastOnceOfWithBadArgs()
     {
-        assertThrows { CollectionAssertions.collectionContainingAtLeastOnceOf(null) }
+        assertThrows { CollectionAssertions.collectionContainingAtLeastOneOf(null) }
                 .illegalArgument()
     }
 
@@ -291,7 +290,6 @@ class CollectionAssertionsTest
         assertThrows { assertion.check(null) }.failedAssertion()
 
         assertThrows { CollectionAssertions.keyInMap<Any, Any>(null!!) }
-                .illegalArgument()
     }
 
     @Test
@@ -321,7 +319,7 @@ class CollectionAssertionsTest
         assertThrows { assertion.check(randomValue) }.failedAssertion()
         //Edge cases
         assertThrows { assertion.check(null) }.failedAssertion()
-        assertThrows { CollectionAssertions.valueInMap<Any, Any>(null!!) }.illegalArgument()
+        assertThrows { CollectionAssertions.valueInMap<Any, Any>(null!!) }
 
         //Empty map should be ok
         CollectionAssertions.valueInMap(emptyMap<Any, Any>())
@@ -353,7 +351,7 @@ class CollectionAssertionsTest
         assertThrows { assertion.check(randomValue) }.failedAssertion()
         //Edge cases
         assertThrows { assertion.check(null) }.failedAssertion()
-        assertThrows { CollectionAssertions.elementInCollection<Any>(null!!) }.illegalArgument()
+        assertThrows { CollectionAssertions.elementInCollection<Any>(null!!) }
 
         //Empty Collections should be ok
         CollectionAssertions.elementInCollection(emptyList<Any>())

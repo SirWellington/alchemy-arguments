@@ -131,7 +131,8 @@ class AssertionsTest
     @Test
     fun testInstanceOfEdgeCases()
     {
-        assertThrows { instanceOf<Any>(null!!) }.failedAssertion()
+        val assertion = instanceOf<Any>(Number::class.java)
+        assertThrows { assertion.check(null) }.failedAssertion()
     }
 
     @Test
@@ -157,7 +158,7 @@ class AssertionsTest
     @Test
     fun testNotEdgeCases()
     {
-        assertThrows { not<Any>(null!!) }.illegalArgument()
+        assertThrows { not<Any>(null!!) }
     }
 
     @Test

@@ -41,7 +41,7 @@ object CollectionAssertions
      *
      * @return
     </E> */
-    fun <E> nonEmptyCollection(): AlchemyAssertion<Collection<*>>
+    fun <E> nonEmptyCollection(): AlchemyAssertion<Collection<E>>
     {
         return AlchemyAssertion { collection ->
             notNull<Any>().check(collection)
@@ -240,7 +240,7 @@ object CollectionAssertions
      * @throws IllegalArgumentException
     </C></E> */
     @Throws(IllegalArgumentException::class)
-    fun <E, C : Collection<E>> collectionContainingAtLeastOnceOf(@Required first: E, @Optional vararg orOthers: E): AlchemyAssertion<C>
+    fun <E, C : Collection<E>> collectionContainingAtLeastOneOf(@Required first: E, @Optional vararg orOthers: E): AlchemyAssertion<C>
     {
         checkNotNull(first, "first argument cannot be null")
 
@@ -256,18 +256,15 @@ object CollectionAssertions
                 return@block
             }
 
-            for (argument in orOthers)
-            {
+            orOthers.forEach { argument ->
+
                 if (collection.contains(argument))
                 {
                     return@block
                 }
             }
 
-            if (orOthers.any { collection.contains(it) })
-            {
-                throw FailedAssertionException("Collection does not contain any of : $first , ${Arrays.toString(orOthers)}")
-            }
+            throw FailedAssertionException("Collection does not contain any of : $first , ${Arrays.toString(orOthers)}")
         }
     }
 
@@ -360,7 +357,7 @@ object CollectionAssertions
 
         return AlchemyAssertion { collection ->
 
-            nonEmptyCollection<Any>().check(collection)
+            nonEmptyCollection<Any?>().check(collection)
 
             val actualSize = collection.size
 

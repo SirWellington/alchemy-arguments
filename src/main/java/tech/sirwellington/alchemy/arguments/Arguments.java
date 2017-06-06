@@ -44,6 +44,11 @@ import tech.sirwellington.alchemy.annotations.designs.FluidAPIDesign;
 public final class Arguments
 {
 
+    Arguments() throws IllegalAccessException
+    {
+        throw new IllegalAccessException("cannot instantiate");
+    }
+
     public static <Argument> AssertionBuilder<Argument, FailedAssertionException> checkThat(@Optional Argument argument)
     {
         return AssertionBuilderImpl.checkThat(Collections.singletonList(argument));
