@@ -14,11 +14,11 @@
  * limitations under the License.
  */
 
+@file:JvmName("PeopleAssertions")
 
 package tech.sirwellington.alchemy.arguments.assertions
 
 
-import tech.sirwellington.alchemy.annotations.access.NonInstantiable
 import tech.sirwellington.alchemy.arguments.AlchemyAssertion
 import tech.sirwellington.alchemy.arguments.FailedAssertionException
 import tech.sirwellington.alchemy.arguments.isNullOrEmpty
@@ -34,47 +34,31 @@ import java.util.regex.Pattern
 
  * @author SirWellington
  */
-@NonInstantiable
-class PeopleAssertions @Throws(IllegalAccessException::class)
-internal constructor()
+
+private val PATTERN = Pattern.compile("^.+@.+\\..+$")
+
+/**
+ * This Assertion performs basic validation of Emails
+ * using the following pattern:
+ * `"^.+@.+\\..+$"`. The intent of this Assertion is too keep it simple and
+ * prevent flagrant violations. The only way to truly know whether an email is valid is to send
+ * a message to it.
+ *
+ * @return
+ */
+fun validEmailAddress(): AlchemyAssertion<String>
 {
 
-    init
-    {
-        throw IllegalAccessException("cannot instantiate")
-    }
+    return AlchemyAssertion { email ->
 
-    companion object
-    {
-
-        private val PATTERN = Pattern.compile("^.+@.+\\..+$")
-
-        /**
-         * This Assertion performs basic validation of Emails
-         * using the following pattern:
-         * `"^.+@.+\\..+$"`. The intent of this Assertion is too keep it simple and
-         * prevent flagrant violations. The only way to truly know whether an email is valid is to send
-         * a message to it.
-
-         * @return
-         */
-
-        fun validEmailAddress(): AlchemyAssertion<String>
+        if (isNullOrEmpty(email))
         {
+            throw FailedAssertionException("Email is null or empty")
+        }
 
-            return AlchemyAssertion { email ->
-
-                if (isNullOrEmpty(email))
-                {
-                    throw FailedAssertionException("Email is null or empty")
-                }
-
-                if (!PATTERN.matcher(email).matches())
-                {
-                    throw FailedAssertionException("Invalid Email Address: " + PATTERN)
-                }
-            }
+        if (!PATTERN.matcher(email).matches())
+        {
+            throw FailedAssertionException("Invalid Email Address: " + PATTERN)
         }
     }
-
 }

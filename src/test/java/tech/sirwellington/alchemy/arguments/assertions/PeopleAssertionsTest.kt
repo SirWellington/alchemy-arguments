@@ -67,17 +67,10 @@ class PeopleAssertionsTest
 
     }
 
-    @DontRepeat
-    @Test
-    fun testConstructor()
-    {
-        assertThrows { PeopleAssertions() }.isInstanceOf(IllegalAccessException::class.java)
-    }
-
     @Test
     fun testValidEmailAddress()
     {
-        val instance = PeopleAssertions.validEmailAddress()
+        val instance = validEmailAddress()
         assertThat(instance, notNullValue())
 
         instance.check(email)
@@ -89,7 +82,7 @@ class PeopleAssertionsTest
     @Test
     fun testValidEmailAddressWithEmptyArgs()
     {
-        val instance = PeopleAssertions.validEmailAddress()
+        val instance = validEmailAddress()
 
         assertThrows { instance.check(null) }.failedAssertion()
         assertThrows { instance.check("") }.failedAssertion()
