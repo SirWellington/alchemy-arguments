@@ -59,6 +59,6 @@ public interface ExceptionMapper<Ex extends Throwable>
      *
      * @see #IDENTITY
      */
-    public Ex apply(FailedAssertionException cause);
+    Ex apply(FailedAssertionException cause);
 
 }

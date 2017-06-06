@@ -51,10 +51,9 @@ final class DynamicExceptionSupplier<Ex extends Throwable> implements ExceptionM
     @Override
     public Ex apply(FailedAssertionException cause)
     {
-        Ex instance = tryToCreateInstance(cause);
-
-        return instance;
+        return tryToCreateInstance(cause);
     }
+
     private Ex tryToCreateInstance(FailedAssertionException cause)
     {
         try

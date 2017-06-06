@@ -137,15 +137,7 @@ internal fun anyAreNull(vararg objects: Any?): Boolean
         return true
     }
 
-    for (`object` in objects)
-    {
-        if (isNull(`object`))
-        {
-            return true
-        }
-    }
-
-    return false
+    return objects.any { isNull(it) }
 }
 
 /**
@@ -163,15 +155,7 @@ internal fun allAreNull(vararg objects: Any?): Boolean
         return true
     }
 
-    for (`object` in objects)
-    {
-        if (!isNull(`object`))
-        {
-            return false
-        }
-    }
-
-    return true
+    return objects.any { isNull(it) }
 }
 
 
@@ -208,15 +192,7 @@ internal fun anyAreNullOrEmpty(@Optional vararg strings: String?): Boolean
         return true
     }
 
-    for (string in strings)
-    {
-        if (isNullOrEmpty(string))
-        {
-            return true
-        }
-    }
-
-    return false
+    return strings.any { isNullOrEmpty(it) }
 }
 
 /**
@@ -237,13 +213,5 @@ internal fun allAreNullOrEmpty(@Optional vararg strings: String?): Boolean
         return true
     }
 
-    for (string in strings)
-    {
-        if (notNullOrEmpty(string))
-        {
-            return false
-        }
-    }
-
-    return true
+    return strings.all { isNullOrEmpty(it) }
 }

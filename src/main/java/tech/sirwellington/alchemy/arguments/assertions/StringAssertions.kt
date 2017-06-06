@@ -378,15 +378,14 @@ fun stringEndingWith(@NonEmpty suffix: String): AlchemyAssertion<String>
 fun alphabeticString(): AlchemyAssertion<String>
 {
     return AlchemyAssertion { string ->
+
         checkString(string)
 
-        for (character in string.toCharArray())
+        if (string.any { it.isNotAlphabetic() })
         {
-            if (!Character.isAlphabetic(character.toInt()))
-            {
-                throw FailedAssertionException("Expected alphabetic string, but '$character' is not alphabetic")
-            }
+            throw FailedAssertionException("Expected alphabetic string, but '$string' is not entirely alphabetic")
         }
+
     }
 }
 
@@ -403,13 +402,11 @@ fun alphanumericString(): AlchemyAssertion<String>
 
         checkString(string)
 
-        for (character in string.toCharArray())
+        if (string.any { it.isNotLetterOrDigit() })
         {
-            if (!Character.isAlphabetic(character.toInt()) && !Character.isDigit(character))
-            {
-                throw FailedAssertionException("Expected alphanumeric string, but character '$character' is not")
-            }
+            throw FailedAssertionException("Expected alphanumeric string, but '$string' is not")
         }
+
     }
 }
 
@@ -521,6 +518,21 @@ fun stringRepresentingInteger(): AlchemyAssertion<String>
 private fun Char.isNumericalSign(): Boolean
 {
     return this == '-' || this == '+'
+}
+
+private fun Char.isAlphabetic(): Boolean
+{
+    return Character.isAlphabetic(this.toInt())
+}
+
+private fun Char.isNotAlphabetic(): Boolean
+{
+    return !this.isAlphabetic()
+}
+
+private fun Char.isNotLetterOrDigit(): Boolean
+{
+    return !this.isLetterOrDigit()
 }
 
 @Throws(FailedAssertionException::class)

@@ -21,12 +21,13 @@ import java.util.Collections;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import tech.sirwellington.alchemy.arguments.assertions.*;
-import tech.sirwellington.alchemy.test.junit.ThrowableAssertion;
 import tech.sirwellington.alchemy.test.junit.runners.*;
 
 import static org.mockito.Mockito.*;
 import static tech.sirwellington.alchemy.arguments.Arguments.*;
 import static tech.sirwellington.alchemy.arguments.assertions.CollectionAssertions.*;
+import static tech.sirwellington.alchemy.arguments.assertions.NumberAssertions.negativeInteger;
+import static tech.sirwellington.alchemy.arguments.assertions.NumberAssertions.positiveInteger;
 import static tech.sirwellington.alchemy.arguments.assertions.StringAssertions.*;
 
 /**
@@ -57,28 +58,28 @@ public class JavaCodeTest
     public void testPositiveInt() throws Exception
     {
         checkThat(positiveNumber)
-                .isA(NumberAssertions.positiveInteger());
+                .isA(positiveInteger());
     }
 
     @Test(expected = FailedAssertionException.class)
     public void testPositiveIntWithBadArg() throws Exception
     {
         checkThat(negativeNumber)
-                .isA(NumberAssertions.positiveInteger());
+                .isA(positiveInteger());
     }
 
     @Test
     public void testNegativeInt() throws Exception
     {
         checkThat(negativeNumber)
-                .isA(NumberAssertions.negativeInteger());
+                .isA(negativeInteger());
     }
 
     @Test(expected = FailedAssertionException.class)
     public void testNegativeIntWithBadArg() throws Exception
     {
         checkThat(negativeNumber)
-                .is(NumberAssertions.positiveInteger());
+                .isA(positiveInteger());
     }
 
     @Test
@@ -99,13 +100,13 @@ public class JavaCodeTest
     public void testEmptyCollections() throws Exception
     {
         checkThat(Collections.emptyList())
-                .is(emptyList());
+                .isA(emptyList());
 
         checkThat(Collections.emptySet())
-                .is(emptySet());
+                .isA(emptySet());
 
         checkThat(Collections.emptyMap())
-                .is(emptyMap());
+                .isA(emptyMap());
     }
 
     @Test(expected = FailedAssertionException.class)
