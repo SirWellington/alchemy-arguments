@@ -48,10 +48,16 @@ class AssertionBuilderTest
     }
 
     @Test
-    @Throws(Throwable::class)
-    fun testAreCallsIs()
+    fun testAreCallsIsA()
     {
         instance.are(assertion)
+        verify(instance).isA(assertion)
+    }
+
+    @Test
+    fun testIsCallsIsA()
+    {
+        instance.`is`(assertion)
         verify(instance).isA(assertion)
     }
 
@@ -64,7 +70,13 @@ class AssertionBuilderTest
 
         override fun are(assertion: AlchemyAssertion<A>?): AssertionBuilder<A, Throwable>
         {
-            return this
+            return isA(assertion)
+        }
+
+        @Throws(Throwable::class)
+        override fun `is`(assertion: AlchemyAssertion<A>): AssertionBuilder<A, Throwable>
+        {
+            return isA(assertion)
         }
 
         override fun <Ex : Throwable?> throwing(exceptionClass: Class<Ex>?): AssertionBuilder<A, Ex>
@@ -82,11 +94,6 @@ class AssertionBuilderTest
             return this as AssertionBuilder<A, Ex>
         }
 
-        @Throws(Throwable::class)
-        override fun `is`(assertion: AlchemyAssertion<A>): AssertionBuilder<A, Throwable>
-        {
-            return this
-        }
 
     }
 
