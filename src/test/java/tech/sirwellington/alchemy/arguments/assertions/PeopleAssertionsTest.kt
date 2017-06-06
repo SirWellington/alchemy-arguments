@@ -21,7 +21,6 @@ import org.junit.Assert.assertThat
 import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
-import tech.sirwellington.alchemy.arguments.FailedAssertionException
 import tech.sirwellington.alchemy.arguments.failedAssertion
 import tech.sirwellington.alchemy.generator.PeopleGenerators
 import tech.sirwellington.alchemy.generator.one

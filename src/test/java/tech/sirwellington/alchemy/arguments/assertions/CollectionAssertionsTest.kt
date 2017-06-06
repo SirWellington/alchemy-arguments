@@ -29,8 +29,8 @@ import tech.sirwellington.alchemy.arguments.whichever
 import tech.sirwellington.alchemy.generator.CollectionGenerators.Companion.listOf
 import tech.sirwellington.alchemy.generator.CollectionGenerators.Companion.mapOf
 import tech.sirwellington.alchemy.generator.NumberGenerators
-import tech.sirwellington.alchemy.generator.NumberGenerators.Companion.positiveIntegers
 import tech.sirwellington.alchemy.generator.NumberGenerators.Companion.negativeIntegers
+import tech.sirwellington.alchemy.generator.NumberGenerators.Companion.positiveIntegers
 import tech.sirwellington.alchemy.generator.StringGenerators.Companion.alphabeticString
 import tech.sirwellington.alchemy.generator.StringGenerators.Companion.alphanumericString
 import tech.sirwellington.alchemy.generator.StringGenerators.Companion.hexadecimalString

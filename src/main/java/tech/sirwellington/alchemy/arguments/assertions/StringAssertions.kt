@@ -27,7 +27,7 @@ import tech.sirwellington.alchemy.arguments.checkNotNullOrEmpty
 import tech.sirwellington.alchemy.arguments.checkThat
 import tech.sirwellington.alchemy.arguments.isNullOrEmpty
 import java.lang.String.format
-import java.util.*
+import java.util.UUID
 import java.util.regex.Pattern
 
 /**

@@ -25,7 +25,6 @@ import tech.sirwellington.alchemy.arguments.Arguments.checkThat
 import tech.sirwellington.alchemy.arguments.failedAssertion
 import tech.sirwellington.alchemy.arguments.illegalArgument
 import tech.sirwellington.alchemy.generator.AlchemyGenerator
-import tech.sirwellington.alchemy.generator.NumberGenerators
 import tech.sirwellington.alchemy.generator.NumberGenerators.Companion.doubles
 import tech.sirwellington.alchemy.generator.NumberGenerators.Companion.integers
 import tech.sirwellington.alchemy.generator.NumberGenerators.Companion.longs
