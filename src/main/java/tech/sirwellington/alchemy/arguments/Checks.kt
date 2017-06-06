@@ -150,12 +150,12 @@ internal fun anyAreNull(vararg objects: Any?): Boolean
 @Internal
 internal fun allAreNull(vararg objects: Any?): Boolean
 {
-    if (isNull(objects))
+    if (isNullOrEmpty(objects.toList()))
     {
         return true
     }
 
-    return objects.any { isNull(it) }
+    return objects.all { isNull(it) }
 }
 
 
