@@ -83,6 +83,23 @@ class AssertionsTest
         verifyZeroInteractions(mock)
     }
 
+    @DontRepeat
+    @Test
+    fun testNonNullReference()
+    {
+        val instance = nonNullReference<Any>()
+        assertThat(instance, notNullValue())
+
+        Tests.checkForNullCase(instance)
+
+        val mock = mock<Any>()
+        instance.check(mock)
+        verifyZeroInteractions(mock)
+
+        assertThrows { instance.check(null) }.failedAssertion()
+    }
+
+    @DontRepeat
     @Test
     fun testNullObject()
     {

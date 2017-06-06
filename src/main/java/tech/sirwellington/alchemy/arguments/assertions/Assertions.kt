@@ -51,6 +51,11 @@ fun <A: Any?> notNull(): AlchemyAssertion<A>
     }
 }
 
+fun <A: Any?> nonNullReference(): AlchemyAssertion<A>
+{
+    return notNull()
+}
+
 /**
  * Asserts that the argument is null.
  * This is the opposite of [.notNull].
