@@ -57,7 +57,7 @@ class AssertionBuilderTest
     @Test
     fun testIsCallsIsA()
     {
-        instance.`is`(assertion)
+        instance.isA(assertion)
         verify(instance).isA(assertion)
     }
 

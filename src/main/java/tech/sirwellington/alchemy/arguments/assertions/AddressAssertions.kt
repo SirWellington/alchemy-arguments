@@ -49,8 +49,8 @@ fun validZipCode(): AlchemyAssertion<String>
 
         checkThat<String>(zip)
                 .usingMessage("zip must consist of 4-5 characters")
-                .`is`(stringWithLengthGreaterThanOrEqualTo(4))
-                .`is`(stringWithLengthLessThanOrEqualTo(5))
+                .isA(stringWithLengthGreaterThanOrEqualTo(4))
+                .isA(stringWithLengthLessThanOrEqualTo(5))
     }
 }
 
