@@ -16,17 +16,24 @@
 
 package tech.sirwellington.alchemy.arguments.assertions
 
+import com.nhaarman.mockito_kotlin.whenever
 import org.hamcrest.Matchers.notNullValue
 import org.junit.Assert.assertThat
 import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
+import org.mockito.ArgumentMatchers
 import org.mockito.Mockito.doNothing
 import org.mockito.Mockito.doThrow
 import org.mockito.Mockito.mock
 import org.mockito.Mockito.verifyZeroInteractions
 import tech.sirwellington.alchemy.arguments.AlchemyAssertion
 import tech.sirwellington.alchemy.arguments.FailedAssertionException
+import tech.sirwellington.alchemy.arguments.failedAssertion
+import tech.sirwellington.alchemy.generator.NumberGenerators
+import tech.sirwellington.alchemy.generator.StringGenerators
+import tech.sirwellington.alchemy.generator.StringGenerators.Companion.strings
+import tech.sirwellington.alchemy.generator.one
 import tech.sirwellington.alchemy.test.junit.ThrowableAssertion.assertThrows
 import tech.sirwellington.alchemy.test.junit.runners.AlchemyTestRunner
 import tech.sirwellington.alchemy.test.junit.runners.DontRepeat
@@ -48,21 +55,12 @@ class AssertionsTest
 
     @DontRepeat
     @Test
-    fun testCannotInstantiateClass()
-    {
-        assertThrows { Assertions::class.java.newInstance() }
-
-        assertThrows { Assertions() }
-                .isInstanceOf(IllegalAccessException::class.java)
-    }
-
-    @DontRepeat
-    @Test
     @Throws(Exception::class)
     fun testNotNull()
     {
 
-        val instance = Companion.notNull()
+        val instance = notNull<Any>()
+
         assertThat<AlchemyAssertion<Any>>(instance, notNullValue())
         Tests.checkForNullCase(instance)
 
@@ -74,20 +72,20 @@ class AssertionsTest
     @Test
     fun testNullObject()
     {
-        val instance = Assertions.nullObject<Any>()
+        val instance = nullObject<Any>()
         assertThat(instance, notNullValue())
 
         instance.check(null)
 
-        val string = one(strings())
-        assertThrows { instance.check(string) }
-                .isInstanceOf(FailedAssertionException::class.java)
+        val string = one(StringGenerators.strings())
+
+        assertThrows { instance.check(string) }.failedAssertion()
     }
 
     @Test
     fun testSameInstanceAs()
     {
-        val instanceOne = Assertions.sameInstanceAs<Any>(null)
+        val instanceOne = sameInstanceAs<Any?>(null)
 
         //null is the same instance as null
         assertThat(instanceOne, notNullValue())
@@ -95,62 +93,62 @@ class AssertionsTest
 
         //null is not the same instance as any other non-null object
         assertThrows { instanceOne.check("") }
-                .isInstanceOf(FailedAssertionException::class.java)
+                .failedAssertion()
 
         val someObject = Any()
-        val instanceTwo = Assertions.sameInstanceAs<Any>(someObject)
+        val instanceTwo = sameInstanceAs(someObject)
         instanceTwo.check(someObject)
 
         val differentObject = Any()
         assertThrows { instanceTwo.check(differentObject) }
-                .isInstanceOf(FailedAssertionException::class.java)
+                .failedAssertion()
     }
 
     @Test
     fun testInstanceOf()
     {
 
-        val instance = Assertions.instanceOf<Any>(Number::class.java)
+        val instance = instanceOf<Any>(Number::class.java)
 
-        instance.check(one(positiveIntegers()))
-        instance.check(one(positiveLongs()))
-        instance.check(one(positiveDoubles()))
+        instance.check(one(NumberGenerators.positiveIntegers()))
+        instance.check(one(NumberGenerators.positiveLongs()))
+        instance.check(one(NumberGenerators.positiveDoubles()))
 
-        assertThrows { instance.check(one(alphabeticString())) }
+        assertThrows { instance.check(one(StringGenerators.alphabeticString())) }.failedAssertion()
     }
 
     @Test
     fun testInstanceOfEdgeCases()
     {
-        assertThrows { Assertions.instanceOf<Any>(null!!) }
-                .isInstanceOf(IllegalArgumentException::class.java)
+        assertThrows { instanceOf<Any>(null!!) }.failedAssertion()
     }
 
     @Test
     fun testNot()
     {
-        val assertion = mock(AlchemyAssertion<*>::class.java)
-        doThrow(FailedAssertionException())
-                .`when`<AlchemyAssertion<Any>>(assertion)
-                .check(ArgumentMatchers.any())
+        val assertion = mock(AlchemyAssertion::class.java)
 
-        val instance = Assertions.not<Any>(assertion)
+        doThrow(FailedAssertionException())
+                .whenever(assertion)
+                .check(ArgumentMatchers.any()
+
+        val instance = not<Any>(assertion)
 
         instance.check("")
 
         doNothing()
-                .`when`<AlchemyAssertion<Any>>(assertion)
+                .whenever<AlchemyAssertion<Any>>(assertion)
                 .check(ArgumentMatchers.any())
 
         assertThrows { instance.check("") }
-                .isInstanceOf(FailedAssertionException::class.java)
+                .failedAssertion()
 
     }
 
     @Test
     fun testNotEdgeCases()
     {
-        assertThrows { Assertions.not<Any>(null!!) }
+        assertThrows { not<Any>(null!!) }
                 .isInstanceOf(IllegalArgumentException::class.java)
     }
 
@@ -164,14 +162,14 @@ class AssertionsTest
             second = one(strings())
         } while (first == second)
 
-        val instance = Assertions.equalTo(second)
+        val instance = equalTo(second)
 
         //Check against self should be ok;
         instance.check(second)
         instance.check("" + second)
 
         assertThrows { instance.check(first) }
-                .isInstanceOf(FailedAssertionException::class.java)
+                .failedAssertion()
 
     }
 

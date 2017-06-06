@@ -22,7 +22,9 @@ import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
 import tech.sirwellington.alchemy.arguments.FailedAssertionException
+import tech.sirwellington.alchemy.arguments.failedAssertion
 import tech.sirwellington.alchemy.generator.DateGenerators
+import tech.sirwellington.alchemy.generator.one
 import tech.sirwellington.alchemy.test.junit.ThrowableAssertion.assertThrows
 import tech.sirwellington.alchemy.test.junit.runners.AlchemyTestRunner
 import tech.sirwellington.alchemy.test.junit.runners.DontRepeat
@@ -68,7 +70,7 @@ class DateAssertionsTest
 
         val future = one(DateGenerators.futureDates())
         assertThrows { instance.check(future) }
-                .isInstanceOf(FailedAssertionException::class.java)
+                .failedAssertion()
 
         Thread.sleep(1)
         //Start time should presentDate be past as well
@@ -85,12 +87,12 @@ class DateAssertionsTest
 
         //The reference date is not after itself
         assertThrows { instance.check(referenceDate) }
-                .isInstanceOf(FailedAssertionException::class.java)
+                .failedAssertion()
 
         //The past is not after the reference date
         val past = one(DateGenerators.pastDates())
         assertThrows { instance.check(past) }
-                .isInstanceOf(FailedAssertionException::class.java)
+                .failedAssertion()
 
         //The future should be after the reference date
         val future = one(DateGenerators.futureDates())
@@ -108,12 +110,12 @@ class DateAssertionsTest
 
         //The reference date is not before itself
         assertThrows { instance.check(referenceDate) }
-                .isInstanceOf(FailedAssertionException::class.java)
+                .failedAssertion()
 
         //The future is not before the reference date
         val future = one(DateGenerators.after(referenceDate))
         assertThrows { instance.check(future) }
-                .isInstanceOf(FailedAssertionException::class.java)
+                .failedAssertion()
 
         //The past is before the reference date
         val past = one(DateGenerators.before(referenceDate))

@@ -22,6 +22,9 @@ import org.mockito.Mockito.never
 import org.mockito.Mockito.spy
 import org.mockito.Mockito.verify
 import org.mockito.Spy
+import tech.sirwellington.alchemy.arguments.assertions.alphabeticString
+import tech.sirwellington.alchemy.arguments.assertions.and
+import tech.sirwellington.alchemy.generator.one
 import tech.sirwellington.alchemy.test.junit.ThrowableAssertion.assertThrows
 import tech.sirwellington.alchemy.test.junit.runners.AlchemyTestRunner
 import java.util.Arrays.asList
@@ -35,11 +38,11 @@ class AlchemyAssertionTest
 {
 
     @Spy
-    private val first: FakeAssertion<Any>? = null
+    private val first: FakeAssertion<Any>
 
-    private var otherAssertions: Array<FakeAssertion<*>>? = null
+    private var otherAssertions: Array<FakeAssertion<*>>
 
-    private var argument: Any? = null
+    private var argument: Any
 
     @Before
     fun setUp()

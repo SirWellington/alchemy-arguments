@@ -39,12 +39,12 @@ import tech.sirwellington.alchemy.test.junit.runners.Repeat
 class DynamicExceptionSupplierTest
 {
 
-    private var exceptionClass: Class<FakeExceptionWithMessage>? = null
-    private var overrideMessage: String? = null
+    private var exceptionClass: Class<FakeExceptionWithMessage>
+    private var overrideMessage: String
 
-    private var instance: DynamicExceptionSupplier<FakeExceptionWithMessage>? = null
+    private var instance: DynamicExceptionSupplier<FakeExceptionWithMessage>
 
-    private var assertionException: FailedAssertionException? = null
+    private var assertionException: FailedAssertionException
 
     @Before
     fun setUp()

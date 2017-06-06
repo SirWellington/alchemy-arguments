@@ -74,7 +74,7 @@ class TimeAssertionsTest
         //The futureInstants is not in the pastInstants
         val future = TimeGenerators.futureInstants().get()
         assertThrows { instance.check(future) }
-                .isInstanceOf(FailedAssertionException::class.java)
+                .failedAssertion()
 
         Thread.sleep(1)
         //The start time should now be in the past
@@ -92,7 +92,7 @@ class TimeAssertionsTest
 
         //The start time is not before itself
         assertThrows { instance.check(startTime) }
-                .isInstanceOf(FailedAssertionException::class.java)
+                .failedAssertion()
 
         //The past is before the present
         val past = one(TimeGenerators.pastInstants())
@@ -101,7 +101,7 @@ class TimeAssertionsTest
         //The future is not before the present
         val future = one(TimeGenerators.futureInstants())
         assertThrows { instance.check(future) }
-                .isInstanceOf(FailedAssertionException::class.java)
+                .failedAssertion()
 
         //Edge case
         assertThrows { TimeAssertions.before(null!!) }
@@ -118,7 +118,7 @@ class TimeAssertionsTest
 
         //The start time is not in the future
         assertThrows { instance.check(startTime) }
-                .isInstanceOf(FailedAssertionException::class.java)
+                .failedAssertion()
 
         //The future is indeed in the future
         val future = one(TimeGenerators.futureInstants())
@@ -127,7 +127,7 @@ class TimeAssertionsTest
         //The past is not in the future
         val past = one(TimeGenerators.pastInstants())
         assertThrows { instance.check(past) }
-                .isInstanceOf(FailedAssertionException::class.java)
+                .failedAssertion()
     }
 
     @Test
@@ -140,7 +140,7 @@ class TimeAssertionsTest
 
         //The start time is not after itself
         assertThrows { instance.check(startTime) }
-                .isInstanceOf(FailedAssertionException::class.java)
+                .failedAssertion()
 
         //The future is indeed after the start time
         val future = one(TimeGenerators.futureInstants())
@@ -149,7 +149,7 @@ class TimeAssertionsTest
         //The past is not after the start time
         val past = one(TimeGenerators.pastInstants())
         assertThrows { instance.check(past) }
-                .isInstanceOf(FailedAssertionException::class.java)
+                .failedAssertion()
 
         //Edge case
         assertThrows { TimeAssertions.after(null!!) }
@@ -166,16 +166,16 @@ class TimeAssertionsTest
 
         val recentPast = Instant.now().minusMillis(50)
         assertThrows { assertion.check(recentPast) }
-                .isInstanceOf(FailedAssertionException::class.java)
+                .failedAssertion()
 
 
         val past = one(pastInstants())
         assertThrows { assertion.check(past) }
-                .isInstanceOf(FailedAssertionException::class.java)
+                .failedAssertion()
 
         val future = one(futureInstants())
         assertThrows { assertion.check(future) }
-                .isInstanceOf(FailedAssertionException::class.java)
+                .failedAssertion()
     }
 
     @Test
@@ -190,11 +190,11 @@ class TimeAssertionsTest
 
         val past = one(pastInstants())
         assertThrows { assertion.check(past) }
-                .isInstanceOf(FailedAssertionException::class.java)
+                .failedAssertion()
 
         val future = one(futureInstants())
         assertThrows { assertion.check(future) }
-                .isInstanceOf(FailedAssertionException::class.java)
+                .failedAssertion()
     }
 
     @DontRepeat
@@ -235,10 +235,10 @@ class TimeAssertionsTest
         assertThat(assertion, notNullValue())
 
         val argumentAfter = instant.plusMillis(delta + 10)
-        assertThrows { assertion.check(argumentAfter) }.isInstanceOf(FailedAssertionException::class.java)
+        assertThrows { assertion.check(argumentAfter) }.failedAssertion()
 
         val argumentBefore = instant.minusMillis(delta + 10)
-        assertThrows { assertion.check(argumentBefore) }.isInstanceOf(FailedAssertionException::class.java)
+        assertThrows { assertion.check(argumentBefore) }.failedAssertion()
     }
 
     @DontRepeat
@@ -252,7 +252,7 @@ class TimeAssertionsTest
         //Check with null argument
         val assertion = TimeAssertions.equalToInstantWithinDelta(Instant.now(), 10)
         assertThrows { assertion.check(null) }
-                .isInstanceOf(FailedAssertionException::class.java)
+                .failedAssertion()
     }
 
     @Test
@@ -265,11 +265,11 @@ class TimeAssertionsTest
 
         val past = one(pastInstants())
         assertThrows { assertion.check(past.toEpochMilli()) }
-                .isInstanceOf(FailedAssertionException::class.java)
+                .failedAssertion()
 
         val future = one(futureInstants())
         assertThrows { assertion.check(future.toEpochMilli()) }
-                .isInstanceOf(FailedAssertionException::class.java)
+                .failedAssertion()
     }
 
     @Test
@@ -284,11 +284,11 @@ class TimeAssertionsTest
 
         val past = one(pastInstants())
         assertThrows { assertion.check(past.toEpochMilli()) }
-                .isInstanceOf(FailedAssertionException::class.java)
+                .failedAssertion()
 
         val future = one(futureInstants())
         assertThrows { assertion.check(future.toEpochMilli()) }
-                .isInstanceOf(FailedAssertionException::class.java)
+                .failedAssertion()
     }
 
     @DontRepeat

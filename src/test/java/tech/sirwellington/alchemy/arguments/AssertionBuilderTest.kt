@@ -19,7 +19,7 @@ import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.mockito.Mock
-import org.mockito.Mockito.`when`
+import org.mockito.Mockito.whenever
 import org.mockito.Mockito.verify
 import org.mockito.Spy
 import tech.sirwellington.alchemy.test.junit.runners.AlchemyTestRunner
@@ -33,16 +33,16 @@ class AssertionBuilderTest
 {
 
     @Mock
-    private val assertion: AlchemyAssertion<*>? = null
+    private val assertion: AlchemyAssertion<*>
 
     @Spy
-    private val instance: FakeInstance<*>? = null
+    private val instance: FakeInstance<*>
 
     @Before
     @Throws(Throwable::class)
     fun setUp()
     {
-        `when`<AssertionBuilder>(instance!!.are(ArgumentMatchers.any()))
+        whenever<AssertionBuilder>(instance!!.are(ArgumentMatchers.any()))
                 .thenCallRealMethod()
     }
 

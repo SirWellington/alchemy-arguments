@@ -45,7 +45,7 @@ object Tests
 
         val badArgument = one(badArguments)
         assertThrows { assertion.check(badArgument) }
-                .isInstanceOf(FailedAssertionException::class.java)
+                .failedAssertion()
 
         val goodArgument = one(goodArguments)
         assertion.check(goodArgument)
@@ -54,7 +54,7 @@ object Tests
     fun checkForNullCase(assertion: AlchemyAssertion<*>)
     {
         assertThrows { assertion.check(null) }
-                .isInstanceOf(FailedAssertionException::class.java)
+                .failedAssertion()
                 .containsInMessage("null")
     }
 }

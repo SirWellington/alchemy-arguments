@@ -38,8 +38,8 @@ import tech.sirwellington.alchemy.test.junit.runners.Repeat
 class PeopleAssertionsTest
 {
 
-    private var email: String? = null
-    private var badEmail: String? = null
+    private var email: String
+    private var badEmail: String
 
     @Before
     @Throws(Exception::class)
@@ -80,7 +80,7 @@ class PeopleAssertionsTest
         instance.check(email)
 
         assertThrows { instance.check(badEmail) }
-                .isInstanceOf(FailedAssertionException::class.java)
+                .failedAssertion()
     }
 
     @DontRepeat
@@ -90,10 +90,10 @@ class PeopleAssertionsTest
         val instance = PeopleAssertions.validEmailAddress()
 
         assertThrows { instance.check(null) }
-                .isInstanceOf(FailedAssertionException::class.java)
+                .failedAssertion()
 
         assertThrows { instance.check("") }
-                .isInstanceOf(FailedAssertionException::class.java)
+                .failedAssertion()
     }
 
 }

@@ -21,6 +21,8 @@ import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
 import tech.sirwellington.alchemy.arguments.assertions.StringAssertions
+import tech.sirwellington.alchemy.arguments.assertions.alphabeticString
+import tech.sirwellington.alchemy.generator.one
 import tech.sirwellington.alchemy.test.junit.ThrowableAssertion.assertThrows
 import tech.sirwellington.alchemy.test.junit.runners.AlchemyTestRunner
 import tech.sirwellington.alchemy.test.junit.runners.DontRepeat
@@ -35,7 +37,7 @@ import tech.sirwellington.alchemy.test.junit.runners.Repeat
 class ArgumentsTest
 {
 
-    private var argument: String? = null
+    private var argument: String
 
     @Before
     fun setUp()
@@ -78,7 +80,7 @@ class ArgumentsTest
         val instance = Arguments.checkThat<String>(argument, *arrayOfNulls<String>(1))
         assertThat(instance, notNullValue())
         assertThrows { instance.are(StringAssertions.nonEmptyString()) }
-                .isInstanceOf(FailedAssertionException::class.java)
+                .failedAssertion()
     }
 
 }

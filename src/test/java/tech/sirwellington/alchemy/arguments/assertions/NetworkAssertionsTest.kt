@@ -40,7 +40,7 @@ import java.net.URL
 class NetworkAssertionsTest
 {
     @GenerateURL
-    private val url: URL? = null
+    private val url: URL
 
     @GenerateInteger(value = RANGE, min = 1, max = MAX_PORT)
     private val port: Int = 0
@@ -61,7 +61,7 @@ class NetworkAssertionsTest
         val badUrl = one(alphanumericString(100))
 
         assertThrows { assertion.check(badUrl) }
-                .isInstanceOf(FailedAssertionException::class.java)
+                .failedAssertion()
     }
 
     @Test
@@ -74,11 +74,11 @@ class NetworkAssertionsTest
 
         val negative = one(negativeIntegers())
         assertThrows { assertion.check(negative) }
-                .isInstanceOf(FailedAssertionException::class.java)
+                .failedAssertion()
 
         val tooHigh = one(integers(MAX_PORT + 1, Integer.MAX_VALUE))
         assertThrows { assertion.check(tooHigh) }
-                .isInstanceOf(FailedAssertionException::class.java)
+                .failedAssertion()
     }
 
     companion object

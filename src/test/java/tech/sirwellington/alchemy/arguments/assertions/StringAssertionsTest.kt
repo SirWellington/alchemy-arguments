@@ -155,10 +155,10 @@ class StringAssertionsTest
         instance.check(arg)
 
         assertThrows { instance.check("") }
-                .isInstanceOf(FailedAssertionException::class.java)
+                .failedAssertion()
 
         assertThrows { instance.check(null) }
-                .isInstanceOf(FailedAssertionException::class.java)
+                .failedAssertion()
     }
 
     @Test
@@ -177,11 +177,11 @@ class StringAssertionsTest
         instance.check(arg)
 
         val tooShort = one(alphabeticString(expectedLength - 1))
-        assertThrows { instance.check(tooShort) }.isInstanceOf(FailedAssertionException::class.java)
+        assertThrows { instance.check(tooShort) }.failedAssertion()
 
         val tooLong = one(strings(expectedLength + 1))
         assertThrows { instance.check(tooLong) }
-                .isInstanceOf(FailedAssertionException::class.java)
+                .failedAssertion()
 
     }
 
@@ -225,7 +225,7 @@ class StringAssertionsTest
         val amountToSubtract = one(integers(1, 5))
         val badString = one(strings(expectedSize - amountToSubtract))
         assertThrows { instance.check(badString) }
-                .isInstanceOf(FailedAssertionException::class.java)
+                .failedAssertion()
 
     }
 
@@ -340,10 +340,10 @@ class StringAssertionsTest
 
         //Sad Cases
         assertThrows { instance.check(null) }
-                .isInstanceOf(FailedAssertionException::class.java)
+                .failedAssertion()
 
         assertThrows { instance.check(string) }
-                .isInstanceOf(FailedAssertionException::class.java)
+                .failedAssertion()
     }
 
     @Test
@@ -378,7 +378,7 @@ class StringAssertionsTest
             StringAssertions.stringContaining(notSubstring)
                     .check(longString)
         }
-                .isInstanceOf(FailedAssertionException::class.java)
+                .failedAssertion()
     }
 
     @Test
@@ -394,7 +394,7 @@ class StringAssertionsTest
         instance.check(allUpperCase)
 
         assertThrows { instance.check(oneLowerCaseCharacter) }
-                .isInstanceOf(FailedAssertionException::class.java)
+                .failedAssertion()
 
     }
 
@@ -421,7 +421,7 @@ class StringAssertionsTest
         instance.check(allLowerCase)
 
         assertThrows { instance.check(oneUpperCaseCharacter) }
-                .isInstanceOf(FailedAssertionException::class.java)
+                .failedAssertion()
     }
 
     private fun upperCaseRandomCharacter(string: String): String
@@ -456,7 +456,7 @@ class StringAssertionsTest
 
         val anotherRandomString = one(strings())
         assertThrows { instance.check(anotherRandomString) }
-                .isInstanceOf(FailedAssertionException::class.java)
+                .failedAssertion()
 
     }
 
@@ -477,10 +477,10 @@ class StringAssertionsTest
 
         val alphanumeric = format("%s-%d", alphabetic, one(positiveIntegers()))
         assertThrows { instance.check(alphanumeric) }
-                .isInstanceOf(FailedAssertionException::class.java)
+                .failedAssertion()
 
         assertThrows { instance.check("") }
-                .isInstanceOf(FailedAssertionException::class.java)
+                .failedAssertion()
     }
 
     @Test
@@ -494,10 +494,10 @@ class StringAssertionsTest
 
         val specialCharacters = alphanumeric + one(strings()) + "-!%$"
         assertThrows { instance.check(specialCharacters) }
-                .isInstanceOf(FailedAssertionException::class.java)
+                .failedAssertion()
 
         assertThrows { instance.check("") }
-                .isInstanceOf(FailedAssertionException::class.java)
+                .failedAssertion()
     }
 
     @Test
@@ -515,11 +515,11 @@ class StringAssertionsTest
         val floatingPointString = floatingPoint.toString()
 
         assertThrows { instance.check(floatingPointString) }
-                .isInstanceOf(FailedAssertionException::class.java)
+                .failedAssertion()
 
         val text = one(strings())
         assertThrows { instance.check(text) }
-                .isInstanceOf(FailedAssertionException::class.java)
+                .failedAssertion()
     }
 
     @Test
@@ -533,7 +533,7 @@ class StringAssertionsTest
 
         val nonUUID = one(alphabeticString(10))
         assertThrows { assertion.check(nonUUID) }
-                .isInstanceOf(FailedAssertionException::class.java)
+                .failedAssertion()
 
     }
 
@@ -555,11 +555,11 @@ class StringAssertionsTest
         val assertion = StringAssertions.integerString()
 
         val alphabetic = one(alphabeticString())
-        assertThrows { assertion.check(alphabetic) }.isInstanceOf(FailedAssertionException::class.java)
+        assertThrows { assertion.check(alphabetic) }.failedAssertion()
 
         val value = one(doubles(-java.lang.Double.MAX_VALUE, java.lang.Double.MAX_VALUE))
         val decimalString = value.toString()
-        assertThrows { assertion.check(decimalString) }.isInstanceOf(FailedAssertionException::class.java)
+        assertThrows { assertion.check(decimalString) }.failedAssertion()
     }
 
     @Test

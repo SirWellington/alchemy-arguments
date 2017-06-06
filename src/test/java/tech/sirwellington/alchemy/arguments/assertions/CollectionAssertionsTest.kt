@@ -22,14 +22,25 @@ import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
 import tech.sirwellington.alchemy.arguments.AlchemyAssertion
-import tech.sirwellington.alchemy.arguments.Arguments.checkThat
-import tech.sirwellington.alchemy.arguments.FailedAssertionException
+import tech.sirwellington.alchemy.arguments.checkThat
+import tech.sirwellington.alchemy.arguments.failedAssertion
+import tech.sirwellington.alchemy.arguments.illegalArgument
+import tech.sirwellington.alchemy.arguments.whichever
+import tech.sirwellington.alchemy.generator.CollectionGenerators.Companion.listOf
+import tech.sirwellington.alchemy.generator.CollectionGenerators.Companion.mapOf
+import tech.sirwellington.alchemy.generator.NumberGenerators
+import tech.sirwellington.alchemy.generator.NumberGenerators.Companion.positiveIntegers
+import tech.sirwellington.alchemy.generator.NumberGenerators.Companion.negativeIntegers
+import tech.sirwellington.alchemy.generator.StringGenerators.Companion.alphabeticString
+import tech.sirwellington.alchemy.generator.StringGenerators.Companion.alphanumericString
+import tech.sirwellington.alchemy.generator.StringGenerators.Companion.hexadecimalString
+import tech.sirwellington.alchemy.generator.one
 import tech.sirwellington.alchemy.test.junit.ThrowableAssertion.assertThrows
 import tech.sirwellington.alchemy.test.junit.runners.AlchemyTestRunner
 import tech.sirwellington.alchemy.test.junit.runners.DontRepeat
 import tech.sirwellington.alchemy.test.junit.runners.GenerateList
 import tech.sirwellington.alchemy.test.junit.runners.Repeat
-import java.util.*
+import java.util.LinkedList
 
 /**
 
@@ -41,22 +52,13 @@ class CollectionAssertionsTest
 {
 
     @GenerateList(String::class)
-    private val strings: MutableList<String>? = null
+    private lateinit var strings: MutableList<String>
 
     @Before
     fun setUp()
     {
     }
 
-    @DontRepeat
-    @Test
-    fun testCannotInstantiateClass()
-    {
-        assertThrows { CollectionAssertions::class.java.newInstance() }
-
-        assertThrows { CollectionAssertions() }
-                .isInstanceOf(IllegalAccessException::class.java)
-    }
 
     @Test
     fun testNonEmptyCollection()
@@ -65,13 +67,10 @@ class CollectionAssertionsTest
         val instance = CollectionAssertions.nonEmptyCollection<String>()
         assertThat(instance, notNullValue())
 
-        instance.check(strings)
+        instance.check(strings as Collection<String>)
 
-        assertThrows { instance.check(null) }
-                .isInstanceOf(FailedAssertionException::class.java)
-
-        assertThrows { instance.check(emptySet<Any>()) }
-                .isInstanceOf(FailedAssertionException::class.java)
+        assertThrows { instance.check(null) }.failedAssertion()
+        assertThrows { instance.check(emptySet()) }.failedAssertion()
 
     }
 
@@ -83,11 +82,8 @@ class CollectionAssertionsTest
 
         instance.check(strings)
 
-        assertThrows { instance.check(null) }
-                .isInstanceOf(FailedAssertionException::class.java)
-
-        assertThrows { instance.check(emptyList<Any>()) }
-                .isInstanceOf(FailedAssertionException::class.java)
+        assertThrows { instance.check(null) }.failedAssertion()
+        assertThrows { instance.check(emptyList<String>()) }.failedAssertion()
     }
 
     @Test
@@ -96,17 +92,17 @@ class CollectionAssertionsTest
         val instance = CollectionAssertions.nonEmptySet<String>()
         assertThat(instance, notNullValue())
 
-        val setOfStrings = HashSet(strings!!)
+        val setOfStrings = strings.toSet()
         instance.check(setOfStrings)
 
-        checkThat<Set<String>>(setOfStrings).`is`(Companion.nonEmptySet())
+        checkThat(setOfStrings).isA(CollectionAssertions.nonEmptySet())
 
         val emptySet = HashSet<String>()
         assertThrows { instance.check(emptySet) }
-                .isInstanceOf(FailedAssertionException::class.java)
+                .failedAssertion()
 
         assertThrows { instance.check(null) }
-                .isInstanceOf(FailedAssertionException::class.java)
+                .failedAssertion()
     }
 
     @Test
@@ -114,17 +110,14 @@ class CollectionAssertionsTest
     {
         val instance = CollectionAssertions.nonEmptyMap<String, Int>()
 
-        val map = mapOf<String, Int>(alphabeticString(),
-                                     positiveIntegers(),
-                                     40)
+        val map = mapOf(alphabeticString(),
+                        NumberGenerators.positiveIntegers(),
+                        40)
 
         instance.check(map)
 
-        assertThrows { instance.check(emptyMap<Any, Any>()) }
-                .isInstanceOf(FailedAssertionException::class.java)
-
-        assertThrows { instance.check(null) }
-                .isInstanceOf(FailedAssertionException::class.java)
+        assertThrows { instance.check(emptyMap()) }.failedAssertion()
+        assertThrows { instance.check(null) }.failedAssertion()
     }
 
     @Test
@@ -133,55 +126,51 @@ class CollectionAssertionsTest
         val instance = CollectionAssertions.nonEmptyArray<String>()
         assertThat(instance, notNullValue())
 
-        assertThrows { instance.check(null) }
-                .isInstanceOf(FailedAssertionException::class.java)
+        assertThrows { instance.check(null) }.failedAssertion()
 
-        val stringArray = strings!!.toTypedArray()
+        val stringArray = strings.toTypedArray()
 
         instance.check(stringArray)
 
         val emptyStringArray = arrayOf<String>()
 
-        assertThrows { instance.check(emptyStringArray) }
-                .isInstanceOf(FailedAssertionException::class.java)
+        assertThrows { instance.check(emptyStringArray) }.failedAssertion()
     }
 
     @Test
     fun testListContaining()
     {
-        val string = strings!!.stream().findAny().orElseGet(alphabeticString())
+        val string = strings.whichever()
 
         val instance = CollectionAssertions.listContaining(string)
         assertThat(instance, notNullValue())
         instance.check(strings)
 
-        val hex = listOf<String>(hexadecimalString(100))
+        val hex = listOf(hexadecimalString(100))
 
-        assertThrows { instance.check(hex) }
-                .isInstanceOf(FailedAssertionException::class.java)
+        assertThrows { instance.check(hex) }.failedAssertion()
     }
 
     @Test
     @Throws(Exception::class)
     fun testListContainingWithBadArgs()
     {
-        assertThrows { CollectionAssertions.listContaining<Any>(null) }
-                .isInstanceOf(IllegalArgumentException::class.java)
+        assertThrows { CollectionAssertions.listContaining(null) }
+                .illegalArgument()
     }
 
     @Test
     fun testCollectionContaining()
     {
-        val string = strings!!.stream().findAny().orElseGet(alphabeticString())
+        val string = strings.stream().findAny().orElse(alphabeticString().get())
 
-        val instance = CollectionAssertions.collectionContaining<Any, Collection<String>>(string)
+        val instance = CollectionAssertions.collectionContaining(string)
         assertThat(instance, notNullValue())
         instance.check(strings)
 
-        val hex = listOf<String>(hexadecimalString(100))
+        val hex = listOf(hexadecimalString(100))
 
-        assertThrows { instance.check(hex) }
-                .isInstanceOf(FailedAssertionException::class.java)
+        assertThrows { instance.check(hex) }.failedAssertion()
     }
 
     @DontRepeat
@@ -189,27 +178,27 @@ class CollectionAssertionsTest
     @Throws(Exception::class)
     fun testCollectionContainingWithBadArgs()
     {
-        assertThrows { CollectionAssertions.collectionContaining<Any, Collection<*>>(null) }
-                .isInstanceOf(IllegalArgumentException::class.java)
+        assertThrows { CollectionAssertions.collectionContaining(null) }
+                .illegalArgument()
     }
 
     @Test
     @Throws(Exception::class)
     fun testCollectionContainingAll()
     {
-        val args = listOf<String>(alphabeticString())
-        val collection = listOf<String>(alphabeticString())
+        val args = listOf(alphabeticString())
+        val collection = listOf(alphabeticString()).toMutableList()
         collection.addAll(args)
 
-        val first = args[0]
+        val first = args.first()
         val others = args.subList(1, args.size).toTypedArray()
 
-        val instance = CollectionAssertions.collectionContainingAll<Any, Collection<String>>(first, *others)
+        val instance = CollectionAssertions.collectionContainingAll(first, *others)
         assertThat(instance, notNullValue())
         instance.check(collection)
 
-        val otherCollection = listOf<String>(alphabeticString())
-        assertThrows { instance.check(otherCollection) }.isInstanceOf(FailedAssertionException::class.java)
+        val otherCollection = listOf(alphabeticString())
+        assertThrows { instance.check(otherCollection) }.failedAssertion()
     }
 
     @DontRepeat
@@ -217,24 +206,25 @@ class CollectionAssertionsTest
     @Throws(Exception::class)
     fun testCollectionContainingAllWithBadArgs()
     {
-        assertThrows { CollectionAssertions.collectionContainingAll<Any, Collection<*>>(null) }.isInstanceOf(IllegalArgumentException::class.java)
+        assertThrows { CollectionAssertions.collectionContainingAll(null) }
+                .illegalArgument()
     }
 
     @Test
     @Throws(Exception::class)
     fun testCollectionContainingAtLeastOnceOf()
     {
-        val args = listOf<String>(alphanumericString())
-        val collection = listOf<String>(alphanumericString())
+        val args = listOf(alphanumericString())
+        val collection = listOf(alphanumericString()).toMutableList()
         collection.addAll(args)
 
         val first = collection[0]
         val others = args.subList(1, args.size).toTypedArray()
 
-        val instance = CollectionAssertions.collectionContainingAtLeastOnceOf<Any, Collection<String>>(first, *others)
+        val instance = CollectionAssertions.collectionContainingAtLeastOnceOf(first, *others)
         instance.check(collection)
 
-        val otherCollection = listOf<String>(alphabeticString())
+        val otherCollection = listOf(alphabeticString()).toMutableList()
         assertThrows { instance.check(otherCollection) }
 
         //With at least one, it should pass.
@@ -247,31 +237,32 @@ class CollectionAssertionsTest
     @Throws(Exception::class)
     fun testCollectionContainingAtLeastOnceOfWithBadArgs()
     {
-        assertThrows { CollectionAssertions.collectionContainingAtLeastOnceOf<Any, Collection<*>>(null) }.isInstanceOf(IllegalArgumentException::class.java)
+        assertThrows { CollectionAssertions.collectionContainingAtLeastOnceOf(null) }
+                .illegalArgument()
     }
 
     @Test
     fun testMapWithKey()
     {
-        val map = mapOf<Int, String>(positiveIntegers(), hexadecimalString(100), 100)
+        val map = mapOf(positiveIntegers(), hexadecimalString(100), 100)
 
-        val key = map.keys.stream().findAny().get()
+        val key = map.keys.whichever()
 
         val instance = CollectionAssertions.mapWithKey<Int, String>(key)
         assertThat(instance, notNullValue())
 
         instance.check(map)
 
-        val badMap = mapOf<Int, String>(negativeIntegers(), hexadecimalString(100), 100)
+        val badMap = mapOf(negativeIntegers(), hexadecimalString(100), 100)
         assertThrows { instance.check(badMap) }
     }
 
     @Test
     fun testMapWithKeyValue()
     {
-        val map = mapOf<Int, String>(positiveIntegers(), alphabeticString(), 100)
+        val map = mapOf(positiveIntegers(), alphabeticString(), 100)
 
-        val anyEntry = map.entries.stream().findAny().get()
+        val anyEntry = map.entries.whichever()
 
         val instance: AlchemyAssertion<Map<Int, String>>
         instance = CollectionAssertions.mapWithKeyValue(anyEntry.key, anyEntry.value)
@@ -280,14 +271,14 @@ class CollectionAssertionsTest
         //Should pass OK
         instance.check(map)
 
-        val badMap = mapOf<Int, String>(negativeIntegers(), hexadecimalString(100), 100)
+        val badMap = mapOf(negativeIntegers(), hexadecimalString(100), 100)
         assertThrows { instance.check(badMap) }
     }
 
     @Test
     fun testKeyInMap()
     {
-        val map = mapOf<String, String>(alphabeticString(), alphanumericString(), 25)
+        val map = mapOf(alphabeticString(), alphanumericString(), 25)
 
         val assertion = CollectionAssertions.keyInMap(map)
         assertThat(assertion, notNullValue())
@@ -296,15 +287,13 @@ class CollectionAssertionsTest
         assertion.check(anyKey)
 
         val randomKey = one(hexadecimalString(42))
-        assertThrows { assertion.check(randomKey) }
-                .isInstanceOf(FailedAssertionException::class.java)
+        assertThrows { assertion.check(randomKey) }.failedAssertion()
 
         //Edge cases
-        assertThrows { assertion.check(null) }
-                .isInstanceOf(FailedAssertionException::class.java)
+        assertThrows { assertion.check(null) }.failedAssertion()
 
         assertThrows { CollectionAssertions.keyInMap<Any, Any>(null!!) }
-                .isInstanceOf(IllegalArgumentException::class.java)
+                .illegalArgument()
     }
 
     @Test
@@ -312,10 +301,9 @@ class CollectionAssertionsTest
     {
         val assertion = CollectionAssertions.keyInMap(emptyMap<Any, Any>())
 
-        for (string in strings!!)
+        for (string in strings)
         {
-            assertThrows { assertion.check(string) }
-                    .isInstanceOf(FailedAssertionException::class.java)
+            assertThrows { assertion.check(string) }.failedAssertion()
         }
     }
 
@@ -323,21 +311,21 @@ class CollectionAssertionsTest
     fun testValueInMap()
     {
 
-        val map = mapOf<String, String>(alphanumericString(), alphabeticString(), 24)
+        val map = mapOf(alphanumericString(), alphabeticString(), 24)
 
         val assertion = CollectionAssertions.valueInMap(map)
         assertThat(assertion, notNullValue())
 
-        val anyValue = map.values.stream().findAny().get()
+        val anyValue = map.values.whichever()
         assertion.check(anyValue)
 
         val randomValue = one(hexadecimalString(10))
         assertThrows { assertion.check(randomValue) }
-                .isInstanceOf(FailedAssertionException::class.java)
+                .failedAssertion()
 
         //Edge cases
         assertThrows { assertion.check(null) }
-                .isInstanceOf(FailedAssertionException::class.java)
+                .failedAssertion()
 
         assertThrows { CollectionAssertions.valueInMap<Any, Any>(null!!) }
                 .isInstanceOf(IllegalArgumentException::class.java)
@@ -352,10 +340,10 @@ class CollectionAssertionsTest
         val assertion = CollectionAssertions.valueInMap(emptyMap<Any, Any>())
         assertThat(assertion, notNullValue())
 
-        for (string in strings!!)
+        for (string in strings)
         {
             assertThrows { assertion.check(string) }
-                    .isInstanceOf(FailedAssertionException::class.java)
+                    .failedAssertion()
         }
     }
 
@@ -365,17 +353,17 @@ class CollectionAssertionsTest
         val assertion = CollectionAssertions.elementInCollection(strings!!)
         assertThat(assertion, notNullValue())
 
-        val anyValue = strings.stream().findAny().get()
+        val anyValue = strings.whichever()
         assertion.check(anyValue)
 
         val randomValue = one(hexadecimalString(20))
 
         assertThrows { assertion.check(randomValue) }
-                .isInstanceOf(FailedAssertionException::class.java)
+                .failedAssertion()
 
         //Edge cases
         assertThrows { assertion.check(null) }
-                .isInstanceOf(FailedAssertionException::class.java)
+                .failedAssertion()
 
         assertThrows { CollectionAssertions.elementInCollection<Any>(null!!) }
                 .isInstanceOf(IllegalArgumentException::class.java)
@@ -388,17 +376,17 @@ class CollectionAssertionsTest
     @Test
     fun testCollectionOfSize()
     {
-        val size = strings!!.size
-        val instance = CollectionAssertions.collectionOfSize<in Collection<String>>(size)
+        val size = strings.size
+        val instance = CollectionAssertions.collectionOfSize<Collection<String>>(size)
         instance.check(strings)
 
         strings.add(one(alphabeticString()))
 
         assertThrows { instance.check(strings) }
-                .isInstanceOf(FailedAssertionException::class.java)
+                .failedAssertion()
 
-        checkThat<List<String>>(strings)
-                .`is`(Companion.collectionOfSize(strings.size))
+        checkThat(strings)
+                .isA(CollectionAssertions.collectionOfSize(strings.size))
 
     }
 
@@ -408,8 +396,8 @@ class CollectionAssertionsTest
     {
         val badSize = one(negativeIntegers())
 
-        assertThrows { CollectionAssertions.collectionOfSize<Collection<*>>(badSize) }
-                .isInstanceOf(IllegalArgumentException::class.java)
+        assertThrows { CollectionAssertions.collectionOfSize<Collection<Any>>(badSize) }
+                .illegalArgument()
     }
 
     @Test
@@ -417,12 +405,10 @@ class CollectionAssertionsTest
     {
         val instance = CollectionAssertions.emptyCollection<String>()
 
-        val emptyCollection = ArrayList<String>()
-
+        val emptyCollection = listOf<String>()
         instance.check(emptyCollection)
 
-        assertThrows { instance.check(strings) }
-                .isInstanceOf(FailedAssertionException::class.java)
+        assertThrows { instance.check(strings) }.failedAssertion()
     }
 
     @Test
@@ -433,8 +419,7 @@ class CollectionAssertionsTest
         val emptyList = LinkedList<String>()
         instance.check(emptyList)
 
-        assertThrows { instance.check(strings) }
-                .isInstanceOf(FailedAssertionException::class.java)
+        assertThrows { instance.check(strings) }.failedAssertion()
     }
 
     @Test
@@ -445,9 +430,8 @@ class CollectionAssertionsTest
         val emptySet = HashSet<String>()
         instance.check(emptySet)
 
-        val nonEmptySet = HashSet(strings!!)
-        assertThrows { instance.check(nonEmptySet) }
-                .isInstanceOf(FailedAssertionException::class.java)
+        val nonEmptySet = HashSet(strings)
+        assertThrows { instance.check(nonEmptySet) }.failedAssertion()
     }
 
 }

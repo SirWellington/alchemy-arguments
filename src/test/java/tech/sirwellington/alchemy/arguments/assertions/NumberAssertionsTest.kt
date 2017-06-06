@@ -72,12 +72,12 @@ class NumberAssertionsTest
         val numberBelowMinimum = min - one(positiveIntegers())
         if (numberBelowMinimum < min)
         {
-            assertThrows { instance.check(numberBelowMinimum) }.isInstanceOf(FailedAssertionException::class.java)
+            assertThrows { instance.check(numberBelowMinimum) }.failedAssertion()
         }
         val numberAboveMaximum = max + one(positiveIntegers())
         if (numberAboveMaximum > max)
         {
-            assertThrows { instance.check(numberAboveMaximum) }.isInstanceOf(FailedAssertionException::class.java)
+            assertThrows { instance.check(numberAboveMaximum) }.failedAssertion()
         }
     }
 
@@ -161,7 +161,7 @@ class NumberAssertionsTest
 
         val amountToSubtract = one(integers(50, 100))
         val badValue = inclusiveLowerBound - amountToSubtract
-        assertThrows { instance.check(badValue) }.isInstanceOf(FailedAssertionException::class.java)
+        assertThrows { instance.check(badValue) }.failedAssertion()
     }
 
     @Test
@@ -176,7 +176,7 @@ class NumberAssertionsTest
         instance.check(goodNumber)
 
         val badNumber = one(negativeIntegers())
-        assertThrows { instance.check(badNumber) }.isInstanceOf(FailedAssertionException::class.java)
+        assertThrows { instance.check(badNumber) }.failedAssertion()
     }
 
     @Test
@@ -190,10 +190,10 @@ class NumberAssertionsTest
 
         val positive = one(positiveIntegers())
         assertThrows { instance.check(positive) }
-                .isInstanceOf(FailedAssertionException::class.java)
+                .failedAssertion()
 
         assertThrows { instance.check(null) }
-                .isInstanceOf(FailedAssertionException::class.java)
+                .failedAssertion()
     }
 
     //==============================
@@ -288,13 +288,13 @@ class NumberAssertionsTest
         val numberBelowMin = min - one(positiveLongs())
         if (numberBelowMin < min)
         {
-            assertThrows { instance.check(numberBelowMin) }.isInstanceOf(FailedAssertionException::class.java)
+            assertThrows { instance.check(numberBelowMin) }.failedAssertion()
         }
 
         val numberAboveMax = max + one(positiveIntegers())
         if (numberAboveMax > max)
         {
-            assertThrows { instance.check(numberAboveMax) }.isInstanceOf(FailedAssertionException::class.java)
+            assertThrows { instance.check(numberAboveMax) }.failedAssertion()
         }
     }
 
@@ -331,10 +331,10 @@ class NumberAssertionsTest
 
         val positive = one(positiveLongs())
         assertThrows { instance.check(positive) }
-                .isInstanceOf(FailedAssertionException::class.java)
+                .failedAssertion()
 
         assertThrows { instance.check(null) }
-                .isInstanceOf(FailedAssertionException::class.java)
+                .failedAssertion()
     }
 
     //==============================

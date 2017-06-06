@@ -68,6 +68,17 @@
             <scope>test</scope>
         </dependency>
 
+        <dependency>
+            <groupId>com.natpryce</groupId>
+            <artifactId>hamkrest</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>com.nhaarman</groupId>
+            <artifactId>mockito-kotlin</artifactId>
+        </dependency>
+
+
         <!--=======================-->
         <!--ALCHEMY-->
         <!--=======================-->

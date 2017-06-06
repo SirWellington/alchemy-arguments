@@ -36,16 +36,16 @@ class GeolocationAssertionsTest
 {
 
     @GenerateDouble(value = RANGE, min = -90.0, max = 90.0)
-    private val latitude: Double? = null
+    private val latitude: Double
 
     @GenerateDouble(value = RANGE, min = -180.0, max = 180.0)
-    private val longitude: Double? = null
+    private val longitude: Double
 
     @GenerateDouble(value = RANGE, min = 91.0, max = java.lang.Double.MAX_VALUE)
-    private val badLatitude: Double? = null
+    private val badLatitude: Double
 
     @GenerateDouble(value = RANGE, min = -java.lang.Double.MAX_VALUE, max = -181.0)
-    private val badLongitude: Double? = null
+    private val badLongitude: Double
 
     @Before
     @Throws(Exception::class)

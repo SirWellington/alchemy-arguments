@@ -22,6 +22,7 @@ import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
 import tech.sirwellington.alchemy.arguments.FailedAssertionException
+import tech.sirwellington.alchemy.arguments.failedAssertion
 import tech.sirwellington.alchemy.test.junit.ThrowableAssertion.assertThrows
 import tech.sirwellington.alchemy.test.junit.runners.AlchemyTestRunner
 import tech.sirwellington.alchemy.test.junit.runners.DontRepeat
@@ -41,42 +42,34 @@ class BooleanAssertionsTest
     {
     }
 
-    @DontRepeat
-    @Test
-    fun testCannotInstantiate()
-    {
-        assertThrows { BooleanAssertions::class.java.newInstance() }
-                .isInstanceOf(IllegalAccessException::class.java)
-    }
-
     @Test
     fun testTrueStatement()
     {
-        val assertion = BooleanAssertions.trueStatement()
+        val assertion = trueStatement()
         assertThat(assertion, notNullValue())
 
         assertion.check(true)
 
         assertThrows { assertion.check(false) }
-                .isInstanceOf(FailedAssertionException::class.java)
+                .failedAssertion()
 
         assertThrows { assertion.check(null) }
-                .isInstanceOf(FailedAssertionException::class.java)
+                .failedAssertion()
     }
 
     @Test
     fun testFalseStatement()
     {
-        val assertion = BooleanAssertions.falseStatement()
+        val assertion = falseStatement()
         assertThat(assertion, notNullValue())
 
         assertion.check(false)
 
         assertThrows { assertion.check(true) }
-                .isInstanceOf(FailedAssertionException::class.java)
+                .failedAssertion()
 
         assertThrows { assertion.check(null) }
-                .isInstanceOf(FailedAssertionException::class.java)
+                .failedAssertion()
     }
 
 }

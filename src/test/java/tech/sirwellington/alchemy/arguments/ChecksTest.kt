@@ -39,11 +39,11 @@ import java.util.*
 class ChecksTest
 {
 
-    private var strings: AlchemyGenerator<String>? = null
+    private var strings: AlchemyGenerator<String>
 
-    private var string: String? = null
-    private var `object`: Any? = null
-    private var varArgs: Array<String>? = null
+    private var string: String
+    private var `object`: Any
+    private var varArgs: Array<String>
 
     @Before
     fun setUp()
@@ -157,7 +157,7 @@ class ChecksTest
         assertThrows { Checks.Internal.checkNotNullOrEmpty(emptyString) }
                 .isInstanceOf(IllegalArgumentException::class.java)
 
-        val nullString: String? = null
+        val nullString: String
         assertThrows { Checks.Internal.checkNotNullOrEmpty(nullString) }
                 .isInstanceOf(IllegalArgumentException::class.java)
     }

@@ -21,7 +21,9 @@ import org.junit.Assert.assertThat
 import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
-import tech.sirwellington.alchemy.arguments.FailedAssertionException
+import tech.sirwellington.alchemy.arguments.failedAssertion
+import tech.sirwellington.alchemy.generator.NumberGenerators
+import tech.sirwellington.alchemy.generator.one
 import tech.sirwellington.alchemy.test.junit.ThrowableAssertion.assertThrows
 import tech.sirwellington.alchemy.test.junit.runners.AlchemyTestRunner
 import tech.sirwellington.alchemy.test.junit.runners.Repeat
@@ -35,9 +37,9 @@ import tech.sirwellington.alchemy.test.junit.runners.Repeat
 class AddressAssertionsTest
 {
 
-    private var zip: String? = null
+    private lateinit var zip: String
 
-    private var badZip: String? = null
+    private lateinit var badZip: String
 
 
     @Before
@@ -52,8 +54,8 @@ class AddressAssertionsTest
     @Throws(Exception::class)
     private fun setupData()
     {
-        zip = zipToString(one(integers(0, 100000)))
-        badZip = zipToString(one(integers(100000, Integer.MAX_VALUE)))
+        zip = zipToString(one(NumberGenerators.integers(0, 100000)))
+        badZip = zipToString(one(NumberGenerators.integers(100000, Integer.MAX_VALUE)))
     }
 
     private fun zipToString(zip: Int): String
@@ -71,7 +73,7 @@ class AddressAssertionsTest
     @Test
     fun testValidZipCode()
     {
-        val assertion = AddressAssertions.validZipCode()
+        val assertion = validZipCode()
         assertThat(assertion, notNullValue())
 
         assertion.check(zip)
@@ -80,16 +82,15 @@ class AddressAssertionsTest
     @Test
     fun testInvalidZipCode()
     {
-        val assertion = AddressAssertions.validZipCode()
+        val assertion = validZipCode()
 
-        assertThrows { assertion.check(badZip) }
-                .isInstanceOf(FailedAssertionException::class.java)
+        assertThrows { assertion.check(badZip) }.failedAssertion()
     }
 
     @Test
     fun testValidZipCodeString()
     {
-        val assertion = AddressAssertions.validZipCodeString()
+        val assertion = validZipCodeString()
         assertThat(assertion, notNullValue())
 
         assertion.check(zip)
@@ -98,9 +99,9 @@ class AddressAssertionsTest
     @Test
     fun testValidZipCodeStringWithInvalid()
     {
-        val assertion = AddressAssertions.validZipCodeString()
+        val assertion = validZipCodeString()
 
-        assertThrows { assertion.check(badZip) }
+        assertThrows { assertion.check(badZip) }.failedAssertion()
     }
 
 }

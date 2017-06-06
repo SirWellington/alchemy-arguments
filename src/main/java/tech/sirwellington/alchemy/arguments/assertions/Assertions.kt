@@ -86,7 +86,7 @@ fun <A: Any> nullObject(): AlchemyAssertion<A>
  * @return
 </A> */
 
-fun <A> sameInstanceAs(@Optional other: Any?): AlchemyAssertion<A>
+fun <A: Any?> sameInstanceAs(@Optional other: A): AlchemyAssertion<A>
 {
     return AlchemyAssertion block@ { argument ->
 
@@ -127,7 +127,7 @@ fun <A> sameInstanceAs(@Optional other: Any?): AlchemyAssertion<A>
  * @return
  */
 
-fun <A> instanceOf(classOfExpectedType: Class<*>): AlchemyAssertion<A>
+fun <A: Any?> instanceOf(classOfExpectedType: Class<*>): AlchemyAssertion<A>
 {
     checkNotNull(classOfExpectedType, "class cannot be null")
 
