@@ -59,7 +59,7 @@ class NetworkAssertionsTest
     @Test
     fun testValidURL()
     {
-        val assertion = NetworkAssertions.validURL()
+        val assertion = validURL()
         assertThat(assertion, notNullValue())
 
         assertion.check(url.toString())
@@ -70,7 +70,7 @@ class NetworkAssertionsTest
     @Test
     fun testValidPort()
     {
-        val assertion = NetworkAssertions.validPort()
+        val assertion = validPort()
         assertThat(assertion, notNullValue())
 
         assertion.check(port)
