@@ -55,7 +55,7 @@ class AssertionBuilderTest
         verify(instance).isA(assertion)
     }
 
-    private class FakeInstance<A> : AssertionBuilder<A, Throwable>
+    private open class FakeInstance<A> : AssertionBuilder<A, Throwable>
     {
         override fun isA(assertion: AlchemyAssertion<A>?): AssertionBuilder<A, Throwable>
         {

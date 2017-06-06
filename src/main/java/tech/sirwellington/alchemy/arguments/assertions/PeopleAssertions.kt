@@ -62,7 +62,7 @@ internal constructor()
         fun validEmailAddress(): AlchemyAssertion<String>
         {
 
-            return AlchemyAssertion { email: String ->
+            return AlchemyAssertion { email ->
 
                 if (isNullOrEmpty(email))
                 {

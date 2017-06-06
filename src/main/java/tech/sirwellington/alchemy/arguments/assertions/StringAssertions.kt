@@ -49,7 +49,9 @@ fun stringThatMatches(pattern: Pattern): AlchemyAssertion<String>
 {
     checkNotNull(pattern, "missing pattern")
 
-    return AlchemyAssertion { string: String ->
+    return AlchemyAssertion { string ->
+
+        checkString(string)
 
         if (!pattern.matcher(string).matches())
         {
@@ -66,7 +68,7 @@ fun stringThatMatches(pattern: Pattern): AlchemyAssertion<String>
 
 fun emptyString(): AlchemyAssertion<String>
 {
-    return AlchemyAssertion { string: String ->
+    return AlchemyAssertion { string ->
 
         if (!isNullOrEmpty(string))
         {
@@ -88,9 +90,9 @@ fun stringWithLengthGreaterThanOrEqualTo(minimumLength: Int): AlchemyAssertion<S
 {
     checkThat(minimumLength >= 0)
 
-    return AlchemyAssertion { string: String ->
+    return AlchemyAssertion { string ->
 
-        notNull<String>().check(string)
+        checkString(string)
 
         if (string.length < minimumLength)
         {
@@ -107,9 +109,9 @@ fun stringWithLengthGreaterThanOrEqualTo(minimumLength: Int): AlchemyAssertion<S
 
 fun stringWithNoWhitespace(): AlchemyAssertion<String>
 {
-    return AlchemyAssertion { string: String ->
+    return AlchemyAssertion { string ->
 
-        notNull<Any>().check(string)
+        checkString(string)
 
         string.toCharArray()
                 .filter { it.isWhitespace() }
@@ -130,9 +132,9 @@ fun stringWithLength(expectedLength: Int): AlchemyAssertion<String>
 {
     checkThat(expectedLength >= 0, "expectedLength must be >= 0")
 
-    return AlchemyAssertion { string: String ->
+    return AlchemyAssertion { string ->
 
-        notNull<Any>().check(string)
+        checkString(string)
 
         if (string.length != expectedLength)
         {
@@ -154,9 +156,9 @@ fun stringWithLengthLessThan(upperBound: Int): AlchemyAssertion<String>
 {
     checkThat(upperBound > 0, "upperBound must be > 0")
 
-    return AlchemyAssertion { string: String ->
+    return AlchemyAssertion { string ->
 
-        nonEmptyString().check(string)
+        checkString(string)
 
         if (string.length >= upperBound)
         {
@@ -178,9 +180,9 @@ fun stringBeginningWith(prefix: String): AlchemyAssertion<String>
 {
     checkThat(!isNullOrEmpty(prefix), "missing prefix")
 
-    return AlchemyAssertion { string: String ->
+    return AlchemyAssertion { string ->
 
-        nonEmptyString().check(string)
+        checkString(string)
 
         if (!string.startsWith(prefix))
         {
@@ -201,9 +203,10 @@ fun stringBeginningWith(prefix: String): AlchemyAssertion<String>
 fun stringWithLengthLessThanOrEqualTo(maximumLength: Int): AlchemyAssertion<String>
 {
     checkThat(maximumLength >= 0)
-    return AlchemyAssertion { string: String ->
 
-        notNull<Any>().check(string)
+    return AlchemyAssertion { string ->
+
+        checkString(string)
 
         if (string.length > maximumLength)
         {
@@ -226,9 +229,9 @@ fun stringWithLengthGreaterThan(minimumLength: Int): AlchemyAssertion<String>
     checkThat(minimumLength > 0, "minimumLength must be > 0")
     checkThat(minimumLength < Integer.MAX_VALUE, "not possible to have a String larger than ${Integer.MAX_VALUE}")
 
-    return AlchemyAssertion { string: String ->
+    return AlchemyAssertion { string ->
 
-        nonEmptyString().check(string)
+        checkString(string)
 
         if (string.length <= minimumLength)
         {
@@ -245,12 +248,10 @@ fun stringWithLengthGreaterThan(minimumLength: Int): AlchemyAssertion<String>
 
 fun nonEmptyString(): AlchemyAssertion<String>
 {
-    return AlchemyAssertion { string: String ->
+    return AlchemyAssertion { string ->
 
-        if (isNullOrEmpty(string))
-        {
-            throw FailedAssertionException("String argument is empty")
-        }
+        checkString(string)
+
     }
 }
 
@@ -270,11 +271,12 @@ fun stringWithLengthBetween(minimumLength: Int, maximumLength: Int): AlchemyAsse
     checkThat(minimumLength < maximumLength, "Minimum length must be < maximum length.")
 
     return AlchemyAssertion { string ->
-        notNull<Any>().check(string)
+
+        checkString(string)
+
         if (string.length < minimumLength || string.length > maximumLength)
         {
-            val message = String.format("Argument size is not between acceptable range of [%d -> %d]", minimumLength, maximumLength)
-            throw FailedAssertionException(message)
+            throw FailedAssertionException("Argument size is not between acceptable range of [$minimumLength -> $maximumLength]")
         }
     }
 }
@@ -293,11 +295,12 @@ fun stringContaining(@NonEmpty substring: String): AlchemyAssertion<String>
     checkNotNullOrEmpty(substring, "substring cannot be empty")
 
     return AlchemyAssertion { string ->
-        nonEmptyString().check(string)
+
+        checkString(string)
 
         if (!string.contains(substring))
         {
-            throw FailedAssertionException(format("Expected %s to contain %s", string, substring))
+            throw FailedAssertionException("Expected $string to contain $substring")
         }
     }
 }
@@ -311,16 +314,12 @@ fun stringContaining(@NonEmpty substring: String): AlchemyAssertion<String>
 fun allUpperCaseString(): AlchemyAssertion<String>
 {
     return AlchemyAssertion { string ->
-        nonEmptyString().check(string)
 
-        for (character in string.toCharArray())
+        checkString(string)
+
+        if (string.any { !it.isUpperCase() })
         {
-            if (!Character.isUpperCase(character))
-            {
-                throw FailedAssertionException(format("Expected %s to be all upper-case, but %s isn't",
-                                                      string,
-                                                      character))
-            }
+            throw FailedAssertionException("Expected string to be all upper-case, but $string isn't")
         }
     }
 }
@@ -334,18 +333,13 @@ fun allUpperCaseString(): AlchemyAssertion<String>
 fun allLowerCaseString(): AlchemyAssertion<String>
 {
     return AlchemyAssertion { string ->
-        nonEmptyString().check(string)
 
-        for (character in string.toCharArray())
+        checkString(string)
+
+        if (!string.all { it.isLowerCase() })
         {
-            if (!Character.isLowerCase(character))
-            {
-                throw FailedAssertionException(format("Expected %s to be all lower-case, but %s isn't",
-                                                      string,
-                                                      character))
-            }
+            throw FailedAssertionException("Expected string to be all lower-case, but $string isn't")
         }
-
     }
 }
 
@@ -366,7 +360,7 @@ fun stringEndingWith(@NonEmpty suffix: String): AlchemyAssertion<String>
     checkNotNullOrEmpty(suffix, "string should not be empty")
 
     return AlchemyAssertion { string ->
-        nonEmptyString().check(string)
+        checkString(string)
 
         if (!string.endsWith(suffix))
         {
@@ -385,7 +379,7 @@ fun stringEndingWith(@NonEmpty suffix: String): AlchemyAssertion<String>
 fun alphabeticString(): AlchemyAssertion<String>
 {
     return AlchemyAssertion { string ->
-        nonEmptyString().check(string)
+        checkString(string)
 
         for (character in string.toCharArray())
         {
@@ -408,7 +402,8 @@ fun alphabeticString(): AlchemyAssertion<String>
 fun alphanumericString(): AlchemyAssertion<String>
 {
     return AlchemyAssertion { string ->
-        nonEmptyString().check(string)
+
+        checkString(string)
 
         for (character in string.toCharArray())
         {
@@ -431,15 +426,12 @@ fun alphanumericString(): AlchemyAssertion<String>
 fun integerString(): AlchemyAssertion<String>
 {
     return AlchemyAssertion { string ->
-        nonEmptyString().check(string)
 
-        try
+        checkString(string)
+
+        if (string.toIntOrNull() == null)
         {
-            Integer.valueOf(string)
-        }
-        catch (ex: NumberFormatException)
-        {
-            throw FailedAssertionException("Expecting a number, instead: " + string)
+            throw FailedAssertionException("Expecting a number, instead: $string")
         }
     }
 }
@@ -454,15 +446,12 @@ fun integerString(): AlchemyAssertion<String>
 fun decimalString(): AlchemyAssertion<String>
 {
     return AlchemyAssertion { string ->
-        nonEmptyString().check(string)
 
-        try
+        checkString(string)
+
+        if (string.toDoubleOrNull() == null)
         {
-            java.lang.Double.valueOf(string)
-        }
-        catch (ex: NumberFormatException)
-        {
-            throw FailedAssertionException("Expecting a decimal number, instead: " + string)
+            throw FailedAssertionException("Expecting a decimal number, instead: $string")
         }
     }
 }
@@ -476,7 +465,8 @@ fun decimalString(): AlchemyAssertion<String>
 fun validUUID(): AlchemyAssertion<String>
 {
     return AlchemyAssertion { string ->
-        nonEmptyString().check(string)
+
+        checkString(string)
 
         try
         {
@@ -510,28 +500,37 @@ fun validUUID(): AlchemyAssertion<String>
 fun stringRepresentingInteger(): AlchemyAssertion<String>
 {
     return AlchemyAssertion { string ->
-        nonEmptyString().check(string)
+
+        checkString(string)
 
         for (i in 0..string.length - 1)
         {
-            val character = string.get(i)
+            val character = string[i]
 
             //The first character is allowed to be a sign character '-' or '+'
-            if (i == 0 && isSignCharacter(character))
+            if (i == 0 && character.isNumericalSign())
             {
                 continue
             }
 
-            if (!Character.isDigit(character))
+            if (!character.isDigit())
             {
-                throw FailedAssertionException(format("Expected an Integer String, but %s is not a digi",
-                                                      character))
+                throw FailedAssertionException("Expected an Integer String, but $character is not a digit in [$string]")
             }
         }
     }
 }
 
-private fun isSignCharacter(character: Char): Boolean
+private fun Char.isNumericalSign(): Boolean
 {
-    return character == '-' || character == '+'
+    return this == '-' || this == '+'
+}
+
+@Throws(FailedAssertionException::class)
+private fun checkString(string: String?)
+{
+    if (isNullOrEmpty(string))
+    {
+        throw FailedAssertionException("string argument is empty")
+    }
 }

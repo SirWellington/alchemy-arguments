@@ -51,6 +51,5 @@ object Tests
     {
         assertThrows { assertion.check(null) }
                 .failedAssertion()
-                .containsInMessage("null")
     }
 }

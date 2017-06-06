@@ -54,7 +54,7 @@ internal constructor()
 
                 try
                 {
-                    val url = URL(string)
+                    URL(string)
                 }
                 catch (ex: Exception)
                 {

@@ -24,6 +24,7 @@ import org.junit.runner.RunWith
 import tech.sirwellington.alchemy.arguments.Arguments.checkThat
 import tech.sirwellington.alchemy.arguments.failedAssertion
 import tech.sirwellington.alchemy.arguments.illegalArgument
+import tech.sirwellington.alchemy.arguments.nullPointer
 import tech.sirwellington.alchemy.generator.AlchemyGenerator
 import tech.sirwellington.alchemy.generator.NumberGenerators
 import tech.sirwellington.alchemy.generator.NumberGenerators.Companion.doubles
@@ -40,7 +41,6 @@ import tech.sirwellington.alchemy.generator.one
 import tech.sirwellington.alchemy.test.junit.ThrowableAssertion.assertThrows
 import tech.sirwellington.alchemy.test.junit.runners.AlchemyTestRunner
 import tech.sirwellington.alchemy.test.junit.runners.Repeat
-import java.lang.Double
 import java.lang.String.format
 import java.util.regex.Pattern
 
@@ -144,8 +144,7 @@ class StringAssertionsTest
     @Test
     fun testStringThatMatchesEdgeCases()
     {
-        assertThrows { stringThatMatches(null!!) }
-                .illegalArgument()
+        assertThrows { stringThatMatches(null!!) }.nullPointer()
     }
 
     @Test
@@ -159,8 +158,7 @@ class StringAssertionsTest
         instance.check(arg)
 
         assertThrows { instance.check("") }.failedAssertion()
-        assertThrows { instance.check(null) }
-                .failedAssertion()
+        assertThrows { instance.check(null) }.failedAssertion()
     }
 
     @Test
@@ -343,11 +341,9 @@ class StringAssertionsTest
     @Test
     fun testStringBeginningWithEdgeCases()
     {
-        assertThrows { stringBeginningWith(null!!) }
-                .illegalArgument()
+        assertThrows { stringBeginningWith(null!!) }.nullPointer()
 
-        assertThrows { stringBeginningWith("") }
-                .illegalArgument()
+        assertThrows { stringBeginningWith("") }.illegalArgument()
     }
 
     @Test
@@ -364,8 +360,7 @@ class StringAssertionsTest
         assertThrows { stringContaining("") }
                 .illegalArgument()
 
-        assertThrows { stringContaining(null!!) }
-                .illegalArgument()
+        assertThrows { stringContaining(null!!) }.nullPointer()
 
         val notSubstring = substring + one(StringGenerators.uuids())
 
@@ -430,11 +425,8 @@ class StringAssertionsTest
     fun testStringEndingWith()
     {
         //Edge Cases
-        assertThrows { stringEndingWith(null!!) }
-                .illegalArgument()
-
-        assertThrows { stringEndingWith("") }
-                .illegalArgument()
+        assertThrows { stringEndingWith(null!!) }.nullPointer()
+        assertThrows { stringEndingWith("") }.illegalArgument()
 
         //Happy Cases
         val string = one(strings())
