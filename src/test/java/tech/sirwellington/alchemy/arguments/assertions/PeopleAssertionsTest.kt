@@ -22,10 +22,14 @@ import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
 import tech.sirwellington.alchemy.arguments.FailedAssertionException
+import tech.sirwellington.alchemy.arguments.failedAssertion
 import tech.sirwellington.alchemy.generator.PeopleGenerators
+import tech.sirwellington.alchemy.generator.one
 import tech.sirwellington.alchemy.test.junit.ThrowableAssertion.assertThrows
 import tech.sirwellington.alchemy.test.junit.runners.AlchemyTestRunner
 import tech.sirwellington.alchemy.test.junit.runners.DontRepeat
+import tech.sirwellington.alchemy.test.junit.runners.GenerateString
+import tech.sirwellington.alchemy.test.junit.runners.GenerateString.Type.ALPHABETIC
 import tech.sirwellington.alchemy.test.junit.runners.Repeat
 
 
@@ -38,8 +42,10 @@ import tech.sirwellington.alchemy.test.junit.runners.Repeat
 class PeopleAssertionsTest
 {
 
-    private var email: String
-    private var badEmail: String
+    private lateinit var email: String
+
+    @GenerateString(ALPHABETIC)
+    private lateinit var badEmail: String
 
     @Before
     @Throws(Exception::class)
@@ -54,7 +60,6 @@ class PeopleAssertionsTest
     private fun setupData()
     {
         email = one(PeopleGenerators.emails())
-        badEmail = one(alphabeticString())
     }
 
     @Throws(Exception::class)
@@ -67,8 +72,7 @@ class PeopleAssertionsTest
     @Test
     fun testConstructor()
     {
-        assertThrows { PeopleAssertions() }
-                .isInstanceOf(IllegalAccessException::class.java)
+        assertThrows { PeopleAssertions() }.isInstanceOf(IllegalAccessException::class.java)
     }
 
     @Test
@@ -79,8 +83,7 @@ class PeopleAssertionsTest
 
         instance.check(email)
 
-        assertThrows { instance.check(badEmail) }
-                .failedAssertion()
+        assertThrows { instance.check(badEmail) }.failedAssertion()
     }
 
     @DontRepeat
@@ -89,11 +92,8 @@ class PeopleAssertionsTest
     {
         val instance = PeopleAssertions.validEmailAddress()
 
-        assertThrows { instance.check(null) }
-                .failedAssertion()
-
-        assertThrows { instance.check("") }
-                .failedAssertion()
+        assertThrows { instance.check(null) }.failedAssertion()
+        assertThrows { instance.check("") }.failedAssertion()
     }
 
 }

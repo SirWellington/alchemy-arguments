@@ -50,7 +50,7 @@ internal constructor()
         {
             return AlchemyAssertion { lat ->
 
-                checkThat<Double>(lat)
+                checkThat(lat)
                         .usingMessage("Latitude must be between -90 and 90, but was " + lat!!)
                         .isA(lessThanOrEqualTo(90.0))
                         .isA(greaterThanOrEqualTo(-90.0))

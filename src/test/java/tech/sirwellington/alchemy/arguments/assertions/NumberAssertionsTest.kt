@@ -89,7 +89,7 @@ class NumberAssertionsTest
         val max = one(integers(min, Integer.MAX_VALUE))
 
         assertThrows { NumberAssertions.numberBetween(max, min) }
-                .isInstanceOf(IllegalArgumentException::class.java)
+                .illegalArgument()
     }
 
     @Test
@@ -109,7 +109,7 @@ class NumberAssertionsTest
     fun testIntLessThanEdgeCases()
     {
         assertThrows { NumberAssertions.lessThan(Integer.MIN_VALUE) }
-                .isInstanceOf(IllegalArgumentException::class.java)
+                .illegalArgument()
     }
 
     @Test
@@ -143,7 +143,7 @@ class NumberAssertionsTest
     fun testIntGreaterThanEdgeCases()
     {
         assertThrows { NumberAssertions.greaterThan(Integer.MAX_VALUE) }
-                .isInstanceOf(IllegalArgumentException::class.java)
+                .illegalArgument()
     }
 
     @Throws(Exception::class)
@@ -189,9 +189,7 @@ class NumberAssertionsTest
         instance.check(negative)
 
         val positive = one(positiveIntegers())
-        assertThrows { instance.check(positive) }
-                .failedAssertion()
-
+        assertThrows { instance.check(positive) }.failedAssertion()
         assertThrows { instance.check(null) }
                 .failedAssertion()
     }
@@ -214,7 +212,7 @@ class NumberAssertionsTest
     fun testLongGreaterThanEdgeCases()
     {
         assertThrows { NumberAssertions.greaterThan(java.lang.Long.MAX_VALUE) }
-                .isInstanceOf(IllegalArgumentException::class.java)
+                .illegalArgument()
     }
 
     @Test
@@ -253,7 +251,7 @@ class NumberAssertionsTest
     fun testLongLessThanEdgeCases()
     {
         assertThrows { NumberAssertions.lessThan(java.lang.Long.MIN_VALUE) }
-                .isInstanceOf(IllegalArgumentException::class.java)
+                .illegalArgument()
     }
 
     @Test
@@ -304,7 +302,7 @@ class NumberAssertionsTest
     {
         val min = one(longs(java.lang.Long.MIN_VALUE, java.lang.Long.MAX_VALUE - 10L))
         val max = one(longs(min, java.lang.Long.MAX_VALUE))
-        assertThrows { NumberAssertions.numberBetween(max, min) }.isInstanceOf(IllegalArgumentException::class.java)
+        assertThrows { NumberAssertions.numberBetween(max, min) }.illegalArgument()
     }
 
     @Test
@@ -330,9 +328,7 @@ class NumberAssertionsTest
         instance.check(negative)
 
         val positive = one(positiveLongs())
-        assertThrows { instance.check(positive) }
-                .failedAssertion()
-
+        assertThrows { instance.check(positive) }.failedAssertion()
         assertThrows { instance.check(null) }
                 .failedAssertion()
     }
@@ -361,7 +357,7 @@ class NumberAssertionsTest
     fun testDoubleLessThanEdgeCases()
     {
         assertThrows { NumberAssertions.lessThan(-java.lang.Double.MAX_VALUE) }
-                .isInstanceOf(IllegalArgumentException::class.java)
+                .illegalArgument()
     }
 
     @Test
@@ -419,7 +415,7 @@ class NumberAssertionsTest
     fun testDoubleGreaterThanEdgeCases()
     {
         assertThrows { NumberAssertions.greaterThan(java.lang.Double.MAX_VALUE) }
-                .isInstanceOf(IllegalArgumentException::class.java)
+                .illegalArgument()
     }
 
     @Test

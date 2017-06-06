@@ -22,10 +22,14 @@ import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
 import tech.sirwellington.alchemy.arguments.FailedAssertionException
+import tech.sirwellington.alchemy.arguments.failedAssertion
+import tech.sirwellington.alchemy.generator.NumberGenerators
+import tech.sirwellington.alchemy.generator.one
 import tech.sirwellington.alchemy.test.junit.ThrowableAssertion.assertThrows
 import tech.sirwellington.alchemy.test.junit.runners.AlchemyTestRunner
 import tech.sirwellington.alchemy.test.junit.runners.GenerateInteger
 import tech.sirwellington.alchemy.test.junit.runners.GenerateInteger.Type.RANGE
+import tech.sirwellington.alchemy.test.junit.runners.GenerateString
 import tech.sirwellington.alchemy.test.junit.runners.GenerateURL
 import tech.sirwellington.alchemy.test.junit.runners.Repeat
 import java.net.URL
@@ -40,7 +44,10 @@ import java.net.URL
 class NetworkAssertionsTest
 {
     @GenerateURL
-    private val url: URL
+    private lateinit var url: URL
+
+    @GenerateString
+    private lateinit var badUrl: String
 
     @GenerateInteger(value = RANGE, min = 1, max = MAX_PORT)
     private val port: Int = 0
@@ -56,12 +63,9 @@ class NetworkAssertionsTest
         val assertion = NetworkAssertions.validURL()
         assertThat(assertion, notNullValue())
 
-        assertion.check(url!!.toString())
+        assertion.check(url.toString())
 
-        val badUrl = one(alphanumericString(100))
-
-        assertThrows { assertion.check(badUrl) }
-                .failedAssertion()
+        assertThrows { assertion.check(badUrl) }.failedAssertion()
     }
 
     @Test
@@ -72,19 +76,16 @@ class NetworkAssertionsTest
 
         assertion.check(port)
 
-        val negative = one(negativeIntegers())
-        assertThrows { assertion.check(negative) }
-                .failedAssertion()
+        val negative = one(NumberGenerators.negativeIntegers())
+        assertThrows { assertion.check(negative) }.failedAssertion()
 
-        val tooHigh = one(integers(MAX_PORT + 1, Integer.MAX_VALUE))
-        assertThrows { assertion.check(tooHigh) }
-                .failedAssertion()
+        val tooHigh = one(NumberGenerators.integers(MAX_PORT + 1, Integer.MAX_VALUE))
+        assertThrows { assertion.check(tooHigh) }.failedAssertion()
     }
 
     companion object
     {
-
-        private val MAX_PORT = 65535
+        private const val MAX_PORT = 65535
     }
 
 }

@@ -16,6 +16,9 @@
 
 package tech.sirwellington.alchemy.arguments.assertions
 
+import com.nhaarman.mockito_kotlin.doNothing
+import com.nhaarman.mockito_kotlin.doThrow
+import com.nhaarman.mockito_kotlin.mock
 import com.nhaarman.mockito_kotlin.whenever
 import org.hamcrest.Matchers.notNullValue
 import org.junit.Assert.assertThat
@@ -23,20 +26,19 @@ import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.mockito.ArgumentMatchers
-import org.mockito.Mockito.doNothing
-import org.mockito.Mockito.doThrow
-import org.mockito.Mockito.mock
 import org.mockito.Mockito.verifyZeroInteractions
 import tech.sirwellington.alchemy.arguments.AlchemyAssertion
 import tech.sirwellington.alchemy.arguments.FailedAssertionException
 import tech.sirwellington.alchemy.arguments.failedAssertion
-import tech.sirwellington.alchemy.generator.NumberGenerators
-import tech.sirwellington.alchemy.generator.StringGenerators
 import tech.sirwellington.alchemy.generator.StringGenerators.Companion.strings
 import tech.sirwellington.alchemy.generator.one
 import tech.sirwellington.alchemy.test.junit.ThrowableAssertion.assertThrows
 import tech.sirwellington.alchemy.test.junit.runners.AlchemyTestRunner
 import tech.sirwellington.alchemy.test.junit.runners.DontRepeat
+import tech.sirwellington.alchemy.test.junit.runners.GenerateDouble
+import tech.sirwellington.alchemy.test.junit.runners.GenerateInteger
+import tech.sirwellington.alchemy.test.junit.runners.GenerateLong
+import tech.sirwellington.alchemy.test.junit.runners.GenerateString
 import tech.sirwellington.alchemy.test.junit.runners.Repeat
 
 /**
@@ -47,6 +49,18 @@ import tech.sirwellington.alchemy.test.junit.runners.Repeat
 @Repeat
 class AssertionsTest
 {
+
+    @GenerateString
+    private lateinit var string: String
+
+    @GenerateInteger
+    private var positiveInt: Int = 0
+
+    @GenerateLong
+    private var positiveLong: Long = 0
+
+    @GenerateDouble
+    private var positiveDouble: Double = 0.0
 
     @Before
     fun setUp()
@@ -61,10 +75,10 @@ class AssertionsTest
 
         val instance = notNull<Any>()
 
-        assertThat<AlchemyAssertion<Any>>(instance, notNullValue())
+        assertThat(instance, notNullValue())
         Tests.checkForNullCase(instance)
 
-        val mock = mock(Any::class.java)
+        val mock = mock<Any>()
         instance.check(mock)
         verifyZeroInteractions(mock)
     }
@@ -76,8 +90,6 @@ class AssertionsTest
         assertThat(instance, notNullValue())
 
         instance.check(null)
-
-        val string = one(StringGenerators.strings())
 
         assertThrows { instance.check(string) }.failedAssertion()
     }
@@ -92,16 +104,14 @@ class AssertionsTest
         instanceOne.check(null)
 
         //null is not the same instance as any other non-null object
-        assertThrows { instanceOne.check("") }
-                .failedAssertion()
+        assertThrows { instanceOne.check("") }.failedAssertion()
 
         val someObject = Any()
         val instanceTwo = sameInstanceAs(someObject)
         instanceTwo.check(someObject)
 
         val differentObject = Any()
-        assertThrows { instanceTwo.check(differentObject) }
-                .failedAssertion()
+        assertThrows { instanceTwo.check(differentObject) }.failedAssertion()
     }
 
     @Test
@@ -110,11 +120,11 @@ class AssertionsTest
 
         val instance = instanceOf<Any>(Number::class.java)
 
-        instance.check(one(NumberGenerators.positiveIntegers()))
-        instance.check(one(NumberGenerators.positiveLongs()))
-        instance.check(one(NumberGenerators.positiveDoubles()))
+        instance.check(positiveInt)
+        instance.check(positiveLong)
+        instance.check(positiveDouble)
 
-        assertThrows { instance.check(one(StringGenerators.alphabeticString())) }.failedAssertion()
+        assertThrows { instance.check(string) }.failedAssertion()
     }
 
     @Test
@@ -126,30 +136,28 @@ class AssertionsTest
     @Test
     fun testNot()
     {
-        val assertion = mock(AlchemyAssertion::class.java)
+        val assertion = mock<AlchemyAssertion<Any>>()
 
         doThrow(FailedAssertionException())
                 .whenever(assertion)
-                .check(ArgumentMatchers.any()
+                .check(ArgumentMatchers.any())
 
-        val instance = not<Any>(assertion)
+        val instance = not(assertion)
 
         instance.check("")
 
         doNothing()
-                .whenever<AlchemyAssertion<Any>>(assertion)
+                .whenever(assertion)
                 .check(ArgumentMatchers.any())
 
-        assertThrows { instance.check("") }
-                .failedAssertion()
-
+        assertThrows { instance.check("") }.failedAssertion()
     }
 
     @Test
     fun testNotEdgeCases()
     {
         assertThrows { not<Any>(null!!) }
-                .isInstanceOf(IllegalArgumentException::class.java)
+                .illegalArgument()
     }
 
     @Test
@@ -157,6 +165,7 @@ class AssertionsTest
     {
         val first = one(strings())
         var second = ""
+
         do
         {
             second = one(strings())
@@ -168,8 +177,7 @@ class AssertionsTest
         instance.check(second)
         instance.check("" + second)
 
-        assertThrows { instance.check(first) }
-                .failedAssertion()
+        assertThrows { instance.check(first) }.failedAssertion()
 
     }
 

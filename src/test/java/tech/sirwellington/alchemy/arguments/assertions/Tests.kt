@@ -23,7 +23,9 @@ import tech.sirwellington.alchemy.annotations.access.Internal
 import tech.sirwellington.alchemy.annotations.access.NonInstantiable
 import tech.sirwellington.alchemy.arguments.AlchemyAssertion
 import tech.sirwellington.alchemy.arguments.FailedAssertionException
+import tech.sirwellington.alchemy.arguments.failedAssertion
 import tech.sirwellington.alchemy.generator.AlchemyGenerator
+import tech.sirwellington.alchemy.generator.one
 import tech.sirwellington.alchemy.test.junit.ThrowableAssertion.assertThrows
 
 /**
@@ -35,8 +37,6 @@ import tech.sirwellington.alchemy.test.junit.ThrowableAssertion.assertThrows
 object Tests
 {
 
-    private val LOG = LoggerFactory.getLogger(Tests::class.java)
-
     fun <T> runTests(assertion: AlchemyAssertion<T>,
                      badArguments: AlchemyGenerator<T>,
                      goodArguments: AlchemyGenerator<T>)
@@ -44,9 +44,7 @@ object Tests
         assertThat(assertion, notNullValue())
 
         val badArgument = one(badArguments)
-        assertThrows { assertion.check(badArgument) }
-                .failedAssertion()
-
+        assertThrows { assertion.check(badArgument) }.failedAssertion()
         val goodArgument = one(goodArguments)
         assertion.check(goodArgument)
     }

@@ -19,6 +19,7 @@ package tech.sirwellington.alchemy.arguments.assertions
 import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
+import tech.sirwellington.alchemy.arguments.failedAssertion
 import tech.sirwellington.alchemy.test.junit.ThrowableAssertion.assertThrows
 import tech.sirwellington.alchemy.test.junit.runners.AlchemyTestRunner
 import tech.sirwellington.alchemy.test.junit.runners.DontRepeat
@@ -36,16 +37,16 @@ class GeolocationAssertionsTest
 {
 
     @GenerateDouble(value = RANGE, min = -90.0, max = 90.0)
-    private val latitude: Double
+    private  var latitude: Double = 0.0
 
     @GenerateDouble(value = RANGE, min = -180.0, max = 180.0)
-    private val longitude: Double
+    private var longitude: Double = 0.0
 
     @GenerateDouble(value = RANGE, min = 91.0, max = java.lang.Double.MAX_VALUE)
-    private val badLatitude: Double
+    private var badLatitude: Double = 0.0
 
     @GenerateDouble(value = RANGE, min = -java.lang.Double.MAX_VALUE, max = -181.0)
-    private val badLongitude: Double
+    private var badLongitude: Double = 0.0
 
     @Before
     @Throws(Exception::class)
@@ -72,7 +73,7 @@ class GeolocationAssertionsTest
     fun testValidLatitudeWithInvalid()
     {
         val assertion = GeolocationAssertions.validLatitude()
-        assertThrows { assertion.check(badLatitude) }
+        assertThrows { assertion.check(badLatitude) }.failedAssertion()
     }
 
     @Test
@@ -86,7 +87,7 @@ class GeolocationAssertionsTest
     fun testValidLongitudeWithInvalid()
     {
         val assertion = GeolocationAssertions.validLongitude()
-        assertThrows { assertion.check(badLongitude) }
+        assertThrows { assertion.check(badLongitude) }.failedAssertion()
     }
 
 }

@@ -98,9 +98,7 @@ class CollectionAssertionsTest
         checkThat(setOfStrings).isA(CollectionAssertions.nonEmptySet())
 
         val emptySet = HashSet<String>()
-        assertThrows { instance.check(emptySet) }
-                .failedAssertion()
-
+        assertThrows { instance.check(emptySet) }.failedAssertion()
         assertThrows { instance.check(null) }
                 .failedAssertion()
     }
@@ -320,15 +318,10 @@ class CollectionAssertionsTest
         assertion.check(anyValue)
 
         val randomValue = one(hexadecimalString(10))
-        assertThrows { assertion.check(randomValue) }
-                .failedAssertion()
-
+        assertThrows { assertion.check(randomValue) }.failedAssertion()
         //Edge cases
-        assertThrows { assertion.check(null) }
-                .failedAssertion()
-
-        assertThrows { CollectionAssertions.valueInMap<Any, Any>(null!!) }
-                .isInstanceOf(IllegalArgumentException::class.java)
+        assertThrows { assertion.check(null) }.failedAssertion()
+        assertThrows { CollectionAssertions.valueInMap<Any, Any>(null!!) }.illegalArgument()
 
         //Empty map should be ok
         CollectionAssertions.valueInMap(emptyMap<Any, Any>())
@@ -342,8 +335,7 @@ class CollectionAssertionsTest
 
         for (string in strings)
         {
-            assertThrows { assertion.check(string) }
-                    .failedAssertion()
+            assertThrows { assertion.check(string) }.failedAssertion()
         }
     }
 
@@ -358,15 +350,10 @@ class CollectionAssertionsTest
 
         val randomValue = one(hexadecimalString(20))
 
-        assertThrows { assertion.check(randomValue) }
-                .failedAssertion()
-
+        assertThrows { assertion.check(randomValue) }.failedAssertion()
         //Edge cases
-        assertThrows { assertion.check(null) }
-                .failedAssertion()
-
-        assertThrows { CollectionAssertions.elementInCollection<Any>(null!!) }
-                .isInstanceOf(IllegalArgumentException::class.java)
+        assertThrows { assertion.check(null) }.failedAssertion()
+        assertThrows { CollectionAssertions.elementInCollection<Any>(null!!) }.illegalArgument()
 
         //Empty Collections should be ok
         CollectionAssertions.elementInCollection(emptyList<Any>())
@@ -382,9 +369,7 @@ class CollectionAssertionsTest
 
         strings.add(one(alphabeticString()))
 
-        assertThrows { instance.check(strings) }
-                .failedAssertion()
-
+        assertThrows { instance.check(strings) }.failedAssertion()
         checkThat(strings)
                 .isA(CollectionAssertions.collectionOfSize(strings.size))
 

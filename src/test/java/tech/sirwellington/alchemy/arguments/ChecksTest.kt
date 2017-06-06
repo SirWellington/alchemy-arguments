@@ -74,7 +74,7 @@ class ChecksTest
         checkNotNull(this)
 
         assertThrows { checkNotNull(null) }
-                .isInstanceOf(IllegalArgumentException::class.java)
+                .illegalArgument()
     }
 
     @Test
@@ -84,7 +84,7 @@ class ChecksTest
         checkNotNull(this, message)
 
         assertThrows { checkNotNull(null, message) }
-                .isInstanceOf(IllegalArgumentException::class.java)
+                .illegalArgument()
                 .hasMessage(message)
     }
 
@@ -94,7 +94,7 @@ class ChecksTest
         checkThat(true)
 
         assertThrows { checkThat(false) }
-                .isInstanceOf(IllegalArgumentException::class.java)
+                .illegalArgument()
     }
 
     @Test
@@ -103,7 +103,7 @@ class ChecksTest
         checkThat(true, message)
 
         assertThrows { checkThat(false, message) }
-                .isInstanceOf(IllegalArgumentException::class.java)
+                .illegalArgument()
                 .hasMessage(message)
     }
 
@@ -148,13 +148,12 @@ class ChecksTest
         checkNotNullOrEmpty(string)
 
         val emptyString = ""
-        assertThrows { checkNotNullOrEmpty(emptyString) }
-                .isInstanceOf(IllegalArgumentException::class.java)
+        assertThrows { checkNotNullOrEmpty(emptyString) }.illegalArgument()
 
         val nullString: String? = null
 
         assertThrows { checkNotNullOrEmpty(nullString) }
-                .isInstanceOf(IllegalArgumentException::class.java)
+                .illegalArgument()
     }
 
     @Test
@@ -164,11 +163,11 @@ class ChecksTest
         checkNotNullOrEmpty(string, message)
 
         assertThrows { checkNotNullOrEmpty("", message) }
-                .isInstanceOf(IllegalArgumentException::class.java)
+                .illegalArgument()
                 .hasMessage(message)
 
         assertThrows { checkNotNullOrEmpty(null, message) }
-                .isInstanceOf(IllegalArgumentException::class.java)
+                .illegalArgument()
                 .hasMessage(message)
 
     }

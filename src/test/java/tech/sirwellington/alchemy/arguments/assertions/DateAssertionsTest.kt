@@ -23,6 +23,7 @@ import org.junit.Test
 import org.junit.runner.RunWith
 import tech.sirwellington.alchemy.arguments.FailedAssertionException
 import tech.sirwellington.alchemy.arguments.failedAssertion
+import tech.sirwellington.alchemy.arguments.illegalArgument
 import tech.sirwellington.alchemy.generator.DateGenerators
 import tech.sirwellington.alchemy.generator.one
 import tech.sirwellington.alchemy.test.junit.ThrowableAssertion.assertThrows
@@ -69,9 +70,7 @@ class DateAssertionsTest
         instance.check(past)
 
         val future = one(DateGenerators.futureDates())
-        assertThrows { instance.check(future) }
-                .failedAssertion()
-
+        assertThrows { instance.check(future) }.failedAssertion()
         Thread.sleep(1)
         //Start time should presentDate be past as well
         instance.check(startTime)
@@ -86,13 +85,11 @@ class DateAssertionsTest
         assertThat(instance, notNullValue())
 
         //The reference date is not after itself
-        assertThrows { instance.check(referenceDate) }
-                .failedAssertion()
+        assertThrows { instance.check(referenceDate) }.failedAssertion()
 
         //The past is not after the reference date
         val past = one(DateGenerators.pastDates())
-        assertThrows { instance.check(past) }
-                .failedAssertion()
+        assertThrows { instance.check(past) }.failedAssertion()
 
         //The future should be after the reference date
         val future = one(DateGenerators.futureDates())
@@ -109,13 +106,11 @@ class DateAssertionsTest
         assertThat(instance, notNullValue())
 
         //The reference date is not before itself
-        assertThrows { instance.check(referenceDate) }
-                .failedAssertion()
+        assertThrows { instance.check(referenceDate) }.failedAssertion()
 
         //The future is not before the reference date
         val future = one(DateGenerators.after(referenceDate))
-        assertThrows { instance.check(future) }
-                .failedAssertion()
+        assertThrows { instance.check(future) }.failedAssertion()
 
         //The past is before the reference date
         val past = one(DateGenerators.before(referenceDate))
@@ -137,12 +132,10 @@ class DateAssertionsTest
 
         //Past is behind the presentDate
         val past = one(DateGenerators.pastDates())
-        assertThrows { instance.check(past) }
-                .isInstanceOf(IllegalArgumentException::class.java)
+        assertThrows { instance.check(past) }.illegalArgument()
 
         //The start time is not in the future
-        assertThrows { instance.check(startTime) }
-                .isInstanceOf(IllegalArgumentException::class.java)
+        assertThrows { instance.check(startTime) }.illegalArgument()
     }
 
 }

@@ -142,6 +142,12 @@ fun <A: Any?> instanceOf(classOfExpectedType: Class<*>): AlchemyAssertion<A>
     }
 }
 
+inline fun <reified A: Any> instanceOf(): AlchemyAssertion<A>
+{
+    return instanceOf(A::class.java)
+}
+
+
 /**
  * Asserts that the argument is [equal to][Object.equals] `other`.
 

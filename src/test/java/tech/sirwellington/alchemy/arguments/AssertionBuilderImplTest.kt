@@ -204,13 +204,9 @@ class AssertionBuilderImplTest
 
         arguments.add("")
         //Test 'is'
-        assertThrows { AssertionBuilderImpl.checkThat(arguments).isA(nonEmptyString()) }
-                .failedAssertion()
-
+        assertThrows { AssertionBuilderImpl.checkThat(arguments).isA(nonEmptyString()) }.failedAssertion()
         //Test 'are' as well
-        assertThrows { AssertionBuilderImpl.checkThat(arguments).are(nonEmptyString()) }
-                .failedAssertion()
-
+        assertThrows { AssertionBuilderImpl.checkThat(arguments).are(nonEmptyString()) }.failedAssertion()
     }
 
     @Test

@@ -22,11 +22,25 @@ import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
 import tech.sirwellington.alchemy.arguments.Arguments.checkThat
-import tech.sirwellington.alchemy.arguments.FailedAssertionException
+import tech.sirwellington.alchemy.arguments.failedAssertion
+import tech.sirwellington.alchemy.arguments.illegalArgument
+import tech.sirwellington.alchemy.generator.AlchemyGenerator
+import tech.sirwellington.alchemy.generator.NumberGenerators
+import tech.sirwellington.alchemy.generator.NumberGenerators.Companion.doubles
+import tech.sirwellington.alchemy.generator.NumberGenerators.Companion.integers
+import tech.sirwellington.alchemy.generator.NumberGenerators.Companion.longs
+import tech.sirwellington.alchemy.generator.NumberGenerators.Companion.negativeIntegers
+import tech.sirwellington.alchemy.generator.NumberGenerators.Companion.positiveIntegers
+import tech.sirwellington.alchemy.generator.NumberGenerators.Companion.smallPositiveIntegers
+import tech.sirwellington.alchemy.generator.StringGenerators
+import tech.sirwellington.alchemy.generator.StringGenerators.Companion.alphabeticString
+import tech.sirwellington.alchemy.generator.StringGenerators.Companion.strings
+import tech.sirwellington.alchemy.generator.StringGenerators.Companion.stringsFromFixedList
+import tech.sirwellington.alchemy.generator.one
 import tech.sirwellington.alchemy.test.junit.ThrowableAssertion.assertThrows
 import tech.sirwellington.alchemy.test.junit.runners.AlchemyTestRunner
-import tech.sirwellington.alchemy.test.junit.runners.DontRepeat
 import tech.sirwellington.alchemy.test.junit.runners.Repeat
+import java.lang.Double
 import java.lang.String.format
 import java.util.regex.Pattern
 
@@ -44,23 +58,13 @@ class StringAssertionsTest
     {
     }
 
-    @DontRepeat
-    @Test
-    fun testCannotInstantiateClass()
-    {
-        assertThrows { StringAssertions::class.java.newInstance() }
-
-        assertThrows { StringAssertions() }
-                .isInstanceOf(IllegalAccessException::class.java)
-    }
-
     @Test
     fun testEmptyString()
     {
-        val instance = StringAssertions.emptyString()
+        val instance = emptyString()
 
         val badArguments = alphabeticString()
-        val goodArguments = stringsFromFixedList(null, "")
+        val goodArguments = stringsFromFixedList("", "")
 
         Tests.runTests(instance, badArguments, goodArguments)
     }
@@ -70,14 +74,14 @@ class StringAssertionsTest
     {
 
         val minAccepted = one(integers(2, 10100))
-        val instance = StringAssertions.stringWithLengthGreaterThan(minAccepted)
+        val instance = stringWithLengthGreaterThan(minAccepted)
 
-        var badArguments = {
+        var badArguments = AlchemyGenerator<String> {
             val length = one(integers(1, minAccepted))
             one(alphabeticString(length))
         }
 
-        val goodArguments = {
+        val goodArguments = AlchemyGenerator<String> {
             val length = minAccepted + one(smallPositiveIntegers())
             one(alphabeticString(length))
         }
@@ -91,39 +95,39 @@ class StringAssertionsTest
     @Test
     fun testStringWithLengthGreaterThanEdgeCases()
     {
-        assertThrows { StringAssertions.stringWithLengthGreaterThan(Integer.MAX_VALUE) }
-                .isInstanceOf(IllegalArgumentException::class.java)
+        assertThrows { stringWithLengthGreaterThan(Integer.MAX_VALUE) }
+                .illegalArgument()
 
         val badArgument = one(integers(Integer.MIN_VALUE, 1))
-        assertThrows { StringAssertions.stringWithLengthGreaterThan(badArgument) }
-                .isInstanceOf(IllegalArgumentException::class.java)
+        assertThrows { stringWithLengthGreaterThan(badArgument) }
+                .illegalArgument()
     }
 
     @Test
     fun testStringWithLengthLessThan()
     {
         val upperBound = one(integers(2, 1000))
-        val instance = StringAssertions.stringWithLengthLessThan(upperBound)
+        val instance = stringWithLengthLessThan(upperBound)
 
-        val badArguments = {
+        val badArguments = AlchemyGenerator {
             val length = one(integers(upperBound + 1, upperBound * 2))
             one(strings(length))
         }
 
-        val goodArugments = {
+        val goodArguments = AlchemyGenerator {
             val length = one(integers(1, upperBound))
             one(strings(length))
         }
 
-        Tests.runTests(instance, badArguments, goodArugments)
+        Tests.runTests(instance, badArguments, goodArguments)
     }
 
     @Test
     fun testStringWithLengthLessThanEdgeCases()
     {
         val badArgument = one(integers(Integer.MIN_VALUE, 1))
-        assertThrows { StringAssertions.stringWithLengthLessThan(badArgument) }
-                .isInstanceOf(IllegalArgumentException::class.java)
+        assertThrows { stringWithLengthLessThan(badArgument) }
+                .illegalArgument()
     }
 
     @Test
@@ -131,32 +135,30 @@ class StringAssertionsTest
     {
         val letter = one(alphabeticString()).substring(0, 1)
         val pattern = Pattern.compile(".*$letter.*")
-        val instance = StringAssertions.stringThatMatches(pattern)
-        val badArguments = { alphabeticString().get().replace(letter.toRegex(), "") }
-        val goodArguments = { alphabeticString().get() + letter }
+        val instance = stringThatMatches(pattern)
+        val badArguments = AlchemyGenerator { alphabeticString().get().replace(letter.toRegex(), "") }
+        val goodArguments = AlchemyGenerator { alphabeticString().get() + letter }
         Tests.runTests(instance, badArguments, goodArguments)
     }
 
     @Test
     fun testStringThatMatchesEdgeCases()
     {
-        assertThrows { StringAssertions.stringThatMatches(null!!) }
-                .isInstanceOf(IllegalArgumentException::class.java)
+        assertThrows { stringThatMatches(null!!) }
+                .illegalArgument()
     }
 
     @Test
     @Throws(Exception::class)
     fun testNonEmptyString()
     {
-        val instance = StringAssertions.nonEmptyString()
+        val instance = nonEmptyString()
         assertThat(instance, notNullValue())
 
         val arg = one(alphabeticString())
         instance.check(arg)
 
-        assertThrows { instance.check("") }
-                .failedAssertion()
-
+        assertThrows { instance.check("") }.failedAssertion()
         assertThrows { instance.check(null) }
                 .failedAssertion()
     }
@@ -165,11 +167,11 @@ class StringAssertionsTest
     @Throws(Exception::class)
     fun testStringWithLength()
     {
-        assertThrows { StringAssertions.stringWithLength(one(negativeIntegers())) }
-                .isInstanceOf(IllegalArgumentException::class.java)
+        assertThrows { stringWithLength(one(NumberGenerators.negativeIntegers())) }
+                .illegalArgument()
 
         val expectedLength = one(integers(5, 25))
-        val instance = StringAssertions.stringWithLength(expectedLength)
+        val instance = stringWithLength(expectedLength)
         assertThat(instance, notNullValue())
         Tests.checkForNullCase(instance)
 
@@ -180,9 +182,7 @@ class StringAssertionsTest
         assertThrows { instance.check(tooShort) }.failedAssertion()
 
         val tooLong = one(strings(expectedLength + 1))
-        assertThrows { instance.check(tooLong) }
-                .failedAssertion()
-
+        assertThrows { instance.check(tooLong) }.failedAssertion()
     }
 
     @Test
@@ -191,8 +191,8 @@ class StringAssertionsTest
     {
         val badArgument = one(negativeIntegers())
 
-        assertThrows { StringAssertions.stringWithLength(badArgument) }
-                .isInstanceOf(IllegalArgumentException::class.java)
+        assertThrows { stringWithLength(badArgument) }
+                .illegalArgument()
     }
 
     @Test
@@ -201,8 +201,8 @@ class StringAssertionsTest
     {
         val negativeNumber = one(negativeIntegers())
 
-        assertThrows { StringAssertions.stringWithLengthGreaterThanOrEqualTo(negativeNumber) }
-                .isInstanceOf(IllegalArgumentException::class.java)
+        assertThrows { stringWithLengthGreaterThanOrEqualTo(negativeNumber) }
+                .illegalArgument()
     }
 
     @Test
@@ -211,7 +211,7 @@ class StringAssertionsTest
     {
         val expectedSize = one(integers(10, 100))
 
-        val instance = StringAssertions.stringWithLengthGreaterThanOrEqualTo(expectedSize)
+        val instance = stringWithLengthGreaterThanOrEqualTo(expectedSize)
         assertThat(instance, notNullValue())
         Tests.checkForNullCase(instance)
 
@@ -224,9 +224,7 @@ class StringAssertionsTest
 
         val amountToSubtract = one(integers(1, 5))
         val badString = one(strings(expectedSize - amountToSubtract))
-        assertThrows { instance.check(badString) }
-                .failedAssertion()
-
+        assertThrows { instance.check(badString) }.failedAssertion()
     }
 
     @Test
@@ -235,8 +233,8 @@ class StringAssertionsTest
     {
         val negativeNumber = one(negativeIntegers())
 
-        assertThrows { StringAssertions.stringWithLengthLessThanOrEqualTo(negativeNumber) }
-                .isInstanceOf(IllegalArgumentException::class.java)
+        assertThrows { stringWithLengthLessThanOrEqualTo(negativeNumber) }
+                .illegalArgument()
     }
 
     @Test
@@ -244,7 +242,7 @@ class StringAssertionsTest
     fun testStringWithLengthLessThanOrEqualTo()
     {
         val expectedSize = one(integers(5, 100))
-        val instance = StringAssertions.stringWithLengthLessThanOrEqualTo(expectedSize)
+        val instance = stringWithLengthLessThanOrEqualTo(expectedSize)
 
         assertThat(instance, notNullValue())
         Tests.checkForNullCase(instance)
@@ -261,15 +259,14 @@ class StringAssertionsTest
     @Throws(Exception::class)
     fun testStringWithNoWhitespace()
     {
-        val instance = StringAssertions.stringWithNoWhitespace()
+        val instance = stringWithNoWhitespace()
         assertThat(instance, notNullValue())
         Tests.checkForNullCase(instance)
 
         val goodString = alphabeticString()
-        val badStrings = {
-            goodString
-            +one(stringsFromFixedList(" ", "\n", "\t"))
-            +goodString
+
+        val badStrings = AlchemyGenerator {
+            one(goodString) + one(stringsFromFixedList(" ", "\n", "\t")) + one(goodString)
         }
 
         Tests.runTests(instance, badStrings, goodString)
@@ -282,24 +279,24 @@ class StringAssertionsTest
         val minimumLength = one(integers(10, 100))
         val maximumLength = one(integers(minimumLength + 1, 1000))
 
-        val instance = StringAssertions.stringWithLengthBetween(minimumLength, maximumLength)
+        val instance = stringWithLengthBetween(minimumLength, maximumLength)
         assertThat(instance, notNullValue())
         Tests.checkForNullCase(instance)
 
-        val tooShort = {
+        val tooShort = AlchemyGenerator {
             //Sad cases
             val stringTooShortLength = minimumLength - one(integers(1, 9))
             val stringTooShort = one(strings(stringTooShortLength))
             stringTooShort
         }
 
-        val tooLong = {
+        val tooLong = AlchemyGenerator {
             val stringTooLongLength = maximumLength + one(smallPositiveIntegers())
             val stringTooLong = one(strings(stringTooLongLength))
             stringTooLong
         }
 
-        var goodStrings = {
+        var goodStrings = AlchemyGenerator {
             val length = one(integers(minimumLength, maximumLength))
             one(strings(length))
         }
@@ -319,11 +316,11 @@ class StringAssertionsTest
         val minimumLength = one(integers(10, 100))
         val maximumLength = one(integers(minimumLength, 1000))
 
-        assertThrows { StringAssertions.stringWithLengthBetween(maximumLength, minimumLength) }
-                .isInstanceOf(IllegalArgumentException::class.java)
+        assertThrows { stringWithLengthBetween(maximumLength, minimumLength) }
+                .illegalArgument()
 
-        assertThrows { StringAssertions.stringWithLengthBetween(-minimumLength, maximumLength) }
-                .isInstanceOf(IllegalArgumentException::class.java)
+        assertThrows { stringWithLengthBetween(-minimumLength, maximumLength) }
+                .illegalArgument()
     }
 
     @Test
@@ -332,28 +329,25 @@ class StringAssertionsTest
         val string = one(strings(20))
         val prefix = one(strings(4))
 
-        val instance = StringAssertions.stringBeginningWith(prefix)
+        val instance = stringBeginningWith(prefix)
 
         //Happy Cases
         instance.check(prefix + string)
         instance.check(prefix)
 
         //Sad Cases
-        assertThrows { instance.check(null) }
-                .failedAssertion()
-
-        assertThrows { instance.check(string) }
-                .failedAssertion()
+        assertThrows { instance.check(null) }.failedAssertion()
+        assertThrows { instance.check(string) }.failedAssertion()
     }
 
     @Test
     fun testStringBeginningWithEdgeCases()
     {
-        assertThrows { StringAssertions.stringBeginningWith(null!!) }
-                .isInstanceOf(IllegalArgumentException::class.java)
+        assertThrows { stringBeginningWith(null!!) }
+                .illegalArgument()
 
-        assertThrows { StringAssertions.stringBeginningWith("") }
-                .isInstanceOf(IllegalArgumentException::class.java)
+        assertThrows { stringBeginningWith("") }
+                .illegalArgument()
     }
 
     @Test
@@ -363,22 +357,21 @@ class StringAssertionsTest
         val substring = longString.substring(0, 100)
 
         // Happy Case
-        StringAssertions.stringContaining(substring)
+        stringContaining(substring)
                 .check(longString)
 
         //Sad Cases
-        assertThrows { StringAssertions.stringContaining("") }
-                .isInstanceOf(IllegalArgumentException::class.java)
+        assertThrows { stringContaining("") }
+                .illegalArgument()
 
-        assertThrows { StringAssertions.stringContaining(null!!) }
-                .isInstanceOf(IllegalArgumentException::class.java)
+        assertThrows { stringContaining(null!!) }
+                .illegalArgument()
 
-        val notSubstring = substring + one(uuids())
+        val notSubstring = substring + one(StringGenerators.uuids())
+
         assertThrows {
-            StringAssertions.stringContaining(notSubstring)
-                    .check(longString)
-        }
-                .failedAssertion()
+            stringContaining(notSubstring).check(longString)
+        }.failedAssertion()
     }
 
     @Test
@@ -388,14 +381,12 @@ class StringAssertionsTest
 
         val oneLowerCaseCharacter = lowerCasedRandomCharacter(allUpperCase)
 
-        val instance = StringAssertions.allUpperCaseString()
+        val instance = allUpperCaseString()
         assertThat(instance, notNullValue())
 
         instance.check(allUpperCase)
 
-        assertThrows { instance.check(oneLowerCaseCharacter) }
-                .failedAssertion()
-
+        assertThrows { instance.check(oneLowerCaseCharacter) }.failedAssertion()
     }
 
     private fun lowerCasedRandomCharacter(string: String): String
@@ -415,7 +406,7 @@ class StringAssertionsTest
         val allLowerCase = one(alphabeticString(50)).toLowerCase()
         val oneUpperCaseCharacter = upperCaseRandomCharacter(allLowerCase)
 
-        val instance = StringAssertions.allLowerCaseString()
+        val instance = allLowerCaseString()
         assertThat(instance, notNullValue())
 
         instance.check(allLowerCase)
@@ -439,25 +430,23 @@ class StringAssertionsTest
     fun testStringEndingWith()
     {
         //Edge Cases
-        assertThrows { StringAssertions.stringEndingWith(null!!) }
-                .isInstanceOf(IllegalArgumentException::class.java)
+        assertThrows { stringEndingWith(null!!) }
+                .illegalArgument()
 
-        assertThrows { StringAssertions.stringEndingWith("") }
-                .isInstanceOf(IllegalArgumentException::class.java)
+        assertThrows { stringEndingWith("") }
+                .illegalArgument()
 
         //Happy Cases
         val string = one(strings())
         val suffix = randomSuffixFrom(string)
 
-        val instance = StringAssertions.stringEndingWith(suffix)
+        val instance = stringEndingWith(suffix)
         assertThat(instance, notNullValue())
 
         instance.check(string)
 
         val anotherRandomString = one(strings())
-        assertThrows { instance.check(anotherRandomString) }
-                .failedAssertion()
-
+        assertThrows { instance.check(anotherRandomString) }.failedAssertion()
     }
 
     private fun randomSuffixFrom(string: String): String
@@ -469,33 +458,29 @@ class StringAssertionsTest
     @Test
     fun testAlphabeticString()
     {
-        val instance = StringAssertions.alphabeticString()
+        val instance = tech.sirwellington.alchemy.arguments.assertions.alphabeticString()
         checkThat(instance, notNullValue())
 
         val alphabetic = one(alphabeticString())
         instance.check(alphabetic)
 
-        val alphanumeric = format("%s-%d", alphabetic, one(positiveIntegers()))
-        assertThrows { instance.check(alphanumeric) }
-                .failedAssertion()
+        assertThrows { instance.check("") }.failedAssertion()
 
-        assertThrows { instance.check("") }
-                .failedAssertion()
+        val alphanumeric = format("%s-%d", alphabetic, one(positiveIntegers()))
+        assertThrows { instance.check(alphanumeric) }.failedAssertion()
     }
 
     @Test
     fun testAlphanumericString()
     {
-        val instance = StringAssertions.alphanumericString()
+        val instance = alphanumericString()
         checkThat(instance, notNullValue())
 
-        val alphanumeric = one(alphanumericString())
+        val alphanumeric = one(StringGenerators.alphanumericString())
         instance.check(alphanumeric)
 
         val specialCharacters = alphanumeric + one(strings()) + "-!%$"
-        assertThrows { instance.check(specialCharacters) }
-                .failedAssertion()
-
+        assertThrows { instance.check(specialCharacters) }.failedAssertion()
         assertThrows { instance.check("") }
                 .failedAssertion()
     }
@@ -503,38 +488,34 @@ class StringAssertionsTest
     @Test
     fun testStringRepresentingInteger()
     {
-        val instance = StringAssertions.stringRepresentingInteger()
+        val instance = stringRepresentingInteger()
         checkThat(instance, notNullValue())
 
-        val integer = one(longs(java.lang.Long.MIN_VALUE, java.lang.Long.MAX_VALUE))
+        val integer = one(longs(Long.MIN_VALUE, Long.MAX_VALUE))
         val integerString = integer.toString()
         instance.check(integerString)
 
         //Edge cases
-        val floatingPoint = one(doubles(-java.lang.Double.MAX_VALUE, java.lang.Double.MAX_VALUE))
+        val floatingPoint = one(doubles(-Double.MAX_VALUE, Double.MAX_VALUE))
         val floatingPointString = floatingPoint.toString()
 
-        assertThrows { instance.check(floatingPointString) }
-                .failedAssertion()
+        assertThrows { instance.check(floatingPointString) }.failedAssertion()
 
         val text = one(strings())
-        assertThrows { instance.check(text) }
-                .failedAssertion()
+        assertThrows { instance.check(text) }.failedAssertion()
     }
 
     @Test
     fun testValidUUID()
     {
-        val assertion = StringAssertions.validUUID()
+        val assertion = validUUID()
         assertThat(assertion, notNullValue())
 
-        val uuid = one(uuids)
+        val uuid = one(StringGenerators.uuids)
         assertion.check(uuid)
 
         val nonUUID = one(alphabeticString(10))
-        assertThrows { assertion.check(nonUUID) }
-                .failedAssertion()
-
+        assertThrows { assertion.check(nonUUID) }.failedAssertion()
     }
 
     @Test
@@ -543,7 +524,7 @@ class StringAssertionsTest
         val value = one(integers(Integer.MIN_VALUE, Integer.MAX_VALUE))
         val string = value.toString()
 
-        val assertion = StringAssertions.integerString()
+        val assertion = integerString()
         assertThat(assertion, notNullValue())
 
         assertion.check(string)
@@ -552,12 +533,12 @@ class StringAssertionsTest
     @Test
     fun testIntegerStringWithBadString()
     {
-        val assertion = StringAssertions.integerString()
+        val assertion = integerString()
 
         val alphabetic = one(alphabeticString())
         assertThrows { assertion.check(alphabetic) }.failedAssertion()
 
-        val value = one(doubles(-java.lang.Double.MAX_VALUE, java.lang.Double.MAX_VALUE))
+        val value = one(doubles(-Double.MAX_VALUE, Double.MAX_VALUE))
         val decimalString = value.toString()
         assertThrows { assertion.check(decimalString) }.failedAssertion()
     }
@@ -565,21 +546,21 @@ class StringAssertionsTest
     @Test
     fun testDecimalString()
     {
-        val assertion = StringAssertions.decimalString()
+        val assertion = decimalString()
         assertThat(assertion, notNullValue())
 
-        val value = one(doubles(-java.lang.Double.MAX_VALUE, java.lang.Double.MAX_VALUE))
+        val value = one(doubles(-Double.MAX_VALUE, Double.MAX_VALUE))
         assertion.check(value.toString())
     }
 
     @Test
     fun testDecimalStringWithBadString()
     {
-        val assertion = StringAssertions.decimalString()
+        val assertion = decimalString()
         assertThat(assertion, notNullValue())
 
-        val value = one(alphanumericString())
-        assertThrows { assertion.check(value.toString()) }
+        val value = one(StringGenerators.alphanumericString())
+        assertThrows { assertion.check(value) }.failedAssertion()
     }
 
 }

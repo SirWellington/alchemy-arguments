@@ -50,9 +50,7 @@ class BooleanAssertionsTest
 
         assertion.check(true)
 
-        assertThrows { assertion.check(false) }
-                .failedAssertion()
-
+        assertThrows { assertion.check(false) }.failedAssertion()
         assertThrows { assertion.check(null) }
                 .failedAssertion()
     }
@@ -65,9 +63,7 @@ class BooleanAssertionsTest
 
         assertion.check(false)
 
-        assertThrows { assertion.check(true) }
-                .failedAssertion()
-
+        assertThrows { assertion.check(true) }.failedAssertion()
         assertThrows { assertion.check(null) }
                 .failedAssertion()
     }

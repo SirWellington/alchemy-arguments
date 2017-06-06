@@ -21,8 +21,14 @@ import org.junit.Assert.assertThat
 import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
-import tech.sirwellington.alchemy.arguments.FailedAssertionException
-import tech.sirwellington.alchemy.generator.TimeGenerators
+import tech.sirwellington.alchemy.arguments.failedAssertion
+import tech.sirwellington.alchemy.arguments.illegalArgument
+import tech.sirwellington.alchemy.generator.NumberGenerators.Companion.longs
+import tech.sirwellington.alchemy.generator.NumberGenerators.Companion.negativeIntegers
+import tech.sirwellington.alchemy.generator.TimeGenerators.Companion.anytime
+import tech.sirwellington.alchemy.generator.TimeGenerators.Companion.futureInstants
+import tech.sirwellington.alchemy.generator.TimeGenerators.Companion.pastInstants
+import tech.sirwellington.alchemy.generator.one
 import tech.sirwellington.alchemy.test.junit.ThrowableAssertion.assertThrows
 import tech.sirwellington.alchemy.test.junit.runners.AlchemyTestRunner
 import tech.sirwellington.alchemy.test.junit.runners.DontRepeat
@@ -43,28 +49,17 @@ class TimeAssertionsTest
     {
     }
 
-    @DontRepeat
-    @Test
-    fun testCannotInstantiate()
-    {
-        assertThrows { TimeAssertions() }
-                .isInstanceOf(IllegalAccessException::class.java)
-
-        assertThrows { TimeAssertions::class.java.newInstance() }
-                .isInstanceOf(IllegalAccessException::class.java)
-    }
-
     @Test
     @Throws(InterruptedException::class)
     fun testInThePast()
     {
         val startTime = Instant.now()
 
-        val instance = TimeAssertions.inThePast()
+        val instance = inThePast()
         assertThat(instance, notNullValue())
 
         // The past is indeed in the past
-        val past = TimeGenerators.pastInstants().get()
+        val past = pastInstants().get()
         instance.check(past)
 
         //The recent past should be fine too
@@ -72,10 +67,8 @@ class TimeAssertionsTest
         instance.check(recentPast)
 
         //The futureInstants is not in the pastInstants
-        val future = TimeGenerators.futureInstants().get()
-        assertThrows { instance.check(future) }
-                .failedAssertion()
-
+        val future = futureInstants().get()
+        assertThrows { instance.check(future) }.failedAssertion()
         Thread.sleep(1)
         //The start time should now be in the past
         instance.check(startTime)
@@ -87,25 +80,21 @@ class TimeAssertionsTest
     {
         val startTime = Instant.now()
 
-        val instance = TimeAssertions.before(startTime)
+        val instance = before(startTime)
         assertThat(instance, notNullValue())
 
         //The start time is not before itself
-        assertThrows { instance.check(startTime) }
-                .failedAssertion()
-
+        assertThrows { instance.check(startTime) }.failedAssertion()
         //The past is before the present
-        val past = one(TimeGenerators.pastInstants())
+        val past = one(pastInstants())
         instance.check(past)
 
         //The future is not before the present
-        val future = one(TimeGenerators.futureInstants())
-        assertThrows { instance.check(future) }
-                .failedAssertion()
-
+        val future = one(futureInstants())
+        assertThrows { instance.check(future) }.failedAssertion()
         //Edge case
-        assertThrows { TimeAssertions.before(null!!) }
-                .isInstanceOf(IllegalArgumentException::class.java)
+        assertThrows { before(null!!) }
+                .illegalArgument()
     }
 
     @Test
@@ -113,21 +102,18 @@ class TimeAssertionsTest
     {
         val startTime = Instant.now()
 
-        val instance = TimeAssertions.inTheFuture()
+        val instance = inTheFuture()
         assertThat(instance, notNullValue())
 
         //The start time is not in the future
-        assertThrows { instance.check(startTime) }
-                .failedAssertion()
-
+        assertThrows { instance.check(startTime) }.failedAssertion()
         //The future is indeed in the future
-        val future = one(TimeGenerators.futureInstants())
+        val future = one(futureInstants())
         instance.check(future)
 
         //The past is not in the future
-        val past = one(TimeGenerators.pastInstants())
-        assertThrows { instance.check(past) }
-                .failedAssertion()
+        val past = one(pastInstants())
+        assertThrows { instance.check(past) }.failedAssertion()
     }
 
     @Test
@@ -135,43 +121,36 @@ class TimeAssertionsTest
     {
         val startTime = Instant.now()
 
-        val instance = TimeAssertions.after(startTime)
+        val instance = after(startTime)
         assertThat(instance, notNullValue())
 
         //The start time is not after itself
-        assertThrows { instance.check(startTime) }
-                .failedAssertion()
-
+        assertThrows { instance.check(startTime) }.failedAssertion()
         //The future is indeed after the start time
-        val future = one(TimeGenerators.futureInstants())
+        val future = one(futureInstants())
         instance.check(future)
 
         //The past is not after the start time
-        val past = one(TimeGenerators.pastInstants())
-        assertThrows { instance.check(past) }
-                .failedAssertion()
-
+        val past = one(pastInstants())
+        assertThrows { instance.check(past) }.failedAssertion()
         //Edge case
-        assertThrows { TimeAssertions.after(null!!) }
-                .isInstanceOf(IllegalArgumentException::class.java)
+        assertThrows { after(null!!) }
+                .illegalArgument()
     }
 
     @Test
     fun testRightNow()
     {
-        val assertion = TimeAssertions.rightNow()
+        val assertion = rightNow()
         assertThat(assertion, notNullValue())
 
         assertion.check(Instant.now())
 
         val recentPast = Instant.now().minusMillis(50)
-        assertThrows { assertion.check(recentPast) }
-                .failedAssertion()
-
+        assertThrows { assertion.check(recentPast) }.failedAssertion()
 
         val past = one(pastInstants())
-        assertThrows { assertion.check(past) }
-                .failedAssertion()
+        assertThrows { assertion.check(past) }.failedAssertion()
 
         val future = one(futureInstants())
         assertThrows { assertion.check(future) }
@@ -183,14 +162,13 @@ class TimeAssertionsTest
     {
         val marginOfErrorInMillis = 10L
 
-        val assertion = TimeAssertions.nowWithinDelta(marginOfErrorInMillis)
+        val assertion = nowWithinDelta(marginOfErrorInMillis)
         assertThat(assertion, notNullValue())
 
         assertion.check(Instant.now())
 
         val past = one(pastInstants())
-        assertThrows { assertion.check(past) }
-                .failedAssertion()
+        assertThrows { assertion.check(past) }.failedAssertion()
 
         val future = one(futureInstants())
         assertThrows { assertion.check(future) }
@@ -202,8 +180,8 @@ class TimeAssertionsTest
     fun testNowWithinDeltaWithBadArguments()
     {
         val negative = one(negativeIntegers())
-        assertThrows { TimeAssertions.nowWithinDelta(negative.toLong()) }
-                .isInstanceOf(IllegalArgumentException::class.java)
+        assertThrows { nowWithinDelta(negative.toLong()) }
+                .illegalArgument()
     }
 
     @Test
@@ -214,7 +192,7 @@ class TimeAssertionsTest
 
         val instant = one(anytime())
 
-        val assertion = TimeAssertions.equalToInstantWithinDelta(instant, delta)
+        val assertion = equalToInstantWithinDelta(instant, delta)
         assertThat(assertion, notNullValue())
 
         var argument = instant.plusMillis(delta)
@@ -231,7 +209,7 @@ class TimeAssertionsTest
         val delta = one(longs(1000, 1000000))
         val instant = one(anytime())
 
-        val assertion = TimeAssertions.equalToInstantWithinDelta(instant, delta)
+        val assertion = equalToInstantWithinDelta(instant, delta)
         assertThat(assertion, notNullValue())
 
         val argumentAfter = instant.plusMillis(delta + 10)
@@ -246,11 +224,10 @@ class TimeAssertionsTest
     @Throws(Exception::class)
     fun testEqualToInstantWithinDeltaWithBadArgs()
     {
-        assertThrows { TimeAssertions.equalToInstantWithinDelta(null!!, 10) }
-                .isInstanceOf(IllegalArgumentException::class.java)
+        assertThrows { equalToInstantWithinDelta(null!!, 10) }.illegalArgument()
 
         //Check with null argument
-        val assertion = TimeAssertions.equalToInstantWithinDelta(Instant.now(), 10)
+        val assertion = equalToInstantWithinDelta(Instant.now(), 10)
         assertThrows { assertion.check(null) }
                 .failedAssertion()
     }
@@ -258,15 +235,13 @@ class TimeAssertionsTest
     @Test
     fun testEpochRightNow()
     {
-        val assertion = TimeAssertions.epochRightNow()
+        val assertion = epochRightNow()
         assertThat(assertion, notNullValue())
 
         assertion.check(Instant.now().toEpochMilli())
 
         val past = one(pastInstants())
-        assertThrows { assertion.check(past.toEpochMilli()) }
-                .failedAssertion()
-
+        assertThrows { assertion.check(past.toEpochMilli()) }.failedAssertion()
         val future = one(futureInstants())
         assertThrows { assertion.check(future.toEpochMilli()) }
                 .failedAssertion()
@@ -277,15 +252,13 @@ class TimeAssertionsTest
     {
         val marginOfErrorInMillis = 10L
 
-        val assertion = TimeAssertions.epochNowWithinDelta(marginOfErrorInMillis)
+        val assertion = epochNowWithinDelta(marginOfErrorInMillis)
         assertThat(assertion, notNullValue())
 
         assertion.check(Instant.now().toEpochMilli())
 
         val past = one(pastInstants())
-        assertThrows { assertion.check(past.toEpochMilli()) }
-                .failedAssertion()
-
+        assertThrows { assertion.check(past.toEpochMilli()) }.failedAssertion()
         val future = one(futureInstants())
         assertThrows { assertion.check(future.toEpochMilli()) }
                 .failedAssertion()
@@ -296,8 +269,8 @@ class TimeAssertionsTest
     fun testEpochNowWithinDeltaBadArguments()
     {
         val negative = one(negativeIntegers())
-        assertThrows { TimeAssertions.epochNowWithinDelta(negative.toLong()) }
-                .isInstanceOf(IllegalArgumentException::class.java)
+        assertThrows { epochNowWithinDelta(negative.toLong()) }
+                .illegalArgument()
     }
 
 }
