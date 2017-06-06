@@ -16,14 +16,17 @@
 
 package tech.sirwellington.alchemy.arguments;
 
+import java.util.Collections;
+
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import tech.sirwellington.alchemy.arguments.assertions.Assertions;
-import tech.sirwellington.alchemy.arguments.assertions.NumberAssertions;
+import tech.sirwellington.alchemy.arguments.assertions.*;
+import tech.sirwellington.alchemy.test.junit.ThrowableAssertion;
 import tech.sirwellington.alchemy.test.junit.runners.*;
 
 import static org.mockito.Mockito.*;
 import static tech.sirwellington.alchemy.arguments.Arguments.*;
+import static tech.sirwellington.alchemy.arguments.assertions.CollectionAssertions.*;
 import static tech.sirwellington.alchemy.arguments.assertions.StringAssertions.*;
 
 /**
@@ -92,4 +95,38 @@ public class JavaCodeTest
         verify(second).check(string);
     }
 
+    @Test
+    public void testEmptyCollections() throws Exception
+    {
+        checkThat(Collections.emptyList())
+                .is(emptyList());
+
+        checkThat(Collections.emptySet())
+                .is(emptySet());
+
+        checkThat(Collections.emptyMap())
+                .is(emptyMap());
+    }
+
+    @Test(expected = FailedAssertionException.class)
+    public void testNonEmptyList() throws Exception
+    {
+        checkThat(Collections.emptyList())
+                .isA(nonEmptyList());
+    }
+
+
+    @Test(expected = FailedAssertionException.class)
+    public void testNonemptySet() throws Exception
+    {
+        checkThat(Collections.emptySet())
+                .isA(nonEmptySet());
+    }
+
+    @Test
+    public void testCheckStringNotEmpty() throws Exception
+    {
+        checkThat(string)
+                .isA(nonEmptyString());
+    }
 }
