@@ -20,9 +20,12 @@ import org.junit.Assert.assertThat
 import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
+import tech.sirwellington.alchemy.arguments.Arguments.checkThat
 import tech.sirwellington.alchemy.arguments.assertions.*
 import tech.sirwellington.alchemy.generator.CollectionGenerators
+import tech.sirwellington.alchemy.generator.CollectionGenerators.Companion.listOf
 import tech.sirwellington.alchemy.generator.StringGenerators
+import tech.sirwellington.alchemy.generator.StringGenerators.Companion.alphabeticString
 import tech.sirwellington.alchemy.generator.one
 import tech.sirwellington.alchemy.test.junit.ThrowableAssertion.assertThrows
 import tech.sirwellington.alchemy.test.junit.runners.AlchemyTestRunner
@@ -43,7 +46,7 @@ class ArgumentsTest
     @Before
     fun setUp()
     {
-        argument = one(StringGenerators.alphabeticString())
+        argument = one(alphabeticString())
     }
 
     @DontRepeat
@@ -56,21 +59,21 @@ class ArgumentsTest
     @Test
     fun testCheckThat()
     {
-        val instance = Arguments.checkThat<String>(argument)
+        val instance = checkThat<String>(argument)
         assertThat(instance, notNullValue())
     }
 
     @Test
     fun testCheckThatWithMultipleArguments()
     {
-        val strings = CollectionGenerators.listOf(StringGenerators.alphabeticString(), 30)
+        val strings = listOf(alphabeticString(), 30)
         val stringArray = strings.toTypedArray()
 
-        var instance = Arguments.checkThat(argument, *stringArray)
+        var instance = checkThat(argument, *stringArray)
         assertThat(instance, notNullValue())
         instance.are(nonEmptyString())
 
-        instance = Arguments.checkThat<String>(argument, *arrayOfNulls(0))
+        instance = checkThat(argument, *arrayOfNulls(0))
         assertThat(instance, notNullValue())
         instance.are(nonEmptyString())
     }
@@ -78,7 +81,7 @@ class ArgumentsTest
     @Test
     fun testCheckThatWithMultipleArgumentsWithFailure()
     {
-        val instance = Arguments.checkThat<String>(argument, *arrayOfNulls(1))
+        val instance = checkThat(argument, *arrayOfNulls(1))
         assertThat(instance, notNullValue())
         assertThrows { instance.are(nonEmptyString()) }
                 .failedAssertion()

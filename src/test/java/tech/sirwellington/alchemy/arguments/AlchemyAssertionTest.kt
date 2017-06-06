@@ -110,7 +110,7 @@ class AlchemyAssertionTest
                 .forEach { a -> verify(a, never()).check(argument) }
     }
 
-    internal class FakeAssertion<T> : AlchemyAssertion<T>
+    internal open class FakeAssertion<T> : AlchemyAssertion<T>
     {
 
         @Throws(FailedAssertionException::class)
