@@ -37,7 +37,7 @@ class GeolocationAssertionsTest
 {
 
     @GenerateDouble(value = RANGE, min = -90.0, max = 90.0)
-    private  var latitude: Double = 0.0
+    private var latitude: Double = 0.0
 
     @GenerateDouble(value = RANGE, min = -180.0, max = 180.0)
     private var longitude: Double = 0.0
@@ -55,38 +55,31 @@ class GeolocationAssertionsTest
 
     }
 
-    @DontRepeat
-    @Test
-    fun testCannotInstantiate()
-    {
-        assertThrows { GeolocationAssertions() }
-    }
-
     @Test
     fun testValidLatitude()
     {
-        val assertion = GeolocationAssertions.validLatitude()
+        val assertion = validLatitude()
         assertion.check(latitude)
     }
 
     @Test
     fun testValidLatitudeWithInvalid()
     {
-        val assertion = GeolocationAssertions.validLatitude()
+        val assertion = validLatitude()
         assertThrows { assertion.check(badLatitude) }.failedAssertion()
     }
 
     @Test
     fun testValidLongitude()
     {
-        val assertion = GeolocationAssertions.validLongitude()
+        val assertion = validLongitude()
         assertion.check(longitude)
     }
 
     @Test
     fun testValidLongitudeWithInvalid()
     {
-        val assertion = GeolocationAssertions.validLongitude()
+        val assertion = validLongitude()
         assertThrows { assertion.check(badLongitude) }.failedAssertion()
     }
 
