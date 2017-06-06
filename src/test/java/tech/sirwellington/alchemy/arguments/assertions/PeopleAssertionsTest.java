@@ -22,15 +22,12 @@ import org.junit.runner.RunWith;
 import tech.sirwellington.alchemy.arguments.AlchemyAssertion;
 import tech.sirwellington.alchemy.arguments.FailedAssertionException;
 import tech.sirwellington.alchemy.generator.PeopleGenerators;
-import tech.sirwellington.alchemy.test.junit.runners.AlchemyTestRunner;
-import tech.sirwellington.alchemy.test.junit.runners.DontRepeat;
-import tech.sirwellington.alchemy.test.junit.runners.Repeat;
+import tech.sirwellington.alchemy.test.junit.runners.*;
 
 import static org.hamcrest.Matchers.notNullValue;
 import static org.junit.Assert.assertThat;
-import static tech.sirwellington.alchemy.generator.AlchemyGenerator.one;
+import static tech.sirwellington.alchemy.generator.AlchemyGenerator.Get.one;
 import static tech.sirwellington.alchemy.generator.StringGenerators.alphabeticString;
-import static tech.sirwellington.alchemy.test.junit.ThrowableAssertion.assertThrows;
 
 
 /**
@@ -68,7 +65,7 @@ public class PeopleAssertionsTest
     @Test
     public void testConstructor() 
     {
-        assertThrows(() -> new PeopleAssertions())
+        new PeopleAssertions();
             .isInstanceOf(IllegalAccessException.class);
     }
 
@@ -80,7 +77,7 @@ public class PeopleAssertionsTest
         
         instance.check(email);
         
-        assertThrows(() -> instance.check(badEmail))
+        instance.check(badEmail);
             .isInstanceOf(FailedAssertionException.class);
     }
     
@@ -90,10 +87,10 @@ public class PeopleAssertionsTest
     {
         AlchemyAssertion<String> instance = PeopleAssertions.validEmailAddress();
         
-        assertThrows(() -> instance.check(null))
+        instance.check(null);
             .isInstanceOf(FailedAssertionException.class);
         
-        assertThrows(() -> instance.check(""))
+        instance.check("");
             .isInstanceOf(FailedAssertionException.class);
     }
     

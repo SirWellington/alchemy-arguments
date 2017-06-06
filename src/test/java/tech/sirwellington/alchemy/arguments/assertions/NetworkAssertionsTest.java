@@ -22,6 +22,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import tech.sirwellington.alchemy.arguments.AlchemyAssertion;
+import tech.sirwellington.alchemy.arguments.FailedAssertionException;
 import tech.sirwellington.alchemy.test.junit.runners.*;
 
 import static org.hamcrest.Matchers.notNullValue;
@@ -61,10 +62,9 @@ public class NetworkAssertionsTest
 
         assertion.check(url.toString());
 
-
     }
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test(expected = FailedAssertionException.class)
     public void testInvalidURL() throws Exception
     {
         AlchemyAssertion<String> assertion = NetworkAssertions.validURL();
@@ -82,7 +82,7 @@ public class NetworkAssertionsTest
         assertion.check(port);
     }
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test(expected = FailedAssertionException.class)
     public void testInvalidPort1() throws Exception
     {
         AlchemyAssertion<Integer> assertion = NetworkAssertions.validPort();
@@ -90,7 +90,7 @@ public class NetworkAssertionsTest
         assertion.check(negative);
     }
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test(expected = FailedAssertionException.class)
     public void testInvalidPort2() throws Exception
     {
         AlchemyAssertion<Integer> assertion = NetworkAssertions.validPort();

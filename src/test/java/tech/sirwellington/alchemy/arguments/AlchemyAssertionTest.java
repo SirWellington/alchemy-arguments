@@ -16,6 +16,7 @@
 package tech.sirwellington.alchemy.arguments;
 
 import java.util.List;
+
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -23,13 +24,10 @@ import org.mockito.Spy;
 import tech.sirwellington.alchemy.test.junit.runners.AlchemyTestRunner;
 
 import static java.util.Arrays.asList;
-import static org.mockito.Mockito.never;
-import static org.mockito.Mockito.spy;
-import static org.mockito.Mockito.verify;
-import static tech.sirwellington.alchemy.generator.AlchemyGenerator.one;
+import static org.mockito.Mockito.*;
+import static tech.sirwellington.alchemy.generator.AlchemyGenerator.Get.one;
 import static tech.sirwellington.alchemy.generator.CollectionGenerators.listOf;
 import static tech.sirwellington.alchemy.generator.StringGenerators.alphabeticString;
-import static tech.sirwellington.alchemy.test.junit.ThrowableAssertion.assertThrows;
 
 /**
  *
@@ -73,7 +71,7 @@ public class AlchemyAssertionTest
     @Test
     public void testOtherWithBadArgs()
     {
-        assertThrows(() -> first.and(null));
+        first.and(null);;
     }
 
     @Test
@@ -92,8 +90,8 @@ public class AlchemyAssertionTest
     @Test
     public void testCombineWithMultipleWithBadArgs()
     {
-        assertThrows(() -> AlchemyAssertion.combine(null, (AlchemyAssertion[]) null));
-        assertThrows(() -> AlchemyAssertion.combine(first, (AlchemyAssertion[]) null));
+        AlchemyAssertion.combine(null, (AlchemyAssertion[]) null);;
+        AlchemyAssertion.combine(first, (AlchemyAssertion[]) null);;
 
     }
 

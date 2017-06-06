@@ -21,13 +21,10 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import tech.sirwellington.alchemy.arguments.AlchemyAssertion;
 import tech.sirwellington.alchemy.arguments.FailedAssertionException;
-import tech.sirwellington.alchemy.test.junit.runners.AlchemyTestRunner;
-import tech.sirwellington.alchemy.test.junit.runners.DontRepeat;
-import tech.sirwellington.alchemy.test.junit.runners.Repeat;
+import tech.sirwellington.alchemy.test.junit.runners.*;
 
-import static org.hamcrest.Matchers.*;
-import static org.junit.Assert.*;
-import static tech.sirwellington.alchemy.test.junit.ThrowableAssertion.assertThrows;
+import static org.hamcrest.Matchers.notNullValue;
+import static org.junit.Assert.assertThat;
 
 /**
  *
@@ -47,7 +44,7 @@ public class BooleanAssertionsTest
     @Test
     public void testCannotInstantiate()
     {
-        assertThrows(() -> BooleanAssertions.class.newInstance())
+        BooleanAssertions.class.newInstance();
             .isInstanceOf(IllegalAccessException.class);
     }
 
@@ -59,10 +56,10 @@ public class BooleanAssertionsTest
         
         assertion.check(true);
         
-        assertThrows(() -> assertion.check(false))
+        assertion.check(false);
             .isInstanceOf(FailedAssertionException.class);
         
-        assertThrows(() -> assertion.check(null))
+        assertion.check(null);
             .isInstanceOf(FailedAssertionException.class);
     }
 
@@ -74,10 +71,10 @@ public class BooleanAssertionsTest
         
         assertion.check(false);
         
-        assertThrows(() -> assertion.check(true))
+        assertion.check(true);
             .isInstanceOf(FailedAssertionException.class);
         
-        assertThrows(() -> assertion.check(null))
+        assertion.check(null);
             .isInstanceOf(FailedAssertionException.class);
     }
 

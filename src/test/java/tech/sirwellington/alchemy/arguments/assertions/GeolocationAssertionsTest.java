@@ -20,12 +20,8 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import tech.sirwellington.alchemy.arguments.AlchemyAssertion;
-import tech.sirwellington.alchemy.test.junit.runners.AlchemyTestRunner;
-import tech.sirwellington.alchemy.test.junit.runners.DontRepeat;
-import tech.sirwellington.alchemy.test.junit.runners.GenerateDouble;
-import tech.sirwellington.alchemy.test.junit.runners.Repeat;
+import tech.sirwellington.alchemy.test.junit.runners.*;
 
-import static tech.sirwellington.alchemy.test.junit.ThrowableAssertion.assertThrows;
 import static tech.sirwellington.alchemy.test.junit.runners.GenerateDouble.Type.RANGE;
 
 /**
@@ -59,7 +55,7 @@ public class GeolocationAssertionsTest
     @Test
     public void testCannotInstantiate()
     {
-        assertThrows(() -> new GeolocationAssertions());
+        new GeolocationAssertions();;
     }
 
     @Test
@@ -73,7 +69,7 @@ public class GeolocationAssertionsTest
     public void testValidLatitudeWithInvalid()
     {
         AlchemyAssertion<Double> assertion = GeolocationAssertions.validLatitude();
-        assertThrows(() -> assertion.check(badLatitude));
+        assertion.check(badLatitude);;
     }
 
     @Test
@@ -87,7 +83,7 @@ public class GeolocationAssertionsTest
     public void testValidLongitudeWithInvalid()
     {
         AlchemyAssertion<Double> assertion = GeolocationAssertions.validLongitude();
-        assertThrows(() -> assertion.check(badLongitude));
+        assertion.check(badLongitude);;
     }
 
 }

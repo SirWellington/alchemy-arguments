@@ -17,25 +17,21 @@
 package tech.sirwellington.alchemy.arguments.assertions;
 
 import java.time.Instant;
+
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import tech.sirwellington.alchemy.arguments.AlchemyAssertion;
 import tech.sirwellington.alchemy.arguments.FailedAssertionException;
 import tech.sirwellington.alchemy.generator.TimeGenerators;
-import tech.sirwellington.alchemy.test.junit.runners.AlchemyTestRunner;
-import tech.sirwellington.alchemy.test.junit.runners.DontRepeat;
-import tech.sirwellington.alchemy.test.junit.runners.Repeat;
+import tech.sirwellington.alchemy.test.junit.runners.*;
 
 import static org.hamcrest.Matchers.notNullValue;
 import static org.junit.Assert.assertThat;
-import static tech.sirwellington.alchemy.generator.AlchemyGenerator.one;
+import static tech.sirwellington.alchemy.generator.AlchemyGenerator.Get.one;
 import static tech.sirwellington.alchemy.generator.NumberGenerators.longs;
 import static tech.sirwellington.alchemy.generator.NumberGenerators.negativeIntegers;
-import static tech.sirwellington.alchemy.generator.TimeGenerators.anytime;
-import static tech.sirwellington.alchemy.generator.TimeGenerators.futureInstants;
-import static tech.sirwellington.alchemy.generator.TimeGenerators.pastInstants;
-import static tech.sirwellington.alchemy.test.junit.ThrowableAssertion.assertThrows;
+import static tech.sirwellington.alchemy.generator.TimeGenerators.*;
 
 /**
  *
@@ -55,10 +51,10 @@ public class TimeAssertionsTest
     @Test
     public void testCannotInstantiate()
     {
-        assertThrows(() -> new TimeAssertions())
+        new TimeAssertions();
             .isInstanceOf(IllegalAccessException.class);
         
-        assertThrows(() -> TimeAssertions.class.newInstance())
+        TimeAssertions.class.newInstance();
             .isInstanceOf(IllegalAccessException.class);
     }
     
@@ -80,7 +76,7 @@ public class TimeAssertionsTest
 
         //The futureInstants is not in the pastInstants
         Instant future = TimeGenerators.futureInstants().get();
-        assertThrows(() -> instance.check(future))
+        instance.check(future);
                 .isInstanceOf(FailedAssertionException.class);
 
         Thread.sleep(1);
@@ -98,7 +94,7 @@ public class TimeAssertionsTest
         assertThat(instance, notNullValue());
 
         //The start time is not before itself
-        assertThrows(() -> instance.check(startTime))
+        instance.check(startTime);
                 .isInstanceOf(FailedAssertionException.class);
 
         //The past is before the present
@@ -107,11 +103,11 @@ public class TimeAssertionsTest
 
         //The future is not before the present
         Instant future = one(TimeGenerators.futureInstants());
-        assertThrows(() -> instance.check(future))
+        instance.check(future);
                 .isInstanceOf(FailedAssertionException.class);
 
         //Edge case
-        assertThrows(() -> TimeAssertions.before(null))
+        TimeAssertions.before(null);
                 .isInstanceOf(IllegalArgumentException.class);
     }
 
@@ -124,7 +120,7 @@ public class TimeAssertionsTest
         assertThat(instance, notNullValue());
 
         //The start time is not in the future
-        assertThrows(() -> instance.check(startTime))
+        instance.check(startTime);
                 .isInstanceOf(FailedAssertionException.class);
 
         //The future is indeed in the future
@@ -133,7 +129,7 @@ public class TimeAssertionsTest
 
         //The past is not in the future
         Instant past = one(TimeGenerators.pastInstants());
-        assertThrows(() -> instance.check(past))
+        instance.check(past);
                 .isInstanceOf(FailedAssertionException.class);
     }
 
@@ -146,7 +142,7 @@ public class TimeAssertionsTest
         assertThat(instance, notNullValue());
 
         //The start time is not after itself
-        assertThrows(() -> instance.check(startTime))
+        instance.check(startTime);
                 .isInstanceOf(FailedAssertionException.class);
 
         //The future is indeed after the start time
@@ -155,11 +151,11 @@ public class TimeAssertionsTest
 
         //The past is not after the start time
         Instant past = one(TimeGenerators.pastInstants());
-        assertThrows(() -> instance.check(past))
+        instance.check(past);
                 .isInstanceOf(FailedAssertionException.class);
 
         //Edge case
-        assertThrows(() -> TimeAssertions.after(null))
+        TimeAssertions.after(null);
                 .isInstanceOf(IllegalArgumentException.class);
     }
 
@@ -172,16 +168,16 @@ public class TimeAssertionsTest
         assertion.check(Instant.now());
         
         Instant recentPast = Instant.now().minusMillis(50);
-        assertThrows(() -> assertion.check(recentPast))
+        assertion.check(recentPast);
             .isInstanceOf(FailedAssertionException.class);
         
         
         Instant past = one(pastInstants());
-        assertThrows(() -> assertion.check(past))
+        assertion.check(past);
             .isInstanceOf(FailedAssertionException.class);
         
         Instant future = one(futureInstants());
-        assertThrows(() -> assertion.check(future))
+        assertion.check(future);
             .isInstanceOf(FailedAssertionException.class);
     }
 
@@ -196,11 +192,11 @@ public class TimeAssertionsTest
         assertion.check(Instant.now());
         
         Instant past = one(pastInstants());
-        assertThrows(() -> assertion.check(past))
+        assertion.check(past);
             .isInstanceOf(FailedAssertionException.class);
         
         Instant future = one(futureInstants());
-        assertThrows(() -> assertion.check(future))
+        assertion.check(future);
             .isInstanceOf(FailedAssertionException.class);
     }
     
@@ -209,7 +205,7 @@ public class TimeAssertionsTest
     public void testNowWithinDeltaWithBadArguments()
     {
         int negative = one(negativeIntegers());
-        assertThrows(() -> TimeAssertions.nowWithinDelta(negative))
+        TimeAssertions.nowWithinDelta(negative);
             .isInstanceOf(IllegalArgumentException.class);
     }
 
@@ -240,22 +236,22 @@ public class TimeAssertionsTest
         assertThat(assertion, notNullValue());
 
         Instant argumentAfter = instant.plusMillis(delta + 10);
-        assertThrows(() -> assertion.check(argumentAfter)).isInstanceOf(FailedAssertionException.class);
+        assertion.check(argumentAfter)).isInstanceOf(FailedAssertionException.class;;
 
         Instant argumentBefore = instant.minusMillis(delta + 10);
-        assertThrows(() -> assertion.check(argumentBefore)).isInstanceOf(FailedAssertionException.class);
+        assertion.check(argumentBefore)).isInstanceOf(FailedAssertionException.class;;
     }
 
     @DontRepeat
     @Test
     public void testEqualToInstantWithinDeltaWithBadArgs() throws Exception
     {
-        assertThrows(() -> TimeAssertions.equalToInstantWithinDelta(null, 10))
+        TimeAssertions.equalToInstantWithinDelta(null, 10);
                 .isInstanceOf(IllegalArgumentException.class);
 
         //Check with null argument
         AlchemyAssertion<Instant> assertion = TimeAssertions.equalToInstantWithinDelta(Instant.now(), 10);
-        assertThrows(() -> assertion.check(null))
+        assertion.check(null);
                 .isInstanceOf(FailedAssertionException.class);
     }
 
@@ -268,11 +264,11 @@ public class TimeAssertionsTest
         assertion.check(Instant.now().toEpochMilli());
         
         Instant past = one(pastInstants());
-        assertThrows(() -> assertion.check(past.toEpochMilli()))
+        assertion.check(past.toEpochMilli());
             .isInstanceOf(FailedAssertionException.class);
         
         Instant future = one(futureInstants());
-        assertThrows(() -> assertion.check(future.toEpochMilli()))
+        assertion.check(future.toEpochMilli());
             .isInstanceOf(FailedAssertionException.class);
     }
 
@@ -287,11 +283,11 @@ public class TimeAssertionsTest
         assertion.check(Instant.now().toEpochMilli());
         
         Instant past = one(pastInstants());
-        assertThrows(() -> assertion.check(past.toEpochMilli()))
+        assertion.check(past.toEpochMilli());
             .isInstanceOf(FailedAssertionException.class);
         
         Instant future = one(futureInstants());
-        assertThrows(() -> assertion.check(future.toEpochMilli()))
+        assertion.check(future.toEpochMilli());
             .isInstanceOf(FailedAssertionException.class);
     }
 
@@ -300,7 +296,7 @@ public class TimeAssertionsTest
     public void testEpochNowWithinDeltaBadArguments()
     {
         int negative = one(negativeIntegers());
-        assertThrows(() -> TimeAssertions.epochNowWithinDelta(negative))
+        TimeAssertions.epochNowWithinDelta(negative);
             .isInstanceOf(IllegalArgumentException.class);
     }
 

@@ -26,8 +26,7 @@ import tech.sirwellington.alchemy.generator.AlchemyGenerator;
 
 import static org.hamcrest.Matchers.notNullValue;
 import static org.junit.Assert.assertThat;
-import static tech.sirwellington.alchemy.generator.AlchemyGenerator.one;
-import static tech.sirwellington.alchemy.test.junit.ThrowableAssertion.assertThrows;
+import static tech.sirwellington.alchemy.generator.AlchemyGenerator.Get.one;
 
 /**
  *
@@ -47,7 +46,7 @@ public class Tests
         assertThat(assertion, notNullValue());
 
         T badArgument = one(badArguments);
-        assertThrows(() -> assertion.check(badArgument))
+        assertion.check(badArgument);
                 .isInstanceOf(FailedAssertionException.class);
 
         T goodArgument = one(goodArguments);
@@ -56,7 +55,7 @@ public class Tests
 
     public static void checkForNullCase(AlchemyAssertion assertion)
     {
-        assertThrows(() -> assertion.check(null))
+        assertion.check(null);
                 .isInstanceOf(FailedAssertionException.class)
                 .containsInMessage("null");
     }

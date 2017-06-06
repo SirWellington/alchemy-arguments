@@ -17,30 +17,23 @@
 package tech.sirwellington.alchemy.arguments.assertions;
 
 import java.util.Objects;
+
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import tech.sirwellington.alchemy.arguments.AlchemyAssertion;
 import tech.sirwellington.alchemy.arguments.FailedAssertionException;
-import tech.sirwellington.alchemy.test.junit.runners.AlchemyTestRunner;
-import tech.sirwellington.alchemy.test.junit.runners.DontRepeat;
-import tech.sirwellington.alchemy.test.junit.runners.Repeat;
+import tech.sirwellington.alchemy.test.junit.runners.*;
 
 import static org.hamcrest.Matchers.notNullValue;
 import static org.junit.Assert.assertThat;
 import static org.mockito.Matchers.any;
-import static org.mockito.Mockito.doNothing;
-import static org.mockito.Mockito.doThrow;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.verifyZeroInteractions;
+import static org.mockito.Mockito.*;
 import static tech.sirwellington.alchemy.arguments.assertions.Assertions.notNull;
-import static tech.sirwellington.alchemy.generator.AlchemyGenerator.one;
-import static tech.sirwellington.alchemy.generator.NumberGenerators.positiveDoubles;
-import static tech.sirwellington.alchemy.generator.NumberGenerators.positiveIntegers;
-import static tech.sirwellington.alchemy.generator.NumberGenerators.positiveLongs;
+import static tech.sirwellington.alchemy.generator.AlchemyGenerator.Get.one;
+import static tech.sirwellington.alchemy.generator.NumberGenerators.*;
 import static tech.sirwellington.alchemy.generator.StringGenerators.alphabeticString;
 import static tech.sirwellington.alchemy.generator.StringGenerators.strings;
-import static tech.sirwellington.alchemy.test.junit.ThrowableAssertion.assertThrows;
 
 /**
  *
@@ -60,9 +53,9 @@ public class AssertionsTest
     @Test
     public void testCannotInstantiateClass()
     {
-        assertThrows(() -> Assertions.class.newInstance());
+        Assertions.class.newInstance();;
         
-        assertThrows(() -> new Assertions())
+        new Assertions();
                 .isInstanceOf(IllegalAccessException.class);
     }
     
@@ -89,7 +82,7 @@ public class AssertionsTest
         instance.check(null);
         
         String string = one(strings());
-        assertThrows(() -> instance.check(string))
+        instance.check(string);
             .isInstanceOf(FailedAssertionException.class);
     }
     
@@ -103,7 +96,7 @@ public class AssertionsTest
         instanceOne.check(null);
 
         //null is not the same instance as any other non-null object
-        assertThrows(() -> instanceOne.check(""))
+        instanceOne.check("");
                 .isInstanceOf(FailedAssertionException.class);
         
         Object someObject = new Object();
@@ -111,7 +104,7 @@ public class AssertionsTest
         instanceTwo.check(someObject);
         
         Object differentObject = new Object();
-        assertThrows(() -> instanceTwo.check(differentObject))
+        instanceTwo.check(differentObject);
                 .isInstanceOf(FailedAssertionException.class);
     }
     
@@ -125,13 +118,13 @@ public class AssertionsTest
         instance.check(one(positiveLongs()));
         instance.check(one(positiveDoubles()));
         
-        assertThrows(() -> instance.check(one(alphabeticString())));
+        instance.check(one(alphabeticString()));;
     }
     
     @Test
     public void testInstanceOfEdgeCases()
     {
-        assertThrows(() -> Assertions.instanceOf(null))
+        Assertions.instanceOf(null);
                 .isInstanceOf(IllegalArgumentException.class);
     }
     
@@ -151,7 +144,7 @@ public class AssertionsTest
                 .when(assertion)
                 .check(any());
         
-        assertThrows(() -> instance.check(""))
+        instance.check("");
                 .isInstanceOf(FailedAssertionException.class);
         
     }
@@ -159,7 +152,7 @@ public class AssertionsTest
     @Test
     public void testNotEdgeCases()
     {
-        assertThrows(() -> Assertions.not(null))
+        Assertions.not(null);
                 .isInstanceOf(IllegalArgumentException.class);
     }
 
@@ -180,7 +173,7 @@ public class AssertionsTest
         instance.check(second);
         instance.check("" + second);
         
-        assertThrows(() -> instance.check(first))
+        instance.check(first);
                 .isInstanceOf(FailedAssertionException.class);
         
     }

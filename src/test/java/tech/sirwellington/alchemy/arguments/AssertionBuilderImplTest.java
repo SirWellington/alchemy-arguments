@@ -18,6 +18,7 @@ package tech.sirwellington.alchemy.arguments;
 import java.io.IOException;
 import java.sql.SQLException;
 import java.util.List;
+
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -29,17 +30,11 @@ import tech.sirwellington.alchemy.test.junit.runners.Repeat;
 import static java.util.Arrays.asList;
 import static org.hamcrest.Matchers.notNullValue;
 import static org.junit.Assert.assertThat;
-import static org.mockito.Mockito.doNothing;
-import static org.mockito.Mockito.doThrow;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.verifyZeroInteractions;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 import static tech.sirwellington.alchemy.arguments.AssertionBuilderImpl.checkThat;
-import static tech.sirwellington.alchemy.generator.AlchemyGenerator.one;
+import static tech.sirwellington.alchemy.generator.AlchemyGenerator.Get.one;
 import static tech.sirwellington.alchemy.generator.CollectionGenerators.listOf;
 import static tech.sirwellington.alchemy.generator.StringGenerators.alphabeticString;
-import static tech.sirwellington.alchemy.test.junit.ThrowableAssertion.assertThrows;
 
 /**
  *
@@ -96,7 +91,7 @@ public class AssertionBuilderImplTest
                 .when(assertion)
                 .check(argument);
 
-        assertThrows(() -> instance.throwing(exceptionMapper).is(assertion))
+        instance.throwing(exceptionMapper).is(assertion);
                 .isInstanceOf(SQLException.class);
 
         verify(exceptionMapper).apply(assertException);
@@ -113,7 +108,7 @@ public class AssertionBuilderImplTest
                 .when(assertion)
                 .check(argument);
 
-        assertThrows(() -> instance.throwing(exceptionMapper).is(assertion))
+        instance.throwing(exceptionMapper).is(assertion);
                 .isInstanceOf(SQLException.class)
                 .hasCauseInstanceOf(FailedAssertionException.class);
     }
@@ -128,7 +123,7 @@ public class AssertionBuilderImplTest
                 .when(assertion)
                 .check(argument);
 
-        assertThrows(() -> instance.throwing(SQLException.class).is(assertion))
+        instance.throwing(SQLException.class).is(assertion);
                 .isInstanceOf(SQLException.class)
                 .hasCauseInstanceOf(FailedAssertionException.class);
     }
@@ -140,7 +135,7 @@ public class AssertionBuilderImplTest
                 .when(assertion)
                 .check(argument);
 
-        assertThrows(() -> instance.is(assertion))
+        instance.is(assertion);
                 .isInstanceOf(FailedAssertionException.class)
                 .hasMessage(assertException.getMessage());
     }
@@ -163,7 +158,7 @@ public class AssertionBuilderImplTest
                 .when(assertion)
                 .check(argument);
 
-        assertThrows(() -> instance.is(assertion))
+        instance.is(assertion);
                 .isInstanceOf(FailedAssertionException.class)
                 .hasCauseInstanceOf(RuntimeException.class);
 
@@ -179,11 +174,11 @@ public class AssertionBuilderImplTest
                 .when(assertion)
                 .check(argument);
 
-        assertThrows(() -> instance.is(assertion))
+        instance.is(assertion);
                 .isInstanceOf(FailedAssertionException.class)
                 .hasMessage(embeddedExceptionMessage);
 
-        assertThrows(() -> instance.usingMessage(overrideMessage).is(assertion))
+        instance.usingMessage(overrideMessage).is(assertion);
                 .isInstanceOf(FailedAssertionException.class)
                 .hasMessage(overrideMessage);
 
@@ -199,11 +194,11 @@ public class AssertionBuilderImplTest
 
         arguments.add("");
         //Test 'is'
-        assertThrows(() -> AssertionBuilderImpl.checkThat(arguments).is(StringAssertions.nonEmptyString()))
+        AssertionBuilderImpl.checkThat(arguments).is(StringAssertions.nonEmptyString());
                 .isInstanceOf(FailedAssertionException.class);
 
         //Test 'are' as well
-        assertThrows(() -> AssertionBuilderImpl.checkThat(arguments).are(StringAssertions.nonEmptyString()))
+        AssertionBuilderImpl.checkThat(arguments).are(StringAssertions.nonEmptyString());
                 .isInstanceOf(FailedAssertionException.class);
 
     }
@@ -220,7 +215,7 @@ public class AssertionBuilderImplTest
         AssertionBuilder<String, IOException> newInstance = instance.usingMessage(overrideMessage)
             .throwing(IOException.class);
         
-        assertThrows(() -> newInstance.is(assertion))
+        newInstance.is(assertion);
             .isInstanceOf(IOException.class)
             .hasMessage(overrideMessage);
     }
@@ -237,7 +232,7 @@ public class AssertionBuilderImplTest
         AssertionBuilder<String, IOException> newInstance = instance.throwing(IOException.class)
             .usingMessage(overrideMessage);
         
-        assertThrows(() -> newInstance.is(assertion))
+        newInstance.is(assertion);
             .isInstanceOf(IOException.class)
             .hasMessage(overrideMessage);
     }

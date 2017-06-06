@@ -26,9 +26,8 @@ import tech.sirwellington.alchemy.test.junit.runners.Repeat;
 
 import static org.hamcrest.Matchers.notNullValue;
 import static org.junit.Assert.assertThat;
-import static tech.sirwellington.alchemy.generator.AlchemyGenerator.one;
+import static tech.sirwellington.alchemy.generator.AlchemyGenerator.Get.one;
 import static tech.sirwellington.alchemy.generator.NumberGenerators.integers;
-import static tech.sirwellington.alchemy.test.junit.ThrowableAssertion.assertThrows;
 
 /**
  *
@@ -80,13 +79,12 @@ public class AddressAssertionsTest
         assertion.check(zip);
     }
 
-    @Test
+    @Test(expected = FailedAssertionException.class)
     public void testInvalidZipCode()
     {
         AlchemyAssertion<String> assertion = AddressAssertions.validZipCode();
         
-        assertThrows(() -> assertion.check(badZip))
-            .isInstanceOf(FailedAssertionException.class);
+        assertion.check(badZip);
     }
 
     @Test
@@ -103,7 +101,7 @@ public class AddressAssertionsTest
     {
         AlchemyAssertion<String> assertion = AddressAssertions.validZipCodeString();
 
-        assertThrows(() -> assertion.check(badZip));
+        assertion.check(badZip);;
     }
 
 }

@@ -16,28 +16,20 @@
 
 package tech.sirwellington.alchemy.arguments;
 
-import java.util.Collection;
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
+
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import tech.sirwellington.alchemy.generator.AlchemyGenerator;
-import tech.sirwellington.alchemy.test.junit.runners.AlchemyTestRunner;
-import tech.sirwellington.alchemy.test.junit.runners.DontRepeat;
-import tech.sirwellington.alchemy.test.junit.runners.Repeat;
+import tech.sirwellington.alchemy.test.junit.runners.*;
 
 import static org.hamcrest.Matchers.is;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertThat;
-import static org.junit.Assert.assertTrue;
-import static tech.sirwellington.alchemy.generator.AlchemyGenerator.one;
+import static org.junit.Assert.*;
+import static tech.sirwellington.alchemy.generator.AlchemyGenerator.Get.one;
 import static tech.sirwellington.alchemy.generator.CollectionGenerators.listOf;
 import static tech.sirwellington.alchemy.generator.NumberGenerators.positiveIntegers;
-import static tech.sirwellington.alchemy.generator.StringGenerators.alphabeticString;
-import static tech.sirwellington.alchemy.generator.StringGenerators.alphanumericString;
-import static tech.sirwellington.alchemy.generator.StringGenerators.strings;
-import static tech.sirwellington.alchemy.test.junit.ThrowableAssertion.assertThrows;
+import static tech.sirwellington.alchemy.generator.StringGenerators.*;
 
 /**
  *
@@ -69,10 +61,10 @@ public class ChecksTest
     @Test
     public void testCannotInstantiate()
     {
-        assertThrows(() -> Checks.class.newInstance())
+        Checks.class.newInstance();
             .isInstanceOf(IllegalAccessException.class);
 
-        assertThrows(() -> Checks.Internal.class.newInstance())
+        Checks.Internal.class.newInstance();
             .isInstanceOf(IllegalAccessException.class);
     }
 
@@ -83,7 +75,7 @@ public class ChecksTest
         Checks.Internal.checkNotNull("");
         Checks.Internal.checkNotNull(this);
 
-        assertThrows(() -> Checks.Internal.checkNotNull(null))
+        Checks.Internal.checkNotNull(null);
             .isInstanceOf(IllegalArgumentException.class);
     }
 
@@ -94,7 +86,7 @@ public class ChecksTest
         Checks.Internal.checkNotNull("", message);
         Checks.Internal.checkNotNull(this, message);
 
-        assertThrows(() -> Checks.Internal.checkNotNull(null, message))
+        Checks.Internal.checkNotNull(null, message);
             .isInstanceOf(IllegalArgumentException.class)
             .hasMessage(message);
     }
@@ -104,7 +96,7 @@ public class ChecksTest
     {
         Checks.Internal.checkThat(true);
 
-        assertThrows(() -> Checks.Internal.checkThat(false))
+        Checks.Internal.checkThat(false);
             .isInstanceOf(IllegalArgumentException.class);
     }
 
@@ -115,7 +107,7 @@ public class ChecksTest
 
         Checks.Internal.checkThat(true, message);
 
-        assertThrows(() -> Checks.Internal.checkThat(false, message))
+        Checks.Internal.checkThat(false, message);
             .isInstanceOf(IllegalArgumentException.class)
             .hasMessage(message);
     }
@@ -126,7 +118,7 @@ public class ChecksTest
         String message = one(alphabeticString());
         Checks.Internal.checkState(true, message);
 
-        assertThrows(() -> Checks.Internal.checkState(false, message))
+        Checks.Internal.checkState(false, message);
             .isInstanceOf(IllegalStateException.class)
             .hasMessage(message);
     }
@@ -163,11 +155,11 @@ public class ChecksTest
         Checks.Internal.checkNotNullOrEmpty(string);
 
         String emptyString = "";
-        assertThrows(() -> Checks.Internal.checkNotNullOrEmpty(emptyString))
+        Checks.Internal.checkNotNullOrEmpty(emptyString);
             .isInstanceOf(IllegalArgumentException.class);
 
         String nullString = null;
-        assertThrows(() -> Checks.Internal.checkNotNullOrEmpty(nullString))
+        Checks.Internal.checkNotNullOrEmpty(nullString);
             .isInstanceOf(IllegalArgumentException.class);
     }
 
@@ -178,11 +170,11 @@ public class ChecksTest
         String message = one(alphabeticString());
         Checks.Internal.checkNotNullOrEmpty(string, message);
 
-        assertThrows(() -> Checks.Internal.checkNotNullOrEmpty("", message))
+        Checks.Internal.checkNotNullOrEmpty("", message);
             .isInstanceOf(IllegalArgumentException.class)
             .hasMessage(message);
 
-        assertThrows(() -> Checks.Internal.checkNotNullOrEmpty(null, message))
+        Checks.Internal.checkNotNullOrEmpty(null, message);
             .isInstanceOf(IllegalArgumentException.class)
             .hasMessage(message);
 

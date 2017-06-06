@@ -17,33 +17,22 @@
 package tech.sirwellington.alchemy.arguments.assertions;
 
 import java.util.regex.Pattern;
+
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import tech.sirwellington.alchemy.arguments.AlchemyAssertion;
 import tech.sirwellington.alchemy.arguments.FailedAssertionException;
 import tech.sirwellington.alchemy.generator.AlchemyGenerator;
-import tech.sirwellington.alchemy.test.junit.runners.AlchemyTestRunner;
-import tech.sirwellington.alchemy.test.junit.runners.DontRepeat;
-import tech.sirwellington.alchemy.test.junit.runners.Repeat;
+import tech.sirwellington.alchemy.test.junit.runners.*;
 
 import static java.lang.String.format;
 import static org.hamcrest.Matchers.notNullValue;
 import static org.junit.Assert.assertThat;
-import static tech.sirwellington.alchemy.arguments.Arguments.checkThat;
-import static tech.sirwellington.alchemy.generator.AlchemyGenerator.one;
-import static tech.sirwellington.alchemy.generator.NumberGenerators.doubles;
-import static tech.sirwellington.alchemy.generator.NumberGenerators.integers;
-import static tech.sirwellington.alchemy.generator.NumberGenerators.longs;
-import static tech.sirwellington.alchemy.generator.NumberGenerators.negativeIntegers;
-import static tech.sirwellington.alchemy.generator.NumberGenerators.positiveIntegers;
-import static tech.sirwellington.alchemy.generator.NumberGenerators.smallPositiveIntegers;
-import static tech.sirwellington.alchemy.generator.StringGenerators.alphabeticString;
-import static tech.sirwellington.alchemy.generator.StringGenerators.alphanumericString;
-import static tech.sirwellington.alchemy.generator.StringGenerators.strings;
-import static tech.sirwellington.alchemy.generator.StringGenerators.stringsFromFixedList;
-import static tech.sirwellington.alchemy.generator.StringGenerators.uuids;
-import static tech.sirwellington.alchemy.test.junit.ThrowableAssertion.assertThrows;
+import static tech.sirwellington.alchemy.arguments.Arguments.*;
+import static tech.sirwellington.alchemy.generator.AlchemyGenerator.Get.one;
+import static tech.sirwellington.alchemy.generator.NumberGenerators.*;
+import static tech.sirwellington.alchemy.generator.StringGenerators.*;
 
 /**
  *
@@ -63,9 +52,9 @@ public class StringAssertionsTest
     @Test
     public void testCannotInstantiateClass()
     {
-        assertThrows(() -> StringAssertions.class.newInstance());
+        StringAssertions.class.newInstance();;
         
-        assertThrows(() -> new StringAssertions())
+        new StringAssertions();
             .isInstanceOf(IllegalAccessException.class);
     }
     
@@ -108,11 +97,11 @@ public class StringAssertionsTest
     @Test
     public void testStringWithLengthGreaterThanEdgeCases()
     {
-        assertThrows(() -> StringAssertions.stringWithLengthGreaterThan(Integer.MAX_VALUE))
+        StringAssertions.stringWithLengthGreaterThan(Integer.MAX_VALUE);
             .isInstanceOf(IllegalArgumentException.class);
         
         int badArgument = one(integers(Integer.MIN_VALUE, 1));
-        assertThrows(() -> StringAssertions.stringWithLengthGreaterThan(badArgument))
+        StringAssertions.stringWithLengthGreaterThan(badArgument);
             .isInstanceOf(IllegalArgumentException.class);
     }
     
@@ -141,7 +130,7 @@ public class StringAssertionsTest
     public void testStringWithLengthLessThanEdgeCases()
     {
         int badArgument = one(integers(Integer.MIN_VALUE, 1));
-        assertThrows(() -> StringAssertions.stringWithLengthLessThan(badArgument))
+        StringAssertions.stringWithLengthLessThan(badArgument);
             .isInstanceOf(IllegalArgumentException.class);
     }
     
@@ -159,7 +148,7 @@ public class StringAssertionsTest
     @Test
     public void testStringThatMatchesEdgeCases()
     {
-        assertThrows(() -> StringAssertions.stringThatMatches(null))
+        StringAssertions.stringThatMatches(null);
             .isInstanceOf(IllegalArgumentException.class);
     }
     
@@ -172,17 +161,17 @@ public class StringAssertionsTest
         String arg = one(alphabeticString());
         instance.check(arg);
         
-        assertThrows(() -> instance.check(""))
+        instance.check("");
             .isInstanceOf(FailedAssertionException.class);
         
-        assertThrows(() -> instance.check(null))
+        instance.check(null);
             .isInstanceOf(FailedAssertionException.class);
     }
     
     @Test
     public void testStringWithLength() throws Exception
     {
-        assertThrows(() -> StringAssertions.stringWithLength(one(negativeIntegers())))
+        StringAssertions.stringWithLength(one(negativeIntegers()));
             .isInstanceOf(IllegalArgumentException.class);
         
         int expectedLength = one(integers(5, 25));
@@ -194,11 +183,11 @@ public class StringAssertionsTest
         instance.check(arg);
         
         String tooShort = one(alphabeticString(expectedLength - 1));
-        assertThrows(() -> instance.check(tooShort)).
+        instance.check(tooShort);.
             isInstanceOf(FailedAssertionException.class);
         
         String tooLong = one(strings(expectedLength + 1));
-        assertThrows(() -> instance.check(tooLong))
+        instance.check(tooLong);
             .isInstanceOf(FailedAssertionException.class);
         
     }
@@ -208,7 +197,7 @@ public class StringAssertionsTest
     {
         int badArgument = one(negativeIntegers());
         
-        assertThrows(() -> StringAssertions.stringWithLength(badArgument))
+        StringAssertions.stringWithLength(badArgument);
             .isInstanceOf(IllegalArgumentException.class);
     }
     
@@ -217,7 +206,7 @@ public class StringAssertionsTest
     {
         int negativeNumber = one(negativeIntegers());
         
-        assertThrows(() -> StringAssertions.stringWithLengthGreaterThanOrEqualTo(negativeNumber))
+        StringAssertions.stringWithLengthGreaterThanOrEqualTo(negativeNumber);
             .isInstanceOf(IllegalArgumentException.class);
     }
     
@@ -239,7 +228,7 @@ public class StringAssertionsTest
         
         int amountToSubtract = one(integers(1, 5));
         String badString = one(strings(expectedSize - amountToSubtract));
-        assertThrows(() -> instance.check(badString))
+        instance.check(badString);
             .isInstanceOf(FailedAssertionException.class);
         
     }
@@ -249,7 +238,7 @@ public class StringAssertionsTest
     {
         int negativeNumber = one(negativeIntegers());
         
-        assertThrows(() -> StringAssertions.stringWithLengthLessThanOrEqualTo(negativeNumber))
+        StringAssertions.stringWithLengthLessThanOrEqualTo(negativeNumber);
             .isInstanceOf(IllegalArgumentException.class);
     }
     
@@ -330,10 +319,10 @@ public class StringAssertionsTest
         int minimumLength = one(integers(10, 100));
         int maximumLength = one(integers(minimumLength, 1_000));
         
-        assertThrows(() -> StringAssertions.stringWithLengthBetween(maximumLength, minimumLength))
+        StringAssertions.stringWithLengthBetween(maximumLength, minimumLength);
             .isInstanceOf(IllegalArgumentException.class);
         
-        assertThrows(() -> StringAssertions.stringWithLengthBetween(-minimumLength, maximumLength))
+        StringAssertions.stringWithLengthBetween(-minimumLength, maximumLength);
             .isInstanceOf(IllegalArgumentException.class);
     }
     
@@ -350,20 +339,20 @@ public class StringAssertionsTest
         instance.check(prefix);
         
         //Sad Cases
-        assertThrows(() -> instance.check(null))
+        instance.check(null);
             .isInstanceOf(FailedAssertionException.class);
         
-        assertThrows(() -> instance.check(string))
+        instance.check(string);
             .isInstanceOf(FailedAssertionException.class);
     }
     
     @Test
     public void testStringBeginningWithEdgeCases()
     {
-        assertThrows(() -> StringAssertions.stringBeginningWith(null))
+        StringAssertions.stringBeginningWith(null);
             .isInstanceOf(IllegalArgumentException.class);
         
-        assertThrows(() -> StringAssertions.stringBeginningWith(""))
+        StringAssertions.stringBeginningWith("");
             .isInstanceOf(IllegalArgumentException.class);
     }
     
@@ -378,14 +367,14 @@ public class StringAssertionsTest
             .check(longString);
         
         //Sad Cases
-        assertThrows(() -> StringAssertions.stringContaining(""))
+        StringAssertions.stringContaining("");
             .isInstanceOf(IllegalArgumentException.class);
         
-        assertThrows(() -> StringAssertions.stringContaining(null))
+        StringAssertions.stringContaining(null);
             .isInstanceOf(IllegalArgumentException.class);
         
         String notSubstring = substring + one(uuids());
-        assertThrows(() -> StringAssertions.stringContaining(notSubstring)
+        StringAssertions.stringContaining(notSubstring;
             .check(longString))
             .isInstanceOf(FailedAssertionException.class);
     }
@@ -402,7 +391,7 @@ public class StringAssertionsTest
         
         instance.check(allUpperCase);
         
-        assertThrows(() -> instance.check(oneLowerCaseCharacter))
+        instance.check(oneLowerCaseCharacter);
             .isInstanceOf(FailedAssertionException.class);
         
     }
@@ -429,7 +418,7 @@ public class StringAssertionsTest
         
         instance.check(allLowerCase);
         
-        assertThrows(() -> instance.check(oneUpperCaseCharacter))
+        instance.check(oneUpperCaseCharacter);
             .isInstanceOf(FailedAssertionException.class);
     }
     
@@ -448,10 +437,10 @@ public class StringAssertionsTest
     public void testStringEndingWith()
     {
         //Edge Cases
-        assertThrows(() -> StringAssertions.stringEndingWith(null))
+        StringAssertions.stringEndingWith(null);
             .isInstanceOf(IllegalArgumentException.class);
         
-        assertThrows(() -> StringAssertions.stringEndingWith(""))
+        StringAssertions.stringEndingWith("");
             .isInstanceOf(IllegalArgumentException.class);
         
         //Happy Cases
@@ -464,7 +453,7 @@ public class StringAssertionsTest
         instance.check(string);
         
         String anotherRandomString = one(strings());
-        assertThrows(() -> instance.check(anotherRandomString))
+        instance.check(anotherRandomString);
             .isInstanceOf(FailedAssertionException.class);
         
     }
@@ -485,10 +474,10 @@ public class StringAssertionsTest
         instance.check(alphabetic);
         
         String alphanumeric = format("%s-%d", alphabetic, one(positiveIntegers()));
-        assertThrows(() -> instance.check(alphanumeric))
+        instance.check(alphanumeric);
             .isInstanceOf(FailedAssertionException.class);
         
-        assertThrows(() -> instance.check(""))
+        instance.check("");
             .isInstanceOf(FailedAssertionException.class);
     }
     
@@ -502,10 +491,10 @@ public class StringAssertionsTest
         instance.check(alphanumeric);
         
         String specialCharacters = alphanumeric + one(strings()) + "-!%$";
-        assertThrows(() -> instance.check(specialCharacters))
+        instance.check(specialCharacters);
             .isInstanceOf(FailedAssertionException.class);
         
-        assertThrows(() -> instance.check(""))
+        instance.check("");
             .isInstanceOf(FailedAssertionException.class);
     }
     
@@ -523,11 +512,11 @@ public class StringAssertionsTest
         double floatingPoint = one(doubles(-Double.MAX_VALUE, Double.MAX_VALUE));
         String floatingPointString = String.valueOf(floatingPoint);
         
-        assertThrows(() -> instance.check(floatingPointString))
+        instance.check(floatingPointString);
             .isInstanceOf(FailedAssertionException.class);
         
         String text = one(strings());
-        assertThrows(() -> instance.check(text))
+        instance.check(text);
             .isInstanceOf(FailedAssertionException.class);
     }
 
@@ -541,7 +530,7 @@ public class StringAssertionsTest
         assertion.check(uuid);
         
         String nonUUID = one(alphabeticString(10));
-        assertThrows(() -> assertion.check(nonUUID))
+        assertion.check(nonUUID);
             .isInstanceOf(FailedAssertionException.class);
         
     }
@@ -564,11 +553,11 @@ public class StringAssertionsTest
         AlchemyAssertion<String> assertion = StringAssertions.integerString();
         
         String alphabetic =  one(alphabeticString());
-        assertThrows(() -> assertion.check(alphabetic)).isInstanceOf(FailedAssertionException.class);
+        assertion.check(alphabetic)).isInstanceOf(FailedAssertionException.class;;
         
         double value = one(doubles(-Double.MAX_VALUE, Double.MAX_VALUE));
         String decimalString = String.valueOf(value);
-        assertThrows(() -> assertion.check(decimalString)).isInstanceOf(FailedAssertionException.class);
+        assertion.check(decimalString)).isInstanceOf(FailedAssertionException.class;;
     }
 
     @Test
@@ -588,7 +577,7 @@ public class StringAssertionsTest
         assertThat(assertion, notNullValue());
         
         String value = one(alphanumericString());
-        assertThrows(() -> assertion.check(String.valueOf(value)));
+        assertion.check(String.valueOf(value));;
     }
 
 }
