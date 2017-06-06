@@ -23,6 +23,7 @@ import org.junit.Test
 import org.junit.runner.RunWith
 import tech.sirwellington.alchemy.arguments.failedAssertion
 import tech.sirwellington.alchemy.arguments.illegalArgument
+import tech.sirwellington.alchemy.arguments.nullPointer
 import tech.sirwellington.alchemy.generator.NumberGenerators.Companion.longs
 import tech.sirwellington.alchemy.generator.NumberGenerators.Companion.negativeIntegers
 import tech.sirwellington.alchemy.generator.TimeGenerators.Companion.anytime
@@ -93,8 +94,7 @@ class TimeAssertionsTest
         val future = one(futureInstants())
         assertThrows { instance.check(future) }.failedAssertion()
         //Edge case
-        assertThrows { before(null!!) }
-                .illegalArgument()
+        assertThrows { before(null!!) }.nullPointer()
     }
 
     @Test
@@ -134,8 +134,7 @@ class TimeAssertionsTest
         val past = one(pastInstants())
         assertThrows { instance.check(past) }.failedAssertion()
         //Edge case
-        assertThrows { after(null!!) }
-                .illegalArgument()
+        assertThrows { after(null!!) }.nullPointer()
     }
 
     @Test
@@ -224,12 +223,11 @@ class TimeAssertionsTest
     @Throws(Exception::class)
     fun testEqualToInstantWithinDeltaWithBadArgs()
     {
-        assertThrows { equalToInstantWithinDelta(null!!, 10) }.illegalArgument()
+        assertThrows { equalToInstantWithinDelta(null!!, 10) }.nullPointer()
 
         //Check with null argument
         val assertion = equalToInstantWithinDelta(Instant.now(), 10)
-        assertThrows { assertion.check(null) }
-                .failedAssertion()
+        assertThrows { assertion.check(null) }.failedAssertion()
     }
 
     @Test
