@@ -18,12 +18,11 @@
 package tech.sirwellington.alchemy.arguments.assertions
 
 
-import java.util.regex.Pattern
 import tech.sirwellington.alchemy.annotations.access.NonInstantiable
 import tech.sirwellington.alchemy.arguments.AlchemyAssertion
-import tech.sirwellington.alchemy.arguments.FailedAssertionException
-
 import tech.sirwellington.alchemy.arguments.Checks.Internal.isNullOrEmpty
+import tech.sirwellington.alchemy.arguments.FailedAssertionException
+import java.util.regex.Pattern
 
 
 /**

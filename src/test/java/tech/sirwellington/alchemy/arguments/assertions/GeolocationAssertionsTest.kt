@@ -19,14 +19,12 @@ package tech.sirwellington.alchemy.arguments.assertions
 import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
-import tech.sirwellington.alchemy.arguments.AlchemyAssertion
+import tech.sirwellington.alchemy.test.junit.ThrowableAssertion.assertThrows
 import tech.sirwellington.alchemy.test.junit.runners.AlchemyTestRunner
 import tech.sirwellington.alchemy.test.junit.runners.DontRepeat
 import tech.sirwellington.alchemy.test.junit.runners.GenerateDouble
-import tech.sirwellington.alchemy.test.junit.runners.Repeat
-
-import tech.sirwellington.alchemy.test.junit.ThrowableAssertion.assertThrows
 import tech.sirwellington.alchemy.test.junit.runners.GenerateDouble.Type.RANGE
+import tech.sirwellington.alchemy.test.junit.runners.Repeat
 
 /**
 

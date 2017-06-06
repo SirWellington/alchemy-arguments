@@ -15,29 +15,18 @@
  */
 package tech.sirwellington.alchemy.arguments.assertions
 
+import org.hamcrest.Matchers.notNullValue
+import org.junit.Assert.assertThat
 import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
 import tech.sirwellington.alchemy.arguments.AlchemyAssertion
+import tech.sirwellington.alchemy.arguments.Arguments.checkThat
 import tech.sirwellington.alchemy.arguments.FailedAssertionException
-import tech.sirwellington.alchemy.generator.AlchemyGenerator
+import tech.sirwellington.alchemy.test.junit.ThrowableAssertion.assertThrows
 import tech.sirwellington.alchemy.test.junit.runners.AlchemyTestRunner
 import tech.sirwellington.alchemy.test.junit.runners.DontRepeat
 import tech.sirwellington.alchemy.test.junit.runners.Repeat
-
-import org.hamcrest.Matchers.notNullValue
-import org.junit.Assert.assertThat
-import tech.sirwellington.alchemy.arguments.Arguments.checkThat
-import tech.sirwellington.alchemy.generator.AlchemyGenerator.one
-import tech.sirwellington.alchemy.generator.NumberGenerators.doubles
-import tech.sirwellington.alchemy.generator.NumberGenerators.integers
-import tech.sirwellington.alchemy.generator.NumberGenerators.longs
-import tech.sirwellington.alchemy.generator.NumberGenerators.negativeIntegers
-import tech.sirwellington.alchemy.generator.NumberGenerators.positiveIntegers
-import tech.sirwellington.alchemy.generator.NumberGenerators.positiveLongs
-import tech.sirwellington.alchemy.generator.NumberGenerators.smallPositiveIntegers
-import tech.sirwellington.alchemy.generator.NumberGenerators.smallPositiveLongs
-import tech.sirwellington.alchemy.test.junit.ThrowableAssertion.assertThrows
 
 /**
 

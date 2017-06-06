@@ -16,25 +16,19 @@
 
 package tech.sirwellington.alchemy.arguments.assertions
 
-import java.net.URL
+import org.hamcrest.Matchers.notNullValue
+import org.junit.Assert.assertThat
 import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
-import tech.sirwellington.alchemy.arguments.AlchemyAssertion
 import tech.sirwellington.alchemy.arguments.FailedAssertionException
+import tech.sirwellington.alchemy.test.junit.ThrowableAssertion.assertThrows
 import tech.sirwellington.alchemy.test.junit.runners.AlchemyTestRunner
 import tech.sirwellington.alchemy.test.junit.runners.GenerateInteger
+import tech.sirwellington.alchemy.test.junit.runners.GenerateInteger.Type.RANGE
 import tech.sirwellington.alchemy.test.junit.runners.GenerateURL
 import tech.sirwellington.alchemy.test.junit.runners.Repeat
-
-import org.hamcrest.Matchers.notNullValue
-import org.junit.Assert.assertThat
-import tech.sirwellington.alchemy.generator.AlchemyGenerator.one
-import tech.sirwellington.alchemy.generator.NumberGenerators.integers
-import tech.sirwellington.alchemy.generator.NumberGenerators.negativeIntegers
-import tech.sirwellington.alchemy.generator.StringGenerators.alphanumericString
-import tech.sirwellington.alchemy.test.junit.ThrowableAssertion.assertThrows
-import tech.sirwellington.alchemy.test.junit.runners.GenerateInteger.Type.RANGE
+import java.net.URL
 
 
 /**

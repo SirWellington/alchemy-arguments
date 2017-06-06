@@ -18,13 +18,10 @@
 package tech.sirwellington.alchemy.arguments.assertions
 
 
-import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import tech.sirwellington.alchemy.annotations.access.NonInstantiable
 import tech.sirwellington.alchemy.arguments.AlchemyAssertion
 import tech.sirwellington.alchemy.arguments.FailedAssertionException
-
-import tech.sirwellington.alchemy.arguments.assertions.Assertions.notNull
 
 /**
 

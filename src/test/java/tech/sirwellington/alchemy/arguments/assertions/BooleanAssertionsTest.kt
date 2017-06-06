@@ -16,18 +16,16 @@
 
 package tech.sirwellington.alchemy.arguments.assertions
 
+import org.hamcrest.Matchers.notNullValue
+import org.junit.Assert.assertThat
 import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
-import tech.sirwellington.alchemy.arguments.AlchemyAssertion
 import tech.sirwellington.alchemy.arguments.FailedAssertionException
+import tech.sirwellington.alchemy.test.junit.ThrowableAssertion.assertThrows
 import tech.sirwellington.alchemy.test.junit.runners.AlchemyTestRunner
 import tech.sirwellington.alchemy.test.junit.runners.DontRepeat
 import tech.sirwellington.alchemy.test.junit.runners.Repeat
-
-import org.hamcrest.Matchers.*
-import org.junit.Assert.*
-import tech.sirwellington.alchemy.test.junit.ThrowableAssertion.assertThrows
 
 /**
 

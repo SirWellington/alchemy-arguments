@@ -16,17 +16,14 @@
 
 package tech.sirwellington.alchemy.arguments.assertions
 
-import org.slf4j.Logger
+import org.hamcrest.Matchers.notNullValue
+import org.junit.Assert.assertThat
 import org.slf4j.LoggerFactory
 import tech.sirwellington.alchemy.annotations.access.Internal
 import tech.sirwellington.alchemy.annotations.access.NonInstantiable
 import tech.sirwellington.alchemy.arguments.AlchemyAssertion
 import tech.sirwellington.alchemy.arguments.FailedAssertionException
 import tech.sirwellington.alchemy.generator.AlchemyGenerator
-
-import org.hamcrest.Matchers.notNullValue
-import org.junit.Assert.assertThat
-import tech.sirwellington.alchemy.generator.AlchemyGenerator.one
 import tech.sirwellington.alchemy.test.junit.ThrowableAssertion.assertThrows
 
 /**

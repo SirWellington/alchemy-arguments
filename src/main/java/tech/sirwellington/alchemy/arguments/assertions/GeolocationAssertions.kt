@@ -20,10 +20,7 @@ package tech.sirwellington.alchemy.arguments.assertions
 
 import tech.sirwellington.alchemy.annotations.access.NonInstantiable
 import tech.sirwellington.alchemy.arguments.AlchemyAssertion
-
 import tech.sirwellington.alchemy.arguments.Arguments.checkThat
-import tech.sirwellington.alchemy.arguments.assertions.NumberAssertions.greaterThanOrEqualTo
-import tech.sirwellington.alchemy.arguments.assertions.NumberAssertions.lessThanOrEqualTo
 
 /**
  * Assertions for testing Geo-Location data, like latitude and longitude.
