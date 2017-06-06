@@ -16,13 +16,11 @@
 
 package tech.sirwellington.alchemy.arguments.assertions
 
-import org.slf4j.LoggerFactory
 import tech.sirwellington.alchemy.annotations.access.NonInstantiable
-import tech.sirwellington.alchemy.annotations.arguments.NonNull
+import tech.sirwellington.alchemy.annotations.arguments.Required
 import tech.sirwellington.alchemy.arguments.AlchemyAssertion
 import tech.sirwellington.alchemy.arguments.Checks.Internal.checkNotNull
 import tech.sirwellington.alchemy.arguments.FailedAssertionException
-import java.lang.String.format
 import java.util.*
 
 /**
@@ -42,64 +40,62 @@ internal constructor()
     companion object
     {
 
-        private val LOG = LoggerFactory.getLogger(DateAssertions::class.java!!)
-
-        @JvmStatic
         fun inThePast(): AlchemyAssertion<Date>
         {
-            return AlchemyAssertion { argument ->
+            return AlchemyAssertion { date ->
                 //Recalculate now each time we are called
                 val present = Date()
                 //Check that argument is before present
-                if (!argument.before(present))
+                if (!date.before(present))
                 {
-                    throw FailedAssertionException(format("Expected Date %s to be in the past", argument))
+                    throw FailedAssertionException("Expected Date [$date] to be in the past")
                 }
             }
         }
 
-        @JvmStatic
-        fun before(@NonNull expected: Date): AlchemyAssertion<Date>
-        {
-            checkNotNull(expected, "date cannot be null")
 
-            return AlchemyAssertion { argument ->
-                Assertions.notNull<Any>().check(argument)
-
-                if (!argument.before(expected))
-                {
-                    throw FailedAssertionException(format("Expected Date to be before %s",
-                                                          expected.toInstant().toString()))
-                }
-            }
-        }
-
-        @JvmStatic
-        fun inTheFuture(): AlchemyAssertion<Date>
-        {
-            return AlchemyAssertion { argument ->
-                //Now must stay current
-                val present = Date()
-
-                //Check that argument is after present
-                if (!argument.after(present))
-                {
-                    throw FailedAssertionException(format("Expected Date to be in the future", argument))
-                }
-            }
-        }
-
-        @JvmStatic
-        fun after(@NonNull expected: Date): AlchemyAssertion<Date>
+        fun before(@Required expected: Date): AlchemyAssertion<Date>
         {
             checkNotNull(expected, "date cannot be null")
 
             return AlchemyAssertion { date ->
-                Assertions.notNull<Any>().check(date)
+
+                notNull<Any>().check(date)
+
+                if (!date.before(expected))
+                {
+                    throw FailedAssertionException("Expected Date to be before $expected")
+                }
+            }
+        }
+
+
+        fun inTheFuture(): AlchemyAssertion<Date>
+        {
+            return AlchemyAssertion { date ->
+                //Now must stay current
+                val present = Date()
+
+                //Check that argument is after present
+                if (!date.after(present))
+                {
+                    throw FailedAssertionException("Expected Date [$date] to be in the future")
+                }
+            }
+        }
+
+
+        fun after(@Required expected: Date): AlchemyAssertion<Date>
+        {
+            checkNotNull(expected, "date cannot be null")
+
+            return AlchemyAssertion { date ->
+
+                notNull<Any>().check(date)
 
                 if (!date.after(expected))
                 {
-                    throw FailedAssertionException(format("Expected Date to be after %s", expected.toInstant().toString()))
+                    throw FailedAssertionException("Expected Date [$date] to be after [$expected]")
                 }
             }
         }

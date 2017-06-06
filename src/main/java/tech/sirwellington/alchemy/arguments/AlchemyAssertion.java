@@ -41,7 +41,6 @@ import static tech.sirwellington.alchemy.annotations.designs.patterns.StrategyPa
  *
  * @author SirWellington
  */
-@FunctionalInterface
 @StrategyPattern(role = INTERFACE)
 public interface AlchemyAssertion<A>
 {

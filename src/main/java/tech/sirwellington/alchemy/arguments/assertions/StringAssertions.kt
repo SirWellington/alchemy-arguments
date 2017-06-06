@@ -52,7 +52,7 @@ internal constructor()
          *
          * @return
          */
-        @JvmStatic
+
         fun stringThatMatches(pattern: Pattern): AlchemyAssertion<String>
         {
             Checks.Internal.checkNotNull(pattern, "missing pattern")
@@ -71,7 +71,7 @@ internal constructor()
 
          * @return
          */
-        @JvmStatic
+
         fun emptyString(): AlchemyAssertion<String>
         {
             return AlchemyAssertion { string: String ->
@@ -91,7 +91,7 @@ internal constructor()
          *
          * @return
          */
-        @JvmStatic
+
         fun stringWithLengthGreaterThanOrEqualTo(minimumLength: Int): AlchemyAssertion<String>
         {
             Checks.Internal.checkThat(minimumLength >= 0)
@@ -112,7 +112,7 @@ internal constructor()
 
          * @return
          */
-        @JvmStatic
+
         fun stringWithNoWhitespace(): AlchemyAssertion<String>
         {
             return AlchemyAssertion { string: String ->
@@ -133,7 +133,7 @@ internal constructor()
          *
          * @return
          */
-        @JvmStatic
+
         fun stringWithLength(expectedLength: Int): AlchemyAssertion<String>
         {
             Checks.Internal.checkThat(expectedLength >= 0, "expectedLength must be >= 0")
@@ -157,7 +157,7 @@ internal constructor()
          *
          * @return
          */
-        @JvmStatic
+
         fun stringWithLengthLessThan(upperBound: Int): AlchemyAssertion<String>
         {
             Checks.Internal.checkThat(upperBound > 0, "upperBound must be > 0")
@@ -181,7 +181,7 @@ internal constructor()
          *
          * @return
          */
-        @JvmStatic
+
         fun stringBeginningWith(prefix: String): AlchemyAssertion<String>
         {
             Checks.Internal.checkThat(!isNullOrEmpty(prefix), "missing prefix")
@@ -205,7 +205,7 @@ internal constructor()
          *
          * @return
          */
-        @JvmStatic
+
         fun stringWithLengthLessThanOrEqualTo(maximumLength: Int): AlchemyAssertion<String>
         {
             Checks.Internal.checkThat(maximumLength >= 0)
@@ -228,7 +228,7 @@ internal constructor()
          *
          * @return
          */
-        @JvmStatic
+
         fun stringWithLengthGreaterThan(minimumLength: Int): AlchemyAssertion<String>
         {
             Checks.Internal.checkThat(minimumLength > 0, "minimumLength must be > 0")
@@ -250,7 +250,7 @@ internal constructor()
          *
          * @return
          */
-        @JvmStatic
+
         fun nonEmptyString(): AlchemyAssertion<String>
         {
             return AlchemyAssertion { string: String ->
@@ -271,7 +271,7 @@ internal constructor()
          *
          * @return
          */
-        @JvmStatic
+
         fun stringWithLengthBetween(minimumLength: Int, maximumLength: Int): AlchemyAssertion<String>
         {
             Checks.Internal.checkThat(minimumLength >= 0, "Minimum length must be at least 0")
@@ -295,7 +295,7 @@ internal constructor()
          * @throws IllegalArgumentException If `substring` is null or empty.
          */
         @Throws(IllegalArgumentException::class)
-        @JvmStatic
+
         fun stringContaining(@NonEmpty substring: String): AlchemyAssertion<String>
         {
             Checks.Internal.checkNotNullOrEmpty(substring, "substring cannot be empty")
@@ -315,7 +315,7 @@ internal constructor()
 
          * @return
          */
-        @JvmStatic
+
         fun allUpperCaseString(): AlchemyAssertion<String>
         {
             return AlchemyAssertion { string ->
@@ -338,7 +338,7 @@ internal constructor()
 
          * @return
          */
-        @JvmStatic
+
         fun allLowerCaseString(): AlchemyAssertion<String>
         {
             return AlchemyAssertion { string ->
@@ -368,7 +368,7 @@ internal constructor()
          * @throws IllegalArgumentException If `substring` is empty or null.
          */
         @Throws(IllegalArgumentException::class)
-        @JvmStatic
+
         fun stringEndingWith(@NonEmpty suffix: String): AlchemyAssertion<String>
         {
             Checks.Internal.checkNotNullOrEmpty(suffix, "string should not be empty")
@@ -389,7 +389,7 @@ internal constructor()
 
          * @return
          */
-        @JvmStatic
+
         fun alphabeticString(): AlchemyAssertion<String>
         {
             return AlchemyAssertion { string ->
@@ -412,7 +412,7 @@ internal constructor()
 
          * @return
          */
-        @JvmStatic
+
         fun alphanumericString(): AlchemyAssertion<String>
         {
             return AlchemyAssertion { string ->
@@ -435,7 +435,7 @@ internal constructor()
 
          * @return
          */
-        @JvmStatic
+
         fun integerString(): AlchemyAssertion<String>
         {
             return AlchemyAssertion { string ->
@@ -458,7 +458,7 @@ internal constructor()
 
          * @return
          */
-        @JvmStatic
+
         fun decimalString(): AlchemyAssertion<String>
         {
             return AlchemyAssertion { string ->
@@ -480,7 +480,7 @@ internal constructor()
 
          * @return
          */
-        @JvmStatic
+
         fun validUUID(): AlchemyAssertion<String>
         {
             return AlchemyAssertion { string ->
@@ -514,7 +514,7 @@ internal constructor()
 
          * @return
          */
-        @JvmStatic
+
         fun stringRepresentingInteger(): AlchemyAssertion<String>
         {
             return AlchemyAssertion { string ->

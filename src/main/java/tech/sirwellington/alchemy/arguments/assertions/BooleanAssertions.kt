@@ -14,12 +14,11 @@
  * limitations under the License.
  */
 
+@file:JvmName("BooleanAssertions")
 
 package tech.sirwellington.alchemy.arguments.assertions
 
 
-import org.slf4j.LoggerFactory
-import tech.sirwellington.alchemy.annotations.access.NonInstantiable
 import tech.sirwellington.alchemy.arguments.AlchemyAssertion
 import tech.sirwellington.alchemy.arguments.FailedAssertionException
 
@@ -27,44 +26,28 @@ import tech.sirwellington.alchemy.arguments.FailedAssertionException
 
  * @author SirWellington
  */
-@NonInstantiable
-class BooleanAssertions @Throws(IllegalAccessException::class)
-private constructor()
+
+
+fun trueStatement(): AlchemyAssertion<Boolean>
 {
+    return AlchemyAssertion { b ->
 
-    init
-    {
-        throw IllegalAccessException("cannot instantiate")
-    }
+        notNull<Any>().check(b)
 
-    companion object
-    {
-        private val LOG = LoggerFactory.getLogger(BooleanAssertions::class.java!!)
-
-
-        @JvmStatic
-        fun trueStatement(): AlchemyAssertion<Boolean>
+        if ((!b))
         {
-            return AlchemyAssertion { b ->
-                notNull<Any>().check(b)
-
-                if ((!b)!!)
-                {
-                    throw FailedAssertionException("Condition not met")
-                }
-            }
-        }
-
-
-        @JvmStatic
-        fun falseStatement(): AlchemyAssertion<Boolean>
-        {
-            return AlchemyAssertion { b ->
-                notNull<Any>().check(b)
-
-                trueStatement().check((!b)!!)
-            }
+            throw FailedAssertionException("Condition not met")
         }
     }
+}
 
+
+fun falseStatement(): AlchemyAssertion<Boolean>
+{
+    return AlchemyAssertion { b ->
+
+        notNull<Any>().check(b)
+
+        trueStatement().check((!b))
+    }
 }

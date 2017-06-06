@@ -52,7 +52,7 @@ internal constructor()
 
          * @return
          */
-        @JvmStatic
+
         fun inThePast(): AlchemyAssertion<Instant>
         {
             return AlchemyAssertion { argument ->
@@ -65,7 +65,7 @@ internal constructor()
             }
         }
 
-        @JvmStatic
+
         fun before(@NonNull expected: Instant): AlchemyAssertion<Instant>
         {
             checkNotNull(expected, "time cannot be null")
@@ -80,7 +80,7 @@ internal constructor()
             }
         }
 
-        @JvmStatic
+
         fun inTheFuture(): AlchemyAssertion<Instant>
         {
             return AlchemyAssertion { argument ->
@@ -93,7 +93,7 @@ internal constructor()
             }
         }
 
-        @JvmStatic
+
         fun after(@NonNull expected: Instant): AlchemyAssertion<Instant>
         {
             checkNotNull(expected, "time cannot be null")
@@ -117,7 +117,7 @@ internal constructor()
          *
          * @see .nowWithinDelta
          */
-        @JvmStatic
+
         fun rightNow(): AlchemyAssertion<Instant>
         {
             return nowWithinDelta(5L)
@@ -137,7 +137,7 @@ internal constructor()
          * @see .rightNow
          */
         @Throws(IllegalArgumentException::class)
-        @JvmStatic
+
         fun nowWithinDelta(marginOfErrorInMillis: Long): AlchemyAssertion<Instant>
         {
             checkThat(marginOfErrorInMillis >= 0, "millis must be non-negative.")
@@ -167,7 +167,7 @@ internal constructor()
          *
          * @return
          */
-        @JvmStatic
+
         fun equalToInstantWithinDelta(@Required instant: Instant, deltaMillis: Long): AlchemyAssertion<Instant>
         {
             checkNotNull(instant, "instant cannot be null")
@@ -191,7 +191,7 @@ internal constructor()
 
          * @return
          */
-        @JvmStatic
+
         fun epochRightNow(): AlchemyAssertion<Long>
         {
             return epochNowWithinDelta(5L)
@@ -208,7 +208,7 @@ internal constructor()
          * @throws IllegalArgumentException If the marginOfError is `< 0`.
          */
         @Throws(IllegalArgumentException::class)
-        @JvmStatic
+
         fun epochNowWithinDelta(marginOfErrorInMillis: Long): AlchemyAssertion<Long>
         {
             checkThat(marginOfErrorInMillis >= 0, "millis must be non-negative.")

@@ -50,7 +50,7 @@ internal constructor()
          *
          * @return
          */
-        @JvmStatic
+
         fun greaterThan(exclusiveLowerBound: Int): AlchemyAssertion<Int>
         {
             Checks.Internal.checkThat(exclusiveLowerBound != Integer.MAX_VALUE, "Integers cannot exceed " + Integer.MAX_VALUE)
@@ -73,7 +73,7 @@ internal constructor()
          *
          * @return
          */
-        @JvmStatic
+
         fun greaterThan(exclusiveLowerBound: Long): AlchemyAssertion<Long>
         {
             Checks.Internal.checkThat(exclusiveLowerBound != java.lang.Long.MAX_VALUE, "Longs cannot exceed " + java.lang.Long.MAX_VALUE)
@@ -122,7 +122,7 @@ internal constructor()
          *
          * @return
          */
-        @JvmStatic
+
         fun greaterThanOrEqualTo(inclusiveLowerBound: Int): AlchemyAssertion<Int>
         {
             return AlchemyAssertion { number: Int ->
@@ -144,7 +144,7 @@ internal constructor()
          *
          * @return
          */
-        @JvmStatic
+
         fun greaterThanOrEqualTo(inclusiveLowerBound: Long): AlchemyAssertion<Long>
         {
             return AlchemyAssertion { number: Long ->
@@ -186,7 +186,7 @@ internal constructor()
 
          * @return
          */
-        @JvmStatic
+
         fun positiveInteger(): AlchemyAssertion<Int>
         {
             return AlchemyAssertion { number: Int ->
@@ -203,7 +203,7 @@ internal constructor()
 
          * @return
          */
-        @JvmStatic
+
         fun negativeInteger(): AlchemyAssertion<Int>
         {
             return lessThan(0)
@@ -217,7 +217,7 @@ internal constructor()
          *
          * @return
          */
-        @JvmStatic
+
         fun lessThanOrEqualTo(inclusiveUpperBound: Int): AlchemyAssertion<Int>
         {
             return AlchemyAssertion { number: Int ->
@@ -239,7 +239,7 @@ internal constructor()
          *
          * @return
          */
-        @JvmStatic
+
         fun lessThanOrEqualTo(inclusiveUpperBound: Long): AlchemyAssertion<Long>
         {
             return AlchemyAssertion { number: Long ->
@@ -281,7 +281,7 @@ internal constructor()
 
          * @return
          */
-        @JvmStatic
+
         fun positiveLong(): AlchemyAssertion<Long>
         {
             return AlchemyAssertion { number: Long ->
@@ -298,7 +298,7 @@ internal constructor()
 
          * @return
          */
-        @JvmStatic
+
         fun negativeLong(): AlchemyAssertion<Long>
         {
             return lessThan(0L)
@@ -312,7 +312,7 @@ internal constructor()
          *
          * @return
          */
-        @JvmStatic
+
         fun lessThan(exclusiveUpperBound: Int): AlchemyAssertion<Int>
         {
             Checks.Internal.checkThat(exclusiveUpperBound != Integer.MIN_VALUE, "Ints cannot be less than " + Integer.MIN_VALUE)
@@ -335,7 +335,7 @@ internal constructor()
          *
          * @return
          */
-        @JvmStatic
+
         fun lessThan(exclusiveUpperBound: Long): AlchemyAssertion<Long>
         {
             Checks.Internal.checkThat(exclusiveUpperBound != java.lang.Long.MIN_VALUE, "Longs cannot be less than " + java.lang.Long.MIN_VALUE)
@@ -389,7 +389,7 @@ internal constructor()
          * @throws IllegalArgumentException If `min >= max`. `min` should always be less than `max`.
          */
         @Throws(IllegalArgumentException::class)
-        @JvmStatic
+
         fun numberBetween(min: Int, max: Int): AlchemyAssertion<Int>
         {
             Checks.Internal.checkThat(min < max, "Minimum must be less than Max.")
@@ -420,7 +420,7 @@ internal constructor()
          * @throws IllegalArgumentException If `min >= max`. `min` should always be less
          */
         @Throws(IllegalArgumentException::class)
-        @JvmStatic
+
         fun numberBetween(min: Long, max: Long): AlchemyAssertion<Long>
         {
             Checks.Internal.checkThat(min < max, "Minimum must be less than Max.")

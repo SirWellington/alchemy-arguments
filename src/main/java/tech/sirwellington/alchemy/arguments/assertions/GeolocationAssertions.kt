@@ -45,7 +45,7 @@ internal constructor()
 
          * @return
          */
-        @JvmStatic
+
         fun validLatitude(): AlchemyAssertion<Double>
         {
             return AlchemyAssertion { lat ->
@@ -62,7 +62,7 @@ internal constructor()
 
          * @return
          */
-        @JvmStatic
+
         fun validLongitude(): AlchemyAssertion<Double>
         {
             return AlchemyAssertion { lon ->

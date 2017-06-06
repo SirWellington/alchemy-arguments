@@ -58,7 +58,7 @@ internal constructor()
 
          * @return
          */
-        @JvmStatic
+
         fun validEmailAddress(): AlchemyAssertion<String>
         {
 

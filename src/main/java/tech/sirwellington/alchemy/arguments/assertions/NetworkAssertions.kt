@@ -49,7 +49,7 @@ internal constructor()
 
          * @return
          */
-        @JvmStatic
+
         fun validURL(): AlchemyAssertion<String>
         {
             return AlchemyAssertion { string ->
@@ -74,7 +74,7 @@ internal constructor()
          *
          * @see [https://en.wikipedia.org/wiki/List_of_TCP_and_UDP_port_numbers](https://en.wikipedia.org/wiki/List_of_TCP_and_UDP_port_numbers)
          */
-        @JvmStatic
+
         fun validPort(): AlchemyAssertion<Int>
         {
             return AlchemyAssertion { port ->
