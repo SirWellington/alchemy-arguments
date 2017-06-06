@@ -41,8 +41,7 @@ import tech.sirwellington.alchemy.arguments.checkNotNull
  *
  * @see .nullObject
 </A> */
-
-fun <A: Any> notNull(): AlchemyAssertion<A>
+fun <A: Any?> notNull(): AlchemyAssertion<A>
 {
     return AlchemyAssertion { reference ->
         if (reference == null)
@@ -64,7 +63,7 @@ fun <A: Any> notNull(): AlchemyAssertion<A>
 </A>
  */
 
-fun <A: Any> nullObject(): AlchemyAssertion<A>
+fun <A: Any?> nullObject(): AlchemyAssertion<A>
 {
     return AlchemyAssertion { reference ->
 
