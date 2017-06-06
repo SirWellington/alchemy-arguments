@@ -171,7 +171,7 @@ class DynamicExceptionSupplierTest
     fun testGetExceptionClass()
     {
         val result = instance.exceptionClass
-        assertThat<Any>(result, equalTo(sameInstance(exceptionClass)))
+        assertThat(result, sameInstance(exceptionClass))
     }
 
     @Test

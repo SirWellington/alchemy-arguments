@@ -36,6 +36,11 @@ fun ThrowableAssertion.illegalArgument(): ThrowableAssertion
     return this.isInstanceOf(kotlin.IllegalArgumentException::class.java)
 }
 
+fun ThrowableAssertion.nullPointer(): ThrowableAssertion
+{
+    return this.isInstanceOf(NullPointerException::class.java)
+}
+
 fun <E> Collection<E>.whichever(): E
 {
     val list = this.toList()

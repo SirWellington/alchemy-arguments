@@ -24,6 +24,7 @@ import tech.sirwellington.alchemy.annotations.access.NonInstantiable
 import tech.sirwellington.alchemy.arguments.AlchemyAssertion
 import tech.sirwellington.alchemy.arguments.FailedAssertionException
 import tech.sirwellington.alchemy.arguments.failedAssertion
+import tech.sirwellington.alchemy.arguments.nullPointer
 import tech.sirwellington.alchemy.generator.AlchemyGenerator
 import tech.sirwellington.alchemy.generator.one
 import tech.sirwellington.alchemy.test.junit.ThrowableAssertion.assertThrows

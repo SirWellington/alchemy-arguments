@@ -42,7 +42,7 @@ fun greaterThan(exclusiveLowerBound: Int): AlchemyAssertion<Int>
 {
     checkThat(exclusiveLowerBound != Integer.MAX_VALUE, "Integers cannot exceed ${Int.MAX_VALUE}")
 
-    return AlchemyAssertion { number: Int ->
+    return AlchemyAssertion { number ->
         notNull<Any>().check(number)
 
         val isWithinBounds = number > exclusiveLowerBound
@@ -61,12 +61,11 @@ fun greaterThan(exclusiveLowerBound: Int): AlchemyAssertion<Int>
  *
  * @return
  */
-
 fun greaterThan(exclusiveLowerBound: Long): AlchemyAssertion<Long>
 {
     checkThat(exclusiveLowerBound != Long.MAX_VALUE, "Longs cannot exceed ${Long.MAX_VALUE}")
 
-    return AlchemyAssertion { number: Long ->
+    return AlchemyAssertion { number ->
 
         notNull<Any>().check(number)
 
@@ -117,7 +116,7 @@ fun greaterThan(exclusiveLowerBound: Double, delta: Double = 0.0): AlchemyAssert
 
 fun greaterThanOrEqualTo(inclusiveLowerBound: Int): AlchemyAssertion<Int>
 {
-    return AlchemyAssertion { number: Int ->
+    return AlchemyAssertion { number ->
 
         notNull<Any>().check(number)
 
@@ -140,7 +139,7 @@ fun greaterThanOrEqualTo(inclusiveLowerBound: Int): AlchemyAssertion<Int>
 
 fun greaterThanOrEqualTo(inclusiveLowerBound: Long): AlchemyAssertion<Long>
 {
-    return AlchemyAssertion { number: Long ->
+    return AlchemyAssertion { number ->
 
         notNull<Any>().check(number)
 
@@ -161,9 +160,10 @@ fun greaterThanOrEqualTo(inclusiveLowerBound: Long): AlchemyAssertion<Long>
  *
  * @return
  */
-@JvmOverloads fun greaterThanOrEqualTo(inclusiveLowerBound: Double, delta: Double = 0.0): AlchemyAssertion<Double>
+@JvmOverloads
+fun greaterThanOrEqualTo(inclusiveLowerBound: Double, delta: Double = 0.0): AlchemyAssertion<Double>
 {
-    return AlchemyAssertion { number: Double ->
+    return AlchemyAssertion { number ->
 
         notNull<Any>().check(number)
 
@@ -183,7 +183,7 @@ fun greaterThanOrEqualTo(inclusiveLowerBound: Long): AlchemyAssertion<Long>
 
 fun positiveInteger(): AlchemyAssertion<Int>
 {
-    return AlchemyAssertion { number: Int ->
+    return AlchemyAssertion { number ->
 
         notNull<Any>().check(number)
 
@@ -216,7 +216,7 @@ fun negativeInteger(): AlchemyAssertion<Int>
 
 fun lessThanOrEqualTo(inclusiveUpperBound: Int): AlchemyAssertion<Int>
 {
-    return AlchemyAssertion { number: Int ->
+    return AlchemyAssertion { number ->
 
         notNull<Any>().check(number)
 
@@ -239,7 +239,7 @@ fun lessThanOrEqualTo(inclusiveUpperBound: Int): AlchemyAssertion<Int>
 
 fun lessThanOrEqualTo(inclusiveUpperBound: Long): AlchemyAssertion<Long>
 {
-    return AlchemyAssertion { number: Long ->
+    return AlchemyAssertion { number ->
 
         notNull<Any>().check(number)
 
@@ -283,7 +283,7 @@ fun lessThanOrEqualTo(inclusiveUpperBound: Long): AlchemyAssertion<Long>
 
 fun positiveLong(): AlchemyAssertion<Long>
 {
-    return AlchemyAssertion { number: Long ->
+    return AlchemyAssertion { number ->
 
         notNull<Any>().check(number)
 
@@ -318,7 +318,7 @@ fun lessThan(exclusiveUpperBound: Int): AlchemyAssertion<Int>
 {
     checkThat(exclusiveUpperBound != Integer.MIN_VALUE, "Ints cannot be less than ${Int.MIN_VALUE}")
 
-    return AlchemyAssertion { number: Int ->
+    return AlchemyAssertion { number ->
 
         notNull<Any>().check(number)
 
@@ -342,7 +342,7 @@ fun lessThan(exclusiveUpperBound: Int): AlchemyAssertion<Int>
 fun lessThan(exclusiveUpperBound: Long): AlchemyAssertion<Long>
 {
     checkThat(exclusiveUpperBound != java.lang.Long.MIN_VALUE, "Longs cannot be less than " + java.lang.Long.MIN_VALUE)
-    return AlchemyAssertion { number: Long ->
+    return AlchemyAssertion { number ->
 
         notNull<Any>().check(number)
 
@@ -363,11 +363,12 @@ fun lessThan(exclusiveUpperBound: Long): AlchemyAssertion<Long>
  *
  * @return
  */
-@JvmOverloads fun lessThan(exclusiveUpperBound: Double, delta: Double = 0.0): AlchemyAssertion<Double>
+@JvmOverloads 
+fun lessThan(exclusiveUpperBound: Double, delta: Double = 0.0): AlchemyAssertion<Double>
 {
     checkThat(exclusiveUpperBound > -java.lang.Double.MAX_VALUE, "Doubles cannot be less than " + -java.lang.Double.MAX_VALUE)
 
-    return AlchemyAssertion { number: Double ->
+    return AlchemyAssertion { number ->
         notNull<Any>().check(number)
 
         val isWithinBounds = number - abs(delta) < exclusiveUpperBound
@@ -394,7 +395,7 @@ fun numberBetween(min: Int, max: Int): AlchemyAssertion<Int>
 {
     checkThat(min < max, "Minimum must be less than Max.")
 
-    return AlchemyAssertion { number: Int ->
+    return AlchemyAssertion { number ->
 
         notNull<Any>().check(number)
 
@@ -426,7 +427,7 @@ fun numberBetween(min: Long, max: Long): AlchemyAssertion<Long>
 {
     checkThat(min < max, "Minimum must be less than Max.")
 
-    return AlchemyAssertion { number: Long ->
+    return AlchemyAssertion { number ->
 
         notNull<Any>().check(number)
 

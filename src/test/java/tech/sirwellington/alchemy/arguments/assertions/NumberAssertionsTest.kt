@@ -448,7 +448,7 @@ class NumberAssertionsTest
         val inclusiveLowerBound = one(doubles(-10000.0, 10000.0))
         val instance = greaterThanOrEqualTo(inclusiveLowerBound)
 
-        assertThat<AlchemyAssertion<Double>>(instance, notNullValue())
+        assertThat(instance, notNullValue())
         Tests.checkForNullCase(instance)
 
         val goodArguments = doubles(inclusiveLowerBound, Double.MAX_VALUE)
