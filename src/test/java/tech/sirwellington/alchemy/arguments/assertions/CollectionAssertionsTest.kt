@@ -342,7 +342,7 @@ class CollectionAssertionsTest
     @Test
     fun testElementInCollection()
     {
-        val assertion = CollectionAssertions.elementInCollection(strings!!)
+        val assertion = CollectionAssertions.elementInCollection(strings)
         assertThat(assertion, notNullValue())
 
         val anyValue = strings.whichever()

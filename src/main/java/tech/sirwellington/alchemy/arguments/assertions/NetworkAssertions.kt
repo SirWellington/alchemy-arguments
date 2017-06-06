@@ -39,8 +39,6 @@ internal constructor()
     companion object
     {
 
-        private val LOG = LoggerFactory.getLogger(NetworkAssertions::class.java!!)
-
         /** The maximum allowable Port number  */
         private val MAX_PORT = 65535
 

@@ -30,6 +30,7 @@ import org.mockito.Mockito.verifyZeroInteractions
 import tech.sirwellington.alchemy.arguments.AlchemyAssertion
 import tech.sirwellington.alchemy.arguments.FailedAssertionException
 import tech.sirwellington.alchemy.arguments.failedAssertion
+import tech.sirwellington.alchemy.arguments.illegalArgument
 import tech.sirwellington.alchemy.generator.StringGenerators.Companion.strings
 import tech.sirwellington.alchemy.generator.one
 import tech.sirwellington.alchemy.test.junit.ThrowableAssertion.assertThrows
@@ -156,8 +157,7 @@ class AssertionsTest
     @Test
     fun testNotEdgeCases()
     {
-        assertThrows { not<Any>(null!!) }
-                .illegalArgument()
+        assertThrows { not<Any>(null!!) }.illegalArgument()
     }
 
     @Test

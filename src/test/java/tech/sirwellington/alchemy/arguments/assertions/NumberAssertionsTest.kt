@@ -22,7 +22,19 @@ import org.junit.Test
 import org.junit.runner.RunWith
 import tech.sirwellington.alchemy.arguments.AlchemyAssertion
 import tech.sirwellington.alchemy.arguments.Arguments.checkThat
-import tech.sirwellington.alchemy.arguments.FailedAssertionException
+import tech.sirwellington.alchemy.arguments.failedAssertion
+import tech.sirwellington.alchemy.arguments.illegalArgument
+import tech.sirwellington.alchemy.generator.AlchemyGenerator
+import tech.sirwellington.alchemy.generator.NumberGenerators
+import tech.sirwellington.alchemy.generator.NumberGenerators.Companion.doubles
+import tech.sirwellington.alchemy.generator.NumberGenerators.Companion.integers
+import tech.sirwellington.alchemy.generator.NumberGenerators.Companion.longs
+import tech.sirwellington.alchemy.generator.NumberGenerators.Companion.negativeIntegers
+import tech.sirwellington.alchemy.generator.NumberGenerators.Companion.positiveIntegers
+import tech.sirwellington.alchemy.generator.NumberGenerators.Companion.positiveLongs
+import tech.sirwellington.alchemy.generator.NumberGenerators.Companion.smallPositiveIntegers
+import tech.sirwellington.alchemy.generator.NumberGenerators.Companion.smallPositiveLongs
+import tech.sirwellington.alchemy.generator.one
 import tech.sirwellington.alchemy.test.junit.ThrowableAssertion.assertThrows
 import tech.sirwellington.alchemy.test.junit.runners.AlchemyTestRunner
 import tech.sirwellington.alchemy.test.junit.runners.DontRepeat
@@ -42,15 +54,6 @@ class NumberAssertionsTest
     {
     }
 
-    @DontRepeat
-    @Test
-    fun testCannotInstantiateClass()
-    {
-        assertThrows { NumberAssertions::class.java.newInstance() }
-
-        assertThrows { NumberAssertions() }
-                .isInstanceOf(IllegalAccessException::class.java)
-    }
     //==============================
     //INTEGER TESTS
     //==============================
@@ -61,7 +64,7 @@ class NumberAssertionsTest
     {
         val min = one(integers(Integer.MIN_VALUE, Integer.MAX_VALUE - 10))
         val max = one(integers(min, Integer.MAX_VALUE))
-        val instance = NumberAssertions.numberBetween(min, max)
+        val instance = numberBetween(min, max)
 
         assertThat(instance, notNullValue())
         Tests.checkForNullCase(instance)
@@ -74,6 +77,7 @@ class NumberAssertionsTest
         {
             assertThrows { instance.check(numberBelowMinimum) }.failedAssertion()
         }
+
         val numberAboveMaximum = max + one(positiveIntegers())
         if (numberAboveMaximum > max)
         {
@@ -88,27 +92,26 @@ class NumberAssertionsTest
         val min = one(integers(Integer.MIN_VALUE, Integer.MAX_VALUE - 10))
         val max = one(integers(min, Integer.MAX_VALUE))
 
-        assertThrows { NumberAssertions.numberBetween(max, min) }
-                .illegalArgument()
+        assertThrows { numberBetween(max, min) }.illegalArgument()
     }
 
     @Test
     fun testIntLessThan()
     {
         val upperBound = one(integers(-1000, 1000))
-        val instance = NumberAssertions.lessThan(upperBound)
+        val instance = lessThan(upperBound)
 
         Tests.checkForNullCase(instance)
 
-        val badNumbers = { upperBound + one(integers(0, 100)) }
-        val goodNumbers = { upperBound - one(smallPositiveIntegers()) }
-        Tests.runTests<Int>(instance, badNumbers, goodNumbers)
+        val badNumbers = AlchemyGenerator { upperBound + one(integers(0, 100)) }
+        val goodNumbers = AlchemyGenerator { upperBound - one(smallPositiveIntegers()) }
+        Tests.runTests(instance, badNumbers, goodNumbers)
     }
 
     @Test
     fun testIntLessThanEdgeCases()
     {
-        assertThrows { NumberAssertions.lessThan(Integer.MIN_VALUE) }
+        assertThrows { lessThan(Integer.MIN_VALUE) }
                 .illegalArgument()
     }
 
@@ -116,33 +119,33 @@ class NumberAssertionsTest
     fun testIntLessThanOrEqualTo()
     {
         val upperBound = one(integers(-1000, 1000))
-        val instance = NumberAssertions.lessThanOrEqualTo(upperBound)
+        val instance = lessThanOrEqualTo(upperBound)
 
         Tests.checkForNullCase(instance)
 
-        val badNumbers = { upperBound + one(smallPositiveIntegers()) }
-        val goodNumbers = { upperBound - one(integers(0, 1000)) }
-        Tests.runTests<Int>(instance, badNumbers, goodNumbers)
+        val badNumbers = AlchemyGenerator { upperBound + one(smallPositiveIntegers()) }
+        val goodNumbers = AlchemyGenerator { upperBound - one(integers(0, 1000)) }
+        Tests.runTests(instance, badNumbers, goodNumbers)
     }
 
     @Test
     fun testIntGreaterThan()
     {
         val lowerBound = one(integers(-1000, 1000))
-        val instance = NumberAssertions.greaterThan(lowerBound)
+        val instance = greaterThan(lowerBound)
 
         Tests.checkForNullCase(instance)
 
         val badNumbers = integers(lowerBound - one(smallPositiveIntegers()), lowerBound)
         val goodNumbers = integers(lowerBound + 1, lowerBound + one(integers(2, 1000)))
-        Tests.runTests<Int>(instance, badNumbers, goodNumbers)
+        Tests.runTests(instance, badNumbers, goodNumbers)
     }
 
     @DontRepeat
     @Test
     fun testIntGreaterThanEdgeCases()
     {
-        assertThrows { NumberAssertions.greaterThan(Integer.MAX_VALUE) }
+        assertThrows { greaterThan(Integer.MAX_VALUE) }
                 .illegalArgument()
     }
 
@@ -150,7 +153,7 @@ class NumberAssertionsTest
     fun testIntGreaterThanOrEqualTo()
     {
         val inclusiveLowerBound = one(integers(-1000, 1000))
-        val instance = NumberAssertions.greaterThanOrEqualTo(inclusiveLowerBound)
+        val instance = greaterThanOrEqualTo(inclusiveLowerBound)
 
         assertThat<AlchemyAssertion<Int>>(instance, notNullValue())
         Tests.checkForNullCase(instance)
@@ -167,7 +170,7 @@ class NumberAssertionsTest
     @Test
     fun testPositiveInteger()
     {
-        val instance = NumberAssertions.positiveInteger()
+        val instance = positiveInteger()
 
         assertThat(instance, notNullValue())
         Tests.checkForNullCase(instance)
@@ -182,7 +185,7 @@ class NumberAssertionsTest
     @Test
     fun testNegativeInteger()
     {
-        val instance = NumberAssertions.negativeInteger()
+        val instance = negativeInteger()
         assertThat(instance, notNullValue())
 
         val negative = one(negativeIntegers())
@@ -201,18 +204,19 @@ class NumberAssertionsTest
     fun testLongGreaterThan()
     {
         val lowerBound = one(longs(-100000L, 100000L))
-        val instance = NumberAssertions.greaterThan(lowerBound)
+        val instance = greaterThan(lowerBound)
         Tests.checkForNullCase(instance)
-        val badNumbers = { lowerBound - one(longs(0, 1000L)) }
-        val goodNumbers = { lowerBound + one(smallPositiveLongs()) }
-        Tests.runTests<Long>(instance, badNumbers, goodNumbers)
+
+        val badNumbers = AlchemyGenerator { lowerBound - one(longs(0, 1000L)) }
+        val goodNumbers = AlchemyGenerator { lowerBound + one(smallPositiveLongs()) }
+
+        Tests.runTests(instance, badNumbers, goodNumbers)
     }
 
     @Test
     fun testLongGreaterThanEdgeCases()
     {
-        assertThrows { NumberAssertions.greaterThan(java.lang.Long.MAX_VALUE) }
-                .illegalArgument()
+        assertThrows { greaterThan(Long.MAX_VALUE) }.illegalArgument()
     }
 
     @Test
@@ -220,37 +224,37 @@ class NumberAssertionsTest
     fun testLongGreaterThanOrEqualTo()
     {
         val inclusiveLowerBound = one(longs(-10_000L, 10_000L))
-        val instance = NumberAssertions.greaterThanOrEqualTo(inclusiveLowerBound)
+        val instance = greaterThanOrEqualTo(inclusiveLowerBound)
 
         assertThat<AlchemyAssertion<Long>>(instance, notNullValue())
         Tests.checkForNullCase(instance)
 
-        val goodArguments = longs(inclusiveLowerBound, java.lang.Long.MAX_VALUE)
-        val badArguments = longs(java.lang.Long.MIN_VALUE, inclusiveLowerBound)
-        Tests.runTests<Long>(instance, badArguments, goodArguments)
+        val goodArguments = longs(inclusiveLowerBound, Long.MAX_VALUE)
+        val badArguments = longs(Long.MIN_VALUE, inclusiveLowerBound)
+        Tests.runTests(instance, badArguments, goodArguments)
     }
 
     @Test
     fun testLongLessThan()
     {
         val upperBound = one(longs(-10000L, 100000))
-        val instance = NumberAssertions.lessThan(upperBound)
+        val instance = lessThan(upperBound)
 
         Tests.checkForNullCase(instance)
 
-        var badNumbers = { upperBound + one(longs(0, 10000L)) }
-        val goodNumbers = { upperBound - one(smallPositiveLongs()) }
-        Tests.runTests<Long>(instance, badNumbers, goodNumbers)
+        var badNumbers = AlchemyGenerator { upperBound + one(longs(0, 10000L)) }
+        val goodNumbers = AlchemyGenerator { upperBound - one(smallPositiveLongs()) }
+        Tests.runTests(instance, badNumbers, goodNumbers)
 
-        badNumbers = { upperBound }
-        Tests.runTests<Long>(instance, badNumbers, goodNumbers)
+        badNumbers = AlchemyGenerator { upperBound }
+        Tests.runTests(instance, badNumbers, goodNumbers)
     }
 
     @DontRepeat
     @Test
     fun testLongLessThanEdgeCases()
     {
-        assertThrows { NumberAssertions.lessThan(java.lang.Long.MIN_VALUE) }
+        assertThrows { lessThan(Long.MIN_VALUE) }
                 .illegalArgument()
     }
 
@@ -258,24 +262,24 @@ class NumberAssertionsTest
     fun testLongLessThanOrEqualTo()
     {
         val lowerBound = one(longs(-10000L, 100000L))
-        val instance = NumberAssertions.lessThanOrEqualTo(lowerBound)
+        val instance = lessThanOrEqualTo(lowerBound)
         Tests.checkForNullCase(instance)
 
-        val badNumbers = { lowerBound + one(smallPositiveLongs()) }
-        var goodNumbers = { lowerBound - one(longs(0, 1000L)) }
+        val badNumbers = AlchemyGenerator { lowerBound + one(smallPositiveLongs()) }
+        var goodNumbers = AlchemyGenerator { lowerBound - one(longs(0, 1000L)) }
 
-        Tests.runTests<Long>(instance, badNumbers, goodNumbers)
-        goodNumbers = { lowerBound }
-        Tests.runTests<Long>(instance, badNumbers, goodNumbers)
+        Tests.runTests(instance, badNumbers, goodNumbers)
+        goodNumbers = AlchemyGenerator { lowerBound }
+        Tests.runTests(instance, badNumbers, goodNumbers)
     }
 
     @Test
     @Throws(Exception::class)
     fun testNumberBetweenLongs()
     {
-        val min = one(longs(java.lang.Long.MIN_VALUE, java.lang.Long.MAX_VALUE - 10L))
-        val max = one(longs(min, java.lang.Long.MAX_VALUE))
-        val instance = NumberAssertions.numberBetween(min, max)
+        val min = one(longs(Long.MIN_VALUE, Long.MAX_VALUE - 10L))
+        val max = one(longs(min, Long.MAX_VALUE))
+        val instance = numberBetween(min, max)
 
         assertThat<AlchemyAssertion<Long>>(instance, notNullValue())
         Tests.checkForNullCase(instance)
@@ -300,20 +304,20 @@ class NumberAssertionsTest
     @Throws(Exception::class)
     fun testNumberBetweenLongsEdgeCases()
     {
-        val min = one(longs(java.lang.Long.MIN_VALUE, java.lang.Long.MAX_VALUE - 10L))
-        val max = one(longs(min, java.lang.Long.MAX_VALUE))
-        assertThrows { NumberAssertions.numberBetween(max, min) }.illegalArgument()
+        val min = one(longs(Long.MIN_VALUE, Long.MAX_VALUE - 10L))
+        val max = one(longs(min, Long.MAX_VALUE))
+        assertThrows { numberBetween(max, min) }.illegalArgument()
     }
 
     @Test
     fun testPositiveLong()
     {
-        val instance = NumberAssertions.positiveLong()
+        val instance = positiveLong()
         assertThat(instance, notNullValue())
         Tests.checkForNullCase(instance)
 
         val goodNumbers = positiveLongs()
-        val badNumbers = longs(java.lang.Long.MIN_VALUE, 0L)
+        val badNumbers = longs(Long.MIN_VALUE, 0L)
 
         Tests.runTests(instance, badNumbers, goodNumbers)
     }
@@ -321,16 +325,15 @@ class NumberAssertionsTest
     @Test
     fun testNegativeLong()
     {
-        val instance = NumberAssertions.negativeLong()
+        val instance = negativeLong()
         checkThat(instance, notNullValue())
 
-        val negative = one(longs(java.lang.Long.MIN_VALUE, 0))
+        val negative = one(longs(Long.MIN_VALUE, 0))
         instance.check(negative)
 
         val positive = one(positiveLongs())
         assertThrows { instance.check(positive) }.failedAssertion()
-        assertThrows { instance.check(null) }
-                .failedAssertion()
+        assertThrows { instance.check(null) }.failedAssertion()
     }
 
     //==============================
@@ -340,24 +343,24 @@ class NumberAssertionsTest
     fun testDoubleLessThan()
     {
         val upperBound = one(doubles(-10000.0, 100000.0))
-        val instance = NumberAssertions.lessThan(upperBound)
+        val instance = lessThan(upperBound)
 
         Tests.checkForNullCase(instance)
 
-        var badNumbers = { upperBound + one(doubles(0.0, 10000.0)) }
-        val goodNumbers = { upperBound - one(doubles(1.0, 100.0)) }
-        Tests.runTests<Double>(instance, badNumbers, goodNumbers)
+        var badNumbers = AlchemyGenerator { upperBound + one(doubles(0.0, 10000.0)) }
+        val goodNumbers = AlchemyGenerator { upperBound - one(doubles(1.0, 100.0)) }
 
-        badNumbers = { upperBound }
-        Tests.runTests<Double>(instance, badNumbers, goodNumbers)
+        Tests.runTests(instance, badNumbers, goodNumbers)
+
+        badNumbers = AlchemyGenerator { upperBound }
+        Tests.runTests(instance, badNumbers, goodNumbers)
     }
 
     @DontRepeat
     @Test
     fun testDoubleLessThanEdgeCases()
     {
-        assertThrows { NumberAssertions.lessThan(-java.lang.Double.MAX_VALUE) }
-                .illegalArgument()
+        assertThrows { lessThan(-Double.MAX_VALUE) }.illegalArgument()
     }
 
     @Test
@@ -365,37 +368,41 @@ class NumberAssertionsTest
     {
         val upperBound = one(doubles(-10000.0, 100000.0))
         val delta = one(doubles(1.0, 10.0))
-        val instance = NumberAssertions.lessThan(upperBound, delta)
+        val instance = lessThan(upperBound, delta)
 
         Tests.checkForNullCase(instance)
 
-        val badNumbers = doubles(upperBound + delta + 1.0, java.lang.Double.MAX_VALUE)
-        val goodNumbers = doubles(-java.lang.Double.MAX_VALUE, upperBound - delta)
+        val badNumbers = doubles(upperBound + delta + 1.0, Double.MAX_VALUE)
+        val goodNumbers = doubles(-Double.MAX_VALUE, upperBound - delta)
+
         Tests.runTests(instance, badNumbers, goodNumbers)
     }
 
     @Test
     fun testDoubleLessThanOrEqualTo()
     {
-        val upperBound = one(doubles(0.0, java.lang.Double.MAX_VALUE / 2))
-        val instance = NumberAssertions.lessThanOrEqualTo(upperBound)
+        val upperBound = one(doubles(0.0, Double.MAX_VALUE / 2))
+        val instance = lessThanOrEqualTo(upperBound)
         Tests.checkForNullCase(instance)
 
-        val badNumbers = doubles(upperBound + 0.1, java.lang.Double.MAX_VALUE)
-        val goodNumber = doubles(-java.lang.Double.MAX_VALUE, upperBound)
-        Tests.runTests<Double>(instance, badNumbers, goodNumber)
+        val badNumbers = doubles(upperBound + 0.1, Double.MAX_VALUE)
+        val goodNumber = doubles(-Double.MAX_VALUE, upperBound)
+
+        Tests.runTests(instance, badNumbers, goodNumber)
     }
 
     @Test
     fun testDoubleLessThanOrEqualToWithDelta()
     {
-        val upperBound = one(doubles(0.0, java.lang.Double.MAX_VALUE / 2))
+        val upperBound = one(doubles(0.0, Double.MAX_VALUE / 2))
         val delta = one(doubles(1.0, 100.0))
-        val instance = NumberAssertions.lessThanOrEqualTo(upperBound, delta)
+        val instance = lessThanOrEqualTo(upperBound, delta)
+
         Tests.checkForNullCase(instance)
 
-        val badNumbers = doubles(upperBound + delta + 0.1, java.lang.Double.MAX_VALUE)
-        val goodNumber = doubles(-java.lang.Double.MAX_VALUE, upperBound)
+        val badNumbers = doubles(upperBound + delta + 0.1, Double.MAX_VALUE)
+        val goodNumber = doubles(-Double.MAX_VALUE, upperBound)
+
         Tests.runTests(instance, badNumbers, goodNumber)
     }
 
@@ -403,18 +410,20 @@ class NumberAssertionsTest
     fun testDoubleGreaterThan()
     {
         val lowerBound = one(doubles(-100000.0, 100000.0))
-        val instance = NumberAssertions.greaterThan(lowerBound)
+        val instance = greaterThan(lowerBound)
+
         Tests.checkForNullCase(instance)
 
-        val badNumbers = doubles(-java.lang.Double.MAX_VALUE, lowerBound)
-        val goodNumbers = doubles(lowerBound + 0.1, java.lang.Double.MAX_VALUE)
-        Tests.runTests<Double>(instance, badNumbers, goodNumbers)
+        val badNumbers = doubles(-Double.MAX_VALUE, lowerBound)
+        val goodNumbers = doubles(lowerBound + 0.1, Double.MAX_VALUE)
+
+        Tests.runTests(instance, badNumbers, goodNumbers)
     }
 
     @Test
     fun testDoubleGreaterThanEdgeCases()
     {
-        assertThrows { NumberAssertions.greaterThan(java.lang.Double.MAX_VALUE) }
+        assertThrows { greaterThan(Double.MAX_VALUE) }
                 .illegalArgument()
     }
 
@@ -423,11 +432,11 @@ class NumberAssertionsTest
     {
         val lowerBound = one(doubles(-100000.0, 100000.0))
         val delta = one(doubles(1.0, 100.0))
-        val instance = NumberAssertions.greaterThan(lowerBound, delta)
+        val instance = greaterThan(lowerBound, delta)
         Tests.checkForNullCase(instance)
 
-        val badNumbers = doubles(-java.lang.Double.MAX_VALUE, lowerBound - delta)
-        val goodNumbers = doubles(lowerBound, java.lang.Double.MAX_VALUE)
+        val badNumbers = doubles(-Double.MAX_VALUE, lowerBound - delta)
+        val goodNumbers = doubles(lowerBound, Double.MAX_VALUE)
         Tests.runTests(instance, badNumbers, goodNumbers)
     }
 
@@ -437,14 +446,14 @@ class NumberAssertionsTest
     fun testDoubleGreaterThanOrEqualTo()
     {
         val inclusiveLowerBound = one(doubles(-10000.0, 10000.0))
-        val instance = NumberAssertions.greaterThanOrEqualTo(inclusiveLowerBound)
+        val instance = greaterThanOrEqualTo(inclusiveLowerBound)
 
         assertThat<AlchemyAssertion<Double>>(instance, notNullValue())
         Tests.checkForNullCase(instance)
 
-        val goodArguments = doubles(inclusiveLowerBound, java.lang.Double.MAX_VALUE)
-        val badArguments = doubles(-java.lang.Double.MAX_VALUE, inclusiveLowerBound)
-        Tests.runTests<Double>(instance, badArguments, goodArguments)
+        val goodArguments = doubles(inclusiveLowerBound, Double.MAX_VALUE)
+        val badArguments = doubles(-Double.MAX_VALUE, inclusiveLowerBound)
+        Tests.runTests(instance, badArguments, goodArguments)
     }
 
 }
