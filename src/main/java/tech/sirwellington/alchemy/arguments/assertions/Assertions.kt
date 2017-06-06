@@ -54,6 +54,7 @@ internal constructor()
          *
          * @see .nullObject
         </A> */
+        @JvmStatic
         fun <A> notNull(): AlchemyAssertion<A>
         {
             return AlchemyAssertion { reference ->
@@ -75,6 +76,7 @@ internal constructor()
          * @see .notNull
         </A>
          */
+        @JvmStatic
         fun <A> nullObject(): AlchemyAssertion<A>
         {
             return AlchemyAssertion { reference ->
@@ -96,6 +98,7 @@ internal constructor()
          *
          * @return
         </A> */
+        @JvmStatic
         fun <A> sameInstanceAs(@Optional other: Any?): AlchemyAssertion<A>
         {
             return AlchemyAssertion block@ { argument ->
@@ -136,6 +139,7 @@ internal constructor()
          *
          * @return
         </A> */
+        @JvmStatic
         fun <A> instanceOf(classOfExpectedType: Class<*>): AlchemyAssertion<A>
         {
             Checks.Internal.checkNotNull(classOfExpectedType, "class cannot be null")
@@ -161,6 +165,7 @@ internal constructor()
          *
          * @return
         </A> */
+        @JvmStatic
         fun <A> equalTo(@Optional other: A): AlchemyAssertion<A>
         {
             return AlchemyAssertion { argument ->
@@ -189,6 +194,7 @@ internal constructor()
          *
          * @return
         </A> */
+        @JvmStatic
         fun <A> not(@Required assertion: AlchemyAssertion<A>): AlchemyAssertion<A>
         {
             Checks.Internal.checkNotNull(assertion, "missing assertion")
