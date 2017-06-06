@@ -50,7 +50,7 @@ public class JavaCodeTest
         AlchemyAssertion<String> assertion = nonEmptyString();
         assertion.check(string);
 
-        checkThat(string).is(nonEmptyString());
+        checkThat(string).isA(nonEmptyString());
     }
 
     @Test
