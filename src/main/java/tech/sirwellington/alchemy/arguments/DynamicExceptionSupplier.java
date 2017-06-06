@@ -22,6 +22,9 @@ import org.slf4j.LoggerFactory;
 import tech.sirwellington.alchemy.annotations.access.Internal;
 import tech.sirwellington.alchemy.annotations.concurrency.Immutable;
 
+import static tech.sirwellington.alchemy.arguments.Checks.checkNotNull;
+import static tech.sirwellington.alchemy.arguments.Checks.isNullOrEmpty;
+
 /**
  * This class uses an Exception class to dynamically create an appropriate wrapper exception.
  *
@@ -39,7 +42,7 @@ final class DynamicExceptionSupplier<Ex extends Throwable> implements ExceptionM
 
     DynamicExceptionSupplier(Class<Ex> exceptionClass, String overrideMessage)
     {
-        Checks.Internal.checkNotNull(exceptionClass, "missing exceptionClass");
+        checkNotNull(exceptionClass, "missing exceptionClass");
         
         this.exceptionClass = exceptionClass;
         this.overrideMessage = overrideMessage;
@@ -160,17 +163,17 @@ final class DynamicExceptionSupplier<Ex extends Throwable> implements ExceptionM
 
     private boolean haveOnlyAnOverrideMessage(String message, FailedAssertionException cause)
     {
-        return !Checks.Internal.isNullOrEmpty(message) && cause == null;
+        return !isNullOrEmpty(message) && cause == null;
     }
 
     private boolean haveOnlyACause(String message, FailedAssertionException cause)
     {
-        return cause != null && Checks.Internal.isNullOrEmpty(message);
+        return cause != null && isNullOrEmpty(message);
     }
 
     private boolean haveOverrideMessageAndACause(String message, FailedAssertionException cause)
     {
-        return cause != null && !Checks.Internal.isNullOrEmpty(message);
+        return cause != null && !isNullOrEmpty(message);
     }
     
     @Internal

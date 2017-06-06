@@ -103,7 +103,7 @@ public interface AlchemyAssertion<A>
     @Required
     default AlchemyAssertion<A> and(@Required AlchemyAssertion<A> other) throws IllegalArgumentException
     {
-        Checks.Internal.checkNotNull(other, "assertion cannot be null");
+        Checks.Internal.Companion.checkNotNull(other, "assertion cannot be null");
 
         return argument ->
         {
@@ -146,8 +146,8 @@ public interface AlchemyAssertion<A>
      */
     static <T> AlchemyAssertion<T> combine(@Required AlchemyAssertion<T> first, AlchemyAssertion<T>... other)
     {
-        Checks.Internal.checkNotNull(first, "the first AlchemyAssertion cannot be null");
-        Checks.Internal.checkNotNull(other, "null varargs");
+        Checks.Internal.Companion.checkNotNull(first, "the first AlchemyAssertion cannot be null");
+        Checks.Internal.Companion.checkNotNull(other, "null varargs");
 
         return (argument) ->
         {
