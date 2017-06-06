@@ -15,6 +15,8 @@
  */
 package tech.sirwellington.alchemy.arguments
 
+import com.nhaarman.mockito_kotlin.doNothing
+import com.nhaarman.mockito_kotlin.doThrow
 import com.nhaarman.mockito_kotlin.whenever
 import org.hamcrest.Matchers.notNullValue
 import org.junit.Assert.assertThat
@@ -22,19 +24,18 @@ import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.mockito.Mock
-import org.mockito.Mockito.doNothing
-import org.mockito.Mockito.doThrow
 import org.mockito.Mockito.mock
 import org.mockito.Mockito.verify
 import org.mockito.Mockito.verifyZeroInteractions
 import tech.sirwellington.alchemy.arguments.AssertionBuilderImpl.checkThat
-import tech.sirwellington.alchemy.arguments.assertions.alphabeticString
-import tech.sirwellington.alchemy.generator.StringGenerators
-import tech.sirwellington.alchemy.generator.StringGenerators.Companion.alphanumericString
+import tech.sirwellington.alchemy.arguments.assertions.*
+import tech.sirwellington.alchemy.generator.CollectionGenerators
 import tech.sirwellington.alchemy.generator.StringGenerators.Companion.alphabeticString
 import tech.sirwellington.alchemy.generator.one
 import tech.sirwellington.alchemy.test.junit.ThrowableAssertion.assertThrows
 import tech.sirwellington.alchemy.test.junit.runners.AlchemyTestRunner
+import tech.sirwellington.alchemy.test.junit.runners.GenerateString
+import tech.sirwellington.alchemy.test.junit.runners.GenerateString.Type.ALPHABETIC
 import tech.sirwellington.alchemy.test.junit.runners.Repeat
 import java.io.IOException
 import java.sql.SQLException
@@ -50,27 +51,30 @@ class AssertionBuilderImplTest
 {
 
     @Mock
-    private val assertion: AlchemyAssertion<*>
+    private lateinit var assertion: AlchemyAssertion<Any>
 
     @Mock
-    private val exceptionMapper: ExceptionMapper<SQLException>
+    private lateinit var exceptionMapper: ExceptionMapper<SQLException>
 
-    private var argument: String
-    private var arguments: MutableList<String>
+    @GenerateString(ALPHABETIC)
+    private lateinit var argument: String
+    private lateinit var arguments: List<String>
 
-    private var instance: AssertionBuilderImpl<String, FailedAssertionException>
+    @GenerateString
+    private lateinit var errorMessage: String
 
-    private var assertException: FailedAssertionException
+    private lateinit var instance: AssertionBuilderImpl<Any, FailedAssertionException>
+
+    private lateinit var assertException: FailedAssertionException
 
     @Before
     fun setUp()
     {
-        argument = one(alphabeticString())
-        arguments = asList(argument!!)
+        arguments = asList(argument)
 
-        instance = AssertionBuilderImpl.checkThat(arguments)
+        instance = AssertionBuilderImpl.checkThat(arguments.toList())
 
-        assertException = FailedAssertionException(one(StringGenerators.alphabeticString()))
+        assertException = FailedAssertionException(errorMessage)
     }
 
     @Test
@@ -78,41 +82,41 @@ class AssertionBuilderImplTest
     {
         val mockArgument = mock(Any::class.java)
         instance = checkThat(arguments)
-        assertThat<AssertionBuilderImpl<String, FailedAssertionException>>(instance, notNullValue())
+        assertThat(instance, notNullValue())
         verifyZeroInteractions(mockArgument)
 
-        instance = checkThat<String>(null)
-        assertThat<AssertionBuilderImpl<String, FailedAssertionException>>(instance, notNullValue())
+        instance = checkThat(null)
+        assertThat(instance, notNullValue())
     }
 
     @Test
     fun testThrowingWhenExceptionIsNotWrapped()
     {
-        whenever(exceptionMapper!!.apply(assertException))
-                .thenReturn(SQLException(one(alphabeticString())))
+        whenever(exceptionMapper.apply(assertException))
+                .thenReturn(SQLException(errorMessage))
 
         doThrow(assertException)
-                .whenever<AlchemyAssertion>(assertion)
+                .whenever(assertion)
                 .check(argument)
 
-        assertThrows { instance!!.throwing(exceptionMapper).`is`(assertion) }
+        assertThrows { instance.throwing(exceptionMapper).isA(assertion) }
                 .isInstanceOf(SQLException::class.java)
 
         verify(exceptionMapper).apply(assertException)
-        verify<AlchemyAssertion>(assertion).check(argument)
+        verify(assertion).check(argument)
     }
 
     @Test
     fun testThrowingWhenExceptionIsWrapped()
     {
-        whenever(exceptionMapper!!.apply(assertException))
-                .thenReturn(SQLException(one(alphabeticString()), assertException))
+        whenever(exceptionMapper.apply(assertException))
+                .thenReturn(SQLException(errorMessage, assertException))
 
         doThrow(assertException)
-                .whenever<AlchemyAssertion>(assertion)
+                .whenever(assertion)
                 .check(argument)
 
-        assertThrows { instance!!.throwing(exceptionMapper).`is`(assertion) }
+        assertThrows { instance.throwing(exceptionMapper).isA(assertion) }
                 .isInstanceOf(SQLException::class.java)
                 .hasCauseInstanceOf(FailedAssertionException::class.java)
     }
@@ -120,14 +124,14 @@ class AssertionBuilderImplTest
     @Test
     fun testThrowingExceptionClass()
     {
-        whenever(exceptionMapper!!.apply(assertException))
+        whenever(exceptionMapper.apply(assertException))
                 .thenReturn(SQLException())
 
         doThrow(assertException)
-                .whenever<AlchemyAssertion>(assertion)
+                .whenever(assertion)
                 .check(argument)
 
-        assertThrows { instance!!.throwing(SQLException::class.java).`is`(assertion) }
+        assertThrows { instance.throwing(SQLException::class.java).isA(assertion) }
                 .isInstanceOf(SQLException::class.java)
                 .hasCauseInstanceOf(FailedAssertionException::class.java)
     }
@@ -137,12 +141,12 @@ class AssertionBuilderImplTest
     fun testIsWhenAssertionFails()
     {
         doThrow(assertException)
-                .whenever<AlchemyAssertion>(assertion)
+                .whenever(assertion)
                 .check(argument)
 
-        assertThrows { instance!!.`is`(assertion) }
+        assertThrows { instance.isA(assertion) }
                 .failedAssertion()
-                .hasMessage(assertException!!.message)
+                .hasMessage(assertException.message)
     }
 
     @Test
@@ -150,21 +154,21 @@ class AssertionBuilderImplTest
     fun testIsWhenAssertionPasses()
     {
         doNothing()
-                .whenever<AlchemyAssertion>(assertion)
+                .whenever(assertion)
                 .check(argument)
 
-        instance!!.`is`(assertion)
-        verify<AlchemyAssertion>(assertion).check(argument)
+        instance.isA(assertion)
+        verify(assertion).check(argument)
     }
 
     @Test
     fun testIsWhenAssertionThrowsUnexpectedException()
     {
         doThrow(RuntimeException())
-                .whenever<AlchemyAssertion>(assertion)
+                .whenever(assertion)
                 .check(argument)
 
-        assertThrows { instance!!.`is`(assertion) }
+        assertThrows { instance.isA(assertion) }
                 .failedAssertion()
                 .hasCauseInstanceOf(RuntimeException::class.java)
 
@@ -180,11 +184,11 @@ class AssertionBuilderImplTest
                 .whenever(assertion)
                 .check(argument)
 
-        assertThrows { instance!!.`is`(assertion) }
+        assertThrows { instance.isA(assertion) }
                 .failedAssertion()
                 .hasMessage(embeddedExceptionMessage)
 
-        assertThrows { instance!!.usingMessage(overrideMessage).`is`(assertion) }
+        assertThrows { instance.usingMessage(overrideMessage).isA(assertion) }
                 .failedAssertion()
                 .hasMessage(overrideMessage)
 
@@ -193,18 +197,18 @@ class AssertionBuilderImplTest
     @Test
     fun testChecksWithMultipleArguments()
     {
-        arguments = listOf<String>(alphabeticString())
+        val arguments = CollectionGenerators.listOf(alphabeticString()).toMutableList()
         //No Exceptions expected
         AssertionBuilderImpl.checkThat(arguments)
-                .are(StringAssertions.nonEmptyString())
+                .are(nonEmptyString())
 
-        arguments!!.add("")
+        arguments.add("")
         //Test 'is'
-        assertThrows { AssertionBuilderImpl.checkThat(arguments).`is`(StringAssertions.nonEmptyString()) }
+        assertThrows { AssertionBuilderImpl.checkThat(arguments).isA(nonEmptyString()) }
                 .failedAssertion()
 
         //Test 'are' as well
-        assertThrows { AssertionBuilderImpl.checkThat(arguments).are(StringAssertions.nonEmptyString()) }
+        assertThrows { AssertionBuilderImpl.checkThat(arguments).are(nonEmptyString()) }
                 .failedAssertion()
 
     }
@@ -212,16 +216,16 @@ class AssertionBuilderImplTest
     @Test
     fun testOverrideMessagePreservedWithCustomException()
     {
-        doThrow(FailedAssertionException::class.java)
-                .whenever<AlchemyAssertion>(assertion)
+        doThrow(FailedAssertionException::class)
+                .whenever(assertion)
                 .check(argument)
 
         val overrideMessage = one(alphabeticString())
 
-        val newInstance = instance!!.usingMessage(overrideMessage)
+        val newInstance = instance.usingMessage(overrideMessage)
                 .throwing(IOException::class.java)
 
-        assertThrows { newInstance.`is`(assertion) }
+        assertThrows { newInstance.isA(assertion) }
                 .isInstanceOf(IOException::class.java)
                 .hasMessage(overrideMessage)
     }
@@ -229,16 +233,16 @@ class AssertionBuilderImplTest
     @Test
     fun testOverrideMessagePreservedWithCustomExceptionReversed()
     {
-        doThrow(FailedAssertionException::class.java)
-                .whenever<AlchemyAssertion>(assertion)
+        doThrow(FailedAssertionException::class)
+                .whenever(assertion)
                 .check(argument)
 
         val overrideMessage = one(alphabeticString())
 
-        val newInstance = instance!!.throwing(IOException::class.java)
+        val newInstance = instance.throwing(IOException::class.java)
                 .usingMessage(overrideMessage)
 
-        assertThrows { newInstance.`is`(assertion) }
+        assertThrows { newInstance.isA(assertion) }
                 .isInstanceOf(IOException::class.java)
                 .hasMessage(overrideMessage)
     }

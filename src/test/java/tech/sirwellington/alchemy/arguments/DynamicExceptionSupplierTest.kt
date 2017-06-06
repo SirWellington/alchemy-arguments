@@ -15,7 +15,7 @@
  */
 package tech.sirwellington.alchemy.arguments
 
-import org.hamcrest.Matchers.`is`
+import org.hamcrest.Matchers.equalTo
 import org.hamcrest.Matchers.instanceOf
 import org.hamcrest.Matchers.isEmptyOrNullString
 import org.hamcrest.Matchers.not
@@ -27,7 +27,11 @@ import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
 import tech.sirwellington.alchemy.annotations.access.Internal
+import tech.sirwellington.alchemy.generator.StringGenerators
+import tech.sirwellington.alchemy.generator.one
 import tech.sirwellington.alchemy.test.junit.runners.AlchemyTestRunner
+import tech.sirwellington.alchemy.test.junit.runners.GenerateString
+import tech.sirwellington.alchemy.test.junit.runners.GenerateString.Type.ALPHABETIC
 import tech.sirwellington.alchemy.test.junit.runners.Repeat
 
 /**
@@ -39,18 +43,19 @@ import tech.sirwellington.alchemy.test.junit.runners.Repeat
 class DynamicExceptionSupplierTest
 {
 
-    private var exceptionClass: Class<FakeExceptionWithMessage>
-    private var overrideMessage: String
+    private lateinit var exceptionClass: Class<FakeExceptionWithMessage>
 
-    private var instance: DynamicExceptionSupplier<FakeExceptionWithMessage>
+    @GenerateString(ALPHABETIC)
+    private lateinit var overrideMessage: String
 
-    private var assertionException: FailedAssertionException
+    private lateinit var instance: DynamicExceptionSupplier<FakeExceptionWithMessage>
+
+    private lateinit var assertionException: FailedAssertionException
 
     @Before
     fun setUp()
     {
-        overrideMessage = one(alphabeticString())
-        assertionException = FailedAssertionException(one(alphabeticString()))
+        assertionException = FailedAssertionException(one(StringGenerators.alphabeticString()))
         exceptionClass = FakeExceptionWithMessage::class.java
 
         instance = DynamicExceptionSupplier(exceptionClass, overrideMessage)
@@ -63,78 +68,77 @@ class DynamicExceptionSupplierTest
 
         var result = instance.apply(assertionException)
         assertThat(result, notNullValue())
-        assertThat<Throwable>(result.cause, nullValue())
-        assertThat<String>(result.message, isEmptyOrNullString())
+        assertThat(result.cause, nullValue())
+        assertThat(result.message, isEmptyOrNullString())
 
         instance = DynamicExceptionSupplier(FakeException::class.java, overrideMessage)
         result = instance.apply(assertionException)
         assertThat(result, notNullValue())
-        assertThat<String>(result.message, isEmptyOrNullString())
-        assertThat<Throwable>(result.cause, nullValue())
+        assertThat(result.message, isEmptyOrNullString())
+        assertThat(result.cause, nullValue())
     }
 
     @Test
     fun testApplyWithMessage()
     {
-        var result = instance!!.apply(assertionException)
+        var result = instance.apply(assertionException)
         assertThat(result, notNullValue())
-        assertThat<Throwable>(result.cause, nullValue())
-        assertThat<String>(result.message, `is`<String>(overrideMessage))
+        assertThat(result.cause, nullValue())
+        assertThat(result.message, equalTo(overrideMessage))
 
-        result = instance!!.apply(null)
+        result = instance.apply(null)
         assertThat(result, notNullValue())
-        assertThat<Throwable>(result.cause, nullValue())
-        assertThat<String>(result.message, `is`<String>(overrideMessage))
+        assertThat(result.cause, nullValue())
+        assertThat(result.message, equalTo(overrideMessage))
 
         instance = DynamicExceptionSupplier(FakeExceptionWithMessage::class.java, null)
-        result = instance!!.apply(assertionException)
+        result = instance.apply(assertionException)
         assertThat(result, notNullValue())
-        assertThat<Throwable>(result.cause, nullValue())
-        assertThat<String>(result.message, `is`<String>(assertionException!!.message))
+        assertThat(result.cause, nullValue())
+        assertThat(result.message, equalTo(assertionException.message))
 
     }
 
     @Test
     fun testApplyWithCause()
     {
-        var instance: DynamicExceptionSupplier<FakeExceptionWithThrowable>
-        instance = DynamicExceptionSupplier(FakeExceptionWithThrowable::class.java, overrideMessage)
+        var instance = DynamicExceptionSupplier(FakeExceptionWithThrowable::class.java, overrideMessage)
 
         var result = instance.apply(assertionException)
         assertThat(result, notNullValue())
-        assertThat<Throwable>(result.cause, notNullValue())
-        assertThat<Throwable>(result.cause, instanceOf<Any>(FailedAssertionException::class.java))
+        assertThat(result.cause, notNullValue())
+        assertThat(result.cause, instanceOf(FailedAssertionException::class.java))
 
         result = instance.apply(null)
         assertThat(result, notNullValue())
-        assertThat<Throwable>(result.cause, nullValue())
-        assertThat<String>(result.message, isEmptyOrNullString())
+        assertThat(result.cause, nullValue())
+        assertThat(result.message, isEmptyOrNullString())
 
         instance = DynamicExceptionSupplier(FakeExceptionWithThrowable::class.java, null)
 
         result = instance.apply(assertionException)
         assertThat(result, notNullValue())
-        assertThat(result.cause, `is`<FailedAssertionException>(assertionException))
+        assertThat<Throwable>(result.cause, equalTo(assertionException))
 
     }
 
     @Test
     fun testApplyWithMessageAndCause()
     {
-        var instance: DynamicExceptionSupplier<FakeExceptionWithBoth>
-        instance = DynamicExceptionSupplier(FakeExceptionWithBoth::class.java, overrideMessage)
+        var instance = DynamicExceptionSupplier(FakeExceptionWithBoth::class.java, overrideMessage)
 
         var result = instance.apply(assertionException)
         assertThat(result, notNullValue())
-        assertThat<String>(result.message, `is`<String>(overrideMessage))
-        assertThat<Throwable>(result.cause, notNullValue())
-        assertThat<Throwable>(result.cause, instanceOf<Any>(FailedAssertionException::class.java))
+        assertThat(result.message, equalTo(overrideMessage))
+        assertThat(result.cause, notNullValue())
+        assertThat(result.cause, instanceOf(FailedAssertionException::class.java))
 
         instance = DynamicExceptionSupplier(FakeExceptionWithBoth::class.java, null)
+
         result = instance.apply(assertionException)
         assertThat(result, notNullValue())
-        assertThat<Throwable>(result.cause, notNullValue())
-        assertThat<Throwable>(result.cause, instanceOf<Any>(FailedAssertionException::class.java))
+        assertThat(result.cause, notNullValue())
+        assertThat(result.cause, instanceOf(FailedAssertionException::class.java))
 
     }
 
@@ -142,24 +146,22 @@ class DynamicExceptionSupplierTest
     @Throws(Exception::class)
     fun testApplyWithCauseButNoMessageConstructor()
     {
-        val expectedMessage = assertionException!!.message
+        val expectedMessage = assertionException.message
 
-        val instance: DynamicExceptionSupplier<FakeExceptionWithMessage>
-        instance = DynamicExceptionSupplier(FakeExceptionWithMessage::class.java, "")
+        val instance = DynamicExceptionSupplier(FakeExceptionWithMessage::class.java, "")
 
         val result = instance.apply(assertionException)
 
         assertThat(result, notNullValue())
-        assertThat<String>(result.message, `is`<String>(expectedMessage))
-        assertThat<Throwable>(result.cause, nullValue())
+        assertThat(result.message, equalTo(expectedMessage))
+        assertThat(result.cause, nullValue())
     }
 
     @Test
     @Throws(Exception::class)
     fun testWhenInvocationFails()
     {
-        val instance: DynamicExceptionSupplier<FakeExceptionThatThrowsOnConstruct>
-        instance = DynamicExceptionSupplier(FakeExceptionThatThrowsOnConstruct::class.java, overrideMessage)
+        val instance = DynamicExceptionSupplier(FakeExceptionThatThrowsOnConstruct::class.java, overrideMessage)
 
         val result = instance.apply(assertionException)
         assertThat(result, nullValue())
@@ -168,15 +170,15 @@ class DynamicExceptionSupplierTest
     @Test
     fun testGetExceptionClass()
     {
-        val result = instance!!.exceptionClass
-        assertThat(result, `is`(sameInstance<Class<FakeExceptionWithMessage>>(exceptionClass)))
+        val result = instance.exceptionClass
+        assertThat<Any>(result, equalTo(sameInstance(exceptionClass)))
     }
 
     @Test
     fun testToString()
     {
-        assertThat(instance!!.toString(), notNullValue())
-        assertThat(instance!!.toString(), not(isEmptyOrNullString()))
+        assertThat(instance.toString(), notNullValue())
+        assertThat(instance.toString(), not(isEmptyOrNullString()))
 
     }
 

@@ -81,14 +81,14 @@ internal fun checkThat(predicate: Boolean, message: String = "")
 
 @Throws(IllegalArgumentException::class)
 @Internal
-internal fun checkNotNullOrEmpty(string: String)
+internal fun checkNotNullOrEmpty(string: String?)
 {
     checkThat(!isNullOrEmpty(string))
 }
 
 @Throws(IllegalArgumentException::class)
 @Internal
-internal fun checkNotNullOrEmpty(string: String, message: String)
+internal fun checkNotNullOrEmpty(string: String?, message: String)
 {
     checkThat(!isNullOrEmpty(string), message)
 }
@@ -117,9 +117,9 @@ internal fun isNull(@Optional `object`: Any?): Boolean
  * @return true if object is not null, false if it is.
  */
 @Internal
-internal fun notNull(@Optional `object`: Any): Boolean
+internal fun notNull(@Optional reference: Any?): Boolean
 {
-    return !isNull(`object`)
+    return !isNull(reference)
 }
 
 /**
@@ -130,9 +130,9 @@ internal fun notNull(@Optional `object`: Any): Boolean
  * @return true if any of the argument objects are null, false otherwise.
  */
 @Internal
-internal fun anyAreNull(vararg objects: Any): Boolean
+internal fun anyAreNull(vararg objects: Any?): Boolean
 {
-    if (isNull(objects) || objects.size == 0)
+    if (isNull(objects) || objects.isEmpty())
     {
         return true
     }
@@ -156,7 +156,7 @@ internal fun anyAreNull(vararg objects: Any): Boolean
  * @return true if all the argument objects are null, false otherwise.
  */
 @Internal
-internal fun allAreNull(vararg objects: Any): Boolean
+internal fun allAreNull(vararg objects: Any?): Boolean
 {
     if (isNull(objects))
     {
@@ -184,7 +184,7 @@ internal fun allAreNull(vararg objects: Any): Boolean
  * @see isNullOrEmpty
  */
 @Internal
-internal fun notNullOrEmpty(@Optional string: String): Boolean
+internal fun notNullOrEmpty(@Optional string: String?): Boolean
 {
     return !isNullOrEmpty(string)
 }
@@ -201,7 +201,7 @@ internal fun notNullOrEmpty(@Optional string: String): Boolean
  * @see allAreNullOrEmpty
  */
 @Internal
-internal fun anyAreNullOrEmpty(@Optional vararg strings: String): Boolean
+internal fun anyAreNullOrEmpty(@Optional vararg strings: String?): Boolean
 {
     if (isNull(strings))
     {
@@ -230,7 +230,7 @@ internal fun anyAreNullOrEmpty(@Optional vararg strings: String): Boolean
  * @see anyAreNullOrEmpty
  */
 @Internal
-internal fun allAreNullOrEmpty(@Optional vararg strings: String): Boolean
+internal fun allAreNullOrEmpty(@Optional vararg strings: String?): Boolean
 {
     if (isNull(strings))
     {

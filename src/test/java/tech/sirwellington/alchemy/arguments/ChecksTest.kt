@@ -16,7 +16,7 @@
 
 package tech.sirwellington.alchemy.arguments
 
-import org.hamcrest.Matchers.`is`
+import org.hamcrest.Matchers.equalTo
 import org.junit.Assert.assertFalse
 import org.junit.Assert.assertThat
 import org.junit.Assert.assertTrue
@@ -24,11 +24,17 @@ import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
 import tech.sirwellington.alchemy.generator.AlchemyGenerator
+import tech.sirwellington.alchemy.generator.CollectionGenerators
+import tech.sirwellington.alchemy.generator.NumberGenerators
+import tech.sirwellington.alchemy.generator.StringGenerators
+import tech.sirwellington.alchemy.generator.one
 import tech.sirwellington.alchemy.test.junit.ThrowableAssertion.assertThrows
 import tech.sirwellington.alchemy.test.junit.runners.AlchemyTestRunner
 import tech.sirwellington.alchemy.test.junit.runners.DontRepeat
+import tech.sirwellington.alchemy.test.junit.runners.GenerateString
+import tech.sirwellington.alchemy.test.junit.runners.GenerateString.Type.ALPHABETIC
 import tech.sirwellington.alchemy.test.junit.runners.Repeat
-import java.util.*
+import java.util.Collections
 
 /**
 
@@ -39,53 +45,45 @@ import java.util.*
 class ChecksTest
 {
 
-    private var strings: AlchemyGenerator<String>
+    private lateinit var strings: AlchemyGenerator<String>
 
-    private var string: String
-    private var `object`: Any
-    private var varArgs: Array<String>
+    private lateinit var string: String
+    private lateinit var `object`: Any
+    private lateinit var varArgs: Array<String>
+
+    @GenerateString(ALPHABETIC)
+    private lateinit var message: String
 
     @Before
     fun setUp()
     {
-        strings = alphanumericString()
+        strings = StringGenerators.alphanumericString()
         string = one(strings)
         `object` = one(strings)
 
-        val listOfStrings = listOf<String>(strings)
+        val listOfStrings = CollectionGenerators.listOf(strings)
         varArgs = listOfStrings.toTypedArray()
     }
 
-    @DontRepeat
-    @Test
-    fun testCannotInstantiate()
-    {
-        assertThrows { Checks::class.java.newInstance() }
-                .isInstanceOf(IllegalAccessException::class.java)
-
-        assertThrows { Checks.Internal::class.java.newInstance() }
-                .isInstanceOf(IllegalAccessException::class.java)
-    }
 
     @DontRepeat
     @Test
     fun testCheckNotNull()
     {
-        Checks.Internal.checkNotNull("")
-        Checks.Internal.checkNotNull(this)
+        checkNotNull("")
+        checkNotNull(this)
 
-        assertThrows { Checks.Internal.checkNotNull(null) }
+        assertThrows { checkNotNull(null) }
                 .isInstanceOf(IllegalArgumentException::class.java)
     }
 
     @Test
     fun testCheckNotNullWithMessage()
     {
-        val message = one(alphabeticString())
-        Checks.Internal.checkNotNull("", message)
-        Checks.Internal.checkNotNull(this, message)
+        checkNotNull("", message)
+        checkNotNull(this, message)
 
-        assertThrows { Checks.Internal.checkNotNull(null, message) }
+        assertThrows { checkNotNull(null, message) }
                 .isInstanceOf(IllegalArgumentException::class.java)
                 .hasMessage(message)
     }
@@ -93,20 +91,18 @@ class ChecksTest
     @Test
     fun testCheckThat()
     {
-        Checks.Internal.checkThat(true)
+        checkThat(true)
 
-        assertThrows { Checks.Internal.checkThat(false) }
+        assertThrows { checkThat(false) }
                 .isInstanceOf(IllegalArgumentException::class.java)
     }
 
     @Test
     fun testCheckThatWithMessage()
     {
-        val message = one(alphabeticString())
+        checkThat(true, message)
 
-        Checks.Internal.checkThat(true, message)
-
-        assertThrows { Checks.Internal.checkThat(false, message) }
+        assertThrows { checkThat(false, message) }
                 .isInstanceOf(IllegalArgumentException::class.java)
                 .hasMessage(message)
     }
@@ -114,10 +110,9 @@ class ChecksTest
     @Test
     fun testCheckState()
     {
-        val message = one(alphabeticString())
-        Checks.Internal.checkState(true, message)
+        checkState(true, message)
 
-        assertThrows { Checks.Internal.checkState(false, message) }
+        assertThrows { checkState(false, message) }
                 .isInstanceOf(IllegalStateException::class.java)
                 .hasMessage(message)
     }
@@ -125,55 +120,54 @@ class ChecksTest
     @Test
     fun testIsNullOrEmptyString()
     {
-        assertThat(Checks.Internal.isNullOrEmpty(null as String?), `is`(true))
-        assertThat(Checks.Internal.isNullOrEmpty(""), `is`(true))
-        assertThat(Checks.Internal.isNullOrEmpty(" "), `is`(false))
+        assertThat(isNullOrEmpty(null as String?), equalTo(true))
+        assertThat(isNullOrEmpty(""), equalTo(true))
+        assertThat(isNullOrEmpty(" "), equalTo(false))
 
-        val string = one(alphabeticString())
-        assertThat(Checks.Internal.isNullOrEmpty(string), `is`(false))
+        assertThat(isNullOrEmpty(string), equalTo(false))
     }
 
     @Test
     fun testIsNullOrEmptyCollection()
     {
-        assertThat(Checks.Internal.isNullOrEmpty(Collections.EMPTY_LIST), `is`(true))
-        assertThat(Checks.Internal.isNullOrEmpty(Collections.EMPTY_SET), `is`(true))
-        assertThat(Checks.Internal.isNullOrEmpty(null as Collection<*>?), `is`(true))
+        assertThat(isNullOrEmpty(Collections.EMPTY_LIST), equalTo(true))
+        assertThat(isNullOrEmpty(Collections.EMPTY_SET), equalTo(true))
+        assertThat(isNullOrEmpty(null as Collection<*>?), equalTo(true))
 
-        val numbers = listOf<Int>(positiveIntegers())
-        val strings = listOf<String>(strings(10))
+        val numbers = CollectionGenerators.listOf(NumberGenerators.positiveIntegers())
+        val strings = CollectionGenerators.listOf(StringGenerators.strings(10))
 
-        assertThat(Checks.Internal.isNullOrEmpty(numbers), `is`(false))
-        assertThat(Checks.Internal.isNullOrEmpty(strings), `is`(false))
+        assertThat(isNullOrEmpty(numbers), equalTo(false))
+        assertThat(isNullOrEmpty(strings), equalTo(false))
     }
 
     @Test
     fun testCheckNotNullOrEmpty()
     {
-        val string = one(strings())
-        Checks.Internal.checkNotNullOrEmpty(string)
+        val string = one(strings)
+        checkNotNullOrEmpty(string)
 
         val emptyString = ""
-        assertThrows { Checks.Internal.checkNotNullOrEmpty(emptyString) }
+        assertThrows { checkNotNullOrEmpty(emptyString) }
                 .isInstanceOf(IllegalArgumentException::class.java)
 
-        val nullString: String
-        assertThrows { Checks.Internal.checkNotNullOrEmpty(nullString) }
+        val nullString: String? = null
+
+        assertThrows { checkNotNullOrEmpty(nullString) }
                 .isInstanceOf(IllegalArgumentException::class.java)
     }
 
     @Test
     fun testCheckNotNullOrEmptyWithMessage()
     {
-        val string = one(strings())
-        val message = one(alphabeticString())
-        Checks.Internal.checkNotNullOrEmpty(string, message)
+        val string = one(strings)
+        checkNotNullOrEmpty(string, message)
 
-        assertThrows { Checks.Internal.checkNotNullOrEmpty("", message) }
+        assertThrows { checkNotNullOrEmpty("", message) }
                 .isInstanceOf(IllegalArgumentException::class.java)
                 .hasMessage(message)
 
-        assertThrows { Checks.Internal.checkNotNullOrEmpty(null, message) }
+        assertThrows { checkNotNullOrEmpty(null, message) }
                 .isInstanceOf(IllegalArgumentException::class.java)
                 .hasMessage(message)
 
@@ -182,91 +176,91 @@ class ChecksTest
     @Test
     fun testIsNull()
     {
-        assertTrue(Checks.isNull(null))
-        assertFalse(Checks.isNull(string))
-        assertFalse(Checks.isNull(`object`))
+        assertTrue(isNull(null))
+        assertFalse(isNull(string))
+        assertFalse(isNull(`object`))
     }
 
     @Test
     fun testNotNull()
     {
-        assertTrue(Checks.notNull(`object`))
-        assertTrue(Checks.notNull(string))
-        assertFalse(Checks.notNull(null))
+        assertTrue(notNull(`object`))
+        assertTrue(notNull(string))
+        assertFalse(notNull(null))
     }
 
     @Test
     fun testAnyAreNull()
     {
-        assertTrue(Checks.anyAreNull())
-        assertTrue(Checks.anyAreNull(null as Any?))
-        assertTrue(Checks.anyAreNull(string, null))
-        assertTrue(Checks.anyAreNull(one(strings), one(strings), null))
+        assertTrue(anyAreNull())
+        assertTrue(anyAreNull(null as Any?))
+        assertTrue(anyAreNull(string, null))
+        assertTrue(anyAreNull(one(strings), one(strings), null))
 
-        assertFalse(Checks.anyAreNull(varArgs as Any?))
-        assertFalse(Checks.anyAreNull(varArgs!![0], varArgs!![1], varArgs!![2]))
+        assertFalse(anyAreNull(varArgs as Any?))
+        assertFalse(anyAreNull(varArgs[0], varArgs[1], varArgs[2]))
 
     }
 
     @Test
     fun testAllAreNull()
     {
-        assertTrue(Checks.allAreNull())
-        assertTrue(Checks.allAreNull(null as Any?))
-        assertTrue(Checks.allAreNull(null, null))
-        assertTrue(Checks.allAreNull(null, null, null))
+        assertTrue(allAreNull())
+        assertTrue(allAreNull(null as Any?))
+        assertTrue(allAreNull(null, null))
+        assertTrue(allAreNull(null, null, null))
 
-        assertFalse(Checks.allAreNull(varArgs as Any?))
-        assertFalse(Checks.allAreNull(null, string))
-        assertFalse(Checks.allAreNull(null, string, string))
-        assertFalse(Checks.allAreNull(null, string, string, `object`))
+        assertFalse(allAreNull(varArgs as Any?))
+        assertFalse(allAreNull(null, string))
+        assertFalse(allAreNull(null, string, string))
+        assertFalse(allAreNull(null, string, string, `object`))
     }
 
     @Test
     fun testIsNullOrEmpty()
     {
-        assertTrue(Checks.isNullOrEmpty(""))
-        assertTrue(Checks.isNullOrEmpty(null))
+        assertTrue(isNullOrEmpty(""))
+        assertTrue(isNullOrEmpty(null as String?))
 
-        assertFalse(Checks.isNullOrEmpty(string))
+        assertFalse(isNullOrEmpty(string))
     }
 
     @Test
     fun testNotNullOrEmpty()
     {
-        assertTrue(Checks.notNullOrEmpty(string))
+        assertTrue(notNullOrEmpty(string))
 
-        assertFalse(Checks.notNullOrEmpty(null))
-        assertFalse(Checks.notNullOrEmpty(""))
+        assertFalse(notNullOrEmpty(null as String?))
+        assertFalse(notNullOrEmpty(""))
     }
 
     @Test
     fun testAnyAreNullOrEmpty()
     {
-        assertTrue(Checks.anyAreNullOrEmpty(string, null))
-        assertTrue(Checks.anyAreNullOrEmpty(null, string, string))
-        assertTrue(Checks.anyAreNullOrEmpty(null, string, one(strings)))
-        assertTrue(Checks.anyAreNullOrEmpty(null, null, null))
+        assertTrue(anyAreNullOrEmpty(string, null))
+        assertTrue(anyAreNullOrEmpty(null, string, string))
+        assertTrue(anyAreNullOrEmpty(null, string, one(strings)))
+        assertTrue(anyAreNullOrEmpty(null, null, null))
 
-        assertFalse(Checks.anyAreNullOrEmpty(*varArgs))
-        assertFalse(Checks.anyAreNullOrEmpty(string, string, string))
+        assertFalse(anyAreNullOrEmpty(*varArgs))
+        assertFalse(anyAreNullOrEmpty(string, string, string))
     }
 
     @Test
     fun testAllAreNullOrEmpty()
     {
-        assertTrue(Checks.allAreNullOrEmpty())
-        assertTrue(Checks.allAreNullOrEmpty(""))
-        assertTrue(Checks.allAreNullOrEmpty("", ""))
-        assertTrue(Checks.allAreNullOrEmpty("", "", null))
-        assertTrue(Checks.allAreNullOrEmpty(null as String?))
-        assertTrue(Checks.allAreNullOrEmpty(null, null, null))
-        assertTrue(Checks.allAreNullOrEmpty(null, null, null, ""))
+        assertTrue(allAreNullOrEmpty())
+        assertTrue(allAreNullOrEmpty(""))
+        assertTrue(allAreNullOrEmpty("", ""))
+        assertTrue(allAreNullOrEmpty("", "", null))
+        assertTrue(allAreNullOrEmpty(null as String?))
+        assertTrue(allAreNullOrEmpty(null, null, null))
+        assertTrue(allAreNullOrEmpty(null, null, null, ""))
 
-        assertFalse(Checks.allAreNullOrEmpty(string, null))
-        assertFalse(Checks.allAreNullOrEmpty(string, ""))
-        assertFalse(Checks.allAreNullOrEmpty(string, string, string, string, ""))
-        assertFalse(Checks.allAreNullOrEmpty(string, string, string, `object`!!.toString(), ""))
+        assertFalse(allAreNullOrEmpty(string, null))
+        assertFalse(allAreNullOrEmpty(string, ""))
+        assertFalse(allAreNullOrEmpty(string, string, string, string, ""))
+        assertFalse(allAreNullOrEmpty(string, string, string, `object`.toString(), ""))
     }
 
 }

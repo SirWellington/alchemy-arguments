@@ -36,12 +36,12 @@ import static tech.sirwellington.alchemy.annotations.designs.patterns.StrategyPa
  * 
  * </pre>
  * 
- * @param <A> The type of argument an assertion checks
+ * @param <Argument> The type of argument an assertion checks
  *
  * @author SirWellington
  */
 @StrategyPattern(role = INTERFACE)
-public interface AlchemyAssertion<A>
+public interface AlchemyAssertion<Argument>
 {
 
     /**
@@ -54,6 +54,6 @@ public interface AlchemyAssertion<A>
      *                                  {@link IllegalArgumentException}, allowing you to write a {@code catch} clause for
      *                                  {@code IllegalArgumentException}.
      */
-    void check(@Optional A argument) throws FailedAssertionException;
+    void check(@Optional Argument argument) throws FailedAssertionException;
 
 }

@@ -15,6 +15,7 @@
  */
 package tech.sirwellington.alchemy.arguments
 
+import com.nhaarman.mockito_kotlin.spy
 import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -22,11 +23,14 @@ import org.mockito.Mockito.never
 import org.mockito.Mockito.spy
 import org.mockito.Mockito.verify
 import org.mockito.Spy
-import tech.sirwellington.alchemy.arguments.assertions.alphabeticString
-import tech.sirwellington.alchemy.arguments.assertions.and
+import tech.sirwellington.alchemy.arguments.assertions.*
+import tech.sirwellington.alchemy.generator.AlchemyGenerator
+import tech.sirwellington.alchemy.generator.CollectionGenerators
+import tech.sirwellington.alchemy.generator.StringGenerators
 import tech.sirwellington.alchemy.generator.one
 import tech.sirwellington.alchemy.test.junit.ThrowableAssertion.assertThrows
 import tech.sirwellington.alchemy.test.junit.runners.AlchemyTestRunner
+import tech.sirwellington.alchemy.test.junit.runners.GenerateString
 import java.util.Arrays.asList
 
 /**
@@ -38,19 +42,20 @@ class AlchemyAssertionTest
 {
 
     @Spy
-    private val first: FakeAssertion<Any>
+    private lateinit var first: FakeAssertion<Any>
 
-    private var otherAssertions: Array<FakeAssertion<*>>
+    private lateinit var otherAssertions: Array<FakeAssertion<Any>>
 
-    private var argument: Any
+    @GenerateString
+    private lateinit var argument: String
 
     @Before
     fun setUp()
     {
-        val assertions = listOf<FakeAssertion<Any>>({ spy(FakeAssertion<*>::class.java) })
+        val generator = AlchemyGenerator { spy<FakeAssertion<Any>>() }
+        val assertions = CollectionGenerators.listOf(generator)
 
-        otherAssertions = assertions.toTypedArray<FakeAssertion<*>>()
-        argument = one(alphabeticString())
+        otherAssertions = assertions.toTypedArray()
     }
 
     @Test
@@ -58,52 +63,51 @@ class AlchemyAssertionTest
     {
         var assertion: AlchemyAssertion<Any> = first
 
-        for (element in otherAssertions!!)
+        for (element in otherAssertions)
         {
             assertion = assertion.and(element)
         }
 
         assertion.check(argument)
         verify<FakeAssertion<Any>>(first).check(argument)
-        asList<FakeAssertion>(*otherAssertions!!).forEach { a -> verify<FakeAssertion>(a).check(argument) }
+        asList(*otherAssertions).forEach { a -> verify(a).check(argument) }
     }
 
     @Test
     fun testOtherWithBadArgs()
     {
-        assertThrows { first!!.and(null) }
+        assertThrows { first.and(null!!) }
     }
 
     @Test
     fun testCombineWithMultiple()
     {
-        val multipleAssertions = AlchemyAssertion.combine<Any>(first, *otherAssertions)
+        val multipleAssertions = combine(first, *otherAssertions)
 
         multipleAssertions.check(argument)
 
         verify<FakeAssertion<Any>>(first).check(argument)
 
-        asList<FakeAssertion>(*otherAssertions!!)
-                .forEach { a -> verify<FakeAssertion>(a).check(argument) }
+        asList(*otherAssertions)
+                .forEach { a -> verify(a).check(argument) }
     }
 
     @Test
     fun testCombineWithMultipleWithBadArgs()
     {
-        assertThrows { AlchemyAssertion.combine(null, *null as Array<AlchemyAssertion<*>>?) }
-        assertThrows { AlchemyAssertion.combine<Any>(first, *null as Array<AlchemyAssertion<*>>?) }
+        assertThrows { combine(null!!, this.first) }
 
     }
 
     @Test
     fun testCombineWithSingle()
     {
-        val multipleAssertions = AlchemyAssertion.combine(first)
+        val multipleAssertions = combine(first)
         multipleAssertions.check(argument)
 
         verify<FakeAssertion<Any>>(first).check(argument)
-        asList<FakeAssertion>(*otherAssertions!!)
-                .forEach { a -> verify<FakeAssertion>(a, never()).check(argument) }
+        asList(*otherAssertions)
+                .forEach { a -> verify(a, never()).check(argument) }
     }
 
     internal class FakeAssertion<T> : AlchemyAssertion<T>

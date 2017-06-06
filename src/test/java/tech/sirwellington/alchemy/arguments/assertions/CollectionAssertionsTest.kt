@@ -70,7 +70,7 @@ class CollectionAssertionsTest
         instance.check(strings as Collection<String>)
 
         assertThrows { instance.check(null) }.failedAssertion()
-        assertThrows { instance.check(emptySet()) }.failedAssertion()
+        assertThrows { instance.check(emptySet<String>()) }.failedAssertion()
 
     }
 

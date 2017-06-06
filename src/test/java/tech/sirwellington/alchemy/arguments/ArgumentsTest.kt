@@ -20,8 +20,9 @@ import org.junit.Assert.assertThat
 import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
-import tech.sirwellington.alchemy.arguments.assertions.StringAssertions
-import tech.sirwellington.alchemy.arguments.assertions.alphabeticString
+import tech.sirwellington.alchemy.arguments.assertions.*
+import tech.sirwellington.alchemy.generator.CollectionGenerators
+import tech.sirwellington.alchemy.generator.StringGenerators
 import tech.sirwellington.alchemy.generator.one
 import tech.sirwellington.alchemy.test.junit.ThrowableAssertion.assertThrows
 import tech.sirwellington.alchemy.test.junit.runners.AlchemyTestRunner
@@ -37,12 +38,12 @@ import tech.sirwellington.alchemy.test.junit.runners.Repeat
 class ArgumentsTest
 {
 
-    private var argument: String
+    private lateinit var argument: String
 
     @Before
     fun setUp()
     {
-        argument = one(alphabeticString())
+        argument = one(StringGenerators.alphabeticString())
     }
 
     @DontRepeat
@@ -56,30 +57,30 @@ class ArgumentsTest
     fun testCheckThat()
     {
         val instance = Arguments.checkThat<String>(argument)
-        assertThat<AssertionBuilder<Any, FailedAssertionException>>(instance, notNullValue())
+        assertThat(instance, notNullValue())
     }
 
     @Test
     fun testCheckThatWithMultipleArguments()
     {
-        val strings = listOf<String>(alphabeticString(), 30)
+        val strings = CollectionGenerators.listOf(StringGenerators.alphabeticString(), 30)
         val stringArray = strings.toTypedArray()
 
-        var instance = Arguments.checkThat<String>(argument, *stringArray)
+        var instance = Arguments.checkThat(argument, *stringArray)
         assertThat(instance, notNullValue())
-        instance.are(StringAssertions.nonEmptyString())
+        instance.are(nonEmptyString())
 
-        instance = Arguments.checkThat<String>(argument, *arrayOfNulls<String>(0))
+        instance = Arguments.checkThat<String>(argument, *arrayOfNulls(0))
         assertThat(instance, notNullValue())
-        instance.are(StringAssertions.nonEmptyString())
+        instance.are(nonEmptyString())
     }
 
     @Test
     fun testCheckThatWithMultipleArgumentsWithFailure()
     {
-        val instance = Arguments.checkThat<String>(argument, *arrayOfNulls<String>(1))
+        val instance = Arguments.checkThat<String>(argument, *arrayOfNulls(1))
         assertThat(instance, notNullValue())
-        assertThrows { instance.are(StringAssertions.nonEmptyString()) }
+        assertThrows { instance.are(nonEmptyString()) }
                 .failedAssertion()
     }
 
