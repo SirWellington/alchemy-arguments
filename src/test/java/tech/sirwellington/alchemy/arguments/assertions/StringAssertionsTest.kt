@@ -34,7 +34,8 @@ import tech.sirwellington.alchemy.generator.NumberGenerators.Companion.negativeI
 import tech.sirwellington.alchemy.generator.NumberGenerators.Companion.positiveIntegers
 import tech.sirwellington.alchemy.generator.NumberGenerators.Companion.smallPositiveIntegers
 import tech.sirwellington.alchemy.generator.StringGenerators
-import tech.sirwellington.alchemy.generator.StringGenerators.Companion.alphabeticString
+import tech.sirwellington.alchemy.generator.StringGenerators.Companion.alphabeticStrings
+import tech.sirwellington.alchemy.generator.StringGenerators.Companion.alphanumericStrings
 import tech.sirwellington.alchemy.generator.StringGenerators.Companion.strings
 import tech.sirwellington.alchemy.generator.StringGenerators.Companion.stringsFromFixedList
 import tech.sirwellington.alchemy.generator.one
@@ -63,7 +64,7 @@ class StringAssertionsTest
     {
         val instance = emptyString()
 
-        val badArguments = alphabeticString()
+        val badArguments = alphabeticStrings()
         val goodArguments = stringsFromFixedList("", "")
 
         Tests.runTests(instance, badArguments, goodArguments)
@@ -78,12 +79,12 @@ class StringAssertionsTest
 
         var badArguments = AlchemyGenerator<String> {
             val length = one(integers(1, minAccepted))
-            one(alphabeticString(length))
+            one(alphabeticStrings(length))
         }
 
         val goodArguments = AlchemyGenerator<String> {
             val length = minAccepted + one(smallPositiveIntegers())
-            one(alphabeticString(length))
+            one(alphabeticStrings(length))
         }
 
         Tests.runTests(instance, badArguments, goodArguments)
@@ -133,11 +134,11 @@ class StringAssertionsTest
     @Test
     fun testStringThatMatches()
     {
-        val letter = one(alphabeticString()).substring(0, 1)
+        val letter = one(alphabeticStrings()).substring(0, 1)
         val pattern = Pattern.compile(".*$letter.*")
         val instance = stringThatMatches(pattern)
-        val badArguments = AlchemyGenerator { alphabeticString().get().replace(letter.toRegex(), "") }
-        val goodArguments = AlchemyGenerator { alphabeticString().get() + letter }
+        val badArguments = AlchemyGenerator { alphabeticStrings().get().replace(letter.toRegex(), "") }
+        val goodArguments = AlchemyGenerator { alphabeticStrings().get() + letter }
         Tests.runTests(instance, badArguments, goodArguments)
     }
 
@@ -154,7 +155,7 @@ class StringAssertionsTest
         val instance = nonEmptyString()
         assertThat(instance, notNullValue())
 
-        val arg = one(alphabeticString())
+        val arg = one(alphabeticStrings())
         instance.check(arg)
 
         assertThrows { instance.check("") }.failedAssertion()
@@ -173,10 +174,10 @@ class StringAssertionsTest
         assertThat(instance, notNullValue())
         Tests.checkForNullCase(instance)
 
-        val arg = one(alphabeticString(expectedLength))
+        val arg = one(alphabeticStrings(expectedLength))
         instance.check(arg)
 
-        val tooShort = one(alphabeticString(expectedLength - 1))
+        val tooShort = one(alphabeticStrings(expectedLength - 1))
         assertThrows { instance.check(tooShort) }.failedAssertion()
 
         val tooLong = one(strings(expectedLength + 1))
@@ -261,13 +262,13 @@ class StringAssertionsTest
         assertThat(instance, notNullValue())
         Tests.checkForNullCase(instance)
 
-        val goodString = alphabeticString()
+        val goodStrings = alphabeticStrings()
 
         val badStrings = AlchemyGenerator {
-            one(goodString) + one(stringsFromFixedList(" ", "\n", "\t")) + one(goodString)
+            one(goodStrings) + one(stringsFromFixedList(" ", "\n", "\t")) + one(goodStrings)
         }
 
-        Tests.runTests(instance, badStrings, goodString)
+        Tests.runTests(instance, badStrings, goodStrings)
     }
 
     @Test
@@ -372,7 +373,7 @@ class StringAssertionsTest
     @Test
     fun testAllUpperCaseString()
     {
-        val allUpperCase = one(alphabeticString(50)).toUpperCase()
+        val allUpperCase = one(alphabeticStrings(50)).toUpperCase()
 
         val oneLowerCaseCharacter = lowerCasedRandomCharacter(allUpperCase)
 
@@ -398,7 +399,7 @@ class StringAssertionsTest
     @Test
     fun testAllLowerCaseString()
     {
-        val allLowerCase = one(alphabeticString(50)).toLowerCase()
+        val allLowerCase = one(alphabeticStrings(50)).toLowerCase()
         val oneUpperCaseCharacter = upperCaseRandomCharacter(allLowerCase)
 
         val instance = allLowerCaseString()
@@ -453,7 +454,7 @@ class StringAssertionsTest
         val instance = tech.sirwellington.alchemy.arguments.assertions.alphabeticString()
         checkThat(instance, notNullValue())
 
-        val alphabetic = one(alphabeticString())
+        val alphabetic = one(alphabeticStrings())
         instance.check(alphabetic)
 
         assertThrows { instance.check("") }.failedAssertion()
@@ -468,7 +469,7 @@ class StringAssertionsTest
         val instance = alphanumericString()
         checkThat(instance, notNullValue())
 
-        val alphanumeric = one(StringGenerators.alphanumericString())
+        val alphanumeric = one(StringGenerators.alphanumericStrings())
         instance.check(alphanumeric)
 
         val specialCharacters = alphanumeric + one(strings()) + "-!%$"
@@ -506,7 +507,7 @@ class StringAssertionsTest
         val uuid = one(StringGenerators.uuids)
         assertion.check(uuid)
 
-        val nonUUID = one(alphabeticString(10))
+        val nonUUID = one(alphabeticStrings(10))
         assertThrows { assertion.check(nonUUID) }.failedAssertion()
     }
 
@@ -527,7 +528,7 @@ class StringAssertionsTest
     {
         val assertion = integerString()
 
-        val alphabetic = one(alphabeticString())
+        val alphabetic = one(alphabeticStrings())
         assertThrows { assertion.check(alphabetic) }.failedAssertion()
 
         val value = one(doubles(-Double.MAX_VALUE, Double.MAX_VALUE))
@@ -551,7 +552,7 @@ class StringAssertionsTest
         val assertion = decimalString()
         assertThat(assertion, notNullValue())
 
-        val value = one(StringGenerators.alphanumericString())
+        val value = one(alphanumericStrings())
         assertThrows { assertion.check(value) }.failedAssertion()
     }
 

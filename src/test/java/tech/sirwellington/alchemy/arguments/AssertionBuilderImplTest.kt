@@ -30,7 +30,7 @@ import org.mockito.Mockito.verifyZeroInteractions
 import tech.sirwellington.alchemy.arguments.AssertionBuilderImpl.checkThat
 import tech.sirwellington.alchemy.arguments.assertions.*
 import tech.sirwellington.alchemy.generator.CollectionGenerators
-import tech.sirwellington.alchemy.generator.StringGenerators.Companion.alphabeticString
+import tech.sirwellington.alchemy.generator.StringGenerators.Companion.alphabeticStrings
 import tech.sirwellington.alchemy.generator.one
 import tech.sirwellington.alchemy.test.junit.ThrowableAssertion.assertThrows
 import tech.sirwellington.alchemy.test.junit.runners.AlchemyTestRunner
@@ -177,8 +177,8 @@ class AssertionBuilderImplTest
     @Test
     fun testUsingMessage()
     {
-        val embeddedExceptionMessage = one(alphabeticString())
-        val overrideMessage = one(alphabeticString())
+        val embeddedExceptionMessage = one(alphabeticStrings())
+        val overrideMessage = one(alphabeticStrings())
 
         doThrow(FailedAssertionException(embeddedExceptionMessage))
                 .whenever(assertion)
@@ -197,7 +197,7 @@ class AssertionBuilderImplTest
     @Test
     fun testChecksWithMultipleArguments()
     {
-        val arguments = CollectionGenerators.listOf(alphabeticString()).toMutableList()
+        val arguments = CollectionGenerators.listOf(alphabeticStrings()).toMutableList()
         //No Exceptions expected
         AssertionBuilderImpl.checkThat(arguments)
                 .are(nonEmptyString())
@@ -216,7 +216,7 @@ class AssertionBuilderImplTest
                 .whenever(assertion)
                 .check(argument)
 
-        val overrideMessage = one(alphabeticString())
+        val overrideMessage = one(alphabeticStrings())
 
         val newInstance = instance.usingMessage(overrideMessage)
                 .throwing(IOException::class.java)
@@ -233,7 +233,7 @@ class AssertionBuilderImplTest
                 .whenever(assertion)
                 .check(argument)
 
-        val overrideMessage = one(alphabeticString())
+        val overrideMessage = one(alphabeticStrings())
 
         val newInstance = instance.throwing(IOException::class.java)
                 .usingMessage(overrideMessage)

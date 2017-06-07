@@ -55,7 +55,7 @@ class DynamicExceptionSupplierTest
     @Before
     fun setUp()
     {
-        assertionException = FailedAssertionException(one(StringGenerators.alphabeticString()))
+        assertionException = FailedAssertionException(one(StringGenerators.alphabeticStrings()))
         exceptionClass = FakeExceptionWithMessage::class.java
 
         instance = DynamicExceptionSupplier(exceptionClass, overrideMessage)

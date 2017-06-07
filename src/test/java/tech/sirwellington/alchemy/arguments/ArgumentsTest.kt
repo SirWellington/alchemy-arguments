@@ -17,17 +17,16 @@ package tech.sirwellington.alchemy.arguments
 
 import org.hamcrest.Matchers.notNullValue
 import org.junit.Assert.assertThat
-import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
 import tech.sirwellington.alchemy.arguments.Arguments.checkThat
 import tech.sirwellington.alchemy.arguments.assertions.*
-import tech.sirwellington.alchemy.generator.CollectionGenerators.Companion.listOf
-import tech.sirwellington.alchemy.generator.StringGenerators.Companion.alphabeticString
-import tech.sirwellington.alchemy.generator.one
 import tech.sirwellington.alchemy.test.junit.ThrowableAssertion.assertThrows
 import tech.sirwellington.alchemy.test.junit.runners.AlchemyTestRunner
 import tech.sirwellington.alchemy.test.junit.runners.DontRepeat
+import tech.sirwellington.alchemy.test.junit.runners.GenerateList
+import tech.sirwellington.alchemy.test.junit.runners.GenerateString
+import tech.sirwellington.alchemy.test.junit.runners.GenerateString.Type.ALPHABETIC
 import tech.sirwellington.alchemy.test.junit.runners.Repeat
 
 /**
@@ -39,13 +38,11 @@ import tech.sirwellington.alchemy.test.junit.runners.Repeat
 class ArgumentsTest
 {
 
+    @GenerateString(ALPHABETIC)
     private lateinit var argument: String
 
-    @Before
-    fun setUp()
-    {
-        argument = one(alphabeticString())
-    }
+    @GenerateList(String::class)
+    private lateinit var strings: List<String>
 
     @DontRepeat
     @Test
@@ -64,7 +61,6 @@ class ArgumentsTest
     @Test
     fun testCheckThatWithMultipleArguments()
     {
-        val strings = listOf(alphabeticString(), 30)
         val stringArray = strings.toTypedArray()
 
         var instance = checkThat(argument, *stringArray)
@@ -80,9 +76,10 @@ class ArgumentsTest
     fun testCheckThatWithMultipleArgumentsWithFailure()
     {
         val instance = checkThat(argument, *arrayOfNulls(1))
+
         assertThat(instance, notNullValue())
-        assertThrows { instance.are(nonEmptyString()) }
-                .failedAssertion()
+
+        assertThrows { instance.are(nonEmptyString()) }.failedAssertion()
     }
 
 }

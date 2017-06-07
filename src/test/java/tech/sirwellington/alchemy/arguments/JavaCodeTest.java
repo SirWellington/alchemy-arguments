@@ -20,7 +20,7 @@ import java.util.Collections;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import tech.sirwellington.alchemy.arguments.assertions.*;
+import tech.sirwellington.alchemy.arguments.assertions.Assertions;
 import tech.sirwellington.alchemy.test.junit.runners.*;
 
 import static org.mockito.Mockito.*;

@@ -57,7 +57,7 @@ class ChecksTest
     @Before
     fun setUp()
     {
-        strings = StringGenerators.alphanumericString()
+        strings = StringGenerators.alphanumericStrings()
         string = one(strings)
         `object` = one(strings)
 

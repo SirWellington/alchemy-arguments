@@ -31,8 +31,8 @@ import tech.sirwellington.alchemy.generator.CollectionGenerators.Companion.mapOf
 import tech.sirwellington.alchemy.generator.NumberGenerators
 import tech.sirwellington.alchemy.generator.NumberGenerators.Companion.negativeIntegers
 import tech.sirwellington.alchemy.generator.NumberGenerators.Companion.positiveIntegers
-import tech.sirwellington.alchemy.generator.StringGenerators.Companion.alphabeticString
-import tech.sirwellington.alchemy.generator.StringGenerators.Companion.alphanumericString
+import tech.sirwellington.alchemy.generator.StringGenerators.Companion.alphabeticStrings
+import tech.sirwellington.alchemy.generator.StringGenerators.Companion.alphanumericStrings
 import tech.sirwellington.alchemy.generator.StringGenerators.Companion.hexadecimalString
 import tech.sirwellington.alchemy.generator.one
 import tech.sirwellington.alchemy.test.junit.ThrowableAssertion.assertThrows
@@ -111,7 +111,7 @@ class CollectionAssertionsTest
     {
         val instance = nonEmptyMap<String, Int>()
 
-        val map = mapOf(alphabeticString(),
+        val map = mapOf(alphabeticStrings(),
                         NumberGenerators.positiveIntegers(),
                         40)
 
@@ -163,7 +163,7 @@ class CollectionAssertionsTest
     @Test
     fun testCollectionContaining()
     {
-        val string = strings.stream().findAny().orElse(alphabeticString().get())
+        val string = strings.stream().findAny().orElse(alphabeticStrings().get())
 
         val instance = collectionContaining(string)
         assertThat(instance, notNullValue())
@@ -187,8 +187,8 @@ class CollectionAssertionsTest
     @Throws(Exception::class)
     fun testCollectionContainingAll()
     {
-        val args = listOf(alphabeticString())
-        val collection = listOf(alphabeticString()).toMutableList()
+        val args = listOf(alphabeticStrings())
+        val collection = listOf(alphabeticStrings()).toMutableList()
         collection.addAll(args)
 
         val first = args.first()
@@ -198,7 +198,7 @@ class CollectionAssertionsTest
         assertThat(instance, notNullValue())
         instance.check(collection)
 
-        val otherCollection = listOf(alphabeticString())
+        val otherCollection = listOf(alphabeticStrings())
         assertThrows { instance.check(otherCollection) }.failedAssertion()
     }
 
@@ -215,8 +215,8 @@ class CollectionAssertionsTest
     @Throws(Exception::class)
     fun testCollectionContainingAtLeastOnceOf()
     {
-        val arguments = listOf(alphanumericString())
-        val collection = listOf(alphanumericString()) + arguments
+        val arguments = listOf(alphanumericStrings())
+        val collection = listOf(alphanumericStrings()) + arguments
 
         val first = collection.first()
         val others = arguments.subList(1, arguments.size).toTypedArray()
@@ -224,7 +224,7 @@ class CollectionAssertionsTest
         val instance = collectionContainingAtLeastOneOf(first, *others)
         instance.check(collection)
 
-        val otherCollection = listOf(alphabeticString()).toMutableList()
+        val otherCollection = listOf(alphabeticStrings()).toMutableList()
         assertThrows { instance.check(otherCollection) }.failedAssertion()
 
         //With at least one, it should pass.
@@ -260,7 +260,7 @@ class CollectionAssertionsTest
     @Test
     fun testMapWithKeyValue()
     {
-        val map = mapOf(positiveIntegers(), alphabeticString(), 100)
+        val map = mapOf(positiveIntegers(), alphabeticStrings(), 100)
 
         val anyEntry = map.entries.whichever()
 
@@ -278,7 +278,7 @@ class CollectionAssertionsTest
     @Test
     fun testKeyInMap()
     {
-        val map = mapOf(alphabeticString(), alphanumericString(), 25)
+        val map = mapOf(alphabeticStrings(), alphanumericStrings(), 25)
 
         val assertion = keyInMap(map)
         assertThat(assertion, notNullValue())
@@ -310,7 +310,7 @@ class CollectionAssertionsTest
     fun testValueInMap()
     {
 
-        val map = mapOf(alphanumericString(), alphabeticString(), 24)
+        val map = mapOf(alphanumericStrings(), alphabeticStrings(), 24)
 
         val assertion = valueInMap(map)
         assertThat(assertion, notNullValue())
@@ -368,7 +368,7 @@ class CollectionAssertionsTest
         val instance = collectionOfSize<Collection<String>>(size)
         instance.check(strings)
 
-        strings.add(one(alphabeticString()))
+        strings.add(one(alphabeticStrings()))
 
         assertThrows { instance.check(strings) }.failedAssertion()
         checkThat(strings)
