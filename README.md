@@ -243,7 +243,7 @@ public String findUsername(Person person)
 
 # Requirements
 
-+ Java 8
++ Java 7
 + Maven
 
 # Building
