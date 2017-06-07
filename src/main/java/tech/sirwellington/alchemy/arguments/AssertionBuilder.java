@@ -88,10 +88,8 @@ public interface AssertionBuilder<Argument, Ex extends Throwable>
      * @param assertion The assertion to run throw the argument. Must be non-null.
      *
      * @throws Ex Throws the desired exception if the assertion fails.
-     *
-     * @deprecated Replaced with {@link #isA(AlchemyAssertion)}.
+     * @see #isA(AlchemyAssertion)
      */
-    @Deprecated
     AssertionBuilder<Argument, Ex> is(@Required AlchemyAssertion<Argument> assertion) throws Ex;
 
     /**
