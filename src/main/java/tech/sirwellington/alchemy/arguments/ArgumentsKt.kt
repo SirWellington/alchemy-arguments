@@ -22,7 +22,7 @@ import tech.sirwellington.alchemy.annotations.arguments.Optional
 /**
  * Kotlin shortcut for [Arguments.checkThat].
  */
-fun <Argument : Any> checkThat(@Optional argument: Argument): AssertionBuilder<Argument, FailedAssertionException>
+fun <Argument : Any?> checkThat(@Optional argument: Argument): AssertionBuilder<Argument, FailedAssertionException>
 {
     return Arguments.checkThat(argument)
 }
