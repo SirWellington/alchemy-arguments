@@ -18,7 +18,6 @@ package tech.sirwellington.alchemy.arguments;
 import tech.sirwellington.alchemy.annotations.access.Internal;
 
 /**
- *
  * An exception that is thrown when an argument assertion fails. This exception is a sub-type of
  * {@link IllegalArgumentException}.
  *

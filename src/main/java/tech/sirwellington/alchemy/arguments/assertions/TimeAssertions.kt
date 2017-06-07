@@ -23,7 +23,6 @@ import tech.sirwellington.alchemy.arguments.AlchemyAssertion
 import tech.sirwellington.alchemy.arguments.FailedAssertionException
 import tech.sirwellington.alchemy.arguments.checkNotNull
 import tech.sirwellington.alchemy.arguments.checkThat
-import java.lang.String.format
 import java.time.Instant
 
 /**

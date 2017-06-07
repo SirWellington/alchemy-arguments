@@ -43,7 +43,7 @@ final class DynamicExceptionSupplier<Ex extends Throwable> implements ExceptionM
     DynamicExceptionSupplier(Class<Ex> exceptionClass, String overrideMessage)
     {
         checkNotNull(exceptionClass, "missing exceptionClass");
-        
+
         this.exceptionClass = exceptionClass;
         this.overrideMessage = overrideMessage;
     }
@@ -63,17 +63,17 @@ final class DynamicExceptionSupplier<Ex extends Throwable> implements ExceptionM
                 if (throwableClassHasMessageAndCauseConstructor())
                 {
                     return exceptionClass.getConstructor(String.class, Throwable.class)
-                            .newInstance(overrideMessage, cause);
+                                         .newInstance(overrideMessage, cause);
                 }
                 else if (throwableClassHasCauseConstructor())
                 {
                     return exceptionClass.getConstructor(Throwable.class)
-                            .newInstance(cause);
+                                         .newInstance(cause);
                 }
                 else if (throwableClassHasMessageConstructor())
                 {
                     return exceptionClass.getConstructor(String.class)
-                            .newInstance(overrideMessage);
+                                         .newInstance(overrideMessage);
                 }
 
             }
@@ -174,7 +174,7 @@ final class DynamicExceptionSupplier<Ex extends Throwable> implements ExceptionM
     {
         return cause != null && !isNullOrEmpty(message);
     }
-    
+
     @Internal
     Class<Ex> getExceptionClass()
     {

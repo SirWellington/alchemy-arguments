@@ -21,23 +21,22 @@ import tech.sirwellington.alchemy.annotations.designs.patterns.StrategyPattern;
 import static tech.sirwellington.alchemy.annotations.designs.patterns.StrategyPattern.Role.INTERFACE;
 
 /**
- * {@linkplain AlchemyAssertion Alchemy Assertions} analyze arguments for validity. 
+ * {@linkplain AlchemyAssertion Alchemy Assertions} analyze arguments for validity.
  * <p>
  * Creating your own {@link AlchemyAssertion} is as simple as implementing this functional interface, which can be done in a
  * lambda.
  * <p>
  * Alchemy Assertions do have a naming convention:
- * 
+ * <p>
  * <pre>
- * 
+ *
  * + Do <b>not</b> begin with "is". For example, isPosition(), isEmpty().
  * + Named after the condition that is expected to be true. For example, greaterThan(5), nonEmptyString().
  * + As long as necessary to allow for an English-legible translation. For example, lessThanOrEqualTo(40). Don't use abbreviations.
- * 
- * </pre>
- * 
- * @param <Argument> The type of argument an assertion checks
  *
+ * </pre>
+ *
+ * @param <Argument> The type of argument an assertion checks
  * @author SirWellington
  */
 @StrategyPattern(role = INTERFACE)
@@ -48,7 +47,6 @@ public interface AlchemyAssertion<Argument>
      * Asserts the validity of the argument.
      *
      * @param argument The argument to validate
-     *
      * @throws FailedAssertionException When the argument-check fails. Note that
      *                                  {@link FailedAssertionException} already extends
      *                                  {@link IllegalArgumentException}, allowing you to write a {@code catch} clause for

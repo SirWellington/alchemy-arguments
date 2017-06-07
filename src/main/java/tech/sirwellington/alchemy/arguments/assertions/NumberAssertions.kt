@@ -363,7 +363,7 @@ fun lessThan(exclusiveUpperBound: Long): AlchemyAssertion<Long>
  *
  * @return
  */
-@JvmOverloads 
+@JvmOverloads
 fun lessThan(exclusiveUpperBound: Double, delta: Double = 0.0): AlchemyAssertion<Double>
 {
     checkThat(exclusiveUpperBound > -java.lang.Double.MAX_VALUE, "Doubles cannot be less than " + -java.lang.Double.MAX_VALUE)

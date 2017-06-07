@@ -27,7 +27,7 @@ import tech.sirwellington.alchemy.annotations.designs.FluidAPIDesign;
  * <br></br>
  * From here you can do:
  * <pre>
-
+ *
  * `checkThat(zipCode)
  * .throwing(ex -> new InvalidZipCodeException(zipCode))
  * .is(notNull())
@@ -54,7 +54,7 @@ public final class Arguments
         return AssertionBuilderImpl.checkThat(Collections.singletonList(argument));
     }
 
-    public static <Argument> AssertionBuilder<Argument, FailedAssertionException> checkThat(@Optional Argument argument, @Optional Argument...others)
+    public static <Argument> AssertionBuilder<Argument, FailedAssertionException> checkThat(@Optional Argument argument, @Optional Argument... others)
     {
         List<Argument> listOfArguments = new ArrayList<>();
         listOfArguments.add(argument);

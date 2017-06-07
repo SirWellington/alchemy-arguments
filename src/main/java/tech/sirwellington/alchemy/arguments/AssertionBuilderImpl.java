@@ -29,7 +29,6 @@ import static tech.sirwellington.alchemy.arguments.Checks.isNullOrEmpty;
 import static tech.sirwellington.alchemy.arguments.ExceptionMapper.IDENTITY;
 
 /**
- *
  * @author SirWellington
  */
 @FluidAPIDesign
@@ -62,9 +61,9 @@ final class AssertionBuilderImpl<Argument, Ex extends Throwable> implements Asse
     public AssertionBuilder<Argument, Ex> usingMessage(String message)
     {
         Checks.checkThat(!isNullOrEmpty(message), "error message is empty");
-        
+
         ExceptionMapper<Ex> newExceptionMapper;
-        if(exceptionMapper instanceof  DynamicExceptionSupplier)
+        if (exceptionMapper instanceof DynamicExceptionSupplier)
         {
             newExceptionMapper = createUpdatedDynamicExceptionMapperWithMessage(message);
         }
@@ -72,7 +71,7 @@ final class AssertionBuilderImpl<Argument, Ex extends Throwable> implements Asse
         {
             newExceptionMapper = this.exceptionMapper;
         }
-        
+
         return new AssertionBuilderImpl<>(assertion, newExceptionMapper, message, arguments);
     }
 
@@ -93,10 +92,10 @@ final class AssertionBuilderImpl<Argument, Ex extends Throwable> implements Asse
     public <Ex extends Throwable> AssertionBuilder<Argument, Ex> throwing(Class<Ex> exceptionClass)
     {
         Checks.checkNotNull(exceptionClass);
-        
+
         return this.throwing(new DynamicExceptionSupplier<>(exceptionClass, overrideMessage));
     }
-    
+
     @Override
     public AssertionBuilderImpl<Argument, Ex> is(AlchemyAssertion<Argument> assertion) throws Ex
     {

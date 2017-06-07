@@ -41,7 +41,7 @@ import tech.sirwellington.alchemy.arguments.checkNotNull
  *
  * @see .nullObject
 </A> */
-fun <A: Any?> notNull(): AlchemyAssertion<A>
+fun <A : Any?> notNull(): AlchemyAssertion<A>
 {
     return AlchemyAssertion { reference ->
         if (reference == null)
@@ -51,7 +51,7 @@ fun <A: Any?> notNull(): AlchemyAssertion<A>
     }
 }
 
-fun <A: Any?> nonNullReference(): AlchemyAssertion<A>
+fun <A : Any?> nonNullReference(): AlchemyAssertion<A>
 {
     return notNull()
 }
@@ -68,7 +68,7 @@ fun <A: Any?> nonNullReference(): AlchemyAssertion<A>
 </A>
  */
 
-fun <A: Any?> nullObject(): AlchemyAssertion<A>
+fun <A : Any?> nullObject(): AlchemyAssertion<A>
 {
     return AlchemyAssertion { reference ->
 
@@ -90,7 +90,7 @@ fun <A: Any?> nullObject(): AlchemyAssertion<A>
  * @return
 </A> */
 
-fun <A: Any?> sameInstanceAs(@Optional other: A): AlchemyAssertion<A>
+fun <A : Any?> sameInstanceAs(@Optional other: A): AlchemyAssertion<A>
 {
     return AlchemyAssertion block@ { argument ->
 
@@ -131,7 +131,7 @@ fun <A: Any?> sameInstanceAs(@Optional other: A): AlchemyAssertion<A>
  * @return
  */
 
-fun <A: Any?> instanceOf(classOfExpectedType: Class<*>): AlchemyAssertion<A>
+fun <A : Any?> instanceOf(classOfExpectedType: Class<*>): AlchemyAssertion<A>
 {
     checkNotNull(classOfExpectedType, "class cannot be null")
 
@@ -146,7 +146,7 @@ fun <A: Any?> instanceOf(classOfExpectedType: Class<*>): AlchemyAssertion<A>
     }
 }
 
-inline fun <reified A: Any> instanceOf(): AlchemyAssertion<A>
+inline fun <reified A : Any> instanceOf(): AlchemyAssertion<A>
 {
     return instanceOf(A::class.java)
 }
