@@ -430,15 +430,15 @@ fun integerString(): AlchemyAssertion<String>
 }
 
 /**
- * Checks that a String can be represented as a Java Double, as determined by
- * [Double.valueOf].
+ * Checks that a String can be represented as a Java Double.
 
  * @return
  */
 
 fun decimalString(): AlchemyAssertion<String>
 {
-    return AlchemyAssertion { string ->
+    return AlchemyAssertion()
+    { string ->
 
         checkString(string)
 
@@ -457,17 +457,16 @@ fun decimalString(): AlchemyAssertion<String>
 
 fun validUUID(): AlchemyAssertion<String>
 {
-    return AlchemyAssertion { string ->
+    return AlchemyAssertion()
+    { string ->
 
         checkString(string)
 
-        try
+        val pattern = Pattern.compile("[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}").toRegex()
+
+        if(!pattern.matches(string))
         {
-            UUID.fromString(string)
-        }
-        catch (ex: Exception)
-        {
-            throw FailedAssertionException("String is not a valid UUID: " + string)
+            throw FailedAssertionException("String is not a valid UUID: $string")
         }
     }
 }
