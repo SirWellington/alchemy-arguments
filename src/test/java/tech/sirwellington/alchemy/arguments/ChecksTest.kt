@@ -1,5 +1,5 @@
 /*
- * Copyright © 2018. Sir Wellington.
+ * Copyright © 2019. Sir Wellington.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  *
@@ -22,11 +22,7 @@ import org.junit.Assert.assertTrue
 import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
-import tech.sirwellington.alchemy.generator.AlchemyGenerator
-import tech.sirwellington.alchemy.generator.CollectionGenerators
-import tech.sirwellington.alchemy.generator.NumberGenerators
-import tech.sirwellington.alchemy.generator.StringGenerators
-import tech.sirwellington.alchemy.generator.one
+import tech.sirwellington.alchemy.generator.*
 import tech.sirwellington.alchemy.test.junit.ThrowableAssertion.assertThrows
 import tech.sirwellington.alchemy.test.junit.runners.AlchemyTestRunner
 import tech.sirwellington.alchemy.test.junit.runners.DontRepeat

@@ -1,5 +1,5 @@
 /*
- * Copyright © 2018. Sir Wellington.
+ * Copyright © 2019. Sir Wellington.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  *
@@ -24,12 +24,8 @@ import tech.sirwellington.alchemy.arguments.failedAssertion
 import tech.sirwellington.alchemy.generator.NumberGenerators
 import tech.sirwellington.alchemy.generator.one
 import tech.sirwellington.alchemy.test.junit.ThrowableAssertion.assertThrows
-import tech.sirwellington.alchemy.test.junit.runners.AlchemyTestRunner
-import tech.sirwellington.alchemy.test.junit.runners.GenerateInteger
+import tech.sirwellington.alchemy.test.junit.runners.*
 import tech.sirwellington.alchemy.test.junit.runners.GenerateInteger.Type.RANGE
-import tech.sirwellington.alchemy.test.junit.runners.GenerateString
-import tech.sirwellington.alchemy.test.junit.runners.GenerateURL
-import tech.sirwellington.alchemy.test.junit.runners.Repeat
 import java.net.URL
 
 

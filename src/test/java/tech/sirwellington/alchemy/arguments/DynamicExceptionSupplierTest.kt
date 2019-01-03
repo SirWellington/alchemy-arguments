@@ -1,5 +1,5 @@
 /*
- * Copyright © 2018. Sir Wellington.
+ * Copyright © 2019. Sir Wellington.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  *
@@ -14,13 +14,7 @@
  */
 package tech.sirwellington.alchemy.arguments
 
-import org.hamcrest.Matchers.equalTo
-import org.hamcrest.Matchers.instanceOf
-import org.hamcrest.Matchers.isEmptyOrNullString
-import org.hamcrest.Matchers.not
-import org.hamcrest.Matchers.notNullValue
-import org.hamcrest.Matchers.nullValue
-import org.hamcrest.Matchers.sameInstance
+import org.hamcrest.Matchers.*
 import org.junit.Assert.assertThat
 import org.junit.Before
 import org.junit.Test

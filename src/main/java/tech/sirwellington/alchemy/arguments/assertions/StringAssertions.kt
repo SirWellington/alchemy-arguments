@@ -1,5 +1,5 @@
 /*
- * Copyright © 2018. Sir Wellington.
+ * Copyright © 2019. Sir Wellington.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  *
@@ -19,12 +19,7 @@ package tech.sirwellington.alchemy.arguments.assertions
 
 
 import tech.sirwellington.alchemy.annotations.arguments.NonEmpty
-import tech.sirwellington.alchemy.arguments.AlchemyAssertion
-import tech.sirwellington.alchemy.arguments.FailedAssertionException
-import tech.sirwellington.alchemy.arguments.checkNotNull
-import tech.sirwellington.alchemy.arguments.checkNotNullOrEmpty
-import tech.sirwellington.alchemy.arguments.checkThat
-import tech.sirwellington.alchemy.arguments.isNullOrEmpty
+import tech.sirwellington.alchemy.arguments.*
 import java.util.UUID
 import java.util.regex.Pattern
 
