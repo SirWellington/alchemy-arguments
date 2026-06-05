@@ -24,7 +24,7 @@ import tech.sirwellington.alchemy.annotations.arguments.Optional
  * This class contains commonly used checks on Objects and Strings.
  *
  *
- * This is different from from what actual [Assertions][AlchemyAssertion] use.
+ * This is different from what actual [Assertions][AlchemyAssertion] use.
 
  * @author SirWellington
  */

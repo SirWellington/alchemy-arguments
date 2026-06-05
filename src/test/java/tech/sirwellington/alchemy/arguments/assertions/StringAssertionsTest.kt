@@ -42,6 +42,7 @@ import tech.sirwellington.alchemy.test.junit.ThrowableAssertion.assertThrows
 import tech.sirwellington.alchemy.test.junit.runners.AlchemyTestRunner
 import tech.sirwellington.alchemy.test.junit.runners.Repeat
 import java.lang.String.format
+import java.util.*
 import java.util.regex.Pattern
 
 /**
@@ -372,7 +373,7 @@ class StringAssertionsTest
     @Test
     fun testAllUpperCaseString()
     {
-        val allUpperCase = one(alphabeticStrings(50)).toUpperCase()
+        val allUpperCase = one(alphabeticStrings(50)).uppercase()
 
         val oneLowerCaseCharacter = lowerCasedRandomCharacter(allUpperCase)
 
@@ -390,7 +391,7 @@ class StringAssertionsTest
         val character = string[index]
 
         val builder = StringBuilder(string)
-        builder.replace(index, index + 1, character.toString().toLowerCase())
+        builder.replace(index, index + 1, character.toString().lowercase())
 
         return builder.toString()
     }
@@ -398,7 +399,7 @@ class StringAssertionsTest
     @Test
     fun testAllLowerCaseString()
     {
-        val allLowerCase = one(alphabeticStrings(50)).toLowerCase()
+        val allLowerCase = one(alphabeticStrings(50)).lowercase()
         val oneUpperCaseCharacter = upperCaseRandomCharacter(allLowerCase)
 
         val instance = allLowerCaseString()
@@ -416,7 +417,7 @@ class StringAssertionsTest
         val character = string[index]
 
         val builder = StringBuilder(string)
-        builder.replace(index, index + 1, character.toString().toUpperCase())
+        builder.replace(index, index + 1, character.toString().uppercase())
 
         return builder.toString()
     }

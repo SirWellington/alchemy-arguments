@@ -16,6 +16,7 @@ package tech.sirwellington.alchemy.arguments
 
 import com.nhaarman.mockito_kotlin.doNothing
 import com.nhaarman.mockito_kotlin.doThrow
+import com.nhaarman.mockito_kotlin.verifyZeroInteractions
 import com.nhaarman.mockito_kotlin.whenever
 import org.hamcrest.Matchers.notNullValue
 import org.junit.Assert.assertThat
@@ -25,7 +26,6 @@ import org.junit.runner.RunWith
 import org.mockito.Mock
 import org.mockito.Mockito.mock
 import org.mockito.Mockito.verify
-import org.mockito.Mockito.verifyZeroInteractions
 import tech.sirwellington.alchemy.arguments.AssertionBuilderImpl.checkThat
 import tech.sirwellington.alchemy.arguments.assertions.nonEmptyString
 import tech.sirwellington.alchemy.generator.CollectionGenerators
