@@ -14,15 +14,11 @@
  */
 package tech.sirwellington.alchemy.arguments;
 
-import java.lang.reflect.Constructor;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import tech.sirwellington.alchemy.annotations.access.Internal;
 import tech.sirwellington.alchemy.annotations.concurrency.Immutable;
 
-import static tech.sirwellington.alchemy.arguments.Checks.checkNotNull;
-import static tech.sirwellington.alchemy.arguments.Checks.isNullOrEmpty;
 import static tech.sirwellington.alchemy.arguments.internal.Checks.checkNotNull;
 import static tech.sirwellington.alchemy.arguments.internal.Checks.isNullOrEmpty;
 
@@ -76,7 +72,7 @@ final class DynamicExceptionSupplier<Ex extends Throwable> implements ExceptionM
                 }
 
                 if (throwableClassHasMessageConstructor()) {
-                    String message = cause.getMessage();
+                    var message = cause.getMessage();
                     return exceptionClass.getConstructor(String.class).newInstance(message);
                 }
             }

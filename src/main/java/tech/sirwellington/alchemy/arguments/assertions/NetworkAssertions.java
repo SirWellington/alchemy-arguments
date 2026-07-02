@@ -13,64 +13,64 @@
  * limitations under the License.
  */
 
-@file:JvmName("NetworkAssertions")
+package tech.sirwellington.alchemy.arguments.assertions;
 
-package tech.sirwellington.alchemy.arguments.assertions
+import tech.sirwellington.alchemy.annotations.access.NonInstantiable;
+import tech.sirwellington.alchemy.arguments.AlchemyAssertion;
+import tech.sirwellington.alchemy.arguments.FailedAssertionException;
 
-import tech.sirwellington.alchemy.arguments.AlchemyAssertion
-import tech.sirwellington.alchemy.arguments.FailedAssertionException
-import java.net.URL
+import java.net.URI;
+
+import static tech.sirwellington.alchemy.arguments.assertions.StringAssertions.nonEmptyString;
+import static tech.sirwellington.alchemy.arguments.internal.Checks.failAssertion;
 
 /**
 
  * @author SirWellington
  */
+@NonInstantiable
+public final class NetworkAssertions {
+    /**
+     * The maximum allowable Port number
+     */
+    private static final int MAX_PORT = 65535;
 
-/** The maximum allowable Port number  */
-private val MAX_PORT = 65535
-
-/**
- * Checks that a URL is valid, according to the [URL] class.
-
- * @return
- */
-
-fun validURL(): AlchemyAssertion<String>
-{
-    return AlchemyAssertion { string ->
-        nonEmptyString().check(string)
-
-        try
-        {
-            URL(string)
-        }
-        catch (ex: Exception)
-        {
-            throw FailedAssertionException("Invalid URL: " + string, ex)
-        }
+    private NetworkAssertions() throws IllegalAccessException {
+        throw new IllegalAccessException("cannot directly instantiate");
     }
-}
 
 
-/**
- * Asserts that a Port number is valid and acceptable.
+    /**
+     * Checks that a URL is valid, according to the [URL] class.
+     * @return A chainable assertion.
+     */
 
- * @return
- *
- * @see [https://en.wikipedia.org/wiki/List_of_TCP_and_UDP_port_numbers](https://en.wikipedia.org/wiki/List_of_TCP_and_UDP_port_numbers)
- */
+    public static AlchemyAssertion<String> validURL() {
+        return string -> {
+            nonEmptyString().check(string);
+            try {
+                var _ = new URI(string).toURL();
+            } catch (Exception ex) {
+                failAssertion("Invalid URL: {0} | [{1}]", string, ex);
+            }
+        };
+    }
 
-fun validPort(): AlchemyAssertion<Int>
-{
-    return AlchemyAssertion { port ->
-        if (port <= 0)
-        {
-            throw FailedAssertionException("Network port must be > 0")
-        }
+    /**
+     * Asserts that the port number is valid and acceptable.
+     * <strong>It does not check if the port is currently open.</strong>
+     * @return A chainable assertion.
+     * @see <a href ="https://en.wikipedia.org/wiki/List_of_TCP_and_UDP_port_numbers">Wikipedia</a>
+     */
+    public static AlchemyAssertion<Integer> validPort() {
+        return port -> {
+            if (port <= 0) {
+                failAssertion("Network port must be > 0, but was [{0}]", port);
+            }
 
-        if (port > MAX_PORT)
-        {
-            throw FailedAssertionException("Network port must <" + MAX_PORT)
-        }
+            if (port > MAX_PORT) {
+                failAssertion("Network port must be less than [{0}], but was [{1}]", MAX_PORT, port);
+            }
+        };
     }
 }

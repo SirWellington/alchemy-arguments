@@ -20,7 +20,14 @@ import tech.sirwellington.alchemy.arguments.AlchemyAssertion;
 
 import static tech.sirwellington.alchemy.arguments.Arguments.checkThat;
 import static tech.sirwellington.alchemy.arguments.assertions.Assertions.notNull;
+import static tech.sirwellington.alchemy.arguments.assertions.NumberAssertions.greaterThanOrEqualTo;
+import static tech.sirwellington.alchemy.arguments.assertions.NumberAssertions.lessThanOrEqualTo;
 
+/**
+ * Assertions for testing Geo-Location data, like latitude and longitude.
+ *
+ * @author SirWellington
+ */
 @NonInstantiable
 public final class GeolocationAssertions {
 
@@ -28,6 +35,10 @@ public final class GeolocationAssertions {
         throw new IllegalAccessException("cannot directly instantiate");
     }
 
+    /**
+     * Checks that a Latitude is in the valid range [-90...90](inclusive).
+     * @return A chainable assertion.
+     */
     public AlchemyAssertion<Double> validLatitude() {
         return latitude -> {
             checkThat(latitude)
@@ -35,47 +46,22 @@ public final class GeolocationAssertions {
                 .is(notNull());
             checkThat(latitude)
                 .usingMessage("Latitude must be between -90 and 90, but was: " + latitude)
-                .is(les)
+                .is(lessThanOrEqualTo(90.0))
+                .is(greaterThanOrEqualTo(-90.0));
         };
     }
-}
 
-/**
- * Assertions for testing Geo-Location data, like latitude and longitude.
- *
- * @author SirWellington
- */
 
-/**
- * Checks that a Latitude is in the valid range [-90...90] (inclusive).
- *
- * @return
- */
-
-fun validLatitude(): AlchemyAssertion<Double>
-{
-    return AlchemyAssertion { lat ->
-
-        checkThat(lat)
-                .usingMessage("Latitude must be between -90 and 90, but was " + lat!!)
-                .isA(lessThanOrEqualTo(90.0))
-                .isA(greaterThanOrEqualTo(-90.0))
-    }
-
-}
-
-/**
- * Checks that a Longitude is in the valid range [-180...180](inclusive).
- *
- * @return
- */
-fun validLongitude(): AlchemyAssertion<Double>
-{
-    return AlchemyAssertion { lon ->
-
-        checkThat<Double>(lon)
-                .usingMessage("Longitude must be between -180 and 180, but was " + lon!!)
-                .isA(greaterThanOrEqualTo(-180.0))
-                .isA(lessThanOrEqualTo(180.0))
+    /**
+     * Checks that a Longitude is in the valid range [-180...180](inclusive).
+     * @return A chainable assertion.
+     */
+    public static AlchemyAssertion<Double> validLongitude() {
+        return longitude -> {
+            checkThat(longitude)
+                .usingMessage("Longitude must be between -180 and 180, but was " + longitude)
+                .is(greaterThanOrEqualTo(-180.0))
+                .is(lessThanOrEqualTo(180.0));
+        };
     }
 }
