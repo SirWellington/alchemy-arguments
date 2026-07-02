@@ -17,8 +17,11 @@ package tech.sirwellington.alchemy.arguments.internal;
 
 import tech.sirwellington.alchemy.annotations.access.Internal;
 import tech.sirwellington.alchemy.annotations.arguments.Optional;
+import tech.sirwellington.alchemy.arguments.FailedAssertionException;
 
 import java.util.Collection;
+
+import static java.text.MessageFormat.format;
 
 /**
  * This class contains commonly used checks on Objects and Strings.
@@ -137,10 +140,10 @@ public final class Checks {
      * Checks if all the objects are null.
      *
      * @param objects the objects to check
-     * @return true if all of the argument objects are null, false otherwise.
+     * @return true if all the argument objects are null, false otherwise.
      */
     public static boolean allAreNull(@Optional Object... objects) {
-        if (objects == null || objects.length == 0) {
+        if (objects == null) {
             return true;
         }
 
@@ -181,11 +184,11 @@ public final class Checks {
     }
 
     /**
-     * Checks if all of the arguments are null or empty. If even one of the arguments is not
+     * Checks if all the arguments are null or empty. If even one of the arguments is not
      * null or empty, then this returns false.
      *
      * @param strings the strings to check (may be null or empty)
-     * @return true if all of the argument strings are null/empty, false otherwise.
+     * @return true if all the argument strings are null/empty, false otherwise.
      */
     public static boolean allAreNullOrEmpty(@Optional String... strings) {
         if (strings == null) {
@@ -198,5 +201,12 @@ public final class Checks {
             }
         }
         return true;
+    }
+
+    @Internal
+    public static void failAssertion(String format, Object... params) {
+        throw new FailedAssertionException(
+            format(format, params)
+        );
     }
 }

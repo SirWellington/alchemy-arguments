@@ -12,41 +12,48 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+package tech.sirwellington.alchemy.arguments.assertions;
 
-@file:JvmName("BooleanAssertions")
+import tech.sirwellington.alchemy.annotations.access.NonInstantiable;
+import tech.sirwellington.alchemy.arguments.AlchemyAssertion;
 
-package tech.sirwellington.alchemy.arguments.assertions
-
-
-import tech.sirwellington.alchemy.arguments.AlchemyAssertion
-import tech.sirwellington.alchemy.arguments.FailedAssertionException
+import static tech.sirwellington.alchemy.arguments.assertions.Assertions.notNull;
+import static tech.sirwellington.alchemy.arguments.internal.Checks.failAssertion;
 
 /**
-
+ * Assertions when dealing with booleans.
  * @author SirWellington
  */
+@NonInstantiable
+public final class BooleanAssertions {
 
-
-fun trueStatement(): AlchemyAssertion<Boolean>
-{
-    return AlchemyAssertion { b ->
-
-        notNull<Any>().check(b)
-
-        if ((!b))
-        {
-            throw FailedAssertionException("Condition not met")
-        }
+    private BooleanAssertions() throws IllegalAccessException {
+        throw new IllegalAccessException("cannot directly instantiate");
     }
-}
 
+    /**
+     * Checks that the condition is {@code true}.
+     * @return A chainable assertion.
+     */
+    public static AlchemyAssertion<Boolean> trueStatement() {
+        return condition -> {
+            notNull().check(condition);
+            if (!condition) {
+                failAssertion("Expecting condition to be true but was false");
+            }
+        };
+    }
 
-fun falseStatement(): AlchemyAssertion<Boolean>
-{
-    return AlchemyAssertion { b ->
-
-        notNull<Any>().check(b)
-
-        trueStatement().check((!b))
+    /**
+     * Checks that the condition is {@code false}.
+     * @return A chainable assertion.
+     */
+    public static AlchemyAssertion<Boolean> falseStatement() {
+        return condition -> {
+            notNull().check(condition);
+            if (condition) {
+                failAssertion("Expecting condition to be false but was true");
+            }
+        };
     }
 }

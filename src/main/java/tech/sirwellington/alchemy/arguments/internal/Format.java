@@ -14,10 +14,4 @@ public class Format {
         throw new IllegalAccessException("cannot directly instantiate");
     }
 
-    @Internal
-    public static void failAssertion(String format, Object... params) {
-        throw new FailedAssertionException(
-            format(format, params)
-        );
-    }
 }

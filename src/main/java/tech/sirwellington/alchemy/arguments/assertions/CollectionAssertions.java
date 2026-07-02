@@ -21,11 +21,10 @@ import tech.sirwellington.alchemy.arguments.FailedAssertionException;
 import java.util.*;
 
 import static java.text.MessageFormat.format;
-import static tech.sirwellington.alchemy.arguments.internal.Checks.checkNotNull;
-import static tech.sirwellington.alchemy.arguments.internal.Checks.checkThat;
+import static tech.sirwellington.alchemy.arguments.internal.Checks.*;
 
 /**
- * Collection and Map assertion utilities.
+ * Assertions to {@link Collection Collection types} and {@link Map Maps}.
  *
  * @author SirWellington
  */
@@ -43,7 +42,7 @@ public final class CollectionAssertions {
             checkNotNull(collection, "Collection cannot be null");
 
             if (collection.isEmpty()) {
-                throw new FailedAssertionException("Collection is empty");
+                failAssertion("Collection is empty");
             }
         };
     }
@@ -56,7 +55,7 @@ public final class CollectionAssertions {
             checkNotNull(list, "List cannot be null");
 
             if (list.isEmpty()) {
-                throw new FailedAssertionException("List is empty");
+                failAssertion("List is empty");
             }
         };
     }
@@ -69,7 +68,7 @@ public final class CollectionAssertions {
             checkNotNull(set, "Set cannot be null");
 
             if (set.isEmpty()) {
-                throw new FailedAssertionException("Set is empty");
+                failAssertion("Set is empty");
             }
         };
     }
@@ -82,7 +81,7 @@ public final class CollectionAssertions {
             checkNotNull(map, "Map cannot be null");
 
             if (map.isEmpty()) {
-                throw new FailedAssertionException("Map is empty");
+                failAssertion("Map is empty");
             }
         };
     }
@@ -95,7 +94,7 @@ public final class CollectionAssertions {
             checkNotNull(array, "Array cannot be null");
 
             if (array.length == 0) {
-                throw new FailedAssertionException("Array is empty");
+                failAssertion("Array is empty");
             }
         };
     }
@@ -110,8 +109,9 @@ public final class CollectionAssertions {
             checkNotNull(collection, "Collection cannot be null");
 
             if (!collection.isEmpty()) {
-                throw new FailedAssertionException(
-                    format("Expected an empty collection, but it has size [{0}]", collection.size())
+                failAssertion(
+                    "Expected an empty collection, but it has size [{0}]",
+                    collection.size()
                 );
             }
         };
@@ -130,9 +130,7 @@ public final class CollectionAssertions {
             checkNotNull(map, "Map cannot be null");
 
             if (!map.isEmpty()) {
-                throw new FailedAssertionException(
-                    format("Expected an empty map, but instead [{0}]", map)
-                );
+                failAssertion("Expected an empty map, but instead [{0}]", map);
             }
         };
     }
@@ -149,7 +147,7 @@ public final class CollectionAssertions {
             checkNotNull(list, "List cannot be null");
 
             if (!list.contains(element)) {
-                throw new FailedAssertionException(element + " not found in List");
+                failAssertion(element + " not found in List");
             }
         };
     }
@@ -164,7 +162,7 @@ public final class CollectionAssertions {
             checkNotNull(collection, "Collection cannot be null");
 
             if (!collection.contains(element)) {
-                throw new FailedAssertionException(element + " not found in Collection");
+                failAssertion(element + " not found in Collection");
             }
         };
     }
@@ -190,7 +188,7 @@ public final class CollectionAssertions {
                                 .toList();
 
             if (!missing.isEmpty()) {
-                throw new FailedAssertionException(
+                failAssertion(
                     "Element(s) not found in Collection: " + missing
                 );
             }
@@ -218,12 +216,10 @@ public final class CollectionAssertions {
                 Arrays.stream(others).anyMatch(collection::contains);
 
             if (!found) {
-                throw new FailedAssertionException(
-                    format(
-                        "Collection does not contain any of [{0}, {1}]",
-                        first,
-                        Arrays.toString(others)
-                    )
+                failAssertion(
+                    "Collection does not contain any of [{0}, {1}]",
+                    first,
+                    Arrays.toString(others)
                 );
             }
         };
@@ -238,9 +234,7 @@ public final class CollectionAssertions {
             checkNotNull(map, "Map cannot be null");
 
             if (!map.containsKey(key)) {
-                throw new FailedAssertionException(
-                    format("Expected key [{0}] in Map", key)
-                );
+                failAssertion("Expected key [{0}] in Map", key);
             }
         };
     }
@@ -253,8 +247,10 @@ public final class CollectionAssertions {
 
             V actualValue = map.get(key);
             if (!Objects.equals(value, actualValue)) {
-                throw new FailedAssertionException(
-                    format("Value in Map [{0}] does not match expected value [{1}] ", actualValue, value)
+                failAssertion(
+                    "Value in Map [{0}] does not match expected value [{1}] ",
+                    actualValue,
+                    value
                 );
             }
         };
@@ -267,9 +263,7 @@ public final class CollectionAssertions {
             checkNotNull(key, "Key cannot be null");
 
             if (!map.containsKey(key)) {
-                throw new FailedAssertionException(
-                    format("Expected key [{0}] to be in map", key)
-                );
+                failAssertion("Expected key [{0}] to be in map", key);
             }
         };
     }
@@ -281,9 +275,7 @@ public final class CollectionAssertions {
             checkNotNull(value, "Value cannot be null");
 
             if (!map.containsValue(value)) {
-                throw new FailedAssertionException(
-                    format("Expected value [{0}] to be in map", value)
-                );
+                failAssertion("Expected value [{0}] to be in map", value);
             }
         };
     }
@@ -295,9 +287,7 @@ public final class CollectionAssertions {
             checkNotNull(element, "Element cannot be null");
 
             if (!collection.contains(element)) {
-                throw new FailedAssertionException(
-                    format("Expected element [{0}] to be in collection", element)
-                );
+                failAssertion("Expected element [{0}] to be in collection", element);
             }
         };
     }
@@ -312,12 +302,10 @@ public final class CollectionAssertions {
 
             int actualSize = collection.size();
             if (actualSize != size) {
-                throw new FailedAssertionException(
-                    format(
-                        "Expected collection with size [{0}] but is instead [{1}]",
-                        size,
-                        actualSize
-                    )
+                failAssertion(
+                    "Expected collection with size [{0}] but is instead [{1}]",
+                    size,
+                    actualSize
                 );
             }
         };

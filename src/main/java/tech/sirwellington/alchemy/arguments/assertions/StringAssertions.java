@@ -23,8 +23,7 @@ import tech.sirwellington.alchemy.arguments.internal.Checks;
 
 import java.util.regex.Pattern;
 
-import static tech.sirwellington.alchemy.arguments.internal.Checks.checkNotNullOrEmpty;
-import static tech.sirwellington.alchemy.arguments.internal.Checks.isNullOrEmpty;
+import static tech.sirwellington.alchemy.arguments.internal.Checks.*;
 
 /**
  * Library assertions for String validation.
@@ -93,6 +92,17 @@ public final class StringAssertions {
                 throw new FailedAssertionException(
                     "Expecting a String with length >= " + minimumLength
                 );
+            }
+        };
+    }
+
+    public static AlchemyAssertion<String> stringWithWhitespace() {
+        return s ->{
+            if (isNullOrEmpty(s)) {
+                failAssertion("string argument is empty");
+            }
+            if (s.chars().noneMatch(Character::isWhitespace)) {
+                failAssertion("Argument should have some whitespace but does not: [{0}]", s);
             }
         };
     }
