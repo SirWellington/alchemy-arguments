@@ -26,7 +26,7 @@ import java.util.Objects;
 
 import static tech.sirwellington.alchemy.arguments.internal.Checks.checkNotNull;
 import static tech.sirwellington.alchemy.arguments.internal.Checks.checkThat;
-import static tech.sirwellington.alchemy.arguments.internal.Format.failAssertion;
+import static tech.sirwellington.alchemy.arguments.internal.Checks.failAssertion;
 
 /**
  * Common {@link AlchemyAssertion Alchemy Asssertions}.
