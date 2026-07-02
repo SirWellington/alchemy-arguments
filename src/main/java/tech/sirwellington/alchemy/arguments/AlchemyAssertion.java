@@ -39,8 +39,7 @@ import static tech.sirwellington.alchemy.annotations.designs.patterns.StrategyPa
  * @author SirWellington
  */
 @StrategyPattern(role = INTERFACE)
-public interface AlchemyAssertion<Argument>
-{
+public interface AlchemyAssertion<Argument> {
 
     /**
      * Asserts the validity of the argument.
