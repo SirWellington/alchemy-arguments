@@ -21,10 +21,7 @@ import tech.sirwellington.alchemy.arguments.AlchemyAssertion;
 import tech.sirwellington.alchemy.arguments.FailedAssertionException;
 import tech.sirwellington.alchemy.arguments.internal.Checks;
 
-import java.lang.classfile.instruction.CharacterRange;
-import java.util.Arrays;
 import java.util.regex.Pattern;
-import java.util.stream.IntStream;
 
 import static tech.sirwellington.alchemy.arguments.internal.Checks.checkNotNullOrEmpty;
 import static tech.sirwellington.alchemy.arguments.internal.Checks.isNullOrEmpty;
@@ -458,8 +455,7 @@ public final class StringAssertions {
             int len = s.length();
             for (int i = 0; i < len; i++) {
                 char c = s.charAt(i);
-                // First character: allow '+' or '-'
-                if (i == 0 && (c == '-' || c == '+')) {
+                if (i == 0 && isNumericalSign(c)) {
                     continue;
                 }
                 if (!Character.isDigit(c)) {

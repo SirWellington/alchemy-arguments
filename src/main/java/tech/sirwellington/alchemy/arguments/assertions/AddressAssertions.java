@@ -16,9 +16,9 @@
 package tech.sirwellington.alchemy.arguments.assertions;
 
 import tech.sirwellington.alchemy.arguments.AlchemyAssertion;
-import tech.sirwellington.alchemy.arguments.internal.Checks;
 
 import static tech.sirwellington.alchemy.arguments.Arguments.checkThat;
+import static tech.sirwellington.alchemy.arguments.assertions.StringAssertions.*;
 
 
 /**
