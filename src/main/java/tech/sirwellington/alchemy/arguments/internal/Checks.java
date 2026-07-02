@@ -13,7 +13,7 @@
  * limitations under the License.
  */
 
-package tech.sirwellington.alchemy.arguments;
+package tech.sirwellington.alchemy.arguments.internal;
 
 import tech.sirwellington.alchemy.annotations.access.Internal;
 import tech.sirwellington.alchemy.annotations.arguments.Optional;
@@ -29,7 +29,7 @@ import tech.sirwellington.alchemy.annotations.arguments.Optional;
 public final class Checks {
 
     private Checks() {
-        throw new AssertionError("Utility class should not be instantiated.");
+        throw new IllegalAcc("Utility class should not be instantiated.");
     }
 
     /**
