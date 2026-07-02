@@ -23,6 +23,8 @@ import tech.sirwellington.alchemy.annotations.concurrency.Immutable;
 
 import static tech.sirwellington.alchemy.arguments.Checks.checkNotNull;
 import static tech.sirwellington.alchemy.arguments.Checks.isNullOrEmpty;
+import static tech.sirwellington.alchemy.arguments.internal.Checks.checkNotNull;
+import static tech.sirwellington.alchemy.arguments.internal.Checks.isNullOrEmpty;
 
 /**
  * This class uses an Exception class to dynamically create an appropriate wrapper exception.
@@ -31,16 +33,14 @@ import static tech.sirwellington.alchemy.arguments.Checks.isNullOrEmpty;
  */
 @Internal
 @Immutable
-final class DynamicExceptionSupplier<Ex extends Throwable> implements ExceptionMapper<Ex>
-{
+final class DynamicExceptionSupplier<Ex extends Throwable> implements ExceptionMapper<Ex> {
 
     private static final Logger LOG = LoggerFactory.getLogger(DynamicExceptionSupplier.class);
 
     private final Class<Ex> exceptionClass;
     private final String overrideMessage;
 
-    DynamicExceptionSupplier(Class<Ex> exceptionClass, String overrideMessage)
-    {
+    DynamicExceptionSupplier(Class<Ex> exceptionClass, String overrideMessage) {
         checkNotNull(exceptionClass, "missing exceptionClass");
 
         this.exceptionClass = exceptionClass;
@@ -48,72 +48,54 @@ final class DynamicExceptionSupplier<Ex extends Throwable> implements ExceptionM
     }
 
     @Override
-    public Ex apply(FailedAssertionException cause)
-    {
+    public Ex apply(FailedAssertionException cause) {
         return tryToCreateInstance(cause);
     }
 
-    private Ex tryToCreateInstance(FailedAssertionException cause)
-    {
-        try
-        {
-            if (haveOverrideMessageAndACause(overrideMessage, cause))
-            {
-                if (throwableClassHasMessageAndCauseConstructor())
-                {
+    private Ex tryToCreateInstance(FailedAssertionException cause) {
+        try {
+            if (haveOverrideMessageAndACause(overrideMessage, cause)) {
+                if (throwableClassHasMessageAndCauseConstructor()) {
                     return exceptionClass.getConstructor(String.class, Throwable.class)
                                          .newInstance(overrideMessage, cause);
                 }
-                else if (throwableClassHasCauseConstructor())
-                {
+                else if (throwableClassHasCauseConstructor()) {
                     return exceptionClass.getConstructor(Throwable.class)
                                          .newInstance(cause);
                 }
-                else if (throwableClassHasMessageConstructor())
-                {
+                else if (throwableClassHasMessageConstructor()) {
                     return exceptionClass.getConstructor(String.class)
                                          .newInstance(overrideMessage);
                 }
 
             }
 
-            if (haveOnlyACause(overrideMessage, cause))
-            {
-                if (throwableClassHasCauseConstructor())
-                {
+            if (haveOnlyACause(overrideMessage, cause)) {
+                if (throwableClassHasCauseConstructor()) {
                     return exceptionClass.getConstructor(Throwable.class).newInstance(cause);
                 }
 
-                if (throwableClassHasMessageConstructor())
-                {
+                if (throwableClassHasMessageConstructor()) {
                     String message = cause.getMessage();
                     return exceptionClass.getConstructor(String.class).newInstance(message);
                 }
             }
 
-            if (haveOnlyAnOverrideMessage(overrideMessage, cause))
-            {
-                if (throwableClassHasMessageConstructor())
-                {
+            if (haveOnlyAnOverrideMessage(overrideMessage, cause)) {
+                if (throwableClassHasMessageConstructor()) {
                     return exceptionClass.getConstructor(String.class).newInstance(overrideMessage);
                 }
             }
 
-        }
-        catch (Exception ex)
-        {
+        } catch (Exception ex) {
             LOG.error("Failed to initialize instance of Exception type {}", exceptionClass, ex);
         }
 
-        try
-        {
-            if (hasDefaultConstructor())
-            {
+        try {
+            if (hasDefaultConstructor()) {
                 return exceptionClass.newInstance();
             }
-        }
-        catch (Exception ex)
-        {
+        } catch (Exception ex) {
             LOG.warn("Failed to create instance of {} using default constructor", exceptionClass.getName());
         }
 
@@ -121,62 +103,49 @@ final class DynamicExceptionSupplier<Ex extends Throwable> implements ExceptionM
     }
 
     @Override
-    public String toString()
-    {
+    public String toString() {
         return "DynamicExceptionSupplier{" + "exceptionClass=" + exceptionClass + ", overrideMessage=" + overrideMessage + '}';
     }
 
-    private boolean hasConstructorWithArguments(Class<?>... classes) throws NoSuchMethodException, SecurityException
-    {
-        try
-        {
-            Constructor<Ex> constructor = exceptionClass.getConstructor(classes);
-            return constructor != null;
-        }
-        catch (NoSuchMethodException ex)
-        {
+    private boolean hasConstructorWithArguments(Class<?>... classes) throws NoSuchMethodException, SecurityException {
+        try {
+            var _ = exceptionClass.getConstructor(classes);
+            return true;
+        } catch (NoSuchMethodException ex) {
             return false;
         }
     }
 
-    private boolean hasDefaultConstructor() throws NoSuchMethodException, SecurityException
-    {
+    private boolean hasDefaultConstructor() throws NoSuchMethodException, SecurityException {
         return hasConstructorWithArguments();
     }
 
-    private boolean throwableClassHasCauseConstructor() throws NoSuchMethodException, SecurityException
-    {
+    private boolean throwableClassHasCauseConstructor() throws NoSuchMethodException, SecurityException {
         return hasConstructorWithArguments(Throwable.class);
     }
 
-    private boolean throwableClassHasMessageConstructor() throws NoSuchMethodException, SecurityException
-    {
+    private boolean throwableClassHasMessageConstructor() throws NoSuchMethodException, SecurityException {
         return hasConstructorWithArguments(String.class);
     }
 
-    private boolean throwableClassHasMessageAndCauseConstructor() throws NoSuchMethodException, SecurityException
-    {
+    private boolean throwableClassHasMessageAndCauseConstructor() throws NoSuchMethodException, SecurityException {
         return hasConstructorWithArguments(String.class, Throwable.class);
     }
 
-    private boolean haveOnlyAnOverrideMessage(String message, FailedAssertionException cause)
-    {
+    private boolean haveOnlyAnOverrideMessage(String message, FailedAssertionException cause) {
         return !isNullOrEmpty(message) && cause == null;
     }
 
-    private boolean haveOnlyACause(String message, FailedAssertionException cause)
-    {
+    private boolean haveOnlyACause(String message, FailedAssertionException cause) {
         return cause != null && isNullOrEmpty(message);
     }
 
-    private boolean haveOverrideMessageAndACause(String message, FailedAssertionException cause)
-    {
+    private boolean haveOverrideMessageAndACause(String message, FailedAssertionException cause) {
         return cause != null && !isNullOrEmpty(message);
     }
 
     @Internal
-    Class<Ex> getExceptionClass()
-    {
+    Class<Ex> getExceptionClass() {
         return this.exceptionClass;
     }
 

@@ -20,10 +20,8 @@ import tech.sirwellington.alchemy.annotations.designs.FluidAPIDesign;
 
 /**
  * The {@link AssertionBuilder} allows compositions of rich argument checks.
- *
- * <pre>
- *
- * {@code
+ * <br>
+ * {@snippet :
  * checkThat(password)
  *      .usingMessage("Invalid Password")
  *      .throwing(InvalidCredentialsException.class)
@@ -31,29 +29,24 @@ import tech.sirwellington.alchemy.annotations.designs.FluidAPIDesign;
  *      .is(nonEmptyString())
  *      .is(stringIsAtLeastOfLength(10));
  * }
- * </pre>
+ * <br>
  * Alternatively using custom Exception Thrower:
- *
- * <pre>
- * {@code
+ * {@snippet :
  * checkThat(password)
-      .throwing(ex -> new BadRequestException("Bad Password", ex))
-      .is(notNull())
-      .is(nonEmptyString())
-      .is(stringIsAtLeastOfLength(10));
- }
- * </pre>
- *
+ * .throwing(ex -> new BadRequestException("Bad Password", ex))
+ * .is(notNull())
+ * .is(nonEmptyString())
+ * .is(stringIsAtLeastOfLength(10));
+ * }
+ * <br>
  * If no {@link ExceptionMapper} is used, the original {@link FailedAssertionException} is thrown.
  *
  * @param <Argument> The type of the argument being checked
  * @param <Ex>       The type of {@link Exception} that will be thrown if the given assertion fails.
- *
  * @author SirWellington
  */
 @FluidAPIDesign
-public interface AssertionBuilder<Argument, Ex extends Throwable>
-{
+public interface AssertionBuilder<Argument, Ex extends Throwable> {
 
     /**
      * Makes it easy to override the
@@ -61,7 +54,6 @@ public interface AssertionBuilder<Argument, Ex extends Throwable>
      * case the argument fails the assertion.
      *
      * @param message
-     *
      * @return
      */
     AssertionBuilder<Argument, Ex> usingMessage(@NonEmpty String message);
@@ -73,9 +65,7 @@ public interface AssertionBuilder<Argument, Ex extends Throwable>
      *
      * @param <Ex>
      * @param exceptionMapper
-     *
      * @return
-     *
      * @see ExceptionMapper
      */
     <Ex extends Throwable> AssertionBuilder<Argument, Ex> throwing(@Required ExceptionMapper<Ex> exceptionMapper);
@@ -85,7 +75,6 @@ public interface AssertionBuilder<Argument, Ex extends Throwable>
      * chain-able, to allow for multiple assertions on a single argument.
      *
      * @param assertion The assertion to run throw the argument. Must be non-null.
-     *
      * @throws Ex Throws the desired exception if the assertion fails.
      * @see #isA(AlchemyAssertion)
      */
@@ -123,7 +112,6 @@ public interface AssertionBuilder<Argument, Ex extends Throwable>
      *
      * @param <Ex>           The type of the Exception that will be thrown.
      * @param exceptionClass The class of the Exception that will be thrown. Must be non-null.
-     *
      * @return
      */
     <Ex extends Throwable> AssertionBuilder<Argument, Ex> throwing(@Required Class<Ex> exceptionClass);
