@@ -31,6 +31,7 @@ import static tech.sirwellington.alchemy.arguments.internal.Checks.checkThat;
 
 /**
  * Common {@link AlchemyAssertion Alchemy Asssertions}.
+ *
  * @author SirWellington
  */
 @NonInstantiable
@@ -42,8 +43,9 @@ public final class Assertions {
 
     /**
      * Asserts the argument is not null.
-     * @return a chainable assertion
+     *
      * @param <A> The type to check.
+     * @return a chainable assertion
      */
     public static <A> AlchemyAssertion<A> notNull() {
         return reference -> {
@@ -56,8 +58,9 @@ public final class Assertions {
     /**
      * Asserts that the argument is null.
      * This is the opposite of {@link #notNull()}.
-     * @return a chainable assertion
+     *
      * @param <A> The type to check.
+     * @return a chainable assertion
      */
     public static <A> AlchemyAssertion<A> nullObject() {
         return reference -> {
@@ -69,9 +72,10 @@ public final class Assertions {
 
     /**
      * Asserts that the argument is the same instance as {@link other}. This assertion uses {@code ==}.
+     *
      * @param other The object to compare against.
+     * @param <A>   The type of the object to check.
      * @return A chainable assertion.
-     * @param <A> The type of the object to check.
      */
     public static <A> AlchemyAssertion<A> sameInstanceAs(@Optional A other) {
         return arg -> {
@@ -95,10 +99,11 @@ public final class Assertions {
      * checkThat(obj).is(instanceOf(Number.class)); // true
      * checkThat(obj).is(instanceOf(Object.class)); // true
      * checkThat(obj).is(instanceOf(String.class)); // false - fails the assertion
-     * }
+     *}
+     *
      * @param clazz The class to check against.
+     * @param <A>   The type of the object.
      * @return A chainable assertion
-     * @param <A> The type of the object.
      */
     public static <A> AlchemyAssertion<A> instanceOf(@Required Class<?> clazz) {
         checkNotNull(clazz, "class parameter cannot be null");
@@ -112,9 +117,10 @@ public final class Assertions {
 
     /**
      * Asserts that the argument is {@link Objects#equals(Object, Object)}  equal to} {@link other}.
+     *
      * @param other The object to compare against.
+     * @param <A>   Type of the argument.
      * @return A chainable assertion.
-     * @param <A> Type of the argument.
      */
     public static <A> AlchemyAssertion<A> equalTo(@Optional A other) {
         return arg -> {
@@ -133,10 +139,11 @@ public final class Assertions {
      * checkThat(filename)
      *   .is(not(stringWithWhitespace()))
      *   .is(not(equalTo("info.txt")));
-     * }
+     *}
+     *
      * @param assertion The assertion to negate.
+     * @param <A>       Type of the object being checked.
      * @return A chainable assertion.
-     * @param <A> Type of the object being checked.
      */
     public static <A> AlchemyAssertion<A> not(@Required AlchemyAssertion<A> assertion) {
         return arg -> {
@@ -170,14 +177,15 @@ public final class Assertions {
      *
      * var age = user.getAge();
      * checkThat(age)is(validAge);
-     * }
+     *}
      * <br>
      * This allows you to <strong>combine and store</strong> multiple {@link AlchemyAssertion assertions} that
      * are frequently used together to perform argument checks.
-     * @param first The first assertion to include.
-     * @param others The rest of the assertions to include.
-     * @return A chainable assertion.
+     *
+     * @param first      The first assertion to include.
+     * @param others     The rest of the assertions to include.
      * @param <Argument> The type of the argument being checked.
+     * @return A chainable assertion.
      */
     @SafeVarargs
     static <Argument> AlchemyAssertion<Argument> combine(
@@ -197,7 +205,7 @@ public final class Assertions {
     }
 
     @Internal
-    static void failAssertion(String format, Object...params) {
+    static void failAssertion(String format, Object... params) {
         throw new FailedAssertionException(
             format(format, params)
         );
