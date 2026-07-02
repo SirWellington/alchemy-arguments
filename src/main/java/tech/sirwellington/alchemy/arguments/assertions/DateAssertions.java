@@ -40,6 +40,11 @@ public final class DateAssertions {
         throw new IllegalAccessException("cannot directly instantiate");
     }
 
+    /**
+     * Asserts that the argument date is before the specified date.
+     * @param expected The date to check against.
+     * @return A chainable assertion.
+     */
     public static AlchemyAssertion<Date> before(@Required Date expected) {
         checkNotNull(expected, "date cannot be null");
 
@@ -51,6 +56,11 @@ public final class DateAssertions {
         };
     }
 
+    /**
+     * Asserts that the argument date is after the specified date.
+     * @param expected The date to check against.
+     * @return A chainable assertion.
+     */
     public static AlchemyAssertion<Date> after(@Required Date expected) {
         checkNotNull(expected, "date cannot be null");
 
@@ -62,6 +72,10 @@ public final class DateAssertions {
         };
     }
 
+    /**
+     * Asserts that the argument date is in the past.
+     * @return A chainable assertion.
+     */
     public static AlchemyAssertion<Date> inThePast() {
         return date -> {
             // Recalculate "now" each time we are called
@@ -74,7 +88,10 @@ public final class DateAssertions {
         };
     }
 
-
+    /**
+     * Asserts that the argument date is in the future.
+     * @return A chainable assertion.
+     */
     public static AlchemyAssertion<Date> inTheFuture() {
         return date -> {
             var present = new Date();
