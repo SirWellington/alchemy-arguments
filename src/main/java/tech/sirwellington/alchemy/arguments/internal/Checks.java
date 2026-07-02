@@ -42,30 +42,25 @@ public final class Checks {
     /**
      * Checks if the provided collection is null or empty.
      */
-    @SuppressWarnings("nullness:argument.type.incompatible")
-    static boolean isNullOrEmpty(java.util.Collection<?> collection) {
+    static <T> boolean isNullOrEmpty(Collection<T> collection) {
         return collection == null || collection.isEmpty();
     }
 
     /**
      * Ensures the reference is not null, and throws an exception otherwise.
      */
-    @Throws(IllegalArgumentException.class)
-    static void checkNotNull(Object reference) {
+    static void checkNotNull(Object reference) throws IllegalArgumentException {
         checkThat(reference != null);
     }
 
-    @Throws(IllegalArgumentException.class)
-    static void checkNotNull(Object reference, String message) {
+    static void checkNotNull(Object reference, String message) throws IllegalArgumentException {
         checkThat(reference != null, message);
     }
 
     /**
      * Checks if the predicate is true and throws an IllegalStateException otherwise.
      */
-    @Throws(IllegalStateException.class)
-    @Internal
-    static void checkState(boolean predicate, String message) {
+    static void checkState(boolean predicate, String message) throws IllegalStateException {
         if (!predicate) {
             throw new IllegalStateException(message);
         }
@@ -74,15 +69,13 @@ public final class Checks {
     /**
      * Throws IllegalArgumentException if the predicate is false.
      */
-    @Throws(IllegalArgumentException.class)
-    static void checkThat(boolean predicate) {
+    static void checkThat(boolean predicate) throws IllegalArgumentException {
         if (!predicate) {
             throw new IllegalArgumentException();
         }
     }
 
-    @Throws(IllegalArgumentException.class)
-    static void checkThat(boolean predicate, String message) {
+    static void checkThat(boolean predicate, String message) throws IllegalArgumentException {
         if (!predicate) {
             throw new IllegalArgumentException(message);
         }
@@ -91,13 +84,11 @@ public final class Checks {
     /**
      * Checks that the string is not null or empty.
      */
-    @Throws(IllegalArgumentException.class)
-    static void checkNotNullOrEmpty(String string) {
+    static void checkNotNullOrEmpty(String string) throws IllegalArgumentException {
         checkThat(!isNullOrEmpty(string));
     }
 
-    @Throws(IllegalArgumentException.class)
-    static void checkNotNullOrEmpty(String string, String message) {
+    static void checkNotNullOrEmpty(String string, String message) throws IllegalArgumentException {
         checkThat(!isNullOrEmpty(string), message);
     }
 
