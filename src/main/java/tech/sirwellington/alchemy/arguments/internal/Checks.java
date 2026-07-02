@@ -37,7 +37,7 @@ public final class Checks {
     /**
      * Checks if the provided string is null or empty.
      */
-    static boolean isNullOrEmpty(String string) {
+    public static boolean isNullOrEmpty(String string) {
         return string == null || string.isEmpty();
     }
 
