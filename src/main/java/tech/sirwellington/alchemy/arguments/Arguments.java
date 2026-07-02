@@ -51,7 +51,9 @@ public final class Arguments {
 
     @SafeVarargs
     public static <Argument> AssertionBuilder<Argument, FailedAssertionException> checkThat(
-        @Optional Argument argument, @Optional Argument... others) {
+        @Optional Argument argument,
+        @Optional Argument... others
+    ) {
         var listOfArguments = new ArrayList<Argument>();
         listOfArguments.add(argument);
 

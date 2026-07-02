@@ -12,69 +12,85 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package tech.sirwellington.alchemy.arguments
 
-import org.hamcrest.Matchers.notNullValue
-import org.junit.Assert.assertThat
-import org.junit.Test
-import org.junit.runner.RunWith
-import tech.sirwellington.alchemy.arguments.Arguments.checkThat
-import tech.sirwellington.alchemy.arguments.assertions.nonEmptyString
-import tech.sirwellington.alchemy.test.junit.ThrowableAssertion.assertThrows
-import tech.sirwellington.alchemy.test.junit.runners.*
-import tech.sirwellington.alchemy.test.junit.runners.GenerateString.Type.ALPHABETIC
+package tech.sirwellington.alchemy.arguments;
+
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.junit.jupiter.MockitoExtension;
+import tech.sirwellington.alchemy.test.AlchemyTest;
+import tech.sirwellington.alchemy.test.ThrowableAssertion;
+import tech.sirwellington.alchemy.test.generation.GenerateList;
+import tech.sirwellington.alchemy.test.generation.GenerateString;
+
+import java.util.List;
+
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static tech.sirwellington.alchemy.arguments.Arguments.checkThat;
+import static tech.sirwellington.alchemy.arguments.assertions.StringAssertions.nonEmptyString;
+import static tech.sirwellington.alchemy.test.ThrowableAssertion.assertThrows;
 
 /**
-
+ * Tests for {@link Arguments}.
+ *
  * @author SirWellington
  */
-@RunWith(AlchemyTestRunner::class)
-@Repeat
-class ArgumentsTest
-{
+@DisplayName("Arguments Utility Tests")
+@AlchemyTest
+@ExtendWith(MockitoExtension.class)
+class ArgumentsTest {
 
-    @GenerateString(ALPHABETIC)
-    private lateinit var argument: String
+    @GenerateString
+    private String argument = "Hello";
 
-    @GenerateList(String::class)
-    private lateinit var strings: List<String>
+    @GenerateList(String.class)
+    private List<String> strings = List.of();
 
-    @DontRepeat
     @Test
-    fun testConstructorThrows()
-    {
-        assertThrows { Arguments::class.java.newInstance() }
+    @DisplayName("testConstructorThrows: Arguments should be non-instantiable")
+    void testConstructorThrows() {
+        assertThrows(
+            () -> Arguments.class.getDeclaredConstructor().newInstance()
+        ).isInstanceOf(IllegalAccessException.class)
+            .hasMessage("cannot directly instantiate");
     }
 
     @Test
-    fun testCheckThat()
-    {
-        val instance = checkThat<String>(argument)
-        assertThat(instance, notNullValue())
+    @DisplayName("testCheckThat: single argument returns non-null instance")
+    void testCheckThat() {
+        var instance = checkThat(argument);
+        assertNotNull(instance, "checkThat should return a non-null assertion");
     }
 
     @Test
-    fun testCheckThatWithMultipleArguments()
-    {
-        val stringArray = strings.toTypedArray()
+    @DisplayName("testCheckThatWithMultipleArguments: multiple args work correctly (including empty)")
+    void testCheckThatWithMultipleArguments() {
+        // Test with multiple strings
+        final var instance1 = checkThat(argument, strings.toArray(new String[0]));
+        assertNotNull(instance1);
+        assertDoesNotThrow(
+            () -> instance1.are(nonEmptyString())
+        );
 
-        var instance = checkThat(argument, *stringArray)
-        assertThat(instance, notNullValue())
-        instance.are(nonEmptyString())
-
-        instance = checkThat(argument, *arrayOfNulls(0))
-        assertThat(instance, notNullValue())
-        instance.are(nonEmptyString())
+        // Test with only first arg and zero additional (i.e., single string)
+        final var instance2 = checkThat(argument, new String[0]);
+        assertNotNull(instance2);
+        assertDoesNotThrow(() -> instance2.are(nonEmptyString()));
     }
 
     @Test
-    fun testCheckThatWithMultipleArgumentsWithFailure()
-    {
-        val instance = checkThat(argument, *arrayOfNulls(1))
+    @DisplayName("testCheckThatWithMultipleArgumentsWithFailure: assertion failure on null element")
+    void testCheckThatWithMultipleArgumentsWithFailure() {
+        var instance = checkThat(argument, new String[]{null});
 
-        assertThat(instance, notNullValue())
+        assertNotNull(instance, "instance should be non-null before checking");
 
-        assertThrows { instance.are(nonEmptyString()) }.failedAssertion()
+        assertThrows(
+            () -> instance.are(nonEmptyString())
+        ).isInstanceOf(FailedAssertionException.class)
+             .containsInMessage("empty");
     }
 
 }
