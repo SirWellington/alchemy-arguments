@@ -14,18 +14,19 @@
  */
 package tech.sirwellington.alchemy.arguments;
 
-import java.util.List;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import tech.sirwellington.alchemy.annotations.access.Internal;
 import tech.sirwellington.alchemy.annotations.concurrency.Immutable;
 import tech.sirwellington.alchemy.annotations.designs.FluidAPIDesign;
 import tech.sirwellington.alchemy.annotations.designs.patterns.StrategyPattern;
+import tech.sirwellington.alchemy.arguments.internal.Checks;
+
+import java.util.List;
 
 import static tech.sirwellington.alchemy.annotations.designs.patterns.StrategyPattern.Role.CLIENT;
-import static tech.sirwellington.alchemy.arguments.Checks.isNullOrEmpty;
 import static tech.sirwellington.alchemy.arguments.ExceptionMapper.IDENTITY;
+import static tech.sirwellington.alchemy.arguments.internal.Checks.*;
 
 /**
  * @author SirWellington
@@ -34,8 +35,7 @@ import static tech.sirwellington.alchemy.arguments.ExceptionMapper.IDENTITY;
 @StrategyPattern(role = CLIENT)
 @Immutable
 @Internal
-final class AssertionBuilderImpl<Argument, Ex extends Throwable> implements AssertionBuilder<Argument, Ex>
-{
+final class AssertionBuilderImpl<Argument, Ex extends Throwable> implements AssertionBuilder<Argument, Ex> {
 
     private final static Logger LOG = LoggerFactory.getLogger(AssertionBuilderImpl.class);
 
@@ -45,11 +45,12 @@ final class AssertionBuilderImpl<Argument, Ex extends Throwable> implements Asse
     private final List<Argument> arguments;
     private final String overrideMessage;
 
-    private AssertionBuilderImpl(AlchemyAssertion<Argument> assertion,
-                                 ExceptionMapper<Ex> exceptionMapper,
-                                 String overrideMessage,
-                                 List<Argument> arguments)
-    {
+    private AssertionBuilderImpl(
+        AlchemyAssertion<Argument> assertion,
+        ExceptionMapper<Ex> exceptionMapper,
+        String overrideMessage,
+        List<Argument> arguments
+    ) {
         this.assertion = assertion;
         this.exceptionMapper = exceptionMapper;
         this.overrideMessage = overrideMessage;
@@ -57,50 +58,48 @@ final class AssertionBuilderImpl<Argument, Ex extends Throwable> implements Asse
     }
 
     @Override
-    public AssertionBuilder<Argument, Ex> usingMessage(String message)
-    {
+    public AssertionBuilder<Argument, Ex> usingMessage(String message) {
         Checks.checkThat(!isNullOrEmpty(message), "error message is empty");
 
         ExceptionMapper<Ex> newExceptionMapper;
-        if (exceptionMapper instanceof DynamicExceptionSupplier)
-        {
+        if (exceptionMapper instanceof DynamicExceptionSupplier) {
             newExceptionMapper = createUpdatedDynamicExceptionMapperWithMessage(message);
         }
-        else
-        {
+        else {
             newExceptionMapper = this.exceptionMapper;
         }
 
         return new AssertionBuilderImpl<>(assertion, newExceptionMapper, message, arguments);
     }
 
-    static <Argument> AssertionBuilderImpl<Argument, FailedAssertionException> checkThat(List<Argument> arguments)
-    {
+    static <Argument> AssertionBuilderImpl<Argument, FailedAssertionException> checkThat(List<Argument> arguments) {
         return new AssertionBuilderImpl<>(null, IDENTITY, "", arguments);
     }
 
     @Override
-    public <Ex extends Throwable> AssertionBuilderImpl<Argument, Ex> throwing(ExceptionMapper<Ex> exceptionMapper)
-    {
-        Checks.checkNotNull(exceptionMapper, "exceptionMapper is null");
+    public <Ex extends Throwable> AssertionBuilderImpl<Argument, Ex> throwing(ExceptionMapper<Ex> exceptionMapper) {
+        checkNotNull(exceptionMapper, "exceptionMapper is null");
 
         return new AssertionBuilderImpl<>(null, exceptionMapper, overrideMessage, arguments);
     }
 
     @Override
-    public <Ex extends Throwable> AssertionBuilder<Argument, Ex> throwing(Class<Ex> exceptionClass)
-    {
-        Checks.checkNotNull(exceptionClass);
+    public <Ex extends Throwable> AssertionBuilder<Argument, Ex> throwing(Class<Ex> exceptionClass) {
+        checkNotNull(exceptionClass);
 
         return this.throwing(new DynamicExceptionSupplier<>(exceptionClass, overrideMessage));
     }
 
     @Override
-    public AssertionBuilderImpl<Argument, Ex> is(AlchemyAssertion<Argument> assertion) throws Ex
-    {
-        Checks.checkNotNull(assertion, "assertion is null");
+    public AssertionBuilderImpl<Argument, Ex> is(AlchemyAssertion<Argument> assertion) throws Ex {
+        checkNotNull(assertion, "assertion is null");
 
-        AssertionBuilderImpl<Argument, Ex> newBuilder = new AssertionBuilderImpl<>(assertion, exceptionMapper, overrideMessage, arguments);
+        var newBuilder = new AssertionBuilderImpl<>(
+            assertion,
+            exceptionMapper,
+            overrideMessage,
+            arguments
+        );
 
         //Check this assertion
         newBuilder.checkAssertion();
@@ -109,86 +108,70 @@ final class AssertionBuilderImpl<Argument, Ex extends Throwable> implements Asse
     }
 
     @Override
-    public AssertionBuilder<Argument, Ex> isA(AlchemyAssertion<Argument> assertion) throws Ex
-    {
+    public AssertionBuilder<Argument, Ex> isA(AlchemyAssertion<Argument> assertion) throws Ex {
         return is(assertion);
     }
 
     @Override
-    public AssertionBuilder<Argument, Ex> are(AlchemyAssertion<Argument> assertion) throws Ex
-    {
+    public AssertionBuilder<Argument, Ex> are(AlchemyAssertion<Argument> assertion) throws Ex {
         return is(assertion);
     }
 
-    private void checkAssertion() throws Ex
-    {
-        Checks.checkState(assertion != null, "no assertion found");
-        Checks.checkState(exceptionMapper != null, "no exceptionMapper found");
+    private void checkAssertion() throws Ex {
+        checkState(assertion != null, "no assertion found");
+        checkState(exceptionMapper != null, "no exceptionMapper found");
 
         FailedAssertionException caught = null;
 
-        try
-        {
-            for (Argument argument : arguments)
-            {
+        try {
+            for (Argument argument : arguments) {
                 assertion.check(argument);
             }
-        }
-        catch (FailedAssertionException ex)
-        {
+        } catch (FailedAssertionException ex) {
             caught = ex;
-            if (!Checks.isNullOrEmpty(overrideMessage))
-            {
+            if (!isNullOrEmpty(overrideMessage)) {
                 caught.changeMessage(overrideMessage);
             }
-        }
-        catch (RuntimeException ex)
-        {
+        } catch (RuntimeException ex) {
             handleUnexpectedException(ex);
         }
 
-        if (exceptionOccurred(caught))
-        {
+        if (exceptionOccurred(caught)) {
             handleFailedAssertion(caught);
         }
 
     }
 
-    private boolean exceptionOccurred(FailedAssertionException caught)
-    {
+    private boolean exceptionOccurred(FailedAssertionException caught) {
         return caught != null;
     }
 
-    private void handleUnexpectedException(RuntimeException ex) throws Ex
-    {
-        LOG.warn("Assertion {} threw an unexpected exception. Only {} Exceptions are acceptable for Assertions.",
-                 assertion,
-                 FailedAssertionException.class.getSimpleName(),
-                 ex);
+    private void handleUnexpectedException(RuntimeException ex) throws Ex {
+        LOG.warn(
+            "Assertion {} threw an unexpected exception. Only {} Exceptions are acceptable for Assertions.",
+            assertion,
+            FailedAssertionException.class.getSimpleName(),
+            ex
+        );
 
-        FailedAssertionException wrappedException = new FailedAssertionException("wrapping unexpected exception", ex);
+        var wrappedException = new FailedAssertionException("wrapping unexpected exception", ex);
         handleFailedAssertion(wrappedException);
     }
 
-    private void handleFailedAssertion(FailedAssertionException caught) throws Ex
-    {
-        Ex mappedEx = exceptionMapper.apply(caught);
+    private void handleFailedAssertion(FailedAssertionException caught) throws Ex {
+        var mappedEx = exceptionMapper.apply(caught);
 
-        if (mappedEx != null)
-        {
+        if (mappedEx != null) {
             throw mappedEx;
         }
-        else
-        {
+        else {
             LOG.warn("Exception Mapper did not return a throwable. Swallowing exception", caught);
         }
     }
 
-    private ExceptionMapper<Ex> createUpdatedDynamicExceptionMapperWithMessage(String message)
-    {
-        DynamicExceptionSupplier<Ex> dynamicExceptionMapper = (DynamicExceptionSupplier<Ex>) exceptionMapper;
-        Class<Ex> exceptionClass = dynamicExceptionMapper.getExceptionClass();
-
+    private ExceptionMapper<Ex> createUpdatedDynamicExceptionMapperWithMessage(String message) {
+        var dynamicExceptionMapper = (DynamicExceptionSupplier<Ex>) exceptionMapper;
+        var exceptionClass = dynamicExceptionMapper.getExceptionClass();
         return new DynamicExceptionSupplier<>(exceptionClass, message);
     }
 
