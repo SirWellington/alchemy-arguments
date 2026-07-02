@@ -13,65 +13,62 @@
  * limitations under the License.
  */
 
-@file:JvmName("AddressAssertions")
+package tech.sirwellington.alchemy.arguments.assertions;
 
-package tech.sirwellington.alchemy.arguments.assertions
+import tech.sirwellington.alchemy.arguments.AlchemyAssertion;
+import tech.sirwellington.alchemy.arguments.internal.Checks;
 
-
-import tech.sirwellington.alchemy.arguments.AlchemyAssertion
-import tech.sirwellington.alchemy.arguments.checkThat
+import static tech.sirwellington.alchemy.arguments.Arguments.checkThat;
 
 
 /**
  * A Library assertion intended to check the validity of address components.
  *
- *
- * You will find checks for:
- * <pre>
- * + Zip Codes
- * + States
- * + Countries
- * </pre>
+ * <p>You will find checks for:
+ * <ul>
+ *   <li>Zip Codes</li>
+ *   <li>States</li>
+ *   <li>Countries</li>
+ * </ul></p>
  *
  * @author SirWellington
  */
+public final class AddressAssertions {
 
-/**
- * Checks that a number can represent a valid zip code.
- * Apparently a Zip Code does not necessarily have to be a digit.
- *
- * @return
- */
-fun validZipCode(): AlchemyAssertion<String>
-{
-    return AlchemyAssertion { zip ->
-
-        checkThat(zip)
-                .usingMessage("zip must consist of 4-5 characters")
-                .isA(stringWithLengthGreaterThanOrEqualTo(4))
-                .isA(stringWithLengthLessThanOrEqualTo(5))
+    private AddressAssertions() throws IllegalAccessException {
+        throw new IllegalAccessException("Utility class should not be instantiated.");
     }
-}
 
-/**
- * Checks that a ZipCode is:
- * <pre>
- * + Not null
- * + Represents an Integer number (eg, 90012)
- * + Is 5 digits (eg, 01693)
- * + Is in the range (00000)...(99999)
- * </pre>
- *
- * @return
- */
-fun validZipCodeString(): AlchemyAssertion<String>
-{
-    return AlchemyAssertion { zip ->
+    /**
+     * Checks that a string can represent a valid zip code.
+     * <p>Appropriately, a Zip Code does not necessarily have to consist only of digits.</p>
+     *
+     * @return an {@link AlchemyAssertion} for ZIP codes (4–5 characters long)
+     */
+    public static AlchemyAssertion<String> validZipCode() {
+        return zip -> checkThat(zip)
+                            .usingMessage("zip must consist of 4-5 characters")
+                            .isA(stringWithLengthGreaterThanOrEqualTo(4))
+                            .isA(stringWithLengthLessThanOrEqualTo(5));
+    }
 
-        nonEmptyString().check(zip)
-        integerString().check(zip)
-        stringWithLength(5)
-
-        validZipCode().check(zip)
+    /**
+     * Checks that a ZIP code string is:
+     * <ul>
+     *   <li>Not null</li>
+     *   <li>Represents an Integer number (e.g., {@code "90012"})</li>
+     *   <li>Exactly 5 digits long (e.g., {@code "01693"})</li>
+     *   <li>In the valid numeric range [00000, 99999]</li>
+     * </ul>
+     *
+     * @return an {@link AlchemyAssertion} for strict ZIP code strings
+     */
+    public static AlchemyAssertion<String> validZipCodeString() {
+        return zip -> {
+            nonEmptyString().check(zip);
+            integerString().check(zip);
+            stringWithLength(5);
+            validZipCode().check(zip);
+        };
     }
 }

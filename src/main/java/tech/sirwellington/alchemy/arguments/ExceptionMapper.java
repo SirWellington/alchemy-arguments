@@ -16,33 +16,29 @@ package tech.sirwellington.alchemy.arguments;
 
 /**
  * An {@code ExceptionMapper} decides how to handle a {@link FailedAssertionException}.
- *
+ * <p>
  * It can :
  * <ol>
  * <li> Supply a new Exception Type that wraps the {@code cause}
  * <li> Supply a new Exception Type that ignores the {@code cause}
  * <li> Return null, which causes no exception to be thrown, essentially ignoring the assertion.
  * </ol>
- *
+ * <p>
  * Behavior #3 may change in the future, as there is no clear use-case for skipping the assertions
  * this way.
  *
- * @author SirWellington
- *
  * @param <Ex>
+ * @author SirWellington
  */
-public interface ExceptionMapper<Ex extends Throwable>
-{
+public interface ExceptionMapper<Ex extends Throwable> {
 
     /**
      * This identity instance passes the same {@link FailedAssertionException} thrown by the
      * {@link AlchemyAssertion}.
      */
-    ExceptionMapper<FailedAssertionException> IDENTITY = new ExceptionMapper<FailedAssertionException>()
-    {
+    ExceptionMapper<FailedAssertionException> IDENTITY = new ExceptionMapper<FailedAssertionException>() {
         @Override
-        public FailedAssertionException apply(FailedAssertionException cause)
-        {
+        public FailedAssertionException apply(FailedAssertionException cause) {
             return cause;
         }
     };
@@ -53,9 +49,7 @@ public interface ExceptionMapper<Ex extends Throwable>
      * re-throw the {@link FailedAssertionException}.
      *
      * @param cause The exception thrown by the {@link AlchemyAssertion}
-     *
      * @return Never return a null Exception
-     *
      * @see #IDENTITY
      */
     Ex apply(FailedAssertionException cause);
