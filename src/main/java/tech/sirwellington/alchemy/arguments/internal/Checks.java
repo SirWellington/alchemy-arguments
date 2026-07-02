@@ -90,11 +90,22 @@ public final class Checks {
      * Checks that the string is not null or empty.
      */
     public static void checkNotNullOrEmpty(String string) throws IllegalArgumentException {
-        checkThat(!isNullOrEmpty(string));
+        checkNotNullOrEmpty(string, "string cannot be empty");
     }
 
     public static void checkNotNullOrEmpty(String string, String message) throws IllegalArgumentException {
         checkThat(!isNullOrEmpty(string), message);
+    }
+
+    /**
+     * Checks that the string is not null or empty.
+     */
+    public static void checkNotNullOrEmpty(Collection<?> collection) throws IllegalArgumentException {
+        checkNotNullOrEmpty(collection, "Collection cannot be null or empty");
+    }
+
+    public static void checkNotNullOrEmpty(Collection<?> collection, String message) throws IllegalArgumentException {
+        checkThat(!isNullOrEmpty(collection), message);
     }
 
     /**

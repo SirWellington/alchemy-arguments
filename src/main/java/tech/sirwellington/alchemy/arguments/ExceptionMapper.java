@@ -36,12 +36,7 @@ public interface ExceptionMapper<Ex extends Throwable> {
      * This identity instance passes the same {@link FailedAssertionException} thrown by the
      * {@link AlchemyAssertion}.
      */
-    ExceptionMapper<FailedAssertionException> IDENTITY = new ExceptionMapper<FailedAssertionException>() {
-        @Override
-        public FailedAssertionException apply(FailedAssertionException cause) {
-            return cause;
-        }
-    };
+    ExceptionMapper<FailedAssertionException> IDENTITY = cause -> cause;
 
     /**
      * Decide how to map the causing exception. You can either return a new Exception that wraps the

@@ -17,6 +17,7 @@ package tech.sirwellington.alchemy.arguments;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import tech.sirwellington.alchemy.annotations.access.Internal;
+import tech.sirwellington.alchemy.annotations.arguments.Required;
 import tech.sirwellington.alchemy.annotations.concurrency.Immutable;
 import tech.sirwellington.alchemy.annotations.designs.FluidAPIDesign;
 import tech.sirwellington.alchemy.annotations.designs.patterns.StrategyPattern;
@@ -72,7 +73,10 @@ final class AssertionBuilderImpl<Argument, Ex extends Throwable> implements Asse
         return new AssertionBuilderImpl<>(assertion, newExceptionMapper, message, arguments);
     }
 
-    static <Argument> AssertionBuilderImpl<Argument, FailedAssertionException> checkThat(List<Argument> arguments) {
+    static <Argument> AssertionBuilderImpl<Argument, FailedAssertionException> checkThat(
+        @Required List<Argument> arguments
+    ) {
+        checkNotNullOrEmpty(arguments, "arguments cannot be empty");
         return new AssertionBuilderImpl<>(null, IDENTITY, "", arguments);
     }
 
