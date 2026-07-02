@@ -12,88 +12,99 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package tech.sirwellington.alchemy.arguments
 
-import com.nhaarman.mockito_kotlin.whenever
-import org.junit.Before
-import org.junit.Test
-import org.junit.runner.RunWith
-import org.mockito.ArgumentMatchers
-import org.mockito.Mock
-import org.mockito.Mockito.verify
-import org.mockito.Spy
-import tech.sirwellington.alchemy.test.junit.runners.AlchemyTestRunner
+package tech.sirwellington.alchemy.arguments;
+
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.Mock;
+import org.mockito.MockitoAnnotations;
+import org.mockito.junit.jupiter.MockitoExtension;
+import tech.sirwellington.alchemy.annotations.arguments.Required;
+import tech.sirwellington.alchemy.test.AlchemyTest;
+
+import static org.mockito.Mockito.*;
 
 /**
-
+ * Tests for {@link AssertionBuilder} behavior — specifically, delegation from `are()` and `` `is`() `` to `isA()`.
+ *
  * @author SirWellington
  */
-@RunWith(AlchemyTestRunner::class)
-class AssertionBuilderTest
-{
+@DisplayName("AssertionBuilder Delegation Tests")
+@AlchemyTest
+@ExtendWith(MockitoExtension.class)
+class AssertionBuilderTest {
 
     @Mock
-    private lateinit var assertion: AlchemyAssertion<Any>
+    private AlchemyAssertion<Object> assertion;
 
-    @Spy
-    private lateinit var instance: FakeInstance<Any>
+    private FakeInstance<Object> instance;
 
-    @Before
-    @Throws(Throwable::class)
-    fun setUp()
-    {
-        whenever(instance.are(ArgumentMatchers.any()))
-                .thenCallRealMethod()
+    @BeforeEach
+    void setUp() {
+        MockitoAnnotations.openMocks(this);
+
+        instance = spy(new FakeInstance<>());
+        doCallRealMethod().when(instance).are(any());
     }
 
     @Test
-    fun testAreCallsIsA()
-    {
-        instance.are(assertion)
-        verify(instance).isA(assertion)
+    @DisplayName("testAreCallsIsA: should delegate are() → isA()")
+    void testAreCallsIsA() {
+        var _ = instance.are(assertion);
+
+        verify(instance, times(1)).isA(eq(assertion));
     }
 
     @Test
-    fun testIsCallsIsA()
-    {
-        instance.isA(assertion)
-        verify(instance).isA(assertion)
+    @DisplayName("testIsCallsIsA: should delegate `is`() → isA()")
+    void testIsCallsIsA() {
+        var _ = instance.is(assertion);
+
+        verify(instance, times(1)).isA(eq(assertion));
     }
 
-    private open class FakeInstance<A> : AssertionBuilder<A, Throwable>
-    {
-        override fun isA(assertion: AlchemyAssertion<A>?): AssertionBuilder<A, Throwable>
-        {
-            return this
+    // -------------------------------
+    // Fake implementation of AssertionBuilder
+    // -------------------------------
+
+    private static class FakeInstance<A> implements AssertionBuilder<A, Throwable> {
+
+        @Override
+        public AssertionBuilder<A, Throwable> isA(@Required AlchemyAssertion<A> assertion) {
+            return this;
         }
 
-        override fun are(assertion: AlchemyAssertion<A>?): AssertionBuilder<A, Throwable>
-        {
-            return isA(assertion)
+        @Override
+        public AssertionBuilder<A, Throwable> are(AlchemyAssertion<A> assertion) {
+            // Original Kotlin: return isA(assertion)
+            return isA(assertion);
         }
 
-        @Throws(Throwable::class)
-        override fun `is`(assertion: AlchemyAssertion<A>): AssertionBuilder<A, Throwable>
-        {
-            return isA(assertion)
+        @Override
+        public AssertionBuilder<A, Throwable> is(AlchemyAssertion<A> assertion) {
+            return isA(assertion);
         }
 
-        override fun <Ex : Throwable?> throwing(exceptionClass: Class<Ex>?): AssertionBuilder<A, Ex>
-        {
-            return this as AssertionBuilder<A, Ex>
+        @SuppressWarnings("unchecked")
+        @Override
+        public <Ex extends Throwable> AssertionBuilder<A, Ex> throwing(Class<Ex> exceptionClass) {
+            return (AssertionBuilder<A, Ex>) this;
         }
 
-        override fun usingMessage(message: String): AssertionBuilder<A, Throwable>
-        {
-            return this
+        @Override
+        public AssertionBuilder<A, Throwable> usingMessage(String message) {
+            // In real impl: returns new builder with message override
+            return this;
         }
 
-        override fun <Ex : Throwable> throwing(exceptionMapper: ExceptionMapper<Ex>): AssertionBuilder<A, Ex>
-        {
-            return this as AssertionBuilder<A, Ex>
+        @SuppressWarnings("unchecked")
+        @Override
+        public <Ex extends Throwable> AssertionBuilder<A, Ex> throwing(
+            tech.sirwellington.alchemy.arguments.ExceptionMapper<Ex> exceptionMapper) {
+            return (AssertionBuilder<A, Ex>) this;
         }
-
-
     }
-
 }
