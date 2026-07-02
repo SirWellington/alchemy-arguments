@@ -186,8 +186,8 @@ public final class CollectionAssertions {
             collectionContaining(first).check(collection);
 
             var missing = Arrays.stream(rest)
-                              .filter(e -> !collection.contains(e))
-                              .toList();
+                                .filter(e -> !collection.contains(e))
+                                .toList();
 
             if (!missing.isEmpty()) {
                 throw new FailedAssertionException(
@@ -201,7 +201,10 @@ public final class CollectionAssertions {
      * Asserts that the collection contains at least one of the specified elements.
      */
     @SafeVarargs
-    public static <E, C extends Collection<E>> AlchemyAssertion<C> collectionContainingAtLeastOneOf(E first, E... others) {
+    public static <E, C extends Collection<E>> AlchemyAssertion<C> collectionContainingAtLeastOneOf(
+        E first,
+        E... others
+    ) {
         checkNotNull(first, "First argument cannot be null");
 
         if (others.length == 0) {
@@ -293,7 +296,7 @@ public final class CollectionAssertions {
 
             if (!collection.contains(element)) {
                 throw new FailedAssertionException(
-                    format("Expected element [{0}] to be in collection",element)
+                    format("Expected element [{0}] to be in collection", element)
                 );
             }
         };
