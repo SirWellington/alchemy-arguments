@@ -13,91 +13,75 @@
  * limitations under the License.
  */
 
-package tech.sirwellington.alchemy.arguments.assertions
+package tech.sirwellington.alchemy.arguments.assertions;
 
-import tech.sirwellington.alchemy.annotations.access.NonInstantiable
-import tech.sirwellington.alchemy.annotations.arguments.Required
-import tech.sirwellington.alchemy.arguments.AlchemyAssertion
-import tech.sirwellington.alchemy.arguments.FailedAssertionException
-import tech.sirwellington.alchemy.arguments.checkNotNull
-import java.util.Date
+
+import tech.sirwellington.alchemy.annotations.access.NonInstantiable;
+import tech.sirwellington.alchemy.annotations.arguments.Required;
+import tech.sirwellington.alchemy.arguments.AlchemyAssertion;
+import tech.sirwellington.alchemy.arguments.FailedAssertionException;
+
+import java.util.Date;
+
+import static java.text.MessageFormat.format;
+import static tech.sirwellington.alchemy.arguments.assertions.Assertions.notNull;
+import static tech.sirwellington.alchemy.arguments.internal.Checks.checkNotNull;
+import static tech.sirwellington.alchemy.arguments.internal.Checks.failAssertion;
 
 /**
-
+ * Assertions for {@link Date Dates}.
+ *
  * @author SirWellington
  */
 @NonInstantiable
-class DateAssertions @Throws(IllegalAccessException::class)
-internal constructor()
-{
+public final class DateAssertions {
 
-    init
-    {
-        throw IllegalAccessException("cannot instantiate")
+    private DateAssertions() throws IllegalAccessException {
+        throw new IllegalAccessException("cannot directly instantiate");
     }
 
-    companion object
-    {
+    public static AlchemyAssertion<Date> before(@Required Date expected) {
+        checkNotNull(expected, "date cannot be null");
 
-        fun inThePast(): AlchemyAssertion<Date>
-        {
-            return AlchemyAssertion { date ->
-                //Recalculate now each time we are called
-                val present = Date()
-                //Check that argument is before present
-                if (!date.before(present))
-                {
-                    throw FailedAssertionException("Expected Date [$date] to be in the past")
-                }
+        return date -> {
+            notNull().check(date);
+            if (!date.before(expected)) {
+                failAssertion("Expected date to be before [{0}] but was [{1}]", expected, date);
             }
-        }
+        };
+    }
 
+    public static AlchemyAssertion<Date> after(@Required Date expected) {
+        checkNotNull(expected, "date cannot be null");
 
-        fun before(@Required expected: Date): AlchemyAssertion<Date>
-        {
-            checkNotNull(expected, "date cannot be null")
-
-            return AlchemyAssertion { date ->
-
-                notNull<Any>().check(date)
-
-                if (!date.before(expected))
-                {
-                    throw FailedAssertionException("Expected Date to be before $expected")
-                }
+        return date -> {
+            notNull().check(date);
+            if (!date.after(expected)) {
+                failAssertion("Expected date to be after [{0}] but was [{1}]", expected, date);
             }
-        }
+        };
+    }
 
-
-        fun inTheFuture(): AlchemyAssertion<Date>
-        {
-            return AlchemyAssertion { date ->
-                //Now must stay current
-                val present = Date()
-
-                //Check that argument is after present
-                if (!date.after(present))
-                {
-                    throw FailedAssertionException("Expected Date [$date] to be in the future")
-                }
+    public static AlchemyAssertion<Date> inThePast() {
+        return date -> {
+            // Recalculate "now" each time we are called
+            var present = new Date();
+            if (!date.before(present)) {
+                throw new FailedAssertionException(
+                    format("Expected Date {0} to be in the past", date)
+                );
             }
-        }
+        };
+    }
 
 
-        fun after(@Required expected: Date): AlchemyAssertion<Date>
-        {
-            checkNotNull(expected, "date cannot be null")
-
-            return AlchemyAssertion { date ->
-
-                notNull<Any>().check(date)
-
-                if (!date.after(expected))
-                {
-                    throw FailedAssertionException("Expected Date [$date] to be after [$expected]")
-                }
+    public static AlchemyAssertion<Date> inTheFuture() {
+        return date -> {
+            var present = new Date();
+            if (!date.after(present)) {
+                failAssertion("Expected Date to be in the future: [{0}]", date);
             }
-        }
+        };
     }
 
 }
