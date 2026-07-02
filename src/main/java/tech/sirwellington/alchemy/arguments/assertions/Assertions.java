@@ -187,7 +187,7 @@ public final class Assertions {
      * @return A chainable assertion.
      */
     @SafeVarargs
-    static <Argument> AlchemyAssertion<Argument> combine(
+    public static <Argument> AlchemyAssertion<Argument> combine(
         @Required AlchemyAssertion<Argument> first,
         @Required AlchemyAssertion<Argument>... others
     ) {
