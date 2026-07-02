@@ -13,13 +13,32 @@
  * limitations under the License.
  */
 
-@file:JvmName("GeolocationAssertions")
+package tech.sirwellington.alchemy.arguments.assertions;
 
-package tech.sirwellington.alchemy.arguments.assertions
+import tech.sirwellington.alchemy.annotations.access.NonInstantiable;
+import tech.sirwellington.alchemy.arguments.AlchemyAssertion;
 
+import static tech.sirwellington.alchemy.arguments.Arguments.checkThat;
+import static tech.sirwellington.alchemy.arguments.assertions.Assertions.notNull;
 
-import tech.sirwellington.alchemy.arguments.AlchemyAssertion
-import tech.sirwellington.alchemy.arguments.checkThat
+@NonInstantiable
+public final class GeolocationAssertions {
+
+    private GeolocationAssertions() throws IllegalAccessException {
+        throw new IllegalAccessException("cannot directly instantiate");
+    }
+
+    public AlchemyAssertion<Double> validLatitude() {
+        return latitude -> {
+            checkThat(latitude)
+                .usingMessage("latitude cannot be null")
+                .is(notNull());
+            checkThat(latitude)
+                .usingMessage("Latitude must be between -90 and 90, but was: " + latitude)
+                .is(les)
+        };
+    }
+}
 
 /**
  * Assertions for testing Geo-Location data, like latitude and longitude.
