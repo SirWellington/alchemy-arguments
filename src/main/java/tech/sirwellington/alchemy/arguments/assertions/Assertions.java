@@ -13,278 +13,193 @@
  * limitations under the License.
  */
 
-@file:JvmName("Assertions")
 
-package tech.sirwellington.alchemy.arguments.assertions
+package tech.sirwellington.alchemy.arguments.assertions;
 
-import tech.sirwellington.alchemy.annotations.arguments.Optional
-import tech.sirwellington.alchemy.annotations.arguments.Required
-import tech.sirwellington.alchemy.arguments.AlchemyAssertion
-import tech.sirwellington.alchemy.arguments.FailedAssertionException
-import tech.sirwellington.alchemy.arguments.checkNotNull
+import tech.sirwellington.alchemy.annotations.access.Internal;
+import tech.sirwellington.alchemy.annotations.access.NonInstantiable;
+import tech.sirwellington.alchemy.annotations.arguments.Optional;
+import tech.sirwellington.alchemy.annotations.arguments.Required;
+import tech.sirwellington.alchemy.arguments.AlchemyAssertion;
+import tech.sirwellington.alchemy.arguments.FailedAssertionException;
+
+import java.util.Objects;
+
+import static java.text.MessageFormat.format;
+import static tech.sirwellington.alchemy.arguments.internal.Checks.checkNotNull;
+import static tech.sirwellington.alchemy.arguments.internal.Checks.checkThat;
 
 /**
- * Common [Alchemy Assertions][AlchemyAssertion].
-
+ * Common {@link AlchemyAssertion Alchemy Asssertions}.
  * @author SirWellington
  */
+@NonInstantiable
+public final class Assertions {
 
-
-/**
- * Asserts that the argument is not null.
-
- * @param <A>
- *
- *
- * @return
- *
- * @see .nullObject
-</A> */
-fun <A : Any?> notNull(): AlchemyAssertion<A>
-{
-    return AlchemyAssertion { reference ->
-        if (reference == null)
-        {
-            throw FailedAssertionException("Argument is null")
-        }
+    private Assertions() throws IllegalAccessException {
+        throw new IllegalAccessException("cannot directly instantiate");
     }
-}
 
-fun <A : Any?> nonNullReference(): AlchemyAssertion<A>
-{
-    return notNull()
-}
-
-/**
- * Asserts that the argument is null.
- * This is the opposite of [.notNull].
-
- * @param <A>
- *
- * @return
- *
- * @see .notNull
-</A>
- */
-
-fun <A : Any?> nullObject(): AlchemyAssertion<A>
-{
-    return AlchemyAssertion { reference ->
-
-        if (reference != null)
-        {
-            throw FailedAssertionException("Argument is not null: $reference")
-        }
+    /**
+     * Asserts the argument is not null.
+     * @return a chainable assertion
+     * @param <A> The type to check.
+     */
+    public static <A> AlchemyAssertion<A> notNull() {
+        return reference -> {
+            if (reference == null) {
+                failAssertion("Argument is null");
+            }
+        };
     }
-}
 
-/**
- * Asserts that the argument is the same instance as `other`.
-
- * @param <A>
- *
- * @param other
- *
- *
- * @return
-</A> */
-
-fun <A : Any?> sameInstanceAs(@Optional other: A): AlchemyAssertion<A>
-{
-    return AlchemyAssertion block@ { argument ->
-
-        if (argument == null && other == null)
-        {
-            return@block
-        }
-
-        if (argument !== other)
-        {
-            throw FailedAssertionException("Expected $argument to be the same instance as $other")
-        }
+    /**
+     * Asserts that the argument is null.
+     * This is the opposite of {@link #notNull()}.
+     * @return a chainable assertion
+     * @param <A> The type to check.
+     */
+    public static <A> AlchemyAssertion<A> nullObject() {
+        return reference -> {
+            if (reference != null) {
+                failAssertion("Expecting null argument but instead: [{0}]", reference);
+            }
+        };
     }
-}
 
-/**
- * Asserts that an argument is an `instanceOf` the specified class. This Assertion respects the inheritance
- * hierarchy, so
- * <pre>
- * Integer instanceOf Object
- * Integer instanceOf Number
- * Integer instanceOf Integer
- * </pre>
- *
- * will pass, but
- *
- * <pre>
- * Integer instanceOf Double
- * Integer instanceOf String
- * </pre>
- *
- * will fail.
+    /**
+     * Asserts that the argument is the same instance as {@link other}. This assertion uses {@code ==}.
+     * @param other The object to compare against.
+     * @return A chainable assertion.
+     * @param <A> The type of the object to check.
+     */
+    public static <A> AlchemyAssertion<A> sameInstanceAs(@Optional A other) {
+        return arg -> {
+            if (arg == null && other == null) {
+                return;
+            }
 
- * @param <A>
- *
- * @param classOfExpectedType
- *
- * @return
- */
-
-fun <A : Any?> instanceOf(classOfExpectedType: Class<*>): AlchemyAssertion<A>
-{
-    checkNotNull(classOfExpectedType, "class cannot be null")
-
-    return AlchemyAssertion { argument ->
-
-        notNull<Any>().check(argument)
-
-        if (!classOfExpectedType.isInstance(argument))
-        {
-            throw FailedAssertionException("Expected Object of type: $classOfExpectedType")
-        }
+            if (arg != other) {
+                failAssertion("Expected {0} to be the same instance as {1}", arg, other);
+            }
+        };
     }
-}
 
-inline fun <reified A : Any> instanceOf(): AlchemyAssertion<A>
-{
-    return instanceOf(A::class.java)
-}
-
-
-/**
- * Asserts that the argument is [equal to][Object.equals] `other`.
-
- * @param <A>
- *
- * @param other
- *
- *
- * @return
- */
-
-fun <A> equalTo(@Optional other: A): AlchemyAssertion<A>
-{
-    return AlchemyAssertion { argument ->
-
-        if (argument != other)
-        {
-            throw FailedAssertionException("Expected $argument to be equal to $other")
-        }
+    /**
+     * Asserts that an argument is an {@code instanceof} the specified class.
+     * The comparison is done using {@link Class#isInstance(Object)}. The comparison respects the
+     * inheritance hierarchy, so that:
+     * {@snippet :
+     * Integer obj = 5;
+     * checkThat(obj).is(instanceOf(Integer.class)); // true
+     * checkThat(obj).is(instanceOf(Number.class)); // true
+     * checkThat(obj).is(instanceOf(Object.class)); // true
+     * checkThat(obj).is(instanceOf(String.class)); // false - fails the assertion
+     * }
+     * @param clazz The class to check against.
+     * @return A chainable assertion
+     * @param <A> The type of the object.
+     */
+    public static <A> AlchemyAssertion<A> instanceOf(@Required Class<?> clazz) {
+        checkNotNull(clazz, "class parameter cannot be null");
+        return obj -> {
+            notNull().check(obj);
+            if (!clazz.isInstance(obj)) {
+                failAssertion("Expected Object [{0}] to be of type [{1}]", obj, clazz);
+            }
+        };
     }
-}
 
-/**
- * Runs the inverse on another [AlchemyAssertion]. This allows you to create expressions such as:
-
- * <pre>
- * `checkThat(filename)
- * .is(not( stringWithWhitespace() ))
- * .is(not( equalTo("info.txt") ));
-` *
-</pre> *
-
- * @param <A>
- *
- * @param assertion
- *
- *
- * @return
- */
-fun <A> not(@Required assertion: AlchemyAssertion<A>): AlchemyAssertion<A>
-{
-    checkNotNull(assertion, "missing assertion")
-
-    return AlchemyAssertion block@ { argument ->
-
-        try
-        {
-            assertion.check(argument)
-        }
-        catch (ex: FailedAssertionException)
-        {
-            return@block
-        }
-
-        throw FailedAssertionException("Expected assertion to fail, but it passed: $assertion")
-
+    /**
+     * Asserts that the argument is {@link Objects#equals(Object, Object)}  equal to} {@link other}.
+     * @param other The object to compare against.
+     * @return A chainable assertion.
+     * @param <A> Type of the argument.
+     */
+    public static <A> AlchemyAssertion<A> equalTo(@Optional A other) {
+        return arg -> {
+            if (!Objects.equals(arg, other)) {
+                failAssertion("Expected [{0}] to be equal to [{1}]", arg, other);
+            }
+        };
     }
-}
 
-/**
- * Chains two [assertions][AlchemyAssertion] together.
- *
- * For example a `validAge` assertion could be constructed dynamically using:
- *
- * ```
- * AlchemyAssertion<Integer> validAge = positiveInteger()
- *                                      .and(greaterThanOrEqualTo(1))
- *                                      .and(lessThanOrEqualTo(120))l
- *
- * checkThat(age).isA(validAge);
- *
- * ```
- *
- * Note that due to the limitations of the type-inference in the Java Compiler, the first
- * [assertion][AlchemyAssertion] that you make must match the type of the argument.
- *
- * For example,
- * ```
- * notNull().and(positiveInteger())
- *      .check(age);
- * ```
- *
- * would not work because `notNull` references a vanilla `Object`.
- *
- * @param other The other assertion to check against
- *
- * @see combine
- * @see checkThat
- */
-@Required
-@Throws(IllegalArgumentException::class)
-fun <A> AlchemyAssertion<A>.and(@Required other: AlchemyAssertion<A>): AlchemyAssertion<A>
-{
-    checkNotNull(other, "assertion cannot be null")
-
-    return AlchemyAssertion { argument ->
-        this.check(argument)
-        other.check(argument)
+    /**
+     * Runs the inverse of another {@link AlchemyAssertion}. This allows you to creat an expression such as:
+     * {@snippet :
+     * import static tech.sirwellington.alchemy.arguments.assertions.StringAssertions.stringWithWhitespace;
+     *
+     * var filename = "./text-file.txt";
+     * checkThat(filename)
+     *   .is(not(stringWithWhitespace()))
+     *   .is(not(equalTo("info.txt")));
+     * }
+     * @param assertion The assertion to negate.
+     * @return A chainable assertion.
+     * @param <A> Type of the object being checked.
+     */
+    public static <A> AlchemyAssertion<A> not(@Required AlchemyAssertion<A> assertion) {
+        return arg -> {
+            try {
+                assertion.check(arg);
+            } catch (FailedAssertionException _) {
+                return;
+            }
+            failAssertion("not() assertion failed. Expected [{0}] to fail, but it passed", assertion);
+        };
     }
-}
 
+    public static <A> AlchemyAssertion<A> and(@Required AlchemyAssertion<A> other) {
+        checkNotNull(other, "assertion cannot be null");
 
-/**
- * Combines multiple [assertions][AlchemyAssertion] into one.
- *
- * For example, a `validAge` assertion could be constructed dynamically using:
- * ```
- * AlchemyAssertion<Integer> validAge = combine(notNull(),
- *                                              greaterThanOrEqualTo(1),
- *                                              lessThanOrEqualTo(120),
- *                                              positiveInteger());
- *
- * checkThat(age).is(validAge);
- * ```
- *
- * This allows you to **combine and store** [assertions][AlchemyAssertion] that are commonly
- * used together ot perform argument checks.
- *
- * @param first The first assertion to include.
- * @param others The rest of the assertions to include.
- *
- * @see .and
- */
-fun <T> combine(@Required first: AlchemyAssertion<T>, vararg others: AlchemyAssertion<T>): AlchemyAssertion<T>
-{
-    checkNotNull(first, "the first AlchemyAssertion cannot be null")
-    checkNotNull(others, "null varargs")
+        return arg -> {
 
-    return AlchemyAssertion { argument ->
-        first.check(argument)
+        };
+    }
 
-        for (assertion in others)
-        {
-            assertion.check(argument)
-        }
+    /**
+     * Combines multiple {@link AlchemyAssertion Assertions} into one.
+     * For example, a {@code validAge} assertion could be constructed dynamically using:
+     * {@snippet :
+     * AlchemyAssertion<Integer> validAge = combine(
+     *   notNull(),
+     *   positiveInteger(),
+     *   greaterThanOrEqualTo(10),
+     *   lessThanOrEqualTo(140)
+     * );
+     *
+     * var age = user.getAge();
+     * checkThat(age)is(validAge);
+     * }
+     * <br>
+     * This allows you to <strong>combine and store</strong> multiple {@link AlchemyAssertion assertions} that
+     * are frequently used together to perform argument checks.
+     * @param first The first assertion to include.
+     * @param others The rest of the assertions to include.
+     * @return A chainable assertion.
+     * @param <Argument> The type of the argument being checked.
+     */
+    @SafeVarargs
+    static <Argument> AlchemyAssertion<Argument> combine(
+        @Required AlchemyAssertion<Argument> first,
+        @Required AlchemyAssertion<Argument>... others
+    ) {
+        checkNotNull(first, "the first assertion cannot be null");
+        checkNotNull(others, "variadic parameter cannot be null");
+        checkThat(others.length > 0, "variadic parameters cannot be empty");
+
+        return argument -> {
+            first.check(argument);
+            for (var assertion : others) {
+                assertion.check(argument);
+            }
+        };
+    }
+
+    @Internal
+    static void failAssertion(String format, Object...params) {
+        throw new FailedAssertionException(
+            format(format, params)
+        );
     }
 }
