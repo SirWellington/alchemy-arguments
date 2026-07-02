@@ -16,7 +16,6 @@
 
 package tech.sirwellington.alchemy.arguments.assertions;
 
-import tech.sirwellington.alchemy.annotations.access.Internal;
 import tech.sirwellington.alchemy.annotations.access.NonInstantiable;
 import tech.sirwellington.alchemy.annotations.arguments.Optional;
 import tech.sirwellington.alchemy.annotations.arguments.Required;
@@ -25,9 +24,9 @@ import tech.sirwellington.alchemy.arguments.FailedAssertionException;
 
 import java.util.Objects;
 
-import static java.text.MessageFormat.format;
 import static tech.sirwellington.alchemy.arguments.internal.Checks.checkNotNull;
 import static tech.sirwellington.alchemy.arguments.internal.Checks.checkThat;
+import static tech.sirwellington.alchemy.arguments.internal.Format.failAssertion;
 
 /**
  * Common {@link AlchemyAssertion Alchemy Asssertions}.
@@ -204,10 +203,4 @@ public final class Assertions {
         };
     }
 
-    @Internal
-    static void failAssertion(String format, Object... params) {
-        throw new FailedAssertionException(
-            format(format, params)
-        );
-    }
 }
