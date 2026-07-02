@@ -13,51 +13,54 @@
  * limitations under the License.
  */
 
-@file:JvmName("PeopleAssertions")
+package tech.sirwellington.alchemy.arguments.assertions;
 
-package tech.sirwellington.alchemy.arguments.assertions
+import tech.sirwellington.alchemy.annotations.access.NonInstantiable;
+import tech.sirwellington.alchemy.arguments.AlchemyAssertion;
 
+import java.util.regex.Pattern;
 
-import tech.sirwellington.alchemy.arguments.AlchemyAssertion
-import tech.sirwellington.alchemy.arguments.FailedAssertionException
-import tech.sirwellington.alchemy.arguments.isNullOrEmpty
-import java.util.regex.Pattern
-
+import static tech.sirwellington.alchemy.arguments.internal.Checks.failAssertion;
+import static tech.sirwellington.alchemy.arguments.internal.Checks.isNullOrEmpty;
 
 /**
- * Assertions made on Data relating to people.
+ * Assertions made on Data about people.
  * + Emails
  * + Addresses
  * + Names
  * + Etc.
-
+ *
  * @author SirWellington
  */
+@NonInstantiable
+public final class PeopleAssertions {
 
-private val PATTERN = Pattern.compile("^.+@.+\\..+$")
+    private static Pattern PATTERN = Pattern.compile("^.+@.+\\..+$");
 
-/**
- * This Assertion performs basic validation of Emails
- * using the following pattern:
- * `"^.+@.+\\..+$"`. The intent of this Assertion is too keep it simple and
- * prevent flagrant violations. The only way to truly know whether an email is valid is to send
- * a message to it.
- *
- * @return
- */
-fun validEmailAddress(): AlchemyAssertion<String>
-{
+    private PeopleAssertions() throws IllegalAccessException {
+        throw new IllegalAccessException("cannot directly instantiate");
+    }
 
-    return AlchemyAssertion { email ->
+    /**
+     * This Assertion performs basic validation of Emails
+     * using the following pattern:
+     * {@code "^.+@.+\\..+$"}. The intent of this Assertion is to keep it simple and
+     * prevent flagrant violations. The only way to truly know whether an email is valid is to send
+     * a message to it.
+     *
+     * @return A chainable assertion
+     */
+    public static AlchemyAssertion<String> validEmailAddress() {
 
-        if (isNullOrEmpty(email))
-        {
-            throw FailedAssertionException("Email is null or empty")
-        }
+        return email -> {
 
-        if (!PATTERN.matcher(email).matches())
-        {
-            throw FailedAssertionException("Invalid Email Address: " + PATTERN)
-        }
+            if (isNullOrEmpty(email)) {
+                failAssertion("Email is null or empty");
+            }
+
+            if (!PATTERN.matcher(email).matches()) {
+                failAssertion("Invalid Email Address: " + PATTERN);
+            }
+        };
     }
 }
