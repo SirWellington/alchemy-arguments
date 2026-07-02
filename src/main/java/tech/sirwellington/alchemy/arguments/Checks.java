@@ -1,5 +1,5 @@
 /*
- * Copyright © 2026. Sir Wellington.
+ * Copyright © 2026. SirWellington.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  *
@@ -13,204 +13,197 @@
  * limitations under the License.
  */
 
-@file:JvmName("Checks")
+package tech.sirwellington.alchemy.arguments;
 
-package tech.sirwellington.alchemy.arguments
-
-import tech.sirwellington.alchemy.annotations.access.Internal
-import tech.sirwellington.alchemy.annotations.arguments.Optional
+import tech.sirwellington.alchemy.annotations.access.Internal;
+import tech.sirwellington.alchemy.annotations.arguments.Optional;
 
 /**
  * This class contains commonly used checks on Objects and Strings.
  *
+ * <p>This is different from what actual {@link AlchemyAssertion} use.</p>
  *
- * This is different from what actual [Assertions][AlchemyAssertion] use.
-
  * @author SirWellington
  */
-
-/**
- * Checks if the provided [string] is null or empty
- */
 @Internal
-internal fun isNullOrEmpty(string: String?): Boolean
-{
-    return string?.isNullOrEmpty() ?: true
-}
+public final class Checks {
 
-/**
- * Checks if the provided [collection] is null or empty
- */
-@Internal
-internal fun isNullOrEmpty(collection: Collection<*>?): Boolean
-{
-    return collection?.isEmpty() ?: true
-}
-
-/**
- * Ensures the reference is not null, and throws an exception otherwise.
- */
-@Throws(IllegalArgumentException::class)
-@JvmOverloads
-internal fun checkNotNull(reference: Any?, message: String = "")
-{
-    checkThat(reference != null, message)
-}
-
-@Throws(IllegalStateException::class)
-@Internal
-internal fun checkState(predicate: Boolean, message: String)
-{
-    if (!predicate)
-    {
-        throw IllegalStateException(message)
-    }
-}
-
-@Throws(IllegalArgumentException::class)
-@JvmOverloads
-@Internal
-internal fun checkThat(predicate: Boolean, message: String = "")
-{
-    if (!predicate)
-    {
-        throw IllegalArgumentException(message)
-    }
-}
-
-@Throws(IllegalArgumentException::class)
-@Internal
-internal fun checkNotNullOrEmpty(string: String?)
-{
-    checkThat(!isNullOrEmpty(string))
-}
-
-@Throws(IllegalArgumentException::class)
-@Internal
-internal fun checkNotNullOrEmpty(string: String?, message: String)
-{
-    checkThat(!isNullOrEmpty(string), message)
-}
-
-/**
- * Checks if the argument object is null.
-
- * @param object
- * *
- * @return true if `object` is null, false otherwise.
- * *
- * @see anyAreNull
- * @see allAreNull
- */
-@Internal
-internal fun isNull(@Optional `object`: Any?): Boolean
-{
-    return `object` == null
-}
-
-/**
- * Checks if the argument object has a valid reference (it is not null).
-
- * @param object
- *
- * @return true if object is not null, false if it is.
- */
-@Internal
-internal fun notNull(@Optional reference: Any?): Boolean
-{
-    return !isNull(reference)
-}
-
-/**
- * Checks if any of the argument objects are null.
-
- * @param objects
- *
- * @return true if any of the argument objects are null, false otherwise.
- */
-@Internal
-internal fun anyAreNull(vararg objects: Any?): Boolean
-{
-    if (isNull(objects) || objects.isEmpty())
-    {
-        return true
+    private Checks() {
+        throw new AssertionError("Utility class should not be instantiated.");
     }
 
-    return objects.any { isNull(it) }
-}
-
-/**
- * Checks if all of the objects are null.
-
- * @param objects
- *
- * @return true if all the argument objects are null, false otherwise.
- */
-@Internal
-internal fun allAreNull(vararg objects: Any?): Boolean
-{
-    if (isNullOrEmpty(objects.toList()))
-    {
-        return true
+    /**
+     * Checks if the provided string is null or empty.
+     */
+    static boolean isNullOrEmpty(String string) {
+        return string == null || string.isEmpty();
     }
 
-    return objects.all { isNull(it) }
-}
-
-
-/**
-
- * @param string
- *
- * @return
- *
- * @see isNullOrEmpty
- */
-@Internal
-internal fun notNullOrEmpty(@Optional string: String?): Boolean
-{
-    return !isNullOrEmpty(string)
-}
-
-/**
- * Checks if any of the argument strings are null or empty. Returns true if even one of the argument
- * strings are null or empty.
-
- * @param strings
- *
- * @return
- *
- * @see isNullOrEmpty
- * @see allAreNullOrEmpty
- */
-@Internal
-internal fun anyAreNullOrEmpty(@Optional vararg strings: String?): Boolean
-{
-    if (isNull(strings))
-    {
-        return true
+    /**
+     * Checks if the provided collection is null or empty.
+     */
+    @SuppressWarnings("nullness:argument.type.incompatible")
+    static boolean isNullOrEmpty(java.util.Collection<?> collection) {
+        return collection == null || collection.isEmpty();
     }
 
-    return strings.any { isNullOrEmpty(it) }
-}
-
-/**
- * Checks if all of the arguments are null or empty. If even one of the arguments is not
- * null or empty, than this returns false.
-
- * @param strings
- *
- * @return true if all of the argument strings are empty or null, false otherwise.
- *
- * @see anyAreNullOrEmpty
- */
-@Internal
-internal fun allAreNullOrEmpty(@Optional vararg strings: String?): Boolean
-{
-    if (isNull(strings))
-    {
-        return true
+    /**
+     * Ensures the reference is not null, and throws an exception otherwise.
+     */
+    @Throws(IllegalArgumentException.class)
+    static void checkNotNull(Object reference) {
+        checkThat(reference != null);
     }
 
-    return strings.all { isNullOrEmpty(it) }
+    @Throws(IllegalArgumentException.class)
+    static void checkNotNull(Object reference, String message) {
+        checkThat(reference != null, message);
+    }
+
+    /**
+     * Checks if the predicate is true and throws an IllegalStateException otherwise.
+     */
+    @Throws(IllegalStateException.class)
+    @Internal
+    static void checkState(boolean predicate, String message) {
+        if (!predicate) {
+            throw new IllegalStateException(message);
+        }
+    }
+
+    /**
+     * Throws IllegalArgumentException if the predicate is false.
+     */
+    @Throws(IllegalArgumentException.class)
+    static void checkThat(boolean predicate) {
+        if (!predicate) {
+            throw new IllegalArgumentException();
+        }
+    }
+
+    @Throws(IllegalArgumentException.class)
+    static void checkThat(boolean predicate, String message) {
+        if (!predicate) {
+            throw new IllegalArgumentException(message);
+        }
+    }
+
+    /**
+     * Checks that the string is not null or empty.
+     */
+    @Throws(IllegalArgumentException.class)
+    static void checkNotNullOrEmpty(String string) {
+        checkThat(!isNullOrEmpty(string));
+    }
+
+    @Throws(IllegalArgumentException.class)
+    static void checkNotNullOrEmpty(String string, String message) {
+        checkThat(!isNullOrEmpty(string), message);
+    }
+
+    /**
+     * Checks if the argument object is null.
+     *
+     * @param object the object to check
+     * @return true if {@code object} is null, false otherwise.
+     */
+    static boolean isNull(@Optional Object object) {
+        return object == null;
+    }
+
+    /**
+     * Checks if the argument object has a valid reference (it is not null).
+     *
+     * @param reference the object to check
+     * @return true if object is not null, false if it is.
+     */
+    static boolean notNull(@Optional Object reference) {
+        return !isNull(reference);
+    }
+
+    /**
+     * Checks if any of the argument objects are null.
+     *
+     * @param objects the objects to check (may be null or empty)
+     * @return true if {@code objects} is null/empty or any of them are null
+     */
+    static boolean anyAreNull(@Optional Object... objects) {
+        if (objects == null || objects.length == 0) {
+            return true;
+        }
+
+        for (Object obj : objects) {
+            if (obj == null) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /**
+     * Checks if all of the objects are null.
+     *
+     * @param objects the objects to check
+     * @return true if all of the argument objects are null, false otherwise.
+     */
+    static boolean allAreNull(@Optional Object... objects) {
+        if (objects == null || objects.length == 0) {
+            return true;
+        }
+
+        for (Object obj : objects) {
+            if (obj != null) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    /**
+     * @param string the string to check
+     * @return true if {@code string} is not null and not empty, false otherwise.
+     */
+    static boolean notNullOrEmpty(@Optional String string) {
+        return !isNullOrEmpty(string);
+    }
+
+    /**
+     * Checks if any of the argument strings are null or empty. Returns true if even one of the
+     * argument strings are null or empty.
+     *
+     * @param strings the strings to check (may be null or empty)
+     * @return true if {@code strings} is null, or any element is null/empty
+     */
+    static boolean anyAreNullOrEmpty(@Optional String... strings) {
+        if (strings == null || strings.length == 0) {
+            return true;
+        }
+
+        for (String s : strings) {
+            if (isNullOrEmpty(s)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /**
+     * Checks if all of the arguments are null or empty. If even one of the arguments is not
+     * null or empty, then this returns false.
+     *
+     * @param strings the strings to check (may be null or empty)
+     * @return true if all of the argument strings are null/empty, false otherwise.
+     */
+    static boolean allAreNullOrEmpty(@Optional String... strings) {
+        if (strings == null || strings.length == 0) {
+            return true;
+        }
+
+        for (String s : strings) {
+            if (!isNullOrEmpty(s)) {
+                return false;
+            }
+        }
+        return true;
+    }
 }
