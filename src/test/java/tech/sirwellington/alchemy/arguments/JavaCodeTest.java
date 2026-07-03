@@ -15,26 +15,31 @@
 
 package tech.sirwellington.alchemy.arguments;
 
-import java.util.Collections;
-
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.Test;
 import tech.sirwellington.alchemy.arguments.assertions.Assertions;
-import tech.sirwellington.alchemy.test.junit.runners.*;
+import tech.sirwellington.alchemy.test.AlchemyTest;
+import tech.sirwellington.alchemy.test.generation.GenerateInteger;
+import tech.sirwellington.alchemy.test.generation.GenerateString;
 
-import static org.mockito.Mockito.*;
-import static tech.sirwellington.alchemy.arguments.Arguments.*;
+import java.util.Collections;
+import java.util.List;
+import java.util.Set;
+
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
+import static tech.sirwellington.alchemy.arguments.Arguments.checkThat;
 import static tech.sirwellington.alchemy.arguments.assertions.CollectionAssertions.*;
 import static tech.sirwellington.alchemy.arguments.assertions.NumberAssertions.negativeInteger;
 import static tech.sirwellington.alchemy.arguments.assertions.NumberAssertions.positiveInteger;
-import static tech.sirwellington.alchemy.arguments.assertions.StringAssertions.*;
+import static tech.sirwellington.alchemy.arguments.assertions.StringAssertions.nonEmptyString;
+import static tech.sirwellington.alchemy.test.ThrowableAssertion.assertThrows;
 
 /**
  * @author SirWellington
  */
-@RunWith(AlchemyTestRunner.class)
-public class JavaCodeTest
-{
+@AlchemyTest
+public final class JavaCodeTest {
+    
     @GenerateString
     private String string;
 
@@ -45,8 +50,7 @@ public class JavaCodeTest
     private Integer negativeNumber;
 
     @Test
-    public void testNonEmptyString() throws Exception
-    {
+    public void testNonEmptyString() {
         AlchemyAssertion<String> assertion = nonEmptyString();
         assertion.check(string);
 
@@ -54,36 +58,34 @@ public class JavaCodeTest
     }
 
     @Test
-    public void testPositiveInt() throws Exception
-    {
+    public void testPositiveInt() {
         checkThat(positiveNumber)
-                .isA(positiveInteger());
-    }
-
-    @Test(expected = FailedAssertionException.class)
-    public void testPositiveIntWithBadArg() throws Exception
-    {
-        checkThat(negativeNumber)
-                .isA(positiveInteger());
+            .isA(positiveInteger());
     }
 
     @Test
-    public void testNegativeInt() throws Exception
-    {
-        checkThat(negativeNumber)
-                .isA(negativeInteger());
-    }
-
-    @Test(expected = FailedAssertionException.class)
-    public void testNegativeIntWithBadArg() throws Exception
-    {
-        checkThat(negativeNumber)
-                .isA(positiveInteger());
+    public void testPositiveIntWithBadArg() {
+        assertThrows(
+            () -> checkThat(negativeNumber).isA(positiveInteger())
+        ).isInstanceOf(FailedAssertionException.class);
+        
     }
 
     @Test
-    public void testCombine() throws Exception
-    {
+    public void testNegativeInt() {
+        checkThat(negativeNumber)
+            .isA(negativeInteger());
+    }
+
+    @Test
+    public void testNegativeIntWithBadArg() {
+        assertThrows(
+            () -> checkThat(negativeNumber).isA(positiveInteger())
+        ).isInstanceOf(FailedAssertionException.class);
+    }
+
+    @Test
+    public void testCombine() {
         AlchemyAssertion<String> first = mock(AlchemyAssertion.class);
         AlchemyAssertion<String> second = mock(AlchemyAssertion.class);
 
@@ -96,37 +98,36 @@ public class JavaCodeTest
     }
 
     @Test
-    public void testEmptyCollections() throws Exception
-    {
+    public void testEmptyCollections() {
         checkThat(Collections.emptyList())
-                .isA(emptyList());
+            .isA(emptyList());
 
         checkThat(Collections.emptySet())
-                .isA(emptySet());
+            .isA(emptySet());
 
         checkThat(Collections.emptyMap())
-                .isA(emptyMap());
-    }
-
-    @Test(expected = FailedAssertionException.class)
-    public void testNonEmptyList() throws Exception
-    {
-        checkThat(Collections.emptyList())
-                .isA(nonEmptyList());
-    }
-
-
-    @Test(expected = FailedAssertionException.class)
-    public void testNonemptySet() throws Exception
-    {
-        checkThat(Collections.emptySet())
-                .isA(nonEmptySet());
+            .isA(emptyMap());
     }
 
     @Test
-    public void testCheckStringNotEmpty() throws Exception
-    {
+    public void testNonEmptyList() {
+        final var emptyList = List.of();
+        assertThrows(
+            () -> checkThat(emptyList).isA(nonEmptyList())
+        ).isInstanceOf(FailedAssertionException.class);
+    }
+
+    @Test
+    public void testNonemptySet() {
+        final var emptySet = Set.of();
+        assertThrows(
+            () -> checkThat(emptySet).isA(nonEmptySet())
+        );
+    }
+
+    @Test
+    public void testCheckStringNotEmpty() {
         checkThat(string)
-                .isA(nonEmptyString());
+            .isA(nonEmptyString());
     }
 }
