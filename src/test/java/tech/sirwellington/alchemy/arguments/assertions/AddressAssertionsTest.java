@@ -1,106 +1,70 @@
-/*
- * Copyright © 2026. Sir Wellington.
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- *
- * You may obtain a copy of the License at
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
+package tech.sirwellington.alchemy.arguments.assertions;
 
-package tech.sirwellington.alchemy.arguments.assertions
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.RepeatedTest;
+import org.junit.jupiter.api.TestInstance;
+import tech.sirwellington.alchemy.arguments.FailedAssertionException;
+import tech.sirwellington.alchemy.generator.NumberGenerators;
+import tech.sirwellington.alchemy.test.AlchemyTest;
 
-import org.hamcrest.Matchers.notNullValue
-import org.junit.Assert.assertThat
-import org.junit.Before
-import org.junit.Test
-import org.junit.runner.RunWith
-import tech.sirwellington.alchemy.arguments.failedAssertion
-import tech.sirwellington.alchemy.generator.NumberGenerators
-import tech.sirwellington.alchemy.generator.one
-import tech.sirwellington.alchemy.test.junit.ThrowableAssertion.assertThrows
-import tech.sirwellington.alchemy.test.junit.runners.AlchemyTestRunner
-import tech.sirwellington.alchemy.test.junit.runners.Repeat
+import java.util.Random;
 
-/**
-
- * @author SirWellington
- */
-@Repeat(100)
-@RunWith(AlchemyTestRunner::class)
-class AddressAssertionsTest
-{
-
-    private lateinit var zip: String
-
-    private lateinit var badZip: String
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.notNullValue;
+import static tech.sirwellington.alchemy.generator.AlchemyGenerator.Get.one;
+import static tech.sirwellington.alchemy.generator.NumberGenerators.integers;
+import static tech.sirwellington.alchemy.test.ThrowableAssertion.assertThrows;
 
 
-    @Before
-    @Throws(Exception::class)
-    fun setUp()
-    {
+@TestInstance(TestInstance.Lifecycle.PER_CLASS)
+@AlchemyTest
+final class AddressAssertionsTest {
 
-        setupData()
+    private static final int ITERATIONS = 100;
+
+    private String zip;
+    private String badZip;
+    private final Random random = new Random();
+
+    @BeforeAll
+    void setUp() {
+        setupData();
     }
 
+    private void setupData() {
+        int zipVal = one(integers(0, 99999));
+        zip = String.format("%05d", zipVal);
 
-    @Throws(Exception::class)
-    private fun setupData()
-    {
-        zip = zipToString(one(NumberGenerators.integers(0, 100000)))
-        badZip = zipToString(one(NumberGenerators.integers(100000, Integer.MAX_VALUE)))
+        int badZipVal = one(integers(100000, Integer.MAX_VALUE));
+        badZip = String.valueOf(badZipVal);
     }
 
-    private fun zipToString(zip: Int): String
-    {
-        if (zip < 99999)
-        {
-            return String.format("%05d", zip)
-        }
-        else
-        {
-            return zip.toString()
-        }
+    @RepeatedTest(ITERATIONS)
+    void testValidZipCode() {
+        var assertion = AddressAssertions.validZipCode();
+        assertThat(assertion, notNullValue());
+
+        assertion.check(zip);
     }
 
-    @Test
-    fun testValidZipCode()
-    {
-        val assertion = validZipCode()
-        assertThat(assertion, notNullValue())
-
-        assertion.check(zip)
+    @RepeatedTest(ITERATIONS)
+    void testInvalidZipCode() {
+        var assertion = AddressAssertions.validZipCode();
+        assertThrows(() -> assertion.check(badZip))
+                          .isInstanceOf(FailedAssertionException.class);
     }
 
-    @Test
-    fun testInvalidZipCode()
-    {
-        val assertion = validZipCode()
-
-        assertThrows { assertion.check(badZip) }.failedAssertion()
+    @RepeatedTest(ITERATIONS)
+    void testValidZipCodeString() {
+        var assertion = AddressAssertions.validZipCodeString();
+        assertThat(assertion, notNullValue());
+        assertion.check(zip);
     }
 
-    @Test
-    fun testValidZipCodeString()
-    {
-        val assertion = validZipCodeString()
-        assertThat(assertion, notNullValue())
-
-        assertion.check(zip)
+    @RepeatedTest(ITERATIONS)
+    void testValidZipCodeStringWithInvalid() {
+        var assertion = AddressAssertions.validZipCodeString();
+        assertThrows(() -> assertion.check(badZip))
+                          .isInstanceOf(FailedAssertionException.class);
     }
-
-    @Test
-    fun testValidZipCodeStringWithInvalid()
-    {
-        val assertion = validZipCodeString()
-
-        assertThrows { assertion.check(badZip) }.failedAssertion()
-    }
-
 }

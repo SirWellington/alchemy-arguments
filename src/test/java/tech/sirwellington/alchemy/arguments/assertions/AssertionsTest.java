@@ -1,190 +1,132 @@
-/*
- * Copyright © 2026. Sir Wellington.
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- *
- * You may obtain a copy of the License at
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
+package tech.sirwellington.alchemy.arguments.assertions;
 
-package tech.sirwellington.alchemy.arguments.assertions
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestInstance;
+import tech.sirwellington.alchemy.arguments.AlchemyAssertion;
+import tech.sirwellington.alchemy.arguments.FailedAssertionException;
+import tech.sirwellington.alchemy.generator.StringGenerators;
+import tech.sirwellington.alchemy.test.AlchemyTest;
+import tech.sirwellington.alchemy.test.generation.GenerateDouble;
+import tech.sirwellington.alchemy.test.generation.GenerateInteger;
+import tech.sirwellington.alchemy.test.generation.GenerateLong;
+import tech.sirwellington.alchemy.test.generation.GenerateString;
 
-import com.nhaarman.mockito_kotlin.*
-import org.hamcrest.Matchers.notNullValue
-import org.junit.Assert.assertThat
-import org.junit.Before
-import org.junit.Test
-import org.junit.runner.RunWith
-import org.mockito.ArgumentMatchers
-import tech.sirwellington.alchemy.arguments.AlchemyAssertion
-import tech.sirwellington.alchemy.arguments.FailedAssertionException
-import tech.sirwellington.alchemy.arguments.failedAssertion
-import tech.sirwellington.alchemy.generator.StringGenerators.Companion.strings
-import tech.sirwellington.alchemy.generator.one
-import tech.sirwellington.alchemy.test.junit.ThrowableAssertion.assertThrows
-import tech.sirwellington.alchemy.test.junit.runners.*
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.notNullValue;
+import static tech.sirwellington.alchemy.arguments.TestHelpers.assertThrowsFailedAssertion;
+import static tech.sirwellington.alchemy.test.ThrowableAssertion.assertThrows;
+import static tech.sirwellington.alchemy.test.generation.GenerateInteger.Type.POSITIVE;
+import static tech.sirwellington.alchemy.test.generation.GenerateString.Type.ALPHABETIC;
 
-/**
+@TestInstance(TestInstance.Lifecycle.PER_CLASS)
+@AlchemyTest
+class AssertionsTest {
 
- * @author SirWellington
- */
-@RunWith(AlchemyTestRunner::class)
-@Repeat
-class AssertionsTest
-{
+    @GenerateString(ALPHABETIC)
+    private String string;
 
-    @GenerateString
-    private lateinit var string: String
+    @GenerateInteger(POSITIVE)
+    private int positiveInt;
 
-    @GenerateInteger
-    private var positiveInt: Int = 0
+    @GenerateLong(GenerateLong.Type.POSITIVE)
+    private long positiveLong;
 
-    @GenerateLong
-    private var positiveLong: Long = 0
+    @GenerateDouble(GenerateDouble.Type.POSITIVE)
+    private double positiveDouble;
 
-    @GenerateDouble
-    private var positiveDouble: Double = 0.0
-
-    @Before
-    fun setUp()
-    {
-    }
-
-    @DontRepeat
     @Test
-    @Throws(Exception::class)
-    fun testNotNull()
-    {
+    void testNotNull() {
+        var instance = Assertions.notNull();
+        assertThat(instance, notNullValue());
 
-        val instance = notNull<Any>()
-
-        assertThat(instance, notNullValue())
-        Tests.checkForNullCase(instance)
-
-        val mock = mock<Any>()
-        instance.check(mock)
-        verifyZeroInteractions(mock)
-    }
-
-    @DontRepeat
-    @Test
-    fun testNonNullReference()
-    {
-        val instance = nonNullReference<Any>()
-        assertThat(instance, notNullValue())
-
-        Tests.checkForNullCase(instance)
-
-        val mock = mock<Any>()
-        instance.check(mock)
-        verifyZeroInteractions(mock)
-
-        assertThrows { instance.check(null) }.failedAssertion()
-    }
-
-    @DontRepeat
-    @Test
-    fun testNullObject()
-    {
-        val instance = nullObject<Any>()
-        assertThat(instance, notNullValue())
-
-        instance.check(null)
-
-        assertThrows { instance.check(string) }.failedAssertion()
+        Object mock = new Object();
+        instance.check(mock);
     }
 
     @Test
-    fun testSameInstanceAs()
-    {
-        val instanceOne = sameInstanceAs<Any?>(null)
-
-        //null is the same instance as null
-        assertThat(instanceOne, notNullValue())
-        instanceOne.check(null)
-
-        //null is not the same instance as any other non-null object
-        assertThrows { instanceOne.check("") }.failedAssertion()
-
-        val someObject = Any()
-        val instanceTwo = sameInstanceAs(someObject)
-        instanceTwo.check(someObject)
-
-        val differentObject = Any()
-        assertThrows { instanceTwo.check(differentObject) }.failedAssertion()
+    void testNonNullReference() {
+        var instance = Assertions.notNull();
+        assertThat(instance, notNullValue());
+        assertThrowsFailedAssertion(() -> instance.check(null));
     }
 
     @Test
-    fun testInstanceOf()
-    {
-
-        val instance = instanceOf<Any>(Number::class.java)
-
-        instance.check(positiveInt)
-        instance.check(positiveLong)
-        instance.check(positiveDouble)
-
-        assertThrows { instance.check(string) }.failedAssertion()
+    void testNullObject() {
+        var instance = Assertions.nullObject();
+        instance.check(null);
+        assertThrowsFailedAssertion(() -> instance.check(string));
     }
 
     @Test
-    fun testInstanceOfEdgeCases()
-    {
-        val assertion = instanceOf<Any>(Number::class.java)
-        assertThrows { assertion.check(null) }.failedAssertion()
+    void testSameInstanceAs() {
+        var instanceOne = Assertions.sameInstanceAs(null);
+
+        assertThat(instanceOne, notNullValue());
+        instanceOne.check(null);
+
+        assertThrowsFailedAssertion(() -> instanceOne.check(new Object()));
+
+        var someObject = new Object();
+        var instanceTwo = Assertions.sameInstanceAs(someObject);
+        instanceTwo.check(someObject);
+
+        var newObject = new Object();
+        assertThrowsFailedAssertion(() -> instanceTwo.check(newObject));
     }
 
     @Test
-    fun testNot()
-    {
-        val assertion = mock<AlchemyAssertion<Any>>()
+    void testInstanceOf() {
+        var instance = Assertions.instanceOf(Number.class);
 
-        doThrow(FailedAssertionException())
-                .whenever(assertion)
-                .check(ArgumentMatchers.any())
+        instance.check(positiveInt);
+        instance.check(positiveLong);
+        instance.check(positiveDouble);
 
-        val instance = not(assertion)
-
-        instance.check("")
-
-        doNothing()
-                .whenever(assertion)
-                .check(ArgumentMatchers.any())
-
-        assertThrows { instance.check("") }.failedAssertion()
+        assertThrowsFailedAssertion(() -> instance.check(string));
     }
 
     @Test
-    fun testNotEdgeCases()
-    {
-        assertThrows { not<Any>(null!!) }
+    void testInstanceOfEdgeCases() {
+        var assertion = Assertions.instanceOf(Number.class);
+        assertThrows(() -> assertion.check(null));
     }
 
     @Test
-    fun testEqualTo()
-    {
-        val first = one(strings())
-        var second = ""
+    void testNot() {
+        // Given
+        AlchemyAssertion<Object> mock = _ -> {
+            throw new FailedAssertionException();
+        };
+        // Then
+        assertThrows(() -> mock.check("")).isInstanceOf(FailedAssertionException.class);
+        var instance = Assertions.not(mock);
+        // When
+        instance.check("");
+        // Then, no exception
 
-        do
-        {
-            second = one(strings())
-        } while (first == second)
-
-        val instance = equalTo(second)
-
-        //Check against self should be ok;
-        instance.check(second)
-        instance.check("" + second)
-
-        assertThrows { instance.check(first) }.failedAssertion()
-
+        AlchemyAssertion<Object> successMock = value -> {};
+        assertThrowsFailedAssertion(() -> Assertions.not(successMock).check(""));
     }
 
+    @Test
+    void testNotEdgeCases() {
+        assertThrows(() -> Assertions.not( null))
+            .isIllegalArgumentException();
+    }
+
+    @Test
+    void testEqualTo() {
+        String first = string;
+        String second;
+
+        do {
+            second = StringGenerators.strings().get();
+        } while (first.equals(second));
+
+        final var instance = Assertions.equalTo(second);
+
+        instance.check(second); // standard equal
+        instance.check(new StringBuilder(second).toString()); // copy equals
+        assertThrowsFailedAssertion(() -> instance.check(first)); // not equal ❌
+    }
 }
