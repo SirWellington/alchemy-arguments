@@ -16,11 +16,9 @@
 package tech.sirwellington.alchemy.arguments.assertions;
 
 import tech.sirwellington.alchemy.arguments.AlchemyAssertion;
-import tech.sirwellington.alchemy.arguments.FailedAssertionException;
 
 import java.util.*;
 
-import static java.text.MessageFormat.format;
 import static tech.sirwellington.alchemy.arguments.internal.Checks.*;
 
 /**
@@ -37,7 +35,7 @@ public final class CollectionAssertions {
     /**
      * Asserts that the collection is not null and not empty.
      */
-    public static <E, C extends Collection<E>> AlchemyAssertion<C> nonEmptyCollection() {
+    public static <E> AlchemyAssertion<Collection<E>> nonEmptyCollection() {
         return collection -> {
             checkNotNull(collection, "Collection cannot be null");
 
@@ -298,7 +296,7 @@ public final class CollectionAssertions {
         checkThat(size >= 0, "Size must be ≥ 0");
 
         return collection -> {
-            CollectionAssertions.<E, C>nonEmptyCollection().check(collection);
+            CollectionAssertions.<E>nonEmptyCollection().check(collection);
 
             int actualSize = collection.size();
             if (actualSize != size) {

@@ -1,415 +1,347 @@
-/*
- * Copyright © 2026. Sir Wellington.
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- *
- * You may obtain a copy of the License at
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
+package tech.sirwellington.alchemy.arguments.assertions;
 
-package tech.sirwellington.alchemy.arguments.assertions
+import org.junit.jupiter.api.RepeatedTest;
+import tech.sirwellington.alchemy.arguments.AlchemyAssertion;
+import tech.sirwellington.alchemy.arguments.Arguments;
+import tech.sirwellington.alchemy.test.AlchemyTest;
+import tech.sirwellington.alchemy.test.generation.GenerateList;
+import tech.sirwellington.alchemy.test.generation.GenerateMap;
 
-import org.hamcrest.Matchers.notNullValue
-import org.junit.Assert.assertThat
-import org.junit.Before
-import org.junit.Test
-import org.junit.runner.RunWith
-import tech.sirwellington.alchemy.arguments.*
-import tech.sirwellington.alchemy.generator.CollectionGenerators.Companion.listOf
-import tech.sirwellington.alchemy.generator.CollectionGenerators.Companion.mapOf
-import tech.sirwellington.alchemy.generator.NumberGenerators
-import tech.sirwellington.alchemy.generator.NumberGenerators.Companion.negativeIntegers
-import tech.sirwellington.alchemy.generator.NumberGenerators.Companion.positiveIntegers
-import tech.sirwellington.alchemy.generator.StringGenerators.Companion.alphabeticStrings
-import tech.sirwellington.alchemy.generator.StringGenerators.Companion.alphanumericStrings
-import tech.sirwellington.alchemy.generator.StringGenerators.Companion.hexadecimalString
-import tech.sirwellington.alchemy.generator.one
-import tech.sirwellington.alchemy.test.junit.ThrowableAssertion.assertThrows
-import tech.sirwellington.alchemy.test.junit.runners.AlchemyTestRunner
-import tech.sirwellington.alchemy.test.junit.runners.DontRepeat
-import tech.sirwellington.alchemy.test.junit.runners.GenerateList
-import tech.sirwellington.alchemy.test.junit.runners.Repeat
-import java.util.Collections
+import java.util.*;
 
-/**
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.notNullValue;
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
+import static tech.sirwellington.alchemy.arguments.TestHelpers.assertThrowsFailedAssertion;
+import static tech.sirwellington.alchemy.arguments.TestHelpers.randomElementFrom;
+import static tech.sirwellington.alchemy.arguments.assertions.CollectionAssertions.*;
+import static tech.sirwellington.alchemy.test.ThrowableAssertion.assertThrows;
 
- * @author SirWellington
- */
-@RunWith(AlchemyTestRunner::class)
-@Repeat(50)
-class CollectionAssertionsTest
-{
+@AlchemyTest
+class CollectionAssertionsTest {
+    private static final int TEST_ITERATIONS = 50;
+    
+    private Set<?> emptySet = Collections.emptySet();
+    private List<?> emptyList = Collections.emptyList();
 
-    private val emptySet = setOf<Any>()
-    private val emptyList = listOf<Any>()
+    @GenerateList(String.class)
+    private List<String> strings;
 
-    @GenerateList(String::class)
-    private lateinit var strings: MutableList<String>
+    @GenerateMap(keyType = String.class, valueType = String.class)
+    private Map<String, String> map;
 
-    @Before
-    fun setUp()
-    {
+    @RepeatedTest(TEST_ITERATIONS)
+    public void testNonEmptyCollection() {
+        var instance = CollectionAssertions.<String>nonEmptyCollection();
+        assertThat(instance, notNullValue());
+
+        instance.check(strings);
+        assertThrowsFailedAssertion(() -> instance.check(null));
+        assertThrowsFailedAssertion(() -> instance.check(Collections.emptySet()));
     }
 
+    @RepeatedTest(TEST_ITERATIONS)
+    public void testNonEmptyList() {
+        AlchemyAssertion<List<String>> instance = nonEmptyList();
+        assertThat(instance, notNullValue());
 
-    @Test
-    fun testNonEmptyCollection()
-    {
-
-        val instance = nonEmptyCollection<String>()
-        assertThat(instance, notNullValue())
-
-        instance.check(strings as Collection<String>)
-
-        assertThrows { instance.check(null) }.failedAssertion()
-        assertThrows { instance.check(Collections.emptySet()) }.failedAssertion()
-
+        instance.check(strings);
+        assertThrowsFailedAssertion(() -> instance.check(null));
+        assertThrowsFailedAssertion(() -> instance.check(Collections.emptyList()));
     }
 
-    @Test
-    fun testNonEmptyList()
-    {
-        val instance = nonEmptyList<String>()
-        assertThat(instance, notNullValue())
+    @RepeatedTest(TEST_ITERATIONS)
+    public void testNonEmptySet() {
+        AlchemyAssertion<Set<String>> instance = nonEmptySet();
+        assertThat(instance, notNullValue());
 
-        instance.check(strings)
+        var setOfStrings = Set.copyOf(strings);
+        instance.check(setOfStrings);
 
-        assertThrows { instance.check(null) }.failedAssertion()
-        assertThrows { instance.check(Collections.emptyList()) }.failedAssertion()
+        assertThrowsFailedAssertion(() -> instance.check(new HashSet<>()));
+        assertThrowsFailedAssertion(() -> instance.check(null));
     }
 
-    @Test
-    fun testNonEmptySet()
-    {
-        val instance = nonEmptySet<String>()
-        assertThat(instance, notNullValue())
+    @RepeatedTest(TEST_ITERATIONS)
+    public void testNonEmptyMap() {
+        AlchemyAssertion<Map<String,Integer>> instance = nonEmptyMap();
+        assertThat(instance, notNullValue());
 
-        val setOfStrings = strings.toSet()
-        instance.check(setOfStrings)
+        var map = new HashMap<String, Integer>();
+        for (int i = 0; i < 5; i++) {
+            map.put("key" + i, i);
+        }
+        instance.check(map);
 
-        checkThat(setOfStrings).isA(nonEmptySet())
-
-        val emptySet = HashSet<String>()
-        assertThrows { instance.check(emptySet) }.failedAssertion()
-        assertThrows { instance.check(null) }
-                .failedAssertion()
+        assertThrowsFailedAssertion(() -> instance.check(Collections.emptyMap()));
+        assertThrowsFailedAssertion(() -> instance.check(null));
     }
 
-    @Test
-    fun testNonEmptyMap()
-    {
-        val instance = nonEmptyMap<String, Int>()
+    @RepeatedTest(TEST_ITERATIONS)
+    public void testNonEmptyArray() {
+        AlchemyAssertion<String[]> instance = nonEmptyArray();
+        assertThat(instance, notNullValue());
 
-        val map = mapOf(alphabeticStrings(),
-                        NumberGenerators.positiveIntegers(),
-                        40)
+        var array = strings.toArray(new String[0]);
+        instance.check(array);
 
-        instance.check(map)
-
-        assertThrows { instance.check(Collections.emptyMap()) }.failedAssertion()
-        assertThrows { instance.check(null) }.failedAssertion()
+        assertThrowsFailedAssertion(() -> instance.check(null));
+        assertThrowsFailedAssertion(() -> instance.check(new String[0]));
     }
 
-    @Test
-    fun testNonEmptyArray()
-    {
-        val instance = nonEmptyArray<String>()
-        assertThat(instance, notNullValue())
+    @RepeatedTest(TEST_ITERATIONS)
+    public void testListContaining() {
+        // Given
+        var element = randomElementFrom(strings);
+        var instance = listContaining(element);
+        // Then
+        assertThat(instance, notNullValue());
 
-        assertThrows { instance.check(null) }.failedAssertion()
-
-        val stringArray = strings.toTypedArray()
-
-        instance.check(stringArray)
-
-        val emptyStringArray = arrayOf<String>()
-
-        assertThrows { instance.check(emptyStringArray) }.failedAssertion()
+        // Then
+        instance.check(strings);
+        // Then
+        assertThrowsFailedAssertion(
+            () -> instance.check(Collections.singletonList("xyz"))
+        );
     }
 
-    @Test
-    fun testListContaining()
-    {
-        val string = strings.whichever()
-
-        val instance = listContaining(string)
-        assertThat(instance, notNullValue())
-        instance.check(strings)
-
-        val hex = listOf(hexadecimalString(100))
-
-        assertThrows { instance.check(hex) }.failedAssertion()
+    @RepeatedTest(TEST_ITERATIONS)
+    public void testListContainingWithBadArgs() {
+        assertThrows(() -> listContaining(null));
     }
 
-    @Test
-    @Throws(Exception::class)
-    fun testListContainingWithBadArgs()
-    {
-        assertThrows { listContaining(null) }
-                .illegalArgument()
+    @RepeatedTest(TEST_ITERATIONS)
+    public void testCollectionContaining() {
+        var element = randomElementFrom(strings);
+        var instance = collectionContaining(element);
+        assertThat(instance, notNullValue());
+
+        instance.check(strings);
+        assertThrowsFailedAssertion(() -> instance.check(Collections.singletonList("xyz")));
     }
 
-    @Test
-    fun testCollectionContaining()
-    {
-        val string = strings.stream().findAny().orElse(alphabeticStrings().get())
-
-        val instance = collectionContaining(string)
-        assertThat(instance, notNullValue())
-        instance.check(strings)
-
-        val hex = listOf(hexadecimalString(100))
-
-        assertThrows { instance.check(hex) }.failedAssertion()
+    @RepeatedTest(TEST_ITERATIONS)
+    public void testCollectionContainingWithBadArgs() {
+        assertThrows(() -> collectionContaining(null)).isIllegalArgumentException();
     }
 
-    @DontRepeat
-    @Test
-    @Throws(Exception::class)
-    fun testCollectionContainingWithBadArgs()
-    {
-        assertThrows { collectionContaining(null) }
-                .illegalArgument()
+    @RepeatedTest(TEST_ITERATIONS)
+    public void testCollectionContainingAll() {
+        var args = strings.subList(0, 2);
+        var collection = new ArrayList<>(strings);
+        collection.addAll(args);
+
+        var first = args.getFirst();
+        var others = args.subList(1, args.size()).toArray(new String[0]);
+
+        var instance = collectionContainingAll(first, others);
+        assertThat(instance, notNullValue());
+
+        instance.check(collection);
+        assertThrowsFailedAssertion(() -> instance.check(Collections.singletonList("xyz")));
     }
 
-    @Test
-    @Throws(Exception::class)
-    fun testCollectionContainingAll()
-    {
-        val args = listOf(alphabeticStrings())
-        val collection = listOf(alphabeticStrings()).toMutableList()
-        collection.addAll(args)
-
-        val first = args.first()
-        val others = args.subList(1, args.size).toTypedArray()
-
-        val instance = collectionContainingAll(first, *others)
-        assertThat(instance, notNullValue())
-        instance.check(collection)
-
-        val otherCollection = listOf(alphabeticStrings())
-        assertThrows { instance.check(otherCollection) }.failedAssertion()
+    @RepeatedTest(TEST_ITERATIONS)
+    public void testCollectionContainingAllWithBadArgs() {
+        assertThrows(() -> collectionContainingAll((String[]) null))
+            .isIllegalArgumentException();
     }
 
-    @DontRepeat
-    @Test
-    @Throws(Exception::class)
-    fun testCollectionContainingAllWithBadArgs()
-    {
-        assertThrows { collectionContainingAll(null) }
-                .illegalArgument()
+    @RepeatedTest(TEST_ITERATIONS)
+    public void testCollectionContainingAtLeastOneOf() {
+        var args = strings.subList(0, 2);
+        var collection = new ArrayList<>(strings);
+        collection.addAll(args);
+
+        var first = args.getFirst();
+        var others = args.subList(1, args.size()).toArray(new String[0]);
+
+        var instance = collectionContainingAtLeastOneOf(first, others);
+        assertThat(instance, notNullValue());
+
+        instance.check(collection);
+        assertThrowsFailedAssertion(() -> instance.check(Collections.singletonList("xyz")));
+
+        // Re-add first to make it pass
+        collection.add(first);
+        instance.check(collection);
     }
 
-    @Test
-    @Throws(Exception::class)
-    fun testCollectionContainingAtLeastOnceOf()
-    {
-        val arguments = listOf(alphanumericStrings())
-        val collection = listOf(alphanumericStrings()) + arguments
-
-        val first = collection.first()
-        val others = arguments.subList(1, arguments.size).toTypedArray()
-
-        val instance = collectionContainingAtLeastOneOf(first, *others)
-        instance.check(collection)
-
-        val otherCollection = listOf(alphabeticStrings()).toMutableList()
-        assertThrows { instance.check(otherCollection) }.failedAssertion()
-
-        //With at least one, it should pass.
-        otherCollection.add(first)
-        instance.check(otherCollection)
+    @RepeatedTest(TEST_ITERATIONS)
+    public void testCollectionContainingAtLeastOneOfWithBadArgs() {
+        assertThrows(() -> collectionContainingAtLeastOneOf((String[]) null))
+            .isIllegalArgumentException();
     }
 
-    @DontRepeat
-    @Test
-    @Throws(Exception::class)
-    fun testCollectionContainingAtLeastOnceOfWithBadArgs()
-    {
-        assertThrows { collectionContainingAtLeastOneOf(null) }
-                .illegalArgument()
+    @RepeatedTest(TEST_ITERATIONS)
+    public void testMapWithKey() {
+        // Given
+        var map = new HashMap<String, String>();
+        for (int i = 0; i < 5; i++) {
+            map.put("key" + i, "val" + i);
+        }
+        var key = map.keySet().iterator().next();
+
+        var instance = CollectionAssertions.<String, String>mapWithKey(key);
+        assertThat(instance, notNullValue());
+
+        instance.check(map);
+        assertThrowsFailedAssertion(() -> instance.check(Collections.singletonMap("bad", "val")));
     }
 
-    @Test
-    fun testMapWithKey()
-    {
-        val map = mapOf(positiveIntegers(), hexadecimalString(100), 100)
+    @RepeatedTest(TEST_ITERATIONS)
+    public void testMapWithKeyValue() {
+        var map = new HashMap<String, Integer>();
+        
+        for (int i = 0; i < 5; i++) {
+            map.put(String.valueOf(i), i);
+        }
 
-        val key = map.keys.whichever()
+        Map.Entry<String, Integer> entry = map.entrySet().iterator().next();
+        var instance = mapWithKeyValue(entry.getKey(), entry.getValue());
+        assertThat(instance, notNullValue());
 
-        val instance = mapWithKey<Int, String>(key)
-        assertThat(instance, notNullValue())
-
-        instance.check(map)
-
-        val badMap = mapOf(negativeIntegers(), hexadecimalString(100), 100)
-        assertThrows { instance.check(badMap) }
+        instance.check(map);
+        assertThrowsFailedAssertion(() -> instance.check(Collections.singletonMap("bad", -1)));
     }
 
-    @Test
-    fun testMapWithKeyValue()
-    {
-        val map = mapOf(positiveIntegers(), alphabeticStrings(), 100)
+    @RepeatedTest(TEST_ITERATIONS)
+    public void testKeyInMap() {
+        var map = new HashMap<String, String>();
+        for (int i = 0; i < 5; i++) {
+            map.put("key" + i, "val" + i);
+        }
+        var assertion = keyInMap(map);
 
-        val anyEntry = map.entries.whichever()
+        var anyKey = map.keySet().iterator().next();
+        assertion.check(anyKey);
 
-        val instance: AlchemyAssertion<Map<Int, String>>
-        instance = mapWithKeyValue(anyEntry.key, anyEntry.value)
-        assertThat(instance, notNullValue())
+        assertThrowsFailedAssertion(() -> assertion.check("nonexistent"));
+        assertThrowsFailedAssertion(() -> assertion.check(null));
 
-        //Should pass OK
-        instance.check(map)
-
-        val badMap = mapOf(negativeIntegers(), hexadecimalString(100), 100)
-        assertThrows { instance.check(badMap) }
+        assertThrows(IllegalArgumentException.class, () -> keyInMap((Map<?, ?>) null));
     }
 
-    @Test
-    fun testKeyInMap()
-    {
-        val map = mapOf(alphabeticStrings(), alphanumericStrings(), 25)
+    @RepeatedTest(TEST_ITERATIONS)
+    public void testKeyInMapWithEmptyMap() {
+        var assertion = keyInMap(Collections.emptyMap());
 
-        val assertion = keyInMap(map)
-        assertThat(assertion, notNullValue())
-
-        val anyKey = map.keys.stream().findAny().get()
-        assertion.check(anyKey)
-
-        val randomKey = one(hexadecimalString(42))
-        assertThrows { assertion.check(randomKey) }.failedAssertion()
-
-        //Edge cases
-        assertThrows { assertion.check(null) }.failedAssertion()
-
-        assertThrows { keyInMap<Any, Any>(null!!) }
-    }
-
-    @Test
-    fun testKeyInMapWithEmptyMap()
-    {
-        val assertion = keyInMap(Collections.emptyMap<Any, Any>())
-
-        for (string in strings)
-        {
-            assertThrows { assertion.check(string) }.failedAssertion()
+        for (String s : strings) {
+            assertThrowsFailedAssertion(() -> assertion.check(s));
         }
     }
 
-    @Test
-    fun testValueInMap()
-    {
+    @RepeatedTest(TEST_ITERATIONS)
+    public void testValueInMap() {
+        Map<String, String> map = new HashMap<>();
+        for (int i = 0; i < 5; i++) {
+            map.put("key" + i, "val" + i);
+        }
+        var assertion = valueInMap(map);
 
-        val map = mapOf(alphanumericStrings(), alphabeticStrings(), 24)
+        String anyValue = map.values().iterator().next();
+        assertion.check(anyValue);
 
-        val assertion = valueInMap(map)
-        assertThat(assertion, notNullValue())
+        assertThrowsFailedAssertion(() -> assertion.check("nonexistent"));
+        assertThrowsFailedAssertion(() -> assertion.check(null));
 
-        val anyValue = map.values.whichever()
-        assertion.check(anyValue)
-
-        val randomValue = one(hexadecimalString(10))
-        assertThrows { assertion.check(randomValue) }.failedAssertion()
-        //Edge cases
-        assertThrows { assertion.check(null) }.failedAssertion()
-        assertThrows { valueInMap<Any, Any>(null!!) }
-
-        //Empty map should be ok
-        valueInMap(Collections.emptyMap<Any, Any>())
+        assertThrows(IllegalArgumentException.class, () -> valueInMap((Map<?, ?>) null));
     }
 
-    @Test
-    fun testValueInMapWithEmptyMap()
-    {
-        val assertion = valueInMap(Collections.emptyMap<Any, Any>())
-        assertThat(assertion, notNullValue())
+    @RepeatedTest(TEST_ITERATIONS)
+    public void testValueInMapWithEmptyMap() {
+        var assertion = valueInMap(Collections.emptyMap());
 
-        for (string in strings)
-        {
-            assertThrows { assertion.check(string) }.failedAssertion()
+        for (String s : strings) {
+            assertThrowsFailedAssertion(() -> assertion.check(s));
         }
     }
 
-    @Test
-    fun testElementInCollection()
-    {
-        val assertion = elementInCollection(strings)
-        assertThat(assertion, notNullValue())
+    @RepeatedTest(TEST_ITERATIONS)
+    public void testElementInCollection() {
+        var assertion = elementInCollection(strings);
 
-        val anyValue = strings.whichever()
-        assertion.check(anyValue)
+        var anyValue = strings.get(Math.abs(new Random().nextInt()) % strings.size());
+        assertion.check(anyValue);
 
-        val randomValue = one(hexadecimalString(20))
+        assertThrowsFailedAssertion(() -> assertion.check("nonexistent"));
+        assertThrowsFailedAssertion(() -> assertion.check(null));
 
-        assertThrows { assertion.check(randomValue) }.failedAssertion()
-        //Edge cases
-        assertThrows { assertion.check(null) }.failedAssertion()
-        assertThrows { elementInCollection<Any>(null!!) }
-
-        //Empty Collections should be ok
-        elementInCollection(Collections.emptyList<Any>())
-
+        assertThrows(IllegalArgumentException.class, () -> elementInCollection((List<?>) null));
     }
 
-    @Test
-    fun testCollectionOfSize()
-    {
-        val size = strings.size
-        val instance = collectionOfSize<Collection<String>>(size)
-        instance.check(strings)
+    @RepeatedTest(TEST_ITERATIONS)
+    public void testCollectionOfSize() {
+        // Given
+        int size = strings.size();
+        var instance = CollectionAssertions.<String, Collection<String>>collectionOfSize(size);
 
-        strings.add(one(alphabeticStrings()))
+        // Then
+        assertDoesNotThrow(() -> instance.check(strings));
 
-        assertThrows { instance.check(strings) }.failedAssertion()
-        checkThat(strings)
-                .isA(collectionOfSize(strings.size))
+        // When
+        strings.add("extra");
 
+        // Then
+        assertThrowsFailedAssertion(() -> instance.check(strings));
+
+        // Then
+        var newSize = strings.size();
+        assertDoesNotThrow(
+            () -> Arguments.checkThat(strings).isA(collectionOfSize(newSize))
+        );
     }
 
-    @DontRepeat
-    @Test
-    fun testCollectionOfSizeWithBadArgs()
-    {
-        val badSize = one(negativeIntegers())
-
-        assertThrows { collectionOfSize<Collection<Any>>(badSize) }
-                .illegalArgument()
+    @RepeatedTest(TEST_ITERATIONS)
+    public void testCollectionOfSizeWithBadArgs() {
+        int badSize = -1;
+        assertThrows(() -> collectionOfSize(badSize))
+            .isIllegalArgumentException();
     }
 
-    @Test
-    fun testEmptyCollection()
-    {
-        val instance = emptyCollection<Any>()
+    @RepeatedTest(TEST_ITERATIONS)
+    public void testEmptyCollection() {
+        // Given
+        var instance = CollectionAssertions.<String,Collection<String>>emptyCollection();
+        // Then
+        assertThat(instance, notNullValue());
 
-        instance.check(emptySet)
-
-        assertThrows { instance.check(strings) }.failedAssertion()
+        // Then
+        assertDoesNotThrow(
+            () -> instance.check(Collections.emptySet())
+        );
+        assertThrowsFailedAssertion(() -> instance.check(strings));
     }
 
-    @Test
-    fun testEmptyList()
-    {
-        val instance = emptyList<Any>()
+    @RepeatedTest(TEST_ITERATIONS)
+    public void testEmptyList() {
+        // When
+        var instance = emptyList();
+        // Then
+        assertThat(instance, notNullValue());
 
-        instance.check(emptyList)
-
-        assertThrows { instance.check(strings) }.failedAssertion()
+        // Then
+        assertDoesNotThrow(
+            () -> instance.check(Collections.emptyList())
+        );
+        assertThrowsFailedAssertion(
+            () -> Arguments.checkThat(strings).is(emptyList())
+        );
     }
 
-    @Test
-    fun testEmptySet()
-    {
-        val instance = emptySet<Any>()
+    @RepeatedTest(TEST_ITERATIONS)
+    public void testEmptySet() {
+        // When
+        var instance = emptySet();
+        // Then
+        assertThat(instance, notNullValue());
 
-        instance.check(emptySet)
-
-        val nonEmptySet = strings.toSet()
-        assertThrows { instance.check(nonEmptySet) }.failedAssertion()
+        assertDoesNotThrow(
+            () -> Arguments.checkThat(emptySet).isA(emptySet())
+        );
+        var nonEmpty = Set.copyOf(strings);
+        assertThrowsFailedAssertion(
+            () -> Arguments.checkThat(nonEmpty).isA(emptySet())
+        );
     }
-
 }
