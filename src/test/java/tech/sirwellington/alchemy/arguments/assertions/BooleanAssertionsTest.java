@@ -1,68 +1,34 @@
-/*
- * Copyright © 2026. Sir Wellington.
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- *
- * You may obtain a copy of the License at
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
+package tech.sirwellington.alchemy.arguments.assertions;
 
-package tech.sirwellington.alchemy.arguments.assertions
+import org.junit.jupiter.api.RepeatedTest;
+import tech.sirwellington.alchemy.test.AlchemyTest;
 
-import org.hamcrest.Matchers.notNullValue
-import org.junit.Assert.assertThat
-import org.junit.Before
-import org.junit.Test
-import org.junit.runner.RunWith
-import tech.sirwellington.alchemy.arguments.failedAssertion
-import tech.sirwellington.alchemy.test.junit.ThrowableAssertion.assertThrows
-import tech.sirwellington.alchemy.test.junit.runners.AlchemyTestRunner
-import tech.sirwellington.alchemy.test.junit.runners.Repeat
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.notNullValue;
+import static tech.sirwellington.alchemy.arguments.TestHelpers.assertThrowsFailedAssertion;
+import static tech.sirwellington.alchemy.arguments.assertions.BooleanAssertions.falseStatement;
+import static tech.sirwellington.alchemy.arguments.assertions.BooleanAssertions.trueStatement;
 
-/**
+@AlchemyTest
+final class BooleanAssertionsTest {
 
- * @author SirWellington
- */
-@Repeat(10)
-@RunWith(AlchemyTestRunner::class)
-class BooleanAssertionsTest
-{
+    @RepeatedTest(100)
+    public void testTrueStatement() {
+        var assertion = trueStatement();
+        assertThat(assertion, notNullValue());
 
-    @Before
-    fun setUp()
-    {
+        assertion.check(true);
+        assertThrowsFailedAssertion(() -> assertion.check(false));
+        assertThrowsFailedAssertion(() -> assertion.check(null));
     }
 
-    @Test
-    fun testTrueStatement()
-    {
-        val assertion = trueStatement()
-        assertThat(assertion, notNullValue())
+    @RepeatedTest(100)
+    public void testFalseStatement() {
+        var assertion = falseStatement();
+        assertThat(assertion, notNullValue());
 
-        assertion.check(true)
-
-        assertThrows { assertion.check(false) }.failedAssertion()
-        assertThrows { assertion.check(null) }
-                .failedAssertion()
+        assertion.check(false);
+        assertThrowsFailedAssertion(() -> assertion.check(true));
+        assertThrowsFailedAssertion(() -> assertion.check(null));
     }
-
-    @Test
-    fun testFalseStatement()
-    {
-        val assertion = falseStatement()
-        assertThat(assertion, notNullValue())
-
-        assertion.check(false)
-
-        assertThrows { assertion.check(true) }.failedAssertion()
-        assertThrows { assertion.check(null) }
-                .failedAssertion()
-    }
-
 }
