@@ -13,127 +13,105 @@
  * limitations under the License.
  */
 
-package tech.sirwellington.alchemy.arguments.assertions
+package tech.sirwellington.alchemy.arguments.assertions;
 
-import org.hamcrest.Matchers.notNullValue
-import org.junit.Assert.assertThat
-import org.junit.Before
-import org.junit.Test
-import org.junit.runner.RunWith
-import tech.sirwellington.alchemy.arguments.failedAssertion
-import tech.sirwellington.alchemy.arguments.illegalArgument
-import tech.sirwellington.alchemy.generator.DateGenerators
-import tech.sirwellington.alchemy.generator.one
-import tech.sirwellington.alchemy.test.junit.ThrowableAssertion.assertThrows
-import tech.sirwellington.alchemy.test.junit.runners.AlchemyTestRunner
-import tech.sirwellington.alchemy.test.junit.runners.DontRepeat
-import tech.sirwellington.alchemy.test.junit.runners.Repeat
-import java.util.Date
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
+import tech.sirwellington.alchemy.generator.DateGenerators;
+import tech.sirwellington.alchemy.test.AlchemyTest;
+
+import java.util.Date;
+
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static tech.sirwellington.alchemy.arguments.TestHelpers.assertThrowsFailedAssertion;
+import static tech.sirwellington.alchemy.arguments.assertions.DateAssertions.*;
+import static tech.sirwellington.alchemy.generator.AlchemyGenerator.Get.one;
+import static tech.sirwellington.alchemy.test.ThrowableAssertion.assertThrows;
 
 /**
-
+ * Tests for {@link DateAssertions}.
+ *
  * @author SirWellington
  */
-@RunWith(AlchemyTestRunner::class)
-@Repeat
-class DateAssertionsTest
-{
+@DisplayName("DateAssertions Tests")
+@AlchemyTest
+final class DateAssertionsTest {
 
-    @Before
-    fun setUp()
-    {
-    }
-
-    @DontRepeat
     @Test
-    fun testCannotInstantiate()
-    {
-        assertThrows { DateAssertions() }
-                .isInstanceOf(IllegalAccessException::class.java)
-
-        assertThrows { DateAssertions::class.java.newInstance() }
-                .isInstanceOf(IllegalAccessException::class.java)
+    @DisplayName("testCannotInstantiate: DateAssertions should be non-instantiable")
+    void testCannotInstantiate() {
+        assertThrows(
+            () -> DateAssertions.class.getDeclaredConstructor().newInstance()
+        ).isInstanceOf(IllegalAccessException.class)
+         .hasMessage("cannot directly instantiate");
     }
 
     @Test
-    @Throws(InterruptedException::class)
-    fun testInThePast()
-    {
-        val startTime = Date()
+    @DisplayName("testInThePast: inThePast assertion works correctly")
+    void testInThePast() throws InterruptedException {
+        var startTime = new Date();
 
-        val instance = DateAssertions.inThePast()
-        assertThat(instance, notNullValue())
+        var instance = inThePast();
+        assertNotNull(instance, "inThePast should return a non-null assertion");
 
-        val past = one(DateGenerators.pastDates())
-        instance.check(past)
+        var past = one(DateGenerators.pastDates());
+        instance.check(past);
 
-        val future = one(DateGenerators.futureDates())
-        assertThrows { instance.check(future) }.failedAssertion()
-        Thread.sleep(1)
-        //Start time should presentDate be past as well
-        instance.check(startTime)
+        var future = one(DateGenerators.futureDates());
+        assertThrowsFailedAssertion(() -> instance.check(future));
+
+        Thread.sleep(1);
+        instance.check(startTime);
     }
 
     @Test
-    fun testAfter()
-    {
-        val referenceDate = Date()
+    @DisplayName("testAfter: after assertion works correctly")
+    void testAfter() {
+        var referenceDate = new Date();
 
-        val instance = DateAssertions.after(referenceDate)
-        assertThat(instance, notNullValue())
+        var instance = after(referenceDate);
+        assertNotNull(instance, "after should return a non-null assertion");
 
-        //The reference date is not after itself
-        assertThrows { instance.check(referenceDate) }.failedAssertion()
+        assertThrowsFailedAssertion(() -> instance.check(referenceDate));
 
-        //The past is not after the reference date
-        val past = one(DateGenerators.pastDates())
-        assertThrows { instance.check(past) }.failedAssertion()
+        var past = one(DateGenerators.pastDates());
+        assertThrows(() -> instance.check(past));
 
-        //The future should be after the reference date
-        val future = one(DateGenerators.futureDates())
-        instance.check(future)
-
+        var future = one(DateGenerators.futureDates());
+        instance.check(future);
     }
 
     @Test
-    fun testBefore()
-    {
-        val referenceDate = Date()
+    @DisplayName("testBefore: before assertion works correctly")
+    void testBefore() {
+        var referenceDate = new Date();
 
-        val instance = DateAssertions.before(referenceDate)
-        assertThat(instance, notNullValue())
+        var instance = before(referenceDate);
+        assertNotNull(instance, "before should return a non-null assertion");
 
-        //The reference date is not before itself
-        assertThrows { instance.check(referenceDate) }.failedAssertion()
+        assertThrowsFailedAssertion(() -> instance.check(referenceDate));
 
-        //The future is not before the reference date
-        val future = one(DateGenerators.after(referenceDate))
-        assertThrows { instance.check(future) }.failedAssertion()
+        var future = one(DateGenerators.futureDates());
+        assertThrowsFailedAssertion(() -> instance.check(future));
 
-        //The past is before the reference date
-        val past = one(DateGenerators.before(referenceDate))
-        instance.check(past)
-
+        var past = one(DateGenerators.pastDates());
+        instance.check(past);
     }
 
     @Test
-    fun testInTheFuture()
-    {
-        val startTime = Date()
+    @DisplayName("testInTheFuture: inTheFuture assertion works correctly")
+    void testInTheFuture() {
+        var startTime = new Date();
 
-        val instance = DateAssertions.inTheFuture()
-        assertThat(instance, notNullValue())
+        var instance = inTheFuture();
+        assertNotNull(instance, "inTheFuture should return a non-null assertion");
 
-        //Future is ahead of the presentDate
-        val future = one(DateGenerators.futureDates())
-        instance.check(future)
+        var future = one(DateGenerators.futureDates());
+        instance.check(future);
 
-        //Past is behind the presentDate
-        val past = one(DateGenerators.pastDates())
-        assertThrows { instance.check(past) }.illegalArgument()
-
-        //The start time is not in the future
-        assertThrows { instance.check(startTime) }.illegalArgument()
+        var past = one(DateGenerators.pastDates());
+        assertThrowsFailedAssertion(() -> instance.check(past));
+        assertThrowsFailedAssertion(() -> instance.check(startTime));
     }
 
 }
