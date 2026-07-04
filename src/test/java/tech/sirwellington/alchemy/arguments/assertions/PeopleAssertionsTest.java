@@ -13,78 +13,54 @@
  * limitations under the License.
  */
 
-package tech.sirwellington.alchemy.arguments.assertions
+package tech.sirwellington.alchemy.arguments.assertions;
 
-import org.hamcrest.Matchers.notNullValue
-import org.junit.Assert.assertThat
-import org.junit.Before
-import org.junit.Test
-import org.junit.runner.RunWith
-import tech.sirwellington.alchemy.arguments.failedAssertion
-import tech.sirwellington.alchemy.generator.PeopleGenerators
-import tech.sirwellington.alchemy.generator.one
-import tech.sirwellington.alchemy.test.junit.ThrowableAssertion.assertThrows
-import tech.sirwellington.alchemy.test.junit.runners.AlchemyTestRunner
-import tech.sirwellington.alchemy.test.junit.runners.DontRepeat
-import tech.sirwellington.alchemy.test.junit.runners.GenerateString
-import tech.sirwellington.alchemy.test.junit.runners.GenerateString.Type.ALPHABETIC
-import tech.sirwellington.alchemy.test.junit.runners.Repeat
 
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.RepeatedTest;
+import org.junit.jupiter.api.Test;
+import tech.sirwellington.alchemy.generator.PeopleGenerators;
+import tech.sirwellington.alchemy.test.AlchemyTest;
+import tech.sirwellington.alchemy.test.generation.GenerateString;
+
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.notNullValue;
+import static tech.sirwellington.alchemy.arguments.TestHelpers.assertThrowsFailedAssertion;
+import static tech.sirwellington.alchemy.arguments.assertions.PeopleAssertions.validEmailAddress;
+import static tech.sirwellington.alchemy.generator.AlchemyGenerator.Get.one;
+import static tech.sirwellington.alchemy.test.generation.GenerateString.Type.ALPHABETIC;
 
 /**
-
  * @author SirWellington
  */
-@Repeat(100)
-@RunWith(AlchemyTestRunner::class)
-class PeopleAssertionsTest
-{
+@AlchemyTest
+final class PeopleAssertionsTest {
 
-    private lateinit var email: String
-
+    private String email;
     @GenerateString(ALPHABETIC)
-    private lateinit var badEmail: String
+    private String badEmail;
 
-    @Before
-    @Throws(Exception::class)
-    fun setUp()
-    {
-
-        setupData()
-        setupMocks()
+    @BeforeEach
+    void setUp() {
+        email = one(PeopleGenerators.emailAddresses());
     }
 
-    @Throws(Exception::class)
-    private fun setupData()
-    {
-        email = one(PeopleGenerators.emails())
-    }
+    @RepeatedTest(100)
+    void testValidEmailAddress() {
+        var instance = validEmailAddress();
+        assertThat(instance, notNullValue());
 
-    @Throws(Exception::class)
-    private fun setupMocks()
-    {
+        instance.check(email);
 
+        assertThrowsFailedAssertion(() -> instance.check(badEmail));
     }
 
     @Test
-    fun testValidEmailAddress()
-    {
-        val instance = validEmailAddress()
-        assertThat(instance, notNullValue())
+    void testValidEmailAddressWithEmptyArgs() {
+        var instance = validEmailAddress();
 
-        instance.check(email)
-
-        assertThrows { instance.check(badEmail) }.failedAssertion()
-    }
-
-    @DontRepeat
-    @Test
-    fun testValidEmailAddressWithEmptyArgs()
-    {
-        val instance = validEmailAddress()
-
-        assertThrows { instance.check(null) }.failedAssertion()
-        assertThrows { instance.check("") }.failedAssertion()
+        assertThrowsFailedAssertion(() ->instance.check(null));
+        assertThrowsFailedAssertion(() ->instance.check(""));
     }
 
 }
