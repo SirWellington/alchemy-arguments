@@ -39,7 +39,7 @@ public final class GeolocationAssertions {
      * Checks that a Latitude is in the valid range [-90...90](inclusive).
      * @return A chainable assertion.
      */
-    public AlchemyAssertion<Double> validLatitude() {
+    public static AlchemyAssertion<Double> validLatitude() {
         return latitude -> {
             checkThat(latitude)
                 .usingMessage("latitude cannot be null")

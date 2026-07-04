@@ -13,73 +13,79 @@
  * limitations under the License.
  */
 
-package tech.sirwellington.alchemy.arguments.assertions
+package tech.sirwellington.alchemy.arguments.assertions;
 
-import org.hamcrest.Matchers.notNullValue
-import org.junit.Assert.assertThat
-import org.junit.Before
-import org.junit.Test
-import org.junit.runner.RunWith
-import tech.sirwellington.alchemy.arguments.failedAssertion
-import tech.sirwellington.alchemy.generator.NumberGenerators
-import tech.sirwellington.alchemy.generator.one
-import tech.sirwellington.alchemy.test.junit.ThrowableAssertion.assertThrows
-import tech.sirwellington.alchemy.test.junit.runners.*
-import tech.sirwellington.alchemy.test.junit.runners.GenerateInteger.Type.RANGE
-import java.net.URL
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
+import tech.sirwellington.alchemy.test.AlchemyTest;
 
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static tech.sirwellington.alchemy.arguments.TestHelpers.assertThrowsFailedAssertion;
+import static tech.sirwellington.alchemy.arguments.assertions.NetworkAssertions.validPort;
+import static tech.sirwellington.alchemy.arguments.assertions.NetworkAssertions.validURL;
+import static tech.sirwellington.alchemy.generator.AlchemyGenerator.Get.one;
+import static tech.sirwellington.alchemy.generator.NetworkGenerators.httpsURLs;
+import static tech.sirwellington.alchemy.generator.NumberGenerators.integers;
+import static tech.sirwellington.alchemy.generator.NumberGenerators.negativeIntegers;
+import static tech.sirwellington.alchemy.generator.StringGenerators.strings;
 
 /**
-
+ * Tests for {@link NetworkAssertions}.
+ *
  * @author SirWellington
  */
-@Repeat(1000)
-@RunWith(AlchemyTestRunner::class)
-class NetworkAssertionsTest
-{
-    @GenerateURL
-    private lateinit var url: URL
+@DisplayName("NetworkAssertions Tests")
+@AlchemyTest
+final class NetworkAssertionsTest {
 
-    @GenerateString
-    private lateinit var badUrl: String
+    private static final int MAX_PORT = 65535;
 
-    @GenerateInteger(value = RANGE, min = 1, max = MAX_PORT)
-    private val port: Int = 0
+    //==============================
+    // URL VALIDATION
+    //==============================
 
-    @Before
-    fun setUp()
-    {
+    @Test
+    @DisplayName("testValidURL: validURL assertion works correctly")
+    void testValidURL() {
+        var url = one(httpsURLs());
+        String urlString = url.toString();
+
+        var assertion = validURL();
+        assertNotNull(assertion);
+
+        // Valid cases
+        assertion.check(urlString);
+
+        // Invalid case
+        assertThrowsFailedAssertion(() -> assertion.check(one(strings())));
     }
 
     @Test
-    fun testValidURL()
-    {
-        val assertion = validURL()
-        assertThat(assertion, notNullValue())
+    @DisplayName("testValidPort: validPort assertion works correctly")
+    void testValidPort() {
+        var port = one(integers(1, MAX_PORT));
+        var assertion = validPort();
 
-        assertion.check(url.toString())
+        assertNotNull(assertion);
 
-        assertThrows { assertion.check(badUrl) }.failedAssertion()
+        // Valid cases
+        assertion.check(port);
+        assertion.check(1);
+        assertion.check(MAX_PORT);
+
+        // Invalid cases: negative and out-of-range
+        int negative = one(negativeIntegers());
+        assertThrowsFailedAssertion(() -> assertion.check(negative));
+
+        int tooHigh = one(integers(MAX_PORT + 1, Integer.MAX_VALUE));
+        assertThrowsFailedAssertion(() -> assertion.check(tooHigh));
     }
 
     @Test
-    fun testValidPort()
-    {
-        val assertion = validPort()
-        assertThat(assertion, notNullValue())
+    @DisplayName("testValidPortEdgeCases: validPort handles boundary values")
+    void testValidPortEdgeCases() {
+        var assertion = validPort();
 
-        assertion.check(port)
-
-        val negative = one(NumberGenerators.negativeIntegers())
-        assertThrows { assertion.check(negative) }.failedAssertion()
-
-        val tooHigh = one(NumberGenerators.integers(MAX_PORT + 1, Integer.MAX_VALUE))
-        assertThrows { assertion.check(tooHigh) }.failedAssertion()
+        assertThrowsFailedAssertion(() -> assertion.check(0));
     }
-
-    companion object
-    {
-        private const val MAX_PORT = 65535
-    }
-
 }

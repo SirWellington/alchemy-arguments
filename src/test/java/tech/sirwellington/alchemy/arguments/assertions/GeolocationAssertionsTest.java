@@ -13,72 +13,89 @@
  * limitations under the License.
  */
 
-package tech.sirwellington.alchemy.arguments.assertions
+package tech.sirwellington.alchemy.arguments.assertions;
 
-import org.junit.Before
-import org.junit.Test
-import org.junit.runner.RunWith
-import tech.sirwellington.alchemy.arguments.failedAssertion
-import tech.sirwellington.alchemy.test.junit.ThrowableAssertion.assertThrows
-import tech.sirwellington.alchemy.test.junit.runners.AlchemyTestRunner
-import tech.sirwellington.alchemy.test.junit.runners.GenerateDouble
-import tech.sirwellington.alchemy.test.junit.runners.GenerateDouble.Type.RANGE
-import tech.sirwellington.alchemy.test.junit.runners.Repeat
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
+import tech.sirwellington.alchemy.test.AlchemyTest;
+
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static tech.sirwellington.alchemy.arguments.TestHelpers.assertThrowsFailedAssertion;
+import static tech.sirwellington.alchemy.arguments.assertions.GeolocationAssertions.*;
+import static tech.sirwellington.alchemy.generator.AlchemyGenerator.Get.one;
+import static tech.sirwellington.alchemy.generator.NumberGenerators.doubles;
 
 /**
-
+ * Tests for {@link GeolocationAssertions}.
+ *
  * @author SirWellington
  */
-@Repeat(100)
-@RunWith(AlchemyTestRunner::class)
-class GeolocationAssertionsTest
-{
+@DisplayName("GeolocationAssertions Tests")
+@AlchemyTest
+final class GeolocationAssertionsTest {
 
-    @GenerateDouble(value = RANGE, min = -90.0, max = 90.0)
-    private var latitude: Double = 0.0
+    private static final double MIN_LATITUDE = -90.0;
+    private static final double MAX_LATITUDE = 90.0;
+    private static final double MIN_LONGITUDE = -180.0;
+    private static final double MAX_LONGITUDE = 180.0;
 
-    @GenerateDouble(value = RANGE, min = -180.0, max = 180.0)
-    private var longitude: Double = 0.0
+    //==============================
+    // LATITUDE VALIDATION
+    //==============================
 
-    @GenerateDouble(value = RANGE, min = 91.0, max = java.lang.Double.MAX_VALUE)
-    private var badLatitude: Double = 0.0
+    @Test
+    @DisplayName("testValidLatitude: validLatitude assertion works correctly")
+    void testValidLatitude() {
+        var latitude = one(doubles(MIN_LATITUDE, MAX_LATITUDE));
+        var assertion = validLatitude();
 
-    @GenerateDouble(value = RANGE, min = -java.lang.Double.MAX_VALUE, max = -181.0)
-    private var badLongitude: Double = 0.0
+        assertNotNull(assertion);
+        assertion.check(latitude);
 
-    @Before
-    @Throws(Exception::class)
-    fun setUp()
-    {
-
+        // Boundary cases
+        assertion.check(MIN_LATITUDE);
+        assertion.check(MAX_LATITUDE);
     }
 
     @Test
-    fun testValidLatitude()
-    {
-        val assertion = validLatitude()
-        assertion.check(latitude)
+    @DisplayName("testValidLatitudeWithInvalid: validLatitude rejects out-of-range latitudes")
+    void testValidLatitudeWithInvalid() {
+        var assertion = GeolocationAssertions.validLatitude();
+
+        var tooHigh = one(doubles(MAX_LATITUDE + 0.1, Double.MAX_VALUE));
+        assertThrowsFailedAssertion(() -> assertion.check(tooHigh));
+
+        var tooLow = one(doubles(Double.MIN_VALUE, MIN_LATITUDE - 0.1));
+        assertThrowsFailedAssertion(() -> assertion.check(tooLow));
+    }
+
+    //==============================
+    // LONGITUDE VALIDATION
+    //==============================
+
+    @Test
+    @DisplayName("testValidLongitude: validLongitude assertion works correctly")
+    void testValidLongitude() {
+        var longitude = one(doubles(MIN_LONGITUDE, MAX_LONGITUDE));
+        var assertion = validLongitude();
+
+        assertNotNull(assertion);
+        assertion.check(longitude);
+
+        // Boundary cases
+        assertion.check(MIN_LONGITUDE);
+        assertion.check(MAX_LONGITUDE);
     }
 
     @Test
-    fun testValidLatitudeWithInvalid()
-    {
-        val assertion = validLatitude()
-        assertThrows { assertion.check(badLatitude) }.failedAssertion()
-    }
+    @DisplayName("testValidLongitudeWithInvalid: validLongitude rejects out-of-range longitudes")
+    void testValidLongitudeWithInvalid() {
+        var assertion = validLongitude();
 
-    @Test
-    fun testValidLongitude()
-    {
-        val assertion = validLongitude()
-        assertion.check(longitude)
-    }
+        var tooHigh = one(doubles(MAX_LONGITUDE + 0.1, Double.MAX_VALUE));
+        assertThrowsFailedAssertion(() -> assertion.check(tooHigh));
 
-    @Test
-    fun testValidLongitudeWithInvalid()
-    {
-        val assertion = validLongitude()
-        assertThrows { assertion.check(badLongitude) }.failedAssertion()
+        var tooLow = one(doubles(Double.MIN_VALUE, MIN_LONGITUDE - 0.1));
+        assertThrowsFailedAssertion(() -> assertion.check(tooLow));
     }
-
 }
