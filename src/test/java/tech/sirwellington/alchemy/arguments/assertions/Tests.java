@@ -13,42 +13,42 @@
  * limitations under the License.
  */
 
-package tech.sirwellington.alchemy.arguments.assertions
+package tech.sirwellington.alchemy.arguments.assertions;
 
-import org.hamcrest.Matchers.notNullValue
-import org.junit.Assert.assertThat
-import tech.sirwellington.alchemy.annotations.access.Internal
-import tech.sirwellington.alchemy.annotations.access.NonInstantiable
-import tech.sirwellington.alchemy.arguments.AlchemyAssertion
-import tech.sirwellington.alchemy.arguments.failedAssertion
-import tech.sirwellington.alchemy.generator.AlchemyGenerator
-import tech.sirwellington.alchemy.generator.AlchemyGenerator.Get.one
-import tech.sirwellington.alchemy.test.junit.ThrowableAssertion.assertThrows
+import org.junit.jupiter.api.Assertions;
+import tech.sirwellington.alchemy.annotations.access.Internal;
+import tech.sirwellington.alchemy.annotations.access.NonInstantiable;
+import tech.sirwellington.alchemy.arguments.AlchemyAssertion;
+import tech.sirwellington.alchemy.generator.AlchemyGenerator;
+
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static tech.sirwellington.alchemy.arguments.TestHelpers.assertThrowsFailedAssertion;
 
 /**
-
+ *
  * @author SirWellington
  */
 @Internal
 @NonInstantiable
-object Tests
-{
+public final class Tests {
 
-    fun <T> runTests(assertion: AlchemyAssertion<T>,
-                     badArguments: AlchemyGenerator<T>,
-                     goodArguments: AlchemyGenerator<T>)
-    {
-        assertThat(assertion, notNullValue())
-
-        val badArgument = one(badArguments)
-        assertThrows { assertion.check(badArgument) }.failedAssertion()
-        val goodArgument = one(goodArguments)
-        assertion.check(goodArgument)
+    private Tests() {
+        throw new IllegalStateException("cannot instantiate");
     }
 
-    fun checkForNullCase(assertion: AlchemyAssertion<*>)
-    {
-        assertThrows { assertion.check(null) }
-                .failedAssertion()
+    public static <T> void runTests(AlchemyAssertion<T> assertion,
+                                    AlchemyGenerator<T> badArguments,
+                                    AlchemyGenerator<T> goodArguments) {
+        assertNotNull(assertion, "assertion should be non-null");
+
+        var badArgument = badArguments.get();
+        assertThrowsFailedAssertion(() -> assertion.check(badArgument));
+
+        var goodArgument = goodArguments.get();
+        Assertions.assertDoesNotThrow(() -> assertion.check(goodArgument));
+    }
+
+    public static void checkForNullCase(AlchemyAssertion<?> assertion) {
+        assertThrowsFailedAssertion(() -> assertion.check(null));
     }
 }
