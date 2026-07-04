@@ -36,9 +36,10 @@ import static tech.sirwellington.alchemy.test.generation.GenerateString.Type.ALP
 @AlchemyTest
 final class PeopleAssertionsTest {
 
-    private String email;
     @GenerateString(ALPHABETIC)
     private String badEmail;
+
+    private String email;
 
     @BeforeEach
     void setUp() {
