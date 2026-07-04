@@ -13,547 +13,523 @@
  * limitations under the License.
  */
 
-package tech.sirwellington.alchemy.arguments.assertions
+package tech.sirwellington.alchemy.arguments.assertions;
 
-import org.hamcrest.Matchers.notNullValue
-import org.junit.Assert.assertThat
-import org.junit.Before
-import org.junit.Test
-import org.junit.runner.RunWith
-import tech.sirwellington.alchemy.arguments.Arguments.checkThat
-import tech.sirwellington.alchemy.arguments.failedAssertion
-import tech.sirwellington.alchemy.arguments.illegalArgument
-import tech.sirwellington.alchemy.arguments.nullPointer
-import tech.sirwellington.alchemy.generator.AlchemyGenerator
-import tech.sirwellington.alchemy.generator.NumberGenerators
-import tech.sirwellington.alchemy.generator.NumberGenerators.Companion.doubles
-import tech.sirwellington.alchemy.generator.NumberGenerators.Companion.integers
-import tech.sirwellington.alchemy.generator.NumberGenerators.Companion.longs
-import tech.sirwellington.alchemy.generator.NumberGenerators.Companion.negativeIntegers
-import tech.sirwellington.alchemy.generator.NumberGenerators.Companion.positiveIntegers
-import tech.sirwellington.alchemy.generator.NumberGenerators.Companion.smallPositiveIntegers
-import tech.sirwellington.alchemy.generator.StringGenerators
-import tech.sirwellington.alchemy.generator.StringGenerators.Companion.alphabeticStrings
-import tech.sirwellington.alchemy.generator.StringGenerators.Companion.alphanumericStrings
-import tech.sirwellington.alchemy.generator.StringGenerators.Companion.strings
-import tech.sirwellington.alchemy.generator.StringGenerators.Companion.stringsFromFixedList
-import tech.sirwellington.alchemy.generator.one
-import tech.sirwellington.alchemy.test.junit.ThrowableAssertion.assertThrows
-import tech.sirwellington.alchemy.test.junit.runners.AlchemyTestRunner
-import tech.sirwellington.alchemy.test.junit.runners.Repeat
-import java.lang.String.format
-import java.util.*
-import java.util.regex.Pattern
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
+import tech.sirwellington.alchemy.test.AlchemyTest;
+
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.notNullValue;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static tech.sirwellington.alchemy.arguments.TestHelpers.assertThrowsFailedAssertion;
+import static tech.sirwellington.alchemy.arguments.assertions.StringAssertions.*;
+import static tech.sirwellington.alchemy.generator.AlchemyGenerator.Get.one;
+import static tech.sirwellington.alchemy.generator.NumberGenerators.*;
+import static tech.sirwellington.alchemy.generator.StringGenerators.*;
+import static tech.sirwellington.alchemy.test.ThrowableAssertion.assertThrows;
 
 /**
-
+ * Tests for {@link StringAssertions}.
+ *
  * @author SirWellington
  */
-@Repeat(5000)
-@RunWith(AlchemyTestRunner::class)
-class StringAssertionsTest
-{
+@DisplayName("StringAssertions Tests")
+@AlchemyTest
+final class StringAssertionsTest {
 
-    @Before
-    fun setUp()
-    {
+    //==============================
+    // EMPTY / NULL CHECKS
+    //==============================
+
+    @Test
+    @DisplayName("testEmptyString: emptyString assertion works correctly")
+    void testEmptyString() {
+        var instance = emptyString();
+        assertNotNull(instance, "emptyString should return a non-null assertion");
+
+        assertThrowsFailedAssertion(() -> instance.check(one(alphabeticStrings())));
+        instance.check("");
+        instance.check(null);
     }
 
     @Test
-    fun testEmptyString()
-    {
-        val instance = emptyString()
+    @DisplayName("testNonEmptyString: nonEmptyString assertion works correctly")
+    void testNonEmptyString() {
+        var instance = nonEmptyString();
+        assertNotNull(instance, "nonEmptyString should return a non-null assertion");
 
-        val badArguments = alphabeticStrings()
-        val goodArguments = stringsFromFixedList("", "")
+        instance.check(one(alphabeticStrings()));
+        assertThrowsFailedAssertion(() -> instance.check(""));
+        assertThrowsFailedAssertion(() -> instance.check(null));
+    }
 
-        Tests.runTests(instance, badArguments, goodArguments)
+    //==============================
+    // LENGTH-BASED ASSERTIONS
+    //==============================
+
+    @Test
+    @DisplayName("testStringWithLengthGreaterThan: stringWithLengthGreaterThan works correctly")
+    void testStringWithLengthGreaterThan() {
+        int min = one(integers(2, 10100));
+        var instance = stringWithLengthGreaterThan(min);
+
+        assertNotNull(instance);
+        assertThrowsFailedAssertion(() -> instance.check(null));
+
+        // Bad cases: length ≤ min
+        int badLen = one(integers(1, min));
+        assertThrowsFailedAssertion(() -> instance.check(one(alphabeticStrings(badLen))));
+
+        // Good case: length > min
+        int goodLen = min + one(smallPositiveIntegers());
+        instance.check(one(alphabeticStrings(goodLen)));
     }
 
     @Test
-    fun testStringWithLengthGreaterThan()
-    {
+    @DisplayName("testStringWithLengthGreaterThanEdgeCases: edge cases for stringWithLengthGreaterThan")
+    void testStringWithLengthGreaterThanEdgeCases() {
+        assertThrows(() -> stringWithLengthGreaterThan(Integer.MAX_VALUE))
+            .isIllegalArgumentException();
 
-        val minAccepted = one(integers(2, 10100))
-        val instance = stringWithLengthGreaterThan(minAccepted)
-
-        var badArguments = AlchemyGenerator<String> {
-            val length = one(integers(1, minAccepted))
-            one(alphabeticStrings(length))
-        }
-
-        val goodArguments = AlchemyGenerator<String> {
-            val length = minAccepted + one(smallPositiveIntegers())
-            one(alphabeticStrings(length))
-        }
-
-        Tests.runTests(instance, badArguments, goodArguments)
-
-        badArguments = strings(minAccepted)
-        Tests.runTests(instance, badArguments, goodArguments)
+        int badArg = one(integers(Integer.MIN_VALUE, 1));
+        assertThrows(() -> stringWithLengthGreaterThan(badArg))
+            .isIllegalArgumentException();
     }
 
     @Test
-    fun testStringWithLengthGreaterThanEdgeCases()
-    {
-        assertThrows { stringWithLengthGreaterThan(Integer.MAX_VALUE) }
-                .illegalArgument()
+    @DisplayName("testStringWithLengthLessThan: stringWithLengthLessThan works correctly")
+    void testStringWithLengthLessThan() {
+        int upperBound = one(integers(2, 1000));
+        var instance = stringWithLengthLessThan(upperBound);
 
-        val badArgument = one(integers(Integer.MIN_VALUE, 1))
-        assertThrows { stringWithLengthGreaterThan(badArgument) }
-                .illegalArgument()
+        assertNotNull(instance);
+        assertThrowsFailedAssertion(() -> instance.check(null));
+
+        // Bad case: length ≥ upperBound
+        int badLen = one(integers(upperBound, upperBound + 50));
+        assertThrowsFailedAssertion(() -> instance.check(one(strings(badLen))));
+
+        // Good case: length < upperBound
+        int goodLen = one(integers(1, upperBound - 1));
+        instance.check(one(strings(goodLen)));
     }
 
     @Test
-    fun testStringWithLengthLessThan()
-    {
-        val upperBound = one(integers(2, 1000))
-        val instance = stringWithLengthLessThan(upperBound)
-
-        val badArguments = AlchemyGenerator {
-            val length = one(integers(upperBound + 1, upperBound * 2))
-            one(strings(length))
-        }
-
-        val goodArguments = AlchemyGenerator {
-            val length = one(integers(1, upperBound))
-            one(strings(length))
-        }
-
-        Tests.runTests(instance, badArguments, goodArguments)
+    @DisplayName("testStringWithLengthLessThanEdgeCases: edge cases for stringWithLengthLessThan")
+    void testStringWithLengthLessThanEdgeCases() {
+        int badArg = one(integers(Integer.MIN_VALUE, 1));
+        assertThrows(() -> stringWithLengthLessThan(badArg))
+            .isIllegalArgumentException();
     }
 
     @Test
-    fun testStringWithLengthLessThanEdgeCases()
-    {
-        val badArgument = one(integers(Integer.MIN_VALUE, 1))
-        assertThrows { stringWithLengthLessThan(badArgument) }
-                .illegalArgument()
+    @DisplayName("testStringWithLength: stringWithLength works correctly")
+    void testStringWithLength() {
+        var expectedLength = one(integers(5, 25));
+        var instance = stringWithLength(expectedLength);
+
+        assertNotNull(instance);
+        assertThrowsFailedAssertion(() -> instance.check(null));
+
+        // Good case
+        instance.check(one(alphabeticStrings(expectedLength)));
+
+        // Bad cases: too short or too long
+        assertThrowsFailedAssertion(() -> instance.check(one(alphabeticStrings(expectedLength - 1))));
+        assertThrowsFailedAssertion(() -> instance.check(one(strings(expectedLength + 1))));
     }
 
     @Test
-    fun testStringThatMatches()
-    {
-        val letter = one(alphabeticStrings()).substring(0, 1)
-        val pattern = Pattern.compile(".*$letter.*")
-        val instance = stringThatMatches(pattern)
-        val badArguments = AlchemyGenerator { alphabeticStrings().get().replace(letter.toRegex(), "") }
-        val goodArguments = AlchemyGenerator { alphabeticStrings().get() + letter }
-        Tests.runTests(instance, badArguments, goodArguments)
+    @DisplayName("testStringWithLengthEdgeCases: edge cases for stringWithLength")
+    void testStringWithLengthEdgeCases() {
+        int badArg = one(negativeIntegers());
+        assertThrows(() -> stringWithLength(badArg))
+            .isIllegalArgumentException();
     }
 
     @Test
-    fun testStringThatMatchesEdgeCases()
-    {
-        assertThrows { stringThatMatches(null!!) }.nullPointer()
+    @DisplayName("testStringWithLengthGreaterThanOrEqualTo: works correctly")
+    void testStringWithLengthGreaterThanOrEqualTo() {
+        var expectedSize = one(integers(10, 100));
+        var instance = stringWithLengthGreaterThanOrEqualTo(expectedSize);
+
+        assertNotNull(instance);
+        assertThrowsFailedAssertion(() -> instance.check(null));
+
+        // At-bound case
+        instance.check(one(strings(expectedSize)));
+
+        // Above bound
+        int extraLen = one(integers(1, 5));
+        instance.check(one(strings(expectedSize + extraLen)));
+
+        // Below bound
+        int lessLen = one(integers(1, 5));
+        assertThrowsFailedAssertion(() -> instance.check(one(strings(expectedSize - lessLen))));
     }
 
     @Test
-    @Throws(Exception::class)
-    fun testNonEmptyString()
-    {
-        val instance = nonEmptyString()
-        assertThat(instance, notNullValue())
-
-        val arg = one(alphabeticStrings())
-        instance.check(arg)
-
-        assertThrows { instance.check("") }.failedAssertion()
-        assertThrows { instance.check(null) }.failedAssertion()
+    @DisplayName("testStringWithLengthGreaterThanOrEqualToEdgeCases: edge cases")
+    void testStringWithLengthGreaterThanOrEqualToEdgeCases() {
+        int negative = one(negativeIntegers());
+        assertThrows(() -> stringWithLengthGreaterThanOrEqualTo(negative))
+            .isIllegalArgumentException();
     }
 
     @Test
-    @Throws(Exception::class)
-    fun testStringWithLength()
-    {
-        assertThrows { stringWithLength(one(NumberGenerators.negativeIntegers())) }
-                .illegalArgument()
+    @DisplayName("testStringWithLengthLessThanOrEqualTo: works correctly")
+    void testStringWithLengthLessThanOrEqualTo() {
+        var expectedSize = one(integers(5, 100));
+        var instance = stringWithLengthLessThanOrEqualTo(expectedSize);
 
-        val expectedLength = one(integers(5, 25))
-        val instance = stringWithLength(expectedLength)
-        assertThat(instance, notNullValue())
-        Tests.checkForNullCase(instance)
+        assertNotNull(instance);
+        assertThrowsFailedAssertion(() -> instance.check(null));
 
-        val arg = one(alphabeticStrings(expectedLength))
-        instance.check(arg)
+        // At-bound case
+        instance.check(one(strings(expectedSize)));
 
-        val tooShort = one(alphabeticStrings(expectedLength - 1))
-        assertThrows { instance.check(tooShort) }.failedAssertion()
+        // Below bound
+        int lessLen = one(integers(1, 10));
+        instance.check(one(strings(expectedSize - lessLen)));
 
-        val tooLong = one(strings(expectedLength + 1))
-        assertThrows { instance.check(tooLong) }.failedAssertion()
+        // Above bound
+        int extraLen = one(integers(5, 10));
+        assertThrowsFailedAssertion(() -> instance.check(one(strings(expectedSize + extraLen))));
     }
 
     @Test
-    @Throws(Exception::class)
-    fun testStringWithLengthEdgeCases()
-    {
-        val badArgument = one(negativeIntegers())
-
-        assertThrows { stringWithLength(badArgument) }
-                .illegalArgument()
+    @DisplayName("testStringWithLengthLessThanOrEqualToEdgeCases: edge cases")
+    void testStringWithLengthLessThanOrEqualToEdgeCases() {
+        int negative = one(negativeIntegers());
+        assertThrows(() -> stringWithLengthLessThanOrEqualTo(negative))
+            .isIllegalArgumentException();
     }
 
     @Test
-    @Throws(Exception::class)
-    fun testStringWithLengthGreaterThanOrEqualToWithBadArgs()
-    {
-        val negativeNumber = one(negativeIntegers())
+    @DisplayName("testStringWithLengthBetween: works correctly")
+    void testStringWithLengthBetween() {
+        var min = one(integers(10, 100));
+        var max = one(integers(min + 1, 1000));
 
-        assertThrows { stringWithLengthGreaterThanOrEqualTo(negativeNumber) }
-                .illegalArgument()
+        var instance = stringWithLengthBetween(min, max);
+        assertNotNull(instance);
+        assertThrowsFailedAssertion(() -> instance.check(null));
+
+        // Within range
+        int goodLen = one(integers(min, max));
+        instance.check(one(strings(goodLen)));
+
+        // Too short
+        int tooShortLen = one(integers(1, min - 1));
+        assertThrowsFailedAssertion(() -> instance.check(one(strings(tooShortLen))));
+
+        // Too long
+        int tooLongLen = one(integers(max + 1, max + 50));
+        assertThrowsFailedAssertion(() -> instance.check(one(strings(tooLongLen))));
     }
 
     @Test
-    @Throws(Exception::class)
-    fun testStringWithLengthGreaterThanOrEqualTo()
-    {
-        val expectedSize = one(integers(10, 100))
+    @DisplayName("testStringWithLengthBetweenEdgeCases: edge cases")
+    void testStringWithLengthBetweenEdgeCases() {
+        var min = one(integers(10, 100));
+        var max = one(integers(min + 1, 1000));
 
-        val instance = stringWithLengthGreaterThanOrEqualTo(expectedSize)
-        assertThat(instance, notNullValue())
-        Tests.checkForNullCase(instance)
+        // Reversed range
+        assertThrows(() -> stringWithLengthBetween(max, min))
+            .isIllegalArgumentException();
 
-        val goodString = one(strings(expectedSize))
-        instance.check(goodString)
-
-        val amountToAdd = one(integers(1, 5))
-        val anotherGoodString = one(strings(expectedSize + amountToAdd))
-        instance.check(anotherGoodString)
-
-        val amountToSubtract = one(integers(1, 5))
-        val badString = one(strings(expectedSize - amountToSubtract))
-        assertThrows { instance.check(badString) }.failedAssertion()
+        // Negative min
+        int negMin = one(negativeIntegers());
+        assertThrows(() -> stringWithLengthBetween(negMin, max))
+            .isIllegalArgumentException();
     }
 
     @Test
-    @Throws(Exception::class)
-    fun testStringWithLengthLessThanOrEqualToWithBadArgs()
-    {
-        val negativeNumber = one(negativeIntegers())
+    @DisplayName("testStringWithWhitespace: works correctly")
+    void testStringWithWhitespace() {
+        var instance = stringWithWhitespace();
 
-        assertThrows { stringWithLengthLessThanOrEqualTo(negativeNumber) }
-                .illegalArgument()
+        assertNotNull(instance);
+        assertThrowsFailedAssertion(() -> instance.check(null));
+        assertThrowsFailedAssertion(() -> instance.check(""));
+        assertThrowsFailedAssertion(() -> instance.check(one(alphabeticStrings())));
+
+        // Good cases: strings with whitespace
+        instance.check(" \t\n");
+        instance.check("hello world");
     }
 
     @Test
-    @Throws(Exception::class)
-    fun testStringWithLengthLessThanOrEqualTo()
-    {
-        val expectedSize = one(integers(5, 100))
-        val instance = stringWithLengthLessThanOrEqualTo(expectedSize)
+    @DisplayName("testStringWithNoWhitespace: works correctly")
+    void testStringWithNoWhitespace() {
+        var instance = stringWithNoWhitespace();
 
-        assertThat(instance, notNullValue())
-        Tests.checkForNullCase(instance)
+        assertNotNull(instance);
+        assertThrowsFailedAssertion(() -> instance.check(null));
+        assertThrowsFailedAssertion(() -> instance.check(""));
+        assertThrowsFailedAssertion(() -> instance.check(one(alphabeticStrings()) + " "));
+        assertThrowsFailedAssertion(() -> instance.check("hello\nworld"));
 
-        val goodStrings = strings(expectedSize)
+        // Good case: no whitespace
+        instance.check(one(alphabeticStrings()));
+    }
 
-        val amountToAdd = one(integers(5, 10))
-        val badStrings = strings(expectedSize + amountToAdd)
+    //==============================
+    // PREFIX / SUFFIX / CONTAINS
+    //==============================
 
-        Tests.runTests(instance, badStrings, goodStrings)
+    @Test
+    @DisplayName("testStringBeginningWith: works correctly")
+    void testStringBeginningWith() {
+        var prefix = one(strings(4));
+        var instance = stringBeginningWith(prefix);
+
+        assertNotNull(instance);
+        assertThrowsFailedAssertion(() -> instance.check(null));
+
+        // Matches
+        var fullString = one(strings(20));
+        instance.check(prefix + fullString);
+        instance.check(prefix);
+
+        // Does not match
+        assertThrowsFailedAssertion(() -> instance.check(fullString));
     }
 
     @Test
-    @Throws(Exception::class)
-    fun testStringWithNoWhitespace()
-    {
-        val instance = stringWithNoWhitespace()
-        assertThat(instance, notNullValue())
-        Tests.checkForNullCase(instance)
+    @DisplayName("testStringBeginningWithEdgeCases: edge cases")
+    void testStringBeginningWithEdgeCases() {
+        assertThrows(() -> stringBeginningWith(null))
+            .isIllegalArgumentException();
 
-        val goodStrings = alphabeticStrings()
-
-        val badStrings = AlchemyGenerator {
-            one(goodStrings) + one(stringsFromFixedList(" ", "\n", "\t")) + one(goodStrings)
-        }
-
-        Tests.runTests(instance, badStrings, goodStrings)
+        assertThrows(() -> stringBeginningWith(""))
+            .isIllegalArgumentException();
     }
 
     @Test
-    @Throws(Exception::class)
-    fun testStringWithLengthBetween()
-    {
-        val minimumLength = one(integers(10, 100))
-        val maximumLength = one(integers(minimumLength + 1, 1000))
+    @DisplayName("testStringEndingWith: works correctly")
+    void testStringEndingWith() {
+        var suffix = one(strings(4));
+        var instance = stringEndingWith(suffix);
 
-        val instance = stringWithLengthBetween(minimumLength, maximumLength)
-        assertThat(instance, notNullValue())
-        Tests.checkForNullCase(instance)
+        assertNotNull(instance);
+        assertThrowsFailedAssertion(() -> instance.check(null));
 
-        val tooShort = AlchemyGenerator {
-            //Sad cases
-            val stringTooShortLength = minimumLength - one(integers(1, 9))
-            val stringTooShort = one(strings(stringTooShortLength))
-            stringTooShort
-        }
+        var fullString = one(strings());
+        // Matches
+        instance.check(fullString + suffix);
 
-        val tooLong = AlchemyGenerator {
-            val stringTooLongLength = maximumLength + one(smallPositiveIntegers())
-            val stringTooLong = one(strings(stringTooLongLength))
-            stringTooLong
-        }
-
-        var goodStrings = AlchemyGenerator {
-            val length = one(integers(minimumLength, maximumLength))
-            one(strings(length))
-        }
-
-        Tests.runTests(instance, tooLong, goodStrings)
-
-        goodStrings = strings(minimumLength)
-        Tests.runTests(instance, tooShort, goodStrings)
-
+        // Does not match
+        assertThrowsFailedAssertion(() -> instance.check(fullString));
     }
 
     @Test
-    @Throws(Exception::class)
-    fun testStringWithLengthBetweenEdgeCases()
-    {
+    @DisplayName("testStringEndingWithEdgeCases: edge cases")
+    void testStringEndingWithEdgeCases() {
+        assertThrows(() -> stringEndingWith(null))
+            .isIllegalArgumentException();
 
-        val minimumLength = one(integers(10, 100))
-        val maximumLength = one(integers(minimumLength, 1000))
-
-        assertThrows { stringWithLengthBetween(maximumLength, minimumLength) }
-                .illegalArgument()
-
-        assertThrows { stringWithLengthBetween(-minimumLength, maximumLength) }
-                .illegalArgument()
+        assertThrows(() -> stringEndingWith(""))
+            .isIllegalArgumentException();
     }
 
     @Test
-    fun testStringBeginningWith()
-    {
-        val string = one(strings(20))
-        val prefix = one(strings(4))
+    @DisplayName("testStringContaining: works correctly")
+    void testStringContaining() {
+        var substring = one(strings(10));
+        var instance = stringContaining(substring);
 
-        val instance = stringBeginningWith(prefix)
+        assertNotNull(instance);
+        assertThrowsFailedAssertion(() -> instance.check(null));
 
-        //Happy Cases
-        instance.check(prefix + string)
-        instance.check(prefix)
+        var fullString = one(strings());
+        // Matches
+        instance.check(fullString + substring + fullString);
 
-        //Sad Cases
-        assertThrows { instance.check(null) }.failedAssertion()
-        assertThrows { instance.check(string) }.failedAssertion()
+        // Does not match
+        assertThrowsFailedAssertion(() -> instance.check(one(alphabeticStrings())));
     }
 
     @Test
-    fun testStringBeginningWithEdgeCases()
-    {
-        assertThrows { stringBeginningWith(null!!) }.nullPointer()
+    @DisplayName("testStringContainingEdgeCases: edge cases")
+    void testStringContainingEdgeCases() {
+        assertThrows(() -> stringContaining(""))
+            .isIllegalArgumentException();
 
-        assertThrows { stringBeginningWith("") }.illegalArgument()
+        assertThrows(() -> stringContaining(null))
+            .isIllegalArgumentException();
+    }
+
+    //==============================
+    // CASE / FORMAT CHECKS
+    //==============================
+
+    @Test
+    @DisplayName("testAllUpperCaseString: works correctly")
+    void testAllUpperCaseString() {
+        var instance = allUpperCaseString();
+
+        assertNotNull(instance);
+        assertThrowsFailedAssertion(() -> instance.check(null));
+        assertThrowsFailedAssertion(() -> instance.check(""));
+        assertThrowsFailedAssertion(() -> instance.check(one(alphabeticStrings()).toLowerCase()));
+
+        var upper = one(alphabeticStrings(50)).toUpperCase();
+        instance.check(upper);
+
+        // Mix-case fails
+        var idx = one(integers(0, upper.length() - 1));
+        var sb = new StringBuilder(upper);
+        sb.setCharAt(idx, Character.toLowerCase(upper.charAt(idx)));
+        assertThrowsFailedAssertion(() -> instance.check(sb.toString()));
     }
 
     @Test
-    fun testStringContaining()
-    {
-        val longString = one(strings(1000))
-        val substring = longString.substring(0, 100)
+    @DisplayName("testAllLowerCaseString: works correctly")
+    void testAllLowerCaseString() {
+        var instance = allLowerCaseString();
 
-        // Happy Case
-        stringContaining(substring)
-                .check(longString)
+        assertNotNull(instance);
+        assertThrowsFailedAssertion(() -> instance.check(null));
+        assertThrowsFailedAssertion(() -> instance.check(""));
+        assertThrowsFailedAssertion(() -> instance.check(one(alphabeticStrings()).toUpperCase()));
 
-        //Sad Cases
-        assertThrows { stringContaining("") }
-                .illegalArgument()
+        var lower = one(alphabeticStrings(50)).toLowerCase();
+        instance.check(lower);
 
-        assertThrows { stringContaining(null!!) }.nullPointer()
-
-        val notSubstring = substring + one(StringGenerators.uuids())
-
-        assertThrows {
-            stringContaining(notSubstring).check(longString)
-        }.failedAssertion()
+        // Mix-case fails
+        var idx = one(integers(0, lower.length() - 1));
+        StringBuilder sb = new StringBuilder(lower);
+        sb.setCharAt(idx, Character.toUpperCase(lower.charAt(idx)));
+        assertThrowsFailedAssertion(() -> instance.check(sb.toString()));
     }
 
     @Test
-    fun testAllUpperCaseString()
-    {
-        val allUpperCase = one(alphabeticStrings(50)).uppercase()
+    @DisplayName("testAlphabeticString: works correctly")
+    void testAlphabeticString() {
+        var instance = alphabeticString();
 
-        val oneLowerCaseCharacter = lowerCasedRandomCharacter(allUpperCase)
+        assertNotNull(instance);
+        assertThat(one(alphabeticStrings()), notNullValue());
 
-        val instance = allUpperCaseString()
-        assertThat(instance, notNullValue())
+        var alpha = one(alphabeticStrings());
+        instance.check(alpha);
 
-        instance.check(allUpperCase)
-
-        assertThrows { instance.check(oneLowerCaseCharacter) }.failedAssertion()
-    }
-
-    private fun lowerCasedRandomCharacter(string: String): String
-    {
-        val index = one(integers(0, string.length))
-        val character = string[index]
-
-        val builder = StringBuilder(string)
-        builder.replace(index, index + 1, character.toString().lowercase())
-
-        return builder.toString()
+        assertThrowsFailedAssertion(() -> instance.check(""));
+        assertThrowsFailedAssertion(() -> instance.check(alpha + "1"));
     }
 
     @Test
-    fun testAllLowerCaseString()
-    {
-        val allLowerCase = one(alphabeticStrings(50)).lowercase()
-        val oneUpperCaseCharacter = upperCaseRandomCharacter(allLowerCase)
+    @DisplayName("testAlphanumericString: works correctly")
+    void testAlphanumericString() {
+        var instance = alphanumericString();
 
-        val instance = allLowerCaseString()
-        assertThat(instance, notNullValue())
+        assertNotNull(instance);
+        var alphanum = one(alphanumericStrings());
+        instance.check(alphanum);
 
-        instance.check(allLowerCase)
-
-        assertThrows { instance.check(oneUpperCaseCharacter) }
-                .failedAssertion()
+        assertThrowsFailedAssertion(() -> instance.check(""));
+        assertThrowsFailedAssertion(() -> instance.check(alphanum + "!"));
     }
 
-    private fun upperCaseRandomCharacter(string: String): String
-    {
-        val index = one(integers(0, string.length))
-        val character = string[index]
+    //==============================
+    // NUMERIC / UUID VALIDATION
+    //==============================
 
-        val builder = StringBuilder(string)
-        builder.replace(index, index + 1, character.toString().uppercase())
+    @Test
+    @DisplayName("testStringRepresentingInteger: works correctly")
+    void testStringRepresentingInteger() {
+        var instance = stringRepresentingInteger();
 
-        return builder.toString()
+        assertNotNull(instance);
+
+        var value = one(positiveIntegers());
+        var intStr = Integer.toString(value);
+        instance.check(intStr);
+
+        // Bad cases
+        double d = one(doubles(-100.0, 100.0));
+        assertThrowsFailedAssertion(() -> instance.check(Double.toString(d)));
+        assertThrowsFailedAssertion(() -> instance.check(one(alphabeticStrings())));
     }
 
     @Test
-    fun testStringEndingWith()
-    {
-        //Edge Cases
-        assertThrows { stringEndingWith(null!!) }.nullPointer()
-        assertThrows { stringEndingWith("") }.illegalArgument()
+    @DisplayName("testIntegerString: works correctly")
+    void testIntegerString() {
+        var instance = integerString();
 
-        //Happy Cases
-        val string = one(strings())
-        val suffix = randomSuffixFrom(string)
+        assertNotNull(instance);
 
-        val instance = stringEndingWith(suffix)
-        assertThat(instance, notNullValue())
+        var value = one(integers(Integer.MIN_VALUE, Integer.MAX_VALUE));
+        var intStr = Integer.toString(value);
+        instance.check(intStr);
 
-        instance.check(string)
-
-        val anotherRandomString = one(strings())
-        assertThrows { instance.check(anotherRandomString) }.failedAssertion()
-    }
-
-    private fun randomSuffixFrom(string: String): String
-    {
-        val suffixStartIndex = one(integers(0, string.length / 2))
-        return string.substring(suffixStartIndex)
+        // Bad cases
+        double d = one(doubles(-10.0, 10.0));
+        assertThrowsFailedAssertion(() -> instance.check(Double.toString(d)));
+        assertThrowsFailedAssertion(() -> instance.check(one(alphabeticStrings())));
     }
 
     @Test
-    fun testAlphabeticString()
-    {
-        val instance = tech.sirwellington.alchemy.arguments.assertions.alphabeticString()
-        checkThat(instance, notNullValue())
+    @DisplayName("testDecimalString: works correctly")
+    void testDecimalString() {
+        var instance = decimalString();
 
-        val alphabetic = one(alphabeticStrings())
-        instance.check(alphabetic)
+        assertNotNull(instance);
 
-        assertThrows { instance.check("") }.failedAssertion()
+        var value = one(doubles(-100.0, 100.0));
+        instance.check(Double.toString(value));
 
-        val alphanumeric = format("%s-%d", alphabetic, one(positiveIntegers()))
-        assertThrows { instance.check(alphanumeric) }.failedAssertion()
+        // Bad cases
+        assertThrowsFailedAssertion(() -> instance.check(one(alphabeticStrings())));
     }
 
     @Test
-    fun testAlphanumericString()
-    {
-        val instance = alphanumericString()
-        checkThat(instance, notNullValue())
+    @DisplayName("testValidUUID: works correctly")
+    void testValidUUID() {
+        var instance = validUUID();
 
-        val alphanumeric = one(StringGenerators.alphanumericStrings())
-        instance.check(alphanumeric)
+        assertNotNull(instance);
 
-        val specialCharacters = alphanumeric + one(strings()) + "-!%$"
-        assertThrows { instance.check(specialCharacters) }.failedAssertion()
-        assertThrows { instance.check("") }
-                .failedAssertion()
+        var uuid = one(uuids());
+        instance.check(uuid);
+
+        assertThrowsFailedAssertion(() -> instance.check(one(alphabeticStrings(10))));
     }
 
     @Test
-    fun testStringRepresentingInteger()
-    {
-        val instance = stringRepresentingInteger()
-        checkThat(instance, notNullValue())
+    @DisplayName("testIntegerStringWithGoodString: integerString works with valid integer strings")
+    void testIntegerStringWithGoodString() {
+        var value = one(integers(Integer.MIN_VALUE, Integer.MAX_VALUE));
+        var string = Integer.toString(value);
 
-        val integer = one(longs(Long.MIN_VALUE, Long.MAX_VALUE))
-        val integerString = integer.toString()
-        instance.check(integerString)
+        var assertion = integerString();
+        assertNotNull(assertion);
 
-        //Edge cases
-        val floatingPoint = one(doubles(-Double.MAX_VALUE, Double.MAX_VALUE))
-        val floatingPointString = floatingPoint.toString()
-
-        assertThrows { instance.check(floatingPointString) }.failedAssertion()
-
-        val text = one(strings())
-        assertThrows { instance.check(text) }.failedAssertion()
+        assertion.check(string);
     }
 
     @Test
-    fun testValidUUID()
-    {
-        val assertion = validUUID()
-        assertThat(assertion, notNullValue())
+    @DisplayName("testIntegerStringWithBadString: integerString rejects non-integer strings")
+    void testIntegerStringWithBadString() {
+        var assertion = integerString();
 
-        val uuid = one(StringGenerators.uuids)
-        assertion.check(uuid)
+        var alphabetic = one(alphabeticStrings());
+        assertThrowsFailedAssertion(() -> assertion.check(alphabetic));
 
-        val nonUUID = one(alphabeticStrings(10))
-        assertThrows { assertion.check(nonUUID) }.failedAssertion()
+        var value = one(doubles(-Double.MAX_VALUE, Double.MAX_VALUE));
+        var decimalString = Double.toString(value);
+        assertThrowsFailedAssertion(() -> assertion.check(decimalString));
     }
 
     @Test
-    fun testIntegerStringWithGoodString()
-    {
-        val value = one(integers(Integer.MIN_VALUE, Integer.MAX_VALUE))
-        val string = value.toString()
+    @DisplayName("testDecimalStringWithBadString: decimalString rejects non-decimal strings")
+    void testDecimalStringWithBadString() {
+        var assertion = decimalString();
 
-        val assertion = integerString()
-        assertThat(assertion, notNullValue())
-
-        assertion.check(string)
-    }
-
-    @Test
-    fun testIntegerStringWithBadString()
-    {
-        val assertion = integerString()
-
-        val alphabetic = one(alphabeticStrings())
-        assertThrows { assertion.check(alphabetic) }.failedAssertion()
-
-        val value = one(doubles(-Double.MAX_VALUE, Double.MAX_VALUE))
-        val decimalString = value.toString()
-        assertThrows { assertion.check(decimalString) }.failedAssertion()
-    }
-
-    @Test
-    fun testDecimalString()
-    {
-        val assertion = decimalString()
-        assertThat(assertion, notNullValue())
-
-        val value = one(doubles(-Double.MAX_VALUE, Double.MAX_VALUE))
-        assertion.check(value.toString())
-    }
-
-    @Test
-    fun testDecimalStringWithBadString()
-    {
-        val assertion = decimalString()
-        assertThat(assertion, notNullValue())
-
-        val value = one(alphanumericStrings())
-        assertThrows { assertion.check(value) }.failedAssertion()
+        var alphanumeric = one(alphanumericStrings());
+        assertThrowsFailedAssertion(() -> assertion.check(alphanumeric));
     }
 
 }
