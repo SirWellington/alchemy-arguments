@@ -21,8 +21,8 @@ import static tech.sirwellington.alchemy.test.ThrowableAssertion.assertThrows;
 class CollectionAssertionsTest {
     private static final int TEST_ITERATIONS = 50;
     
-    private Set<?> emptySet = Collections.emptySet();
-    private List<?> emptyList = Collections.emptyList();
+    private Set<String> emptySet = Collections.emptySet();
+    private List<String> emptyList = Collections.emptyList();
 
     @GenerateList(String.class)
     private List<String> strings;
@@ -47,7 +47,7 @@ class CollectionAssertionsTest {
 
         instance.check(strings);
         assertThrowsFailedAssertion(() -> instance.check(null));
-        assertThrowsFailedAssertion(() -> instance.check(Collections.emptyList()));
+        assertThrowsFailedAssertion(() -> instance.check(emptyList));
     }
 
     @RepeatedTest(TEST_ITERATIONS)
@@ -219,7 +219,8 @@ class CollectionAssertionsTest {
         assertThrowsFailedAssertion(() -> assertion.check("nonexistent"));
         assertThrowsFailedAssertion(() -> assertion.check(null));
 
-        assertThrows(IllegalArgumentException.class, () -> keyInMap((Map<?, ?>) null));
+        assertThrows(() -> keyInMap((Map<?, ?>) null))
+            .isIllegalArgumentException();
     }
 
     @RepeatedTest(TEST_ITERATIONS)
@@ -245,7 +246,8 @@ class CollectionAssertionsTest {
         assertThrowsFailedAssertion(() -> assertion.check("nonexistent"));
         assertThrowsFailedAssertion(() -> assertion.check(null));
 
-        assertThrows(IllegalArgumentException.class, () -> valueInMap((Map<?, ?>) null));
+        assertThrows(() -> valueInMap((Map<?, ?>) null))
+            .isIllegalArgumentException();
     }
 
     @RepeatedTest(TEST_ITERATIONS)
@@ -267,7 +269,8 @@ class CollectionAssertionsTest {
         assertThrowsFailedAssertion(() -> assertion.check("nonexistent"));
         assertThrowsFailedAssertion(() -> assertion.check(null));
 
-        assertThrows(IllegalArgumentException.class, () -> elementInCollection((List<?>) null));
+        assertThrows(() -> elementInCollection((List<?>) null))
+            .isIllegalArgumentException();
     }
 
     @RepeatedTest(TEST_ITERATIONS)

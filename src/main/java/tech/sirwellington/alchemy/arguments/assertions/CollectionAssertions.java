@@ -16,6 +16,7 @@
 package tech.sirwellington.alchemy.arguments.assertions;
 
 import tech.sirwellington.alchemy.arguments.AlchemyAssertion;
+import tech.sirwellington.alchemy.arguments.internal.Checks;
 
 import java.util.*;
 
@@ -37,9 +38,7 @@ public final class CollectionAssertions {
      */
     public static <E> AlchemyAssertion<Collection<E>> nonEmptyCollection() {
         return collection -> {
-            checkNotNull(collection, "Collection cannot be null");
-
-            if (collection.isEmpty()) {
+            if (Checks.isNullOrEmpty(collection)) {
                 failAssertion("Collection is empty");
             }
         };
@@ -50,9 +49,7 @@ public final class CollectionAssertions {
      */
     public static <E> AlchemyAssertion<List<E>> nonEmptyList() {
         return list -> {
-            checkNotNull(list, "List cannot be null");
-
-            if (list.isEmpty()) {
+            if (Checks.isNullOrEmpty(list)) {
                 failAssertion("List is empty");
             }
         };
@@ -63,9 +60,7 @@ public final class CollectionAssertions {
      */
     public static <E> AlchemyAssertion<Set<E>> nonEmptySet() {
         return set -> {
-            checkNotNull(set, "Set cannot be null");
-
-            if (set.isEmpty()) {
+            if (Checks.isNullOrEmpty(set)) {
                 failAssertion("Set is empty");
             }
         };
@@ -76,9 +71,7 @@ public final class CollectionAssertions {
      */
     public static <K, V> AlchemyAssertion<Map<K, V>> nonEmptyMap() {
         return map -> {
-            checkNotNull(map, "Map cannot be null");
-
-            if (map.isEmpty()) {
+            if (Checks.isNullOrEmpty(map)) {
                 failAssertion("Map is empty");
             }
         };
@@ -89,9 +82,7 @@ public final class CollectionAssertions {
      */
     public static <E> AlchemyAssertion<E[]> nonEmptyArray() {
         return array -> {
-            checkNotNull(array, "Array cannot be null");
-
-            if (array.length == 0) {
+            if (array == null || array.length == 0) {
                 failAssertion("Array is empty");
             }
         };
@@ -104,7 +95,9 @@ public final class CollectionAssertions {
      */
     public static <E, C extends Collection<E>> AlchemyAssertion<C> emptyCollection() {
         return collection -> {
-            checkNotNull(collection, "Collection cannot be null");
+            if (collection == null) {
+                failAssertion("Collection is null");
+            }
 
             if (!collection.isEmpty()) {
                 failAssertion(
@@ -125,8 +118,9 @@ public final class CollectionAssertions {
 
     public static <K, V> AlchemyAssertion<Map<K, V>> emptyMap() {
         return map -> {
-            checkNotNull(map, "Map cannot be null");
-
+            if (map == null) {
+                failAssertion("Map is null");
+            }
             if (!map.isEmpty()) {
                 failAssertion("Expected an empty map, but instead [{0}]", map);
             }
@@ -258,8 +252,6 @@ public final class CollectionAssertions {
         checkNotNull(map, "Map cannot be null");
 
         return key -> {
-            checkNotNull(key, "Key cannot be null");
-
             if (!map.containsKey(key)) {
                 failAssertion("Expected key [{0}] to be in map", key);
             }
@@ -270,8 +262,6 @@ public final class CollectionAssertions {
         checkNotNull(map, "Map cannot be null");
 
         return value -> {
-            checkNotNull(value, "Value cannot be null");
-
             if (!map.containsValue(value)) {
                 failAssertion("Expected value [{0}] to be in map", value);
             }
@@ -282,8 +272,6 @@ public final class CollectionAssertions {
         checkNotNull(collection, "Collection cannot be null");
 
         return element -> {
-            checkNotNull(element, "Element cannot be null");
-
             if (!collection.contains(element)) {
                 failAssertion("Expected element [{0}] to be in collection", element);
             }

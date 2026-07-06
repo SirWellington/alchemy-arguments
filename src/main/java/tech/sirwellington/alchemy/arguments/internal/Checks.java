@@ -20,6 +20,7 @@ import tech.sirwellington.alchemy.annotations.arguments.Optional;
 import tech.sirwellington.alchemy.arguments.FailedAssertionException;
 
 import java.util.Collection;
+import java.util.Map;
 
 import static java.text.MessageFormat.format;
 
@@ -49,6 +50,13 @@ public final class Checks {
      */
     public static <T> boolean isNullOrEmpty(Collection<T> collection) {
         return collection == null || collection.isEmpty();
+    }
+
+    /**
+     * Checks if the provided Map is null or empty.
+     */
+    public static <K, V> boolean isNullOrEmpty(Map<K, V> map) {
+        return map == null || map.isEmpty();
     }
 
     /**
