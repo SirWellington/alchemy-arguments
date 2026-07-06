@@ -44,15 +44,14 @@ class AssertionBuilderTest {
 
     @BeforeEach
     void setUp() {
-        MockitoAnnotations.openMocks(this);
-
         instance = spy(new FakeInstance<>());
-        doCallRealMethod().when(instance).are(any());
     }
 
     @Test
     @DisplayName("testAreCallsIsA: should delegate are() → isA()")
     void testAreCallsIsA() {
+        doCallRealMethod().when(instance).are(any());
+
         var _ = instance.are(assertion);
 
         verify(instance, times(1)).isA(eq(assertion));

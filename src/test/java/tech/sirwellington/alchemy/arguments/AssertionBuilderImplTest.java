@@ -27,7 +27,6 @@ import tech.sirwellington.alchemy.test.generation.GenerateList;
 import tech.sirwellington.alchemy.test.generation.GenerateString;
 
 import java.io.IOException;
-import java.sql.SQLException;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -44,14 +43,14 @@ import static tech.sirwellington.alchemy.test.generation.GenerateString.Type.ALP
  */
 @DisplayName("AssertionBuilderImpl Tests")
 @AlchemyTest
-@ExtendWith(MockitoExtension.class) // Assuming custom extension OR use @ExtendWith(MockitoExtension.class) if using mockito-junit-jupiter
+@ExtendWith(MockitoExtension.class)
 class AssertionBuilderImplTest {
 
     @Mock
     private AlchemyAssertion<String> assertion;
 
     @Mock
-    private ExceptionMapper<SQLException> exceptionMapper;
+    private ExceptionMapper<IOException> exceptionMapper;
 
     @GenerateString(ALPHABETIC)
     private String argument;
@@ -87,7 +86,7 @@ class AssertionBuilderImplTest {
     @Test
     @DisplayName("testThrowingWhenExceptionIsNotWrapped")
     void testThrowingWhenExceptionIsNotWrapped() {
-        var ex = new SQLException(errorMessage);
+        var ex = new IOException(errorMessage);
         when(exceptionMapper.apply(assertException))
             .thenReturn(ex);
 
@@ -95,7 +94,7 @@ class AssertionBuilderImplTest {
 
         assertThrows(
             () -> instance.throwing(exceptionMapper).isA(assertion)
-        ).isInstanceOf(SQLException.class);
+        ).isInstanceOf(IOException.class);
 
         verify(exceptionMapper).apply(assertException);
         verify(assertion).check(any());
@@ -104,7 +103,7 @@ class AssertionBuilderImplTest {
     @Test
     @DisplayName("testThrowingWhenExceptionIsWrapped")
     void testThrowingWhenExceptionIsWrapped() {
-        var wrapped = new SQLException(errorMessage, assertException);
+        var wrapped = new IOException(errorMessage, assertException);
         when(exceptionMapper.apply(assertException))
             .thenReturn(wrapped);
 
@@ -112,7 +111,7 @@ class AssertionBuilderImplTest {
 
         assertThrows(
             () -> instance.throwing(exceptionMapper).isA(assertion)
-        ).isInstanceOf(SQLException.class)
+        ).isInstanceOf(IOException.class)
          .hasCauseInstanceOf(FailedAssertionException.class);
 
         verify(exceptionMapper).apply(assertException);
@@ -122,13 +121,13 @@ class AssertionBuilderImplTest {
     @Test
     @DisplayName("testThrowingExceptionClass")
     void testThrowingExceptionClass() {
-        var thrown = new SQLException();
+        var thrown = new IOException();
         when(exceptionMapper.apply(assertException)).thenReturn(thrown);
 
         doThrow(assertException).when(assertion).check(any());
 
-        assertThrows(() -> instance.throwing(SQLException.class).is(assertion))
-            .isInstanceOf(SQLException.class)
+        assertThrows(() -> instance.throwing(IOException.class).is(assertion))
+            .isInstanceOf(IOException.class)
             .hasCauseInstanceOf(FailedAssertionException.class);
 
         verify(assertion).check(any());
