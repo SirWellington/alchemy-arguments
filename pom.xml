@@ -24,9 +24,9 @@
     </parent>
 
     <artifactId>alchemy-arguments</artifactId>
+    <name>${project.artifactId}</name>
     <packaging>jar</packaging>
 
-    <name>${project.artifactId}</name>
     <url>https://github.com/SirWellington/alchemy-arguments</url>
     <description>
         Part of the Alchemy Collection.
@@ -127,5 +127,18 @@
         </dependency>
 
     </dependencies>
+
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <configuration>
+                    <argLine>--add-opens tech.sirwellington.alchemy.arguments/tech.sirwellington.alchemy.arguments.assertions=ALL-UNNAMED</argLine>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
 
 </project>
