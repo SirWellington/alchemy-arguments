@@ -5,4 +5,6 @@ module tech.sirwellington.alchemy.arguments {
 
     exports tech.sirwellington.alchemy.arguments;
     exports tech.sirwellington.alchemy.arguments.assertions;
+
+    opens tech.sirwellington.alchemy.arguments.assertions to tech.sirwellington.alchemy.arguments.tests;
 }
