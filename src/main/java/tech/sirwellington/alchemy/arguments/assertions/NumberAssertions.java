@@ -38,15 +38,21 @@ public final class NumberAssertions {
      * Asserts that an integer is strictly greater than the supplied value.
      */
     public static AlchemyAssertion<Integer> greaterThan(int exclusiveLowerBound) {
-        if (exclusiveLowerBound == Integer.MAX_VALUE) {
-            failAssertion("Integers cannot exceed {0}", Integer.MAX_VALUE);
-        }
+        checkThat(
+            exclusiveLowerBound != Integer.MAX_VALUE,
+            "Integers cannot be greater than [Integer.MAX_VALUE={0}]",
+            Integer.MAX_VALUE
+        );
 
         return number -> {
             notNull().check(number);
 
             if (number <= exclusiveLowerBound) {
-                failAssertion("Number must be > {0}", exclusiveLowerBound);
+                failAssertion(
+                    "Number must be > {0} but was {1}",
+                    exclusiveLowerBound,
+                    number
+                );
             }
         };
     }
@@ -55,15 +61,21 @@ public final class NumberAssertions {
      * Asserts that a long is strictly greater than the supplied value.
      */
     public static AlchemyAssertion<Long> greaterThan(long exclusiveLowerBound) {
-        if (exclusiveLowerBound == Long.MAX_VALUE) {
-            failAssertion("Longs cannot exceed {0}", Long.MAX_VALUE);
-        }
+        checkThat(
+            exclusiveLowerBound != Long.MAX_VALUE,
+            "Longs cannot be greater than [Long.MAX_VALUE={0}]",
+            Long.MAX_VALUE
+        );
 
         return number -> {
             notNull().check(number);
 
             if (number <= exclusiveLowerBound) {
-                failAssertion("Number must be > {0}", exclusiveLowerBound);
+                failAssertion(
+                    "Number must be > {0} but was {1}",
+                    exclusiveLowerBound,
+                    number
+                );
             }
         };
     }
@@ -75,16 +87,23 @@ public final class NumberAssertions {
      * @param delta               The tolerance; added to {@code number} for comparison
      */
     public static AlchemyAssertion<Double> greaterThan(double exclusiveLowerBound, double delta) {
-        if (Double.compare(exclusiveLowerBound, Double.MAX_VALUE) == 0) {
-            failAssertion("Doubles cannot exceed {0}", Double.MAX_VALUE);
-        }
+        checkThat(
+            Double.compare(exclusiveLowerBound, Double.MAX_VALUE) != 0,
+            "Doubles cannot be greater than [Double.MAX_VALUE={0}",
+            Double.MAX_VALUE
+        );
 
         return number -> {
             notNull().check(number);
 
             // Use Math.abs(delta) to ensure symmetry in tolerance
             if (number + Math.abs(delta) <= exclusiveLowerBound) {
-                failAssertion("Number must be > {0} ± {1}", exclusiveLowerBound, delta);
+                failAssertion(
+                    "Number must be > {0} ± {1} but was {2}",
+                    exclusiveLowerBound,
+                    delta,
+                    number
+                );
             }
         };
     }
@@ -93,6 +112,10 @@ public final class NumberAssertions {
      * Overload of {@link #greaterThan(double, double)} with default zero delta.
      */
     public static AlchemyAssertion<Double> greaterThan(double exclusiveLowerBound) {
+        checkThat(
+            exclusiveLowerBound != Double.MAX_VALUE,
+            "Doubles cannot be greater than Double.MAX_VALUE"
+        );
         return greaterThan(exclusiveLowerBound, 0.0);
     }
 
@@ -104,7 +127,11 @@ public final class NumberAssertions {
             notNull().check(number);
 
             if (number < inclusiveLowerBound) {
-                failAssertion("Number must be greater than or equal to {0}", inclusiveLowerBound);
+                failAssertion(
+                    "Number must be greater than or equal to {0} but was {1}",
+                    inclusiveLowerBound,
+                    number
+                );
             }
         };
     }
@@ -113,11 +140,19 @@ public final class NumberAssertions {
      * Asserts that a long is greater than or equal to the supplied value.
      */
     public static AlchemyAssertion<Long> greaterThanOrEqualTo(long inclusiveLowerBound) {
+        checkThat(
+            inclusiveLowerBound != Long.MAX_VALUE,
+            "Longs cannot be greater than Long.MAX_VALUE"
+        );
         return number -> {
             notNull().check(number);
 
             if (number < inclusiveLowerBound) {
-                failAssertion("Number must be greater than or equal to {0}", inclusiveLowerBound);
+                failAssertion(
+                    "Number must be greater than or equal to {0} but was {1}",
+                    inclusiveLowerBound,
+                    number
+                );
             }
         };
     }
@@ -130,7 +165,12 @@ public final class NumberAssertions {
             notNull().check(number);
 
             if (number + Math.abs(delta) < inclusiveLowerBound) {
-                failAssertion("Number must be >= {0} ± {1}", inclusiveLowerBound, delta);
+                failAssertion(
+                    "Number must be >= {0} ± {1} but was {2}",
+                    inclusiveLowerBound,
+                    delta,
+                    number
+                );
             }
         };
     }
@@ -139,6 +179,10 @@ public final class NumberAssertions {
      * Overload of {@link #greaterThanOrEqualTo(double, double)} with default zero delta.
      */
     public static AlchemyAssertion<Double> greaterThanOrEqualTo(double inclusiveLowerBound) {
+        checkThat(
+            inclusiveLowerBound != Double.MAX_VALUE,
+            "Doubles cannot be greater than Double.MAX_VALUE"
+        );
         return greaterThanOrEqualTo(inclusiveLowerBound, 0.0);
     }
 
@@ -150,7 +194,7 @@ public final class NumberAssertions {
             notNull().check(number);
 
             if (number <= 0) {
-                failAssertion("Expected positive integer: {0}", number);
+                failAssertion("Expected positive integer but was {0}", number);
             }
         };
     }
@@ -170,7 +214,7 @@ public final class NumberAssertions {
             notNull().check(number);
 
             if (number <= 0) {
-                failAssertion("Expected positive long: {0}", number);
+                failAssertion("Expected positive long but was {0}", number);
             }
         };
     }
@@ -190,7 +234,11 @@ public final class NumberAssertions {
             notNull().check(number);
 
             if (number > inclusiveUpperBound) {
-                failAssertion("Number must be less than or equal to {0}", inclusiveUpperBound);
+                failAssertion(
+                    "Number must be less than or equal to {0} but was {1}",
+                    inclusiveUpperBound,
+                    number
+                );
             }
         };
     }
@@ -203,7 +251,11 @@ public final class NumberAssertions {
             notNull().check(number);
 
             if (number > inclusiveUpperBound) {
-                failAssertion("Number must be less than or equal to {0}", inclusiveUpperBound);
+                failAssertion(
+                    "Number must be less than or equal to {0} but was {1}",
+                    inclusiveUpperBound,
+                    number
+                );
             }
         };
     }
@@ -216,7 +268,12 @@ public final class NumberAssertions {
             notNull().check(number);
 
             if (number - Math.abs(delta) > inclusiveUpperBound) {
-                failAssertion("Number must be <= {0} ± {1}", inclusiveUpperBound, delta);
+                failAssertion(
+                    "Number must be <= {0} ± {1}, but was {2}",
+                    inclusiveUpperBound,
+                    delta,
+                    number
+                );
             }
         };
     }
@@ -232,15 +289,17 @@ public final class NumberAssertions {
      * Asserts that an integer is strictly less than the supplied value.
      */
     public static AlchemyAssertion<Integer> lessThan(int exclusiveUpperBound) {
-        if (exclusiveUpperBound == Integer.MIN_VALUE) {
-            failAssertion("Ints cannot be less than {0}", Integer.MIN_VALUE);
-        }
+        checkThat(
+            exclusiveUpperBound != Integer.MIN_VALUE,
+            "Integers cannot be less than {0}",
+            Integer.MIN_VALUE
+        );
 
         return number -> {
             notNull().check(number);
 
             if (number >= exclusiveUpperBound) {
-                failAssertion("Number must be < {0}", exclusiveUpperBound);
+                failAssertion("Number must be < {0} but was {1}", exclusiveUpperBound, number);
             }
         };
     }
@@ -249,15 +308,16 @@ public final class NumberAssertions {
      * Asserts that a long is strictly less than the supplied value.
      */
     public static AlchemyAssertion<Long> lessThan(long exclusiveUpperBound) {
-        if (exclusiveUpperBound == Long.MIN_VALUE) {
-            failAssertion("Longs cannot be less than {0}", Long.MIN_VALUE);
-        }
-
+        checkThat(
+            exclusiveUpperBound != Long.MIN_VALUE,
+            "Longs cannot be less than [Long.MIN_VALUE={0}]",
+            Long.MIN_VALUE
+        );
         return number -> {
             notNull().check(number);
 
             if (number >= exclusiveUpperBound) {
-                failAssertion("Number must be < {0}", exclusiveUpperBound);
+                failAssertion("Number must be < {0} but was {1}", exclusiveUpperBound, number);
             }
         };
     }
@@ -271,7 +331,11 @@ public final class NumberAssertions {
             notNull().check(number);
 
             if (number - Math.abs(delta) >= exclusiveUpperBound) {
-                failAssertion("Number must be < {0}", exclusiveUpperBound);
+                failAssertion(
+                    "Number must be < {0} but was {1}",
+                    exclusiveUpperBound,
+                    number
+                );
             }
         };
     }
@@ -289,9 +353,7 @@ public final class NumberAssertions {
      * @throws IllegalArgumentException if min ≥ max
      */
     public static AlchemyAssertion<Integer> numberBetween(int min, int max) {
-        if (min >= max) {
-            throw new IllegalArgumentException("Minimum must be less than Max.");
-        }
+        checkThat(max > min, "min must be greater than max");
 
         return number -> {
             notNull().check(number);

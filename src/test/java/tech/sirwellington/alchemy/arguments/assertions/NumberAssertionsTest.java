@@ -47,31 +47,21 @@ final class NumberAssertionsTest {
         // Given
         int min = one(integers(Integer.MIN_VALUE, Integer.MAX_VALUE - 10));
         int max = one(integers(min, Integer.MAX_VALUE));
+        // When
         var instance = numberBetween(min, max);
         // Then
-        assertNotNull(instance);
-        // Test null case
         Tests.checkForNullCase(instance);
 
-        // Test good numbers within range
+        // Given
         var goodNumbers = integers(min, max);
-        instance.check(goodNumbers.get());
+        var belowMin = integers(Integer.MIN_VALUE, min);
+        // Then
+        Tests.runTests(instance, belowMin, goodNumbers);
 
-        // Test number below minimum
-        var numberBelowMin = min - one(positiveIntegers());
-        if (numberBelowMin < min) {
-            assertThrowsFailedAssertion(
-                () -> instance.check(numberBelowMin)
-            );
-        }
-
-        // Test number above maximum
-        int numberAboveMax = max + one(positiveIntegers());
-        if (numberAboveMax > max) {
-            assertThrowsFailedAssertion(
-                () -> instance.check(numberAboveMax)
-            );
-        }
+        // Given
+        var aboveMin = integers(max+1, Integer.MAX_VALUE);
+        // Then
+        Tests.runTests(instance, aboveMin, goodNumbers);
     }
 
     @Test
@@ -90,11 +80,13 @@ final class NumberAssertionsTest {
         // Given
         int upperBound = one(integers(-1000, 1000));
         var instance = lessThan(upperBound);
+        // Then
         Tests.checkForNullCase(instance);
 
-        // When
-        AlchemyGenerator<Integer> badNumbers = () -> upperBound + one(integers(0, 100));
-        AlchemyGenerator<Integer> goodNumbers = () -> upperBound - one(smallPositiveIntegers());
+        // Given
+        var badNumbers = integers(0, 100).mapping(x -> upperBound + x);
+        var goodNumbers = smallPositiveIntegers().mapping(x -> upperBound - x);
+        // Then
         Tests.runTests(instance, badNumbers, goodNumbers);
     }
 
@@ -157,17 +149,13 @@ final class NumberAssertionsTest {
 
         // Then
         Tests.checkForNullCase(instance);
-
-        // the lowerbound >= lowerbound
         instance.check(inclusiveLowerBound);
-        // Given
-        var greatThanLowerBound = inclusiveLowerBound + one(integers(1, 100));
-        instance.check(greatThanLowerBound);
 
-        // Test bad numbers (< lowerBound)
-        var amountToSubtract = one(integers(50, 100));
-        var badValue = inclusiveLowerBound - amountToSubtract;
-        assertThrowsFailedAssertion(() -> instance.check(badValue));
+        // Given
+        var goodNumbers = integers(1, 100).mapping(x -> inclusiveLowerBound + x);
+        var badNumbers = integers(25, 1000).mapping(x -> inclusiveLowerBound - x);
+        // Then
+        Tests.runTests(instance, badNumbers, goodNumbers);
     }
 
     @Test
@@ -336,8 +324,8 @@ final class NumberAssertionsTest {
         Tests.checkForNullCase(instance);
 
         // Given
-        var badNumbers = longs(Long.MIN_VALUE, 0L);
-        var goodNumbers = positiveLongs();
+        var badNumbers = positiveLongs();
+        var goodNumbers = longs(Long.MIN_VALUE, 0L);
         Tests.runTests(instance, badNumbers, goodNumbers);
     }
 
@@ -377,10 +365,8 @@ final class NumberAssertionsTest {
         // Then
         Tests.checkForNullCase(instance);
         // Given
-        var badMin = upperBound + delta + 1.0;
-        var badNumbers = doubles(badMin, Double.MAX_VALUE);
-        var goodMin = (upperBound + delta) - 1.0;
-        var goodNumbers = doubles(goodMin, Double.MAX_VALUE);
+        var badNumbers = doubles(upperBound, Double.MAX_VALUE);
+        var goodNumbers = doubles(-Double.MAX_VALUE, upperBound+delta);
         Tests.runTests(instance, badNumbers, goodNumbers);
     }
 

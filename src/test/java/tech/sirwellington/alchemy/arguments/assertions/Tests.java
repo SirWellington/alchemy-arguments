@@ -21,6 +21,8 @@ import tech.sirwellington.alchemy.annotations.access.NonInstantiable;
 import tech.sirwellington.alchemy.arguments.AlchemyAssertion;
 import tech.sirwellington.alchemy.generator.AlchemyGenerator;
 
+import java.util.stream.IntStream;
+
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static tech.sirwellington.alchemy.arguments.TestHelpers.assertThrowsFailedAssertion;
 
@@ -32,6 +34,8 @@ import static tech.sirwellington.alchemy.arguments.TestHelpers.assertThrowsFaile
 @NonInstantiable
 public final class Tests {
 
+    private static final int ITERATIONS = 50;
+
     private Tests() {
         throw new IllegalStateException("cannot instantiate");
     }
@@ -41,11 +45,13 @@ public final class Tests {
                                     AlchemyGenerator<T> goodArguments) {
         assertNotNull(assertion, "assertion should be non-null");
 
-        var badArgument = badArguments.get();
-        assertThrowsFailedAssertion(() -> assertion.check(badArgument));
+        IntStream.range(0, ITERATIONS).forEach( _ -> {
+            var badArgument = badArguments.get();
+            assertThrowsFailedAssertion(() -> assertion.check(badArgument));
 
-        var goodArgument = goodArguments.get();
-        Assertions.assertDoesNotThrow(() -> assertion.check(goodArgument));
+            var goodArgument = goodArguments.get();
+            Assertions.assertDoesNotThrow(() -> assertion.check(goodArgument));
+        });
     }
 
     public static void checkForNullCase(AlchemyAssertion<?> assertion) {

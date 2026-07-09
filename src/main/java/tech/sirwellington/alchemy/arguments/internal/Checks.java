@@ -19,6 +19,7 @@ import tech.sirwellington.alchemy.annotations.access.Internal;
 import tech.sirwellington.alchemy.annotations.arguments.Optional;
 import tech.sirwellington.alchemy.arguments.FailedAssertionException;
 
+import java.text.MessageFormat;
 import java.util.Collection;
 import java.util.Map;
 
@@ -88,9 +89,17 @@ public final class Checks {
         }
     }
 
-    public static void checkThat(boolean predicate, String message) throws IllegalArgumentException {
+    /**
+     * Throws an {@link IllegalArgumentException} if the predicate is false.
+     * @param predicate The condition to check is true.
+     * @param message Error message to include in the exception, formatted using {@link MessageFormat#format(String, Object...)}
+     * @param messageArgs Message arguments as passed to {@link MessageFormat#format(String, Object...)}.
+     * @throws IllegalArgumentException Thrown if the condition is not true.
+     */
+    public static void checkThat(boolean predicate, String message, Object... messageArgs) throws IllegalArgumentException {
         if (!predicate) {
-            throw new IllegalArgumentException(message);
+            var errorMessage = MessageFormat.format(message, messageArgs);
+            throw new IllegalArgumentException(errorMessage);
         }
     }
 
