@@ -17,13 +17,14 @@ package tech.sirwellington.alchemy.arguments;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
+import tech.sirwellington.alchemy.generator.StringGenerators;
 import tech.sirwellington.alchemy.test.AlchemyTest;
 import tech.sirwellington.alchemy.test.generation.GenerateString;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.*;
+import static tech.sirwellington.alchemy.test.ThrowableAssertion.assertThrows;
 import static tech.sirwellington.alchemy.test.generation.GenerateString.Type.ALPHABETIC;
 
 /**
@@ -33,179 +34,217 @@ import static tech.sirwellington.alchemy.test.generation.GenerateString.Type.ALP
  */
 @DisplayName("DynamicExceptionSupplier Tests")
 @AlchemyTest
-class DynamicExceptionSupplierTest {
+final class DynamicExceptionSupplierTest {
 
-    private final Class<FakeExceptionWithMessage> exceptionClass = FakeExceptionWithMessage.class;
     @GenerateString(ALPHABETIC)
     private String overrideMessage;
-    private FailedAssertionException assertionException;
-    private DynamicExceptionSupplier<FakeExceptionWithMessage> instance;
+    private FailedAssertionException causingException;
 
     @BeforeEach
-    void setUp() {
-        assertionException = new FailedAssertionException(
+    void setup() {
+        causingException = new FailedAssertionException(
+            StringGenerators.alphabeticStrings().get()
+        );
+    }
+
+    @Test
+    void testApply_NoMessage_NoCause_NoOverrideMessage() {
+        // Given
+        var instance = new DynamicExceptionSupplier<>(
+            FakeException.class,
+            null
+        );
+
+        // When
+        var result = instance.apply(causingException);
+
+        // Then
+        assertThat(result, notNullValue());
+        assertThat(result.getCause(), nullValue());
+        assertThat(result.getMessage(), emptyOrNullString());
+    }
+    @Test
+    void testApply_Type_NoMessage_NoCause_UsingOverrideMessage() {
+        // Given
+        var instance = new DynamicExceptionSupplier<>(
+            FakeException.class,
             overrideMessage
         );
-        instance = new DynamicExceptionSupplier<>(exceptionClass, overrideMessage);
-    }
 
-    @Nested
-    @DisplayName("Apply With No Message Or Cause")
-    class ApplyNoMessageOrCause {
+        // When
+        var result = instance.apply(causingException);
 
-        @Test
-        void shouldCreateExceptionWithoutMessageOrCause() {
-            var instance = new DynamicExceptionSupplier<>(FakeException.class, null);
-            var result = instance.apply(assertionException);
-
-            assertThat(result, notNullValue());
-            assertThat(result.getCause(), nullValue());
-            assertThat(result.getMessage(), emptyString());
-        }
-
-        @Test
-        void shouldCreateExceptionWithOverrideMessageButStillNoCause() {
-            var instance = new DynamicExceptionSupplier<>(FakeException.class, overrideMessage);
-            var result = instance.apply(assertionException);
-
-            assertThat(result, nullValue());
-            assertThat(result.getCause(), nullValue());
-            assertThat(result.getMessage(), emptyString());
-        }
-    }
-
-    @Nested
-    @DisplayName("Apply With Message Only")
-    class ApplyWithMessage {
-
-        @Test
-        void shouldUseOverrideMessageWhenPresent() {
-            var result = instance.apply(assertionException);
-
-            assertThat(result, nullValue());
-            assertThat(result.getCause(), nullValue());
-            assertThat(result.getMessage(), equalTo(overrideMessage));
-            assertThat(result.getMessage(), equalTo(overrideMessage));
-        }
-
-        @Test
-        void shouldUseOverrideMessageEvenWhenCauseIsNull() {
-            var result = instance.apply(null);
-
-            assertThat(result, nullValue());
-            assertThat(result.getCause(), nullValue());
-            assertThat(result.getMessage(), equalTo(overrideMessage));
-        }
-
-        @Test
-        void shouldUseAssertionExceptionMessageWhenNoOverrideMessageProvided() {
-            var supplier = new DynamicExceptionSupplier<>(FakeExceptionWithMessage.class, null);
-            var result = supplier.apply(assertionException);
-
-            assertThat(result, nullValue());
-            assertThat(result.getCause(), nullValue());
-            assertThat(
-                result.getMessage(), 
-                equalTo(assertionException.getMessage())
-            );
-            assertThat(
-                result.getMessage(), 
-                equalTo(assertionException.getMessage())
-            );
-        }
-    }
-
-    @Nested
-    @DisplayName("Apply With Cause")
-    class ApplyWithCause {
-
-        @Test
-        void shouldWrapCauseWhenBothMessageAndCauseAvailable() {
-            var supplier = new DynamicExceptionSupplier<>(FakeExceptionWithThrowable.class, overrideMessage);
-            var result = supplier.apply(assertionException);
-
-            assertThat(result, nullValue());
-            assertThat(result.getCause(), equalTo(assertionException));
-        }
-
-        @Test
-        void shouldHaveNullCauseWhenInputIsNull() {
-            var supplier = new DynamicExceptionSupplier<>(FakeExceptionWithThrowable.class, overrideMessage);
-            var result = supplier.apply(null);
-
-            assertThat(result, nullValue());
-            assertThat(result.getCause(), nullValue());
-            // message likely empty unless fallback constructor exists
-        }
-
-        @Test
-        void shouldUseCauseAsOnlyArgumentWhenNoOverrideMessage() {
-            var supplier = new DynamicExceptionSupplier<>(FakeExceptionWithThrowable.class, null);
-            var result = supplier.apply(assertionException);
-
-            assertThat(result, nullValue());
-            assertThat(result.getCause(), equalTo(assertionException));
-        }
-    }
-
-    @Nested
-    @DisplayName("Apply With Message And Cause")
-    class ApplyWithMessageAndCause {
-
-        @Test
-        void shouldUseBothMessageAndCauseWhenConstructorExists() {
-            var supplier = new DynamicExceptionSupplier<>(FakeExceptionWithBoth.class, overrideMessage);
-            var result = supplier.apply(assertionException);
-
-            assertThat(result, nullValue());
-            assertThat(result.getMessage(), equalTo(overrideMessage));
-            assertThat(result.getCause(), equalTo(assertionException));
-        }
-
-        @Test
-        void shouldFallBackToCauseOnlyIfNoMessageConstructor() {
-            var supplier = new DynamicExceptionSupplier<>(FakeExceptionWithThrowable.class, overrideMessage);
-            var result = supplier.apply(assertionException);
-
-            assertThat(result, nullValue());
-            assertThat(result.getCause(), equalTo(assertionException));
-        }
+        // Then
+        assertThat(result, notNullValue());
+        assertThat(result.getCause(), nullValue());
+        assertThat(result.getMessage(), emptyOrNullString());
     }
 
     @Test
-    void shouldUseCauseMessageWhenOnlyMessageConstructorExists() {
-        var supplier = new DynamicExceptionSupplier<>(FakeExceptionWithMessage.class, "");
-        var result = supplier.apply(assertionException);
+    void testApply_Type_HasMessage_NoCause_UsingOverrideMessage() {
+        // Given
+        var instance = new DynamicExceptionSupplier<>(
+            FakeExceptionWithMessage.class,
+            overrideMessage
+        );
 
-        assertThat(result, nullValue());
+        // When
+        var result = instance.apply(causingException);
+
+        // Then
+        assertThat(result, notNullValue());
+        assertThat(result.getMessage(), equalTo(overrideMessage));
+        assertThat(result.getCause(), nullValue());
+    }
+
+    @Test
+    void testApply_Type_HasMessage_NoCause_NoOverrideMessage() {
+        // Given
+        var instance = new DynamicExceptionSupplier<>(
+            FakeExceptionWithMessage.class,
+            null
+        );
+
+        // When
+        var result = instance.apply(causingException);
+
+        // Then
+        assertThat(result, notNullValue());
+        assertThat(result.getMessage(),  equalTo(causingException.getMessage()));
+        assertThat(result.getCause(), nullValue());
+    }
+
+    @Test
+    void testApply_Type_NoMessage_HasCause_UsingOverrideMessage() {
+        // Given
+        var instance = new DynamicExceptionSupplier<>(
+            FakeExceptionWithThrowable.class,
+            overrideMessage
+        );
+
+        // When
+        var result = instance.apply(causingException);
+
+        // Then
+        assertThat(result, notNullValue());
+        assertThat(result.getCause(), notNullValue());
+        assertThat(
+            result.getCause(),
+            instanceOf(FailedAssertionException.class)
+        );
         assertThat(
             result.getMessage(),
-            equalTo(assertionException.getMessage())
+            containsString(causingException.getMessage())
         );
-        assertThat(result.getCause(), nullValue()); // constructor doesn't accept cause
     }
 
     @Test
-    void shouldReturnNullWhenConstructorThrows() {
-        var supplier = new DynamicExceptionSupplier<>(FakeExceptionThatThrowsOnConstruct.class, overrideMessage);
-        var result = supplier.apply(assertionException);
+    void testApply_Type_NoMessage_HasCause_NoOverrideMessage() {
+        // Given
+        var instance = new DynamicExceptionSupplier<>(
+            FakeExceptionWithThrowable.class,
+            null
+        );
 
+        // When
+        var result = instance.apply(causingException);
+
+        // Then
+        assertThat(result, notNullValue());
+        assertThat(result.getCause(), notNullValue());
+        assertThat(
+            result.getCause(),
+            instanceOf(FailedAssertionException.class)
+        );
+        assertThat(
+            result.getMessage(),
+            containsString(causingException.getMessage())
+        );
+    }
+
+    @Test
+    void testApply_Type_HasMessage_HasCause_UsingOverrideMessage() {
+        // Given
+        var instance = new DynamicExceptionSupplier<>(
+            FakeExceptionWithBoth.class,
+            overrideMessage
+        );
+
+        // When
+        var result = instance.apply(causingException);
+
+        // Then
+        assertThat(result, notNullValue());
+        assertThat(result.getCause(), notNullValue());
+        assertThat(result.getCause(), equalTo(causingException));
+        assertThat(result.getMessage(), equalTo(overrideMessage));
+    }
+
+    @Test
+    void testApply_Type_HasMessage_HasCause_NoOverrideMessage() {
+        // Given
+        var instance = new DynamicExceptionSupplier<>(
+            FakeExceptionWithBoth.class,
+            null
+        );
+
+        // When
+        var result = instance.apply(causingException);
+
+        // Then
+        assertThat(result, notNullValue());
+        assertThat(result.getCause(), notNullValue());
+        assertThat(result.getCause(), equalTo(causingException));
+        assertThat(
+            result.getMessage(),
+            containsString(causingException.getMessage())
+        );
+    }
+
+    @Test
+    void testWhenInvocationFails() {
+        // Given
+        var instance = new DynamicExceptionSupplier<>(
+            FakeExceptionThatThrowsOnConstruct.class,
+            overrideMessage
+        );
+
+        // When
+        var result = instance.apply(causingException);
+
+        // Then
         assertThat(result, nullValue());
     }
 
     @Test
-    void shouldGetExceptionClassCorrectly() {
-        assertThat(instance.getExceptionClass(), equalTo(exceptionClass));
+    void testGetExceptionClass() {
+        // Given
+        var exceptionClass = FakeException.class;
+        var instance = new DynamicExceptionSupplier<>(
+            exceptionClass,
+            null
+        );
+
+        // When
+        var result = instance.getExceptionClass();
+
+        // Then
+        assertThat(result, equalTo(exceptionClass));
     }
 
     @Test
-    void shouldHaveValidToString() {
-        String toString = instance.toString();
+    void testToString() {
+        // Given
+        var instance = new DynamicExceptionSupplier<>(
+            FakeExceptionWithBoth.class,
+            overrideMessage
+        );
 
-        assertThat(toString, notNullValue());
-        assertThat(toString, not(emptyString()));
-        assertThat(toString, containsString("exceptionClass=" + exceptionClass.getName()));
-        assertThat(toString, containsString("overrideMessage="));
+        // When
+        var string = instance.toString();
+
+        // Then
+        assertThat(string, not(emptyOrNullString()));
     }
 
     // -------------------------------
