@@ -18,12 +18,14 @@ package tech.sirwellington.alchemy.arguments.assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import tech.sirwellington.alchemy.test.AlchemyTest;
+import tech.sirwellington.alchemy.test.generation.GenerateDouble;
 
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static tech.sirwellington.alchemy.arguments.TestHelpers.assertThrowsFailedAssertion;
 import static tech.sirwellington.alchemy.arguments.assertions.GeolocationAssertions.*;
 import static tech.sirwellington.alchemy.generator.AlchemyGenerator.Get.one;
 import static tech.sirwellington.alchemy.generator.NumberGenerators.doubles;
+import static tech.sirwellington.alchemy.test.generation.GenerateDouble.Type.RANGE;
 
 /**
  * Tests for {@link GeolocationAssertions}.
@@ -39,6 +41,21 @@ final class GeolocationAssertionsTest {
     private static final double MIN_LONGITUDE = -180.0;
     private static final double MAX_LONGITUDE = 180.0;
 
+    @GenerateDouble(value = RANGE, min = MIN_LATITUDE, max = MAX_LATITUDE)
+    private double latitude;
+    @GenerateDouble(value = RANGE, min = MAX_LATITUDE + 1, max = Double.MAX_VALUE)
+    private double latitudeTooHigh;
+    @GenerateDouble(value = RANGE, min = -Double.MAX_VALUE, max = MIN_LATITUDE-1)
+    private double latitudeTooLow;
+
+    @GenerateDouble(value = RANGE, min = MIN_LONGITUDE, max = MAX_LONGITUDE)
+    private double longitude;
+    @GenerateDouble(value = RANGE, min = -Double.MAX_VALUE, max = MIN_LONGITUDE - 1)
+    private double longitudeTooLow;
+    @GenerateDouble(value = RANGE, min = MAX_LONGITUDE+1, max = Double.MAX_VALUE)
+    private double longitudeTooHigh;
+
+
     //==============================
     // LATITUDE VALIDATION
     //==============================
@@ -46,12 +63,9 @@ final class GeolocationAssertionsTest {
     @Test
     @DisplayName("testValidLatitude: validLatitude assertion works correctly")
     void testValidLatitude() {
-        var latitude = one(doubles(MIN_LATITUDE, MAX_LATITUDE));
         var assertion = validLatitude();
-
-        assertNotNull(assertion);
+        Tests.checkForNullCase(assertion);
         assertion.check(latitude);
-
         // Boundary cases
         assertion.check(MIN_LATITUDE);
         assertion.check(MAX_LATITUDE);
@@ -59,14 +73,12 @@ final class GeolocationAssertionsTest {
 
     @Test
     @DisplayName("testValidLatitudeWithInvalid: validLatitude rejects out-of-range latitudes")
-    void testValidLatitudeWithInvalid() {
+    void testValidLatitude_WithInvalid() {
         var assertion = GeolocationAssertions.validLatitude();
+        Tests.checkForNullCase(assertion);
 
-        var tooHigh = one(doubles(MAX_LATITUDE + 0.1, Double.MAX_VALUE));
-        assertThrowsFailedAssertion(() -> assertion.check(tooHigh));
-
-        var tooLow = one(doubles(Double.MIN_VALUE, MIN_LATITUDE - 0.1));
-        assertThrowsFailedAssertion(() -> assertion.check(tooLow));
+        assertThrowsFailedAssertion(() -> assertion.check(latitudeTooHigh));
+        assertThrowsFailedAssertion(() -> assertion.check(latitudeTooLow));
     }
 
     //==============================
@@ -76,10 +88,9 @@ final class GeolocationAssertionsTest {
     @Test
     @DisplayName("testValidLongitude: validLongitude assertion works correctly")
     void testValidLongitude() {
-        var longitude = one(doubles(MIN_LONGITUDE, MAX_LONGITUDE));
         var assertion = validLongitude();
+        Tests.checkForNullCase(assertion);
 
-        assertNotNull(assertion);
         assertion.check(longitude);
 
         // Boundary cases
@@ -89,13 +100,9 @@ final class GeolocationAssertionsTest {
 
     @Test
     @DisplayName("testValidLongitudeWithInvalid: validLongitude rejects out-of-range longitudes")
-    void testValidLongitudeWithInvalid() {
+    void testValidLongitude_WithInvalid() {
         var assertion = validLongitude();
-
-        var tooHigh = one(doubles(MAX_LONGITUDE + 0.1, Double.MAX_VALUE));
-        assertThrowsFailedAssertion(() -> assertion.check(tooHigh));
-
-        var tooLow = one(doubles(Double.MIN_VALUE, MIN_LONGITUDE - 0.1));
-        assertThrowsFailedAssertion(() -> assertion.check(tooLow));
+        assertThrowsFailedAssertion(() -> assertion.check(longitudeTooHigh));
+        assertThrowsFailedAssertion(() -> assertion.check(longitudeTooLow));
     }
 }

@@ -19,6 +19,7 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import tech.sirwellington.alchemy.test.AlchemyTest;
 
+import java.lang.reflect.InvocationTargetException;
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
 
@@ -44,8 +45,9 @@ final class TimeAssertionsTest {
     void testCannotInstantiate() {
         assertThrows(
             () -> TimeAssertions.class.getDeclaredConstructor().newInstance()
-        ).isInstanceOf(IllegalAccessException.class)
-         .hasMessage("cannot directly instantiate");
+        ).isInstanceOf(InvocationTargetException.class)
+         .hasCauseInstanceOf(IllegalAccessException.class)
+         .containsInMessage("cannot directly instantiate");
     }
 
     @Test

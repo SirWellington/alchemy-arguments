@@ -20,6 +20,7 @@ import org.junit.jupiter.api.Test;
 import tech.sirwellington.alchemy.generator.DateGenerators;
 import tech.sirwellington.alchemy.test.AlchemyTest;
 
+import java.lang.reflect.InvocationTargetException;
 import java.util.Date;
 
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -42,8 +43,9 @@ final class DateAssertionsTest {
     void testCannotInstantiate() {
         assertThrows(
             () -> DateAssertions.class.getDeclaredConstructor().newInstance()
-        ).isInstanceOf(IllegalAccessException.class)
-         .hasMessage("cannot directly instantiate");
+        ).isInstanceOf(InvocationTargetException.class)
+         .hasCauseInstanceOf(IllegalAccessException.class)
+         .containsInMessage("cannot directly instantiate");
     }
 
     @Test

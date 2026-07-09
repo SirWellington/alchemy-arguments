@@ -109,8 +109,8 @@ class AssertionsTest {
     }
 
     @Test
-    void testNotEdgeCases() {
-        assertThrows(() -> Assertions.not( null))
+    void testNot_EdgeCases() {
+        assertThrows(() -> Assertions.not(null))
             .isIllegalArgumentException();
     }
 

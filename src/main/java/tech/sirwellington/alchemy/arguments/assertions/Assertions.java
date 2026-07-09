@@ -144,6 +144,7 @@ public final class Assertions {
      * @return A chainable assertion.
      */
     public static <A> AlchemyAssertion<A> not(@Required AlchemyAssertion<A> assertion) {
+        checkNotNull(assertion, "assertion cannot be null");
         return arg -> {
             try {
                 assertion.check(arg);
