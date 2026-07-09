@@ -49,6 +49,7 @@ public final class Tests {
     }
 
     public static void checkForNullCase(AlchemyAssertion<?> assertion) {
+        assertNotNull(assertion, "assertion cannot be null");
         assertThrowsFailedAssertion(() -> assertion.check(null));
     }
 }

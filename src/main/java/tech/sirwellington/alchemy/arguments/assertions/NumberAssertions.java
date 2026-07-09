@@ -19,6 +19,7 @@ import tech.sirwellington.alchemy.annotations.access.NonInstantiable;
 import tech.sirwellington.alchemy.arguments.AlchemyAssertion;
 
 import static tech.sirwellington.alchemy.arguments.assertions.Assertions.notNull;
+import static tech.sirwellington.alchemy.arguments.internal.Checks.checkThat;
 import static tech.sirwellington.alchemy.arguments.internal.Checks.failAssertion;
 
 /**
@@ -265,11 +266,7 @@ public final class NumberAssertions {
      * Asserts that a double is strictly less than the supplied value within margin of error.
      */
     public static AlchemyAssertion<Double> lessThan(double exclusiveUpperBound, double delta) {
-        if (Double.isInfinite(exclusiveUpperBound)) {
-            // Avoid overflow or misinterpretation for extreme values
-            failAssertion("Doubles cannot be less than {0}", Double.NEGATIVE_INFINITY);
-        }
-
+        checkThat(exclusiveUpperBound > -Double.MAX_VALUE, "Doubles cannot be less than {0}");
         return number -> {
             notNull().check(number);
 
