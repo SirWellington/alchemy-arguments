@@ -18,22 +18,18 @@ package tech.sirwellington.alchemy.arguments;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.mockito.Mockito;
 import tech.sirwellington.alchemy.test.AlchemyTest;
-import tech.sirwellington.alchemy.test.ThrowableAssertion;
 import tech.sirwellington.alchemy.test.generation.GenerateString;
 
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
-import java.util.function.Supplier;
 
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
-import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.never;
-import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.*;
 import static tech.sirwellington.alchemy.arguments.assertions.Assertions.combine;
+import static tech.sirwellington.alchemy.test.ThrowableAssertion.assertThrows;
 import static tech.sirwellington.alchemy.test.generation.GenerateString.Type.ALPHABETIC;
 
 /**
@@ -43,33 +39,41 @@ import static tech.sirwellington.alchemy.test.generation.GenerateString.Type.ALP
  */
 @DisplayName("Alchemy Assertion Tests")
 @AlchemyTest
-class AlchemyAssertionTest {
+final class AlchemyAssertionTest {
 
+    private List<AlchemyAssertion<String>> assertions;
     private AlchemyAssertion<String> first;
-    private List<AlchemyAssertion<String>> otherAssertions;
 
     @GenerateString(ALPHABETIC)
     private String argument;
 
     @BeforeEach
     void setUp() {
-        first = Mockito.mock();
-
-        // Generate 3–5 fake assertions (similar to Kotlin test)
-        otherAssertions = Arrays.asList(
-            Mockito.mock(),
-            Mockito.mock(),
-            Mockito.mock()
+        assertions = Arrays.asList(
+            mock(),
+            mock(),
+            mock()
         );
+        first = assertions.getFirst();
+
+        assertions.forEach(a -> {
+            doCallRealMethod()
+                .when(a)
+                .and(any());
+        });
     }
 
     @Test
-    @DisplayName("testOther: chained 'and' should check all assertions")
-    void testOther() {
-        AlchemyAssertion<String> assertion = first;
+    @DisplayName("testAnd: chained 'and' should check all assertions")
+    void testAnd() {
+        AlchemyAssertion<String> assertion = null;
 
-        for (AlchemyAssertion<String> element : otherAssertions) {
-            assertion = assertion.and(element);
+        for (var a : assertions) {
+            if (assertion == null) {
+                assertion = a;
+                continue;
+            }
+            assertion = assertion.and(a);
         }
 
         // Execute the chain
@@ -77,16 +81,15 @@ class AlchemyAssertionTest {
         assertDoesNotThrow(() -> finalAssertion.check(argument));
 
         // Verify each was called
-        verify(first).check(any());
-        for (var a : otherAssertions) {
-            verify(a).check(any());
+        for (var a : assertions) {
+            verify(a, times(1)).check(any());
         }
     }
 
     @Test
-    @DisplayName("testOtherWithBadArgs: 'and' rejects null")
-    void testOtherWithBadArgs() {
-        ThrowableAssertion.assertThrows(
+    @DisplayName("testAnd_WithBadArgs: 'and' rejects null")
+    void testAnd_WithBadArgs() {
+        assertThrows(
             () -> first.and(null)
         ).isInstanceOf(IllegalArgumentException.class);
     }
@@ -94,13 +97,12 @@ class AlchemyAssertionTest {
     @Test
     @DisplayName("testCombineWithMultiple: combine() validates all")
     void testCombineWithMultiple() {
-        var args = otherAssertions.toArray(new AlchemyAssertion[0]);
-        AlchemyAssertion<String> combined = combine(first, args);
+        var combined = combine(assertions);
 
         assertDoesNotThrow(() -> combined.check(argument));
 
         verify(first).check(any());
-        for (var a : otherAssertions) {
+        for (var a : assertions) {
             verify(a).check(argument);
         }
     }
@@ -108,20 +110,25 @@ class AlchemyAssertionTest {
     @Test
     @DisplayName("testCombineWithMultipleWithBadArgs: combine() rejects null")
     void testCombineWithMultipleWithBadArgs() {
-        ThrowableAssertion.assertThrows(
-            () -> combine(null, first)
+        assertThrows(
+            () -> combine(null)
+        ).isInstanceOf(IllegalArgumentException.class);
+        assertThrows(
+            () -> combine(Collections.emptyList())
         ).isInstanceOf(IllegalArgumentException.class);
     }
 
     @Test
     @DisplayName("testCombineWithSingle: single assertion is returned as-is")
     void testCombineWithSingle() {
-        AlchemyAssertion<String> combined = combine(first);
+        // Given
+        var combined = combine(List.of(first));
+        // Then
         assertDoesNotThrow(() -> combined.check(argument));
         verify(first).check(argument);
 
         // Ensure no other assertions were checked (they weren't even passed)
-        for (var a : otherAssertions) {
+        for (var a : assertions.subList(1, assertions.size())) {
             verify(a, never()).check(any());
         }
     }

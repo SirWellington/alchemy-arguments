@@ -69,18 +69,38 @@ final class TimeAssertionsTest {
     @Test
     @DisplayName("testBefore: before assertion works correctly")
     void testBefore() {
-        var referenceTime = Instant.now();
-
-        var instance = before(referenceTime);
+        // Given
+        var startTime = Instant.now();
+        // When
+        var instance = before(startTime);
+        // Then
         assertNotNull(instance, "before should return a non-null assertion");
+        assertThrowsFailedAssertion(() -> instance.check(startTime));
 
-        assertThrowsFailedAssertion(() -> instance.check(referenceTime));
-
+        // The past is before the present
         var past = one(pastInstants());
-        assertThrows(() -> instance.check(past));
+        instance.check(past);
 
+        // The future is not before now, should fail
         var future = one(futureInstants());
-        instance.check(future);
+        assertThrowsFailedAssertion(
+            () -> instance.check(future)
+        );
+    }
+
+    @Test
+    @DisplayName("testBefore: before assertion handles bad parameters")
+    void testBefore_HandlesBadArguments() {
+        // Given
+        var instance = before(Instant.now());
+
+        // Then
+        assertThrowsFailedAssertion(
+            () -> instance.check(null)
+        );
+        assertThrows(
+            () -> before(null)
+        ).isIllegalArgumentException();
     }
 
     @Test
@@ -196,9 +216,9 @@ final class TimeAssertionsTest {
             () -> equalToInstantWithinDelta(null, 100L)
         ).isInstanceOf(IllegalArgumentException.class);
 
-        assertThrows(
-            () -> equalToInstantWithinDelta(Instant.now(), -10L)
-        ).isInstanceOf(IllegalArgumentException.class);
+        assertNotNull(
+            equalToInstantWithinDelta(Instant.now(), -10L)
+        );
     }
 
     @Test

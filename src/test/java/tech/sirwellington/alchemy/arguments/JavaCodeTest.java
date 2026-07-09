@@ -89,7 +89,10 @@ public final class JavaCodeTest {
         AlchemyAssertion<String> first = mock(AlchemyAssertion.class);
         AlchemyAssertion<String> second = mock(AlchemyAssertion.class);
 
-        AlchemyAssertion<String> combined = Assertions.combine(first, second);
+        var combined = Assertions.combine(List.of(
+            first,
+            second
+        ));
 
         combined.check(string);
 

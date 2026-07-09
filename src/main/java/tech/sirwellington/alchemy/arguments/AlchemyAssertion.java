@@ -17,13 +17,10 @@ package tech.sirwellington.alchemy.arguments;
 import tech.sirwellington.alchemy.annotations.arguments.Optional;
 import tech.sirwellington.alchemy.annotations.arguments.Required;
 import tech.sirwellington.alchemy.annotations.designs.patterns.StrategyPattern;
-import tech.sirwellington.alchemy.arguments.internal.Checks;
-
-import java.util.Arrays;
+import tech.sirwellington.alchemy.arguments.assertions.Assertions;
 
 import static tech.sirwellington.alchemy.annotations.designs.patterns.StrategyPattern.Role.INTERFACE;
 import static tech.sirwellington.alchemy.arguments.internal.Checks.checkNotNull;
-import static tech.sirwellington.alchemy.arguments.internal.Checks.checkThat;
 
 /**
  * {@linkplain AlchemyAssertion Alchemy Assertions} analyze arguments for validity.
@@ -84,7 +81,7 @@ public interface AlchemyAssertion<Argument> {
      * @param other The other assertion to check against.
      * @return A chainable assertion.
      */
-    default AlchemyAssertion<Argument> and(AlchemyAssertion<Argument> other) {
+    default AlchemyAssertion<Argument> and(@Required AlchemyAssertion<Argument> other) {
         checkNotNull(other, "other assertion cannot be null");
 
         return arg -> {

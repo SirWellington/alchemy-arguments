@@ -22,11 +22,10 @@ import tech.sirwellington.alchemy.annotations.arguments.Required;
 import tech.sirwellington.alchemy.arguments.AlchemyAssertion;
 import tech.sirwellington.alchemy.arguments.FailedAssertionException;
 
+import java.util.List;
 import java.util.Objects;
 
-import static tech.sirwellington.alchemy.arguments.internal.Checks.checkNotNull;
-import static tech.sirwellington.alchemy.arguments.internal.Checks.checkThat;
-import static tech.sirwellington.alchemy.arguments.internal.Checks.failAssertion;
+import static tech.sirwellington.alchemy.arguments.internal.Checks.*;
 
 /**
  * Common {@link AlchemyAssertion Alchemy Asssertions}.
@@ -167,12 +166,12 @@ public final class Assertions {
      * Combines multiple {@link AlchemyAssertion Assertions} into one.
      * For example, a {@code validAge} assertion could be constructed dynamically using:
      * {@snippet :
-     * AlchemyAssertion<Integer> validAge = combine(
+     * AlchemyAssertion<Integer> validAge = combine(List.of(
      *   notNull(),
      *   positiveInteger(),
      *   greaterThanOrEqualTo(10),
      *   lessThanOrEqualTo(140)
-     * );
+     * ));
      *
      * var age = user.getAge();
      * checkThat(age)is(validAge);
@@ -181,23 +180,17 @@ public final class Assertions {
      * This allows you to <strong>combine and store</strong> multiple {@link AlchemyAssertion assertions} that
      * are frequently used together to perform argument checks.
      *
-     * @param first      The first assertion to include.
-     * @param others     The rest of the assertions to include.
+     * @param assertions The list assertions to include.
      * @param <Argument> The type of the argument being checked.
      * @return A chainable assertion.
      */
-    @SafeVarargs
     public static <Argument> AlchemyAssertion<Argument> combine(
-        @Required AlchemyAssertion<Argument> first,
-        @Required AlchemyAssertion<Argument>... others
+        @Required List<AlchemyAssertion<Argument>> assertions
     ) {
-        checkNotNull(first, "the first assertion cannot be null");
-        checkNotNull(others, "variadic parameter cannot be null");
-        checkThat(others.length > 0, "variadic parameters cannot be empty");
+        checkNotNullOrEmpty(assertions, "assertions cannot be null or empty");
 
         return argument -> {
-            first.check(argument);
-            for (var assertion : others) {
+            for (var assertion : assertions) {
                 assertion.check(argument);
             }
         };
