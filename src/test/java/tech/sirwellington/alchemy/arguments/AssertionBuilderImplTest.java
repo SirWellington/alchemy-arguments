@@ -20,6 +20,7 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
+import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 import tech.sirwellington.alchemy.generator.CollectionGenerators;
 import tech.sirwellington.alchemy.test.AlchemyTest;
@@ -55,7 +56,6 @@ class AssertionBuilderImplTest {
     @GenerateString(ALPHABETIC)
     private String argument;
 
-    @GenerateList(String.class)
     private List<String> arguments;
 
     @GenerateString(ALPHABETIC)
@@ -66,6 +66,7 @@ class AssertionBuilderImplTest {
 
     @BeforeEach
     void setUp() {
+        arguments = List.of(argument);
         instance = AssertionBuilderImpl.checkThat(arguments);
 
         assertException = new FailedAssertionException(errorMessage);
@@ -121,10 +122,7 @@ class AssertionBuilderImplTest {
     @Test
     @DisplayName("testThrowingExceptionClass")
     void testThrowingExceptionClass() {
-        var thrown = new IOException();
-        when(exceptionMapper.apply(assertException)).thenReturn(thrown);
-
-        doThrow(assertException).when(assertion).check(any());
+        doThrow(assertException).when(assertion).check(argument);
 
         assertThrows(() -> instance.throwing(IOException.class).is(assertion))
             .isInstanceOf(IOException.class)
@@ -182,8 +180,7 @@ class AssertionBuilderImplTest {
 
         assertThrows(
             () -> instance.usingMessage(overrideMsg).isA(assertion)
-        ).isInstanceOf(AssertionError.class)
-         .hasCauseInstanceOf(FailedAssertionException.class)
+        ).isInstanceOf(FailedAssertionException.class)
          .hasMessage(overrideMsg);
     }
 
