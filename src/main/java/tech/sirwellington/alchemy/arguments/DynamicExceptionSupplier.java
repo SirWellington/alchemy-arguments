@@ -89,7 +89,7 @@ final class DynamicExceptionSupplier<Ex extends Throwable> implements ExceptionM
 
         try {
             if (hasDefaultConstructor()) {
-                return exceptionClass.newInstance();
+                return exceptionClass.getDeclaredConstructor().newInstance();
             }
         } catch (Exception ex) {
             LOG.warn("Failed to create instance of {} using default constructor", exceptionClass.getName());
