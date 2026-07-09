@@ -24,6 +24,7 @@ import tech.sirwellington.alchemy.test.ThrowableAssertion;
 import tech.sirwellington.alchemy.test.generation.GenerateList;
 import tech.sirwellington.alchemy.test.generation.GenerateString;
 
+import java.lang.reflect.InvocationTargetException;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
@@ -53,8 +54,8 @@ class ArgumentsTest {
     void testConstructorThrows() {
         assertThrows(
             () -> Arguments.class.getDeclaredConstructor().newInstance()
-        ).isInstanceOf(IllegalAccessException.class)
-            .hasMessage("cannot directly instantiate");
+        ).isInstanceOf(InvocationTargetException.class)
+            .hasCauseInstanceOf(IllegalAccessException.class);
     }
 
     @Test
