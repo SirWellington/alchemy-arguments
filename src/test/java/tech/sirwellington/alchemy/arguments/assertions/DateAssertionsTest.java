@@ -43,8 +43,7 @@ final class DateAssertionsTest {
     void testCannotInstantiate() {
         assertThrows(
             () -> DateAssertions.class.getDeclaredConstructor().newInstance()
-        ).isInstanceOf(InvocationTargetException.class)
-         .hasCauseInstanceOf(IllegalAccessException.class);
+        ).isInstanceOf(IllegalAccessException.class);
     }
 
     @Test

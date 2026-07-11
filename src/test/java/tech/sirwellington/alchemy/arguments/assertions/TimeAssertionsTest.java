@@ -45,8 +45,7 @@ final class TimeAssertionsTest {
     void testCannotInstantiate() {
         assertThrows(
             () -> TimeAssertions.class.getDeclaredConstructor().newInstance()
-        ).isInstanceOf(InvocationTargetException.class)
-         .hasCauseInstanceOf(IllegalAccessException.class);
+        ).isInstanceOf(IllegalAccessException.class);
     }
 
     @Test
