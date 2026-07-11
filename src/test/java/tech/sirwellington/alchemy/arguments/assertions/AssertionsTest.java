@@ -3,6 +3,7 @@ package tech.sirwellington.alchemy.arguments.assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
 import tech.sirwellington.alchemy.arguments.AlchemyAssertion;
+import tech.sirwellington.alchemy.arguments.Arguments;
 import tech.sirwellington.alchemy.arguments.FailedAssertionException;
 import tech.sirwellington.alchemy.generator.StringGenerators;
 import tech.sirwellington.alchemy.test.AlchemyTest;
@@ -14,6 +15,7 @@ import tech.sirwellington.alchemy.test.generation.GenerateString;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.notNullValue;
 import static tech.sirwellington.alchemy.arguments.TestHelpers.assertThrowsFailedAssertion;
+import static tech.sirwellington.alchemy.arguments.assertions.Assertions.instanceOf;
 import static tech.sirwellington.alchemy.test.ThrowableAssertion.assertThrows;
 import static tech.sirwellington.alchemy.test.generation.GenerateInteger.Type.POSITIVE;
 import static tech.sirwellington.alchemy.test.generation.GenerateString.Type.ALPHABETIC;
@@ -76,18 +78,20 @@ class AssertionsTest {
 
     @Test
     void testInstanceOf() {
-        var instance = Assertions.instanceOf(Number.class);
-
-        instance.check(positiveInt);
-        instance.check(positiveLong);
-        instance.check(positiveDouble);
-
-        assertThrowsFailedAssertion(() -> instance.check(string));
+        Arguments.checkThat(positiveInt).is(instanceOf(Number.class));
+        Arguments.checkThat(positiveInt).is(instanceOf(Integer.class));
+        Arguments.checkThat(positiveInt).is(instanceOf(Object.class));
+        assertThrowsFailedAssertion(
+            () -> Arguments.checkThat(positiveInt).is(instanceOf(String.class))
+        );
+        assertThrowsFailedAssertion(
+            () -> Arguments.checkThat(string).is(instanceOf(Number.class))
+        );
     }
 
     @Test
     void testInstanceOfEdgeCases() {
-        var assertion = Assertions.instanceOf(Number.class);
+        var assertion = instanceOf(Number.class);
         assertThrows(() -> assertion.check(null));
     }
 

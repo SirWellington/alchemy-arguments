@@ -2,6 +2,7 @@ package tech.sirwellington.alchemy.arguments.assertions;
 
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.RepeatedTest;
+import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
 import tech.sirwellington.alchemy.arguments.FailedAssertionException;
 import tech.sirwellington.alchemy.generator.NumberGenerators;
@@ -37,6 +38,12 @@ final class AddressAssertionsTest {
 
         int badZipVal = one(integers(100000, Integer.MAX_VALUE));
         badZip = String.valueOf(badZipVal);
+    }
+
+    @Test
+    void testCannotInstantiate() {
+        assertThrows(() -> AddressAssertions.class.getDeclaredConstructor().newInstance())
+            .isInstanceOf(IllegalAccessException.class);
     }
 
     @RepeatedTest(ITERATIONS)
