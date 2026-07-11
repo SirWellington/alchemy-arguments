@@ -47,7 +47,7 @@ public final class NumberAssertions {
         return number -> {
             notNull().check(number);
 
-            if (number <= exclusiveLowerBound) {
+            if (!(number > exclusiveLowerBound)) {
                 failAssertion(
                     "Number must be > {0} but was {1}",
                     exclusiveLowerBound,
@@ -70,7 +70,7 @@ public final class NumberAssertions {
         return number -> {
             notNull().check(number);
 
-            if (number <= exclusiveLowerBound) {
+            if (!(number > exclusiveLowerBound)) {
                 failAssertion(
                     "Number must be > {0} but was {1}",
                     exclusiveLowerBound,
@@ -96,8 +96,7 @@ public final class NumberAssertions {
         return number -> {
             notNull().check(number);
 
-            // Use Math.abs(delta) to ensure symmetry in tolerance
-            if (number + Math.abs(delta) <= exclusiveLowerBound) {
+            if (!(number + Math.abs(delta) > exclusiveLowerBound)) {
                 failAssertion(
                     "Number must be > {0} ± {1} but was {2}",
                     exclusiveLowerBound,
@@ -113,7 +112,7 @@ public final class NumberAssertions {
      */
     public static AlchemyAssertion<Double> greaterThan(double exclusiveLowerBound) {
         checkThat(
-            exclusiveLowerBound != Double.MAX_VALUE,
+            Double.compare(exclusiveLowerBound, Double.MAX_VALUE) != 0,
             "Doubles cannot be greater than Double.MAX_VALUE"
         );
         return greaterThan(exclusiveLowerBound, 0.0);
@@ -126,7 +125,7 @@ public final class NumberAssertions {
         return number -> {
             notNull().check(number);
 
-            if (number < inclusiveLowerBound) {
+            if (!(number >= inclusiveLowerBound)) {
                 failAssertion(
                     "Number must be greater than or equal to {0} but was {1}",
                     inclusiveLowerBound,
@@ -147,7 +146,7 @@ public final class NumberAssertions {
         return number -> {
             notNull().check(number);
 
-            if (number < inclusiveLowerBound) {
+            if (!(number >= inclusiveLowerBound)) {
                 failAssertion(
                     "Number must be greater than or equal to {0} but was {1}",
                     inclusiveLowerBound,
@@ -164,7 +163,7 @@ public final class NumberAssertions {
         return number -> {
             notNull().check(number);
 
-            if (number + Math.abs(delta) < inclusiveLowerBound) {
+            if (!(number + Math.abs(delta) >= inclusiveLowerBound)) {
                 failAssertion(
                     "Number must be >= {0} ± {1} but was {2}",
                     inclusiveLowerBound,
@@ -180,7 +179,7 @@ public final class NumberAssertions {
      */
     public static AlchemyAssertion<Double> greaterThanOrEqualTo(double inclusiveLowerBound) {
         checkThat(
-            inclusiveLowerBound != Double.MAX_VALUE,
+            Double.compare(inclusiveLowerBound, Double.MAX_VALUE) != 0,
             "Doubles cannot be greater than Double.MAX_VALUE"
         );
         return greaterThanOrEqualTo(inclusiveLowerBound, 0.0);
@@ -193,7 +192,7 @@ public final class NumberAssertions {
         return number -> {
             notNull().check(number);
 
-            if (number <= 0) {
+            if (!(number >0)) {
                 failAssertion("Expected positive integer but was {0}", number);
             }
         };
@@ -213,7 +212,7 @@ public final class NumberAssertions {
         return number -> {
             notNull().check(number);
 
-            if (number <= 0) {
+            if (!(number > 0)) {
                 failAssertion("Expected positive long but was {0}", number);
             }
         };
@@ -233,7 +232,7 @@ public final class NumberAssertions {
         return number -> {
             notNull().check(number);
 
-            if (number > inclusiveUpperBound) {
+            if (!(number <= inclusiveUpperBound)) {
                 failAssertion(
                     "Number must be less than or equal to {0} but was {1}",
                     inclusiveUpperBound,
@@ -250,7 +249,7 @@ public final class NumberAssertions {
         return number -> {
             notNull().check(number);
 
-            if (number > inclusiveUpperBound) {
+            if (!(number <= inclusiveUpperBound)) {
                 failAssertion(
                     "Number must be less than or equal to {0} but was {1}",
                     inclusiveUpperBound,
@@ -267,7 +266,7 @@ public final class NumberAssertions {
         return number -> {
             notNull().check(number);
 
-            if (number - Math.abs(delta) > inclusiveUpperBound) {
+            if (!(number - Math.abs(delta) <= inclusiveUpperBound)) {
                 failAssertion(
                     "Number must be <= {0} ± {1}, but was {2}",
                     inclusiveUpperBound,
@@ -298,7 +297,7 @@ public final class NumberAssertions {
         return number -> {
             notNull().check(number);
 
-            if (number >= exclusiveUpperBound) {
+            if (!(number < exclusiveUpperBound)) {
                 failAssertion("Number must be < {0} but was {1}", exclusiveUpperBound, number);
             }
         };
@@ -316,7 +315,7 @@ public final class NumberAssertions {
         return number -> {
             notNull().check(number);
 
-            if (number >= exclusiveUpperBound) {
+            if (!(number < exclusiveUpperBound)) {
                 failAssertion("Number must be < {0} but was {1}", exclusiveUpperBound, number);
             }
         };
@@ -330,7 +329,7 @@ public final class NumberAssertions {
         return number -> {
             notNull().check(number);
 
-            if (number - Math.abs(delta) >= exclusiveUpperBound) {
+            if (!(number - Math.abs(delta) < exclusiveUpperBound)) {
                 failAssertion(
                     "Number must be < {0} but was {1}",
                     exclusiveUpperBound,
@@ -358,7 +357,7 @@ public final class NumberAssertions {
         return number -> {
             notNull().check(number);
 
-            if (number < min || number > max) {
+            if (!(number >= min && number <= max)) {
                 failAssertion("Expected a number between {0} and {1} but got {2} instead", min, max, number);
             }
         };
@@ -370,14 +369,12 @@ public final class NumberAssertions {
      * @throws IllegalArgumentException if min ≥ max
      */
     public static AlchemyAssertion<Long> numberBetween(long min, long max) {
-        if (min >= max) {
-            throw new IllegalArgumentException("Minimum must be less than Max.");
-        }
+        checkThat(min < max, "min must be < max");
 
         return number -> {
             notNull().check(number);
 
-            if (number < min || number > max) {
+            if (!(number >= min && number <= max)) {
                 failAssertion("Expected a number between {0} and {1} but got {2} instead", min, max, number);
             }
         };

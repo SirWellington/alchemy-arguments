@@ -46,7 +46,7 @@ final class NumberAssertionsTest {
     void testNumberBetweenInts() {
         // Given
         int min = one(integers(Integer.MIN_VALUE, Integer.MAX_VALUE - 10));
-        int max = one(integers(min, Integer.MAX_VALUE));
+        int max = one(integers(min+1, Integer.MAX_VALUE));
         // When
         var instance = numberBetween(min, max);
         // Then
@@ -273,7 +273,7 @@ final class NumberAssertionsTest {
     void testNumberBetweenLongs() {
         // Given
         var min = one(longs(Long.MIN_VALUE+1, Long.MAX_VALUE - 10L));
-        var max = one(longs(min, Long.MAX_VALUE-1L));
+        var max = one(longs(min+1, Long.MAX_VALUE));
         var instance = numberBetween(min, max);
         // Then
         Tests.checkForNullCase(instance);
