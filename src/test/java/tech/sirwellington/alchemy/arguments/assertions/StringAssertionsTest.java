@@ -17,6 +17,10 @@ package tech.sirwellington.alchemy.arguments.assertions;
 
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import tech.sirwellington.alchemy.arguments.AlchemyAssertion;
+import tech.sirwellington.alchemy.generator.AlchemyGenerator;
+import tech.sirwellington.alchemy.generator.CollectionGenerators;
+import tech.sirwellington.alchemy.generator.StringGenerators;
 import tech.sirwellington.alchemy.test.AlchemyTest;
 
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -45,10 +49,14 @@ final class StringAssertionsTest {
     @Test
     @DisplayName("testEmptyString: emptyString assertion works correctly")
     void testEmptyString() {
+        // Given
         var instance = emptyString();
-        assertNotNull(instance, "emptyString should return a non-null assertion");
+        // Then
+        assertNotNull(instance);
 
-        assertThrowsFailedAssertion(() -> instance.check(one(alphabeticStrings())));
+        assertThrowsFailedAssertion(
+            () -> instance.check(one(alphabeticStrings()))
+        );
         instance.check("");
         instance.check(null);
     }
@@ -56,12 +64,14 @@ final class StringAssertionsTest {
     @Test
     @DisplayName("testNonEmptyString: nonEmptyString assertion works correctly")
     void testNonEmptyString() {
+        // Given
         var instance = nonEmptyString();
         assertNotNull(instance, "nonEmptyString should return a non-null assertion");
+        // Then
+        Tests.checkForNullCase(instance);
 
         instance.check(one(alphabeticStrings()));
         assertThrowsFailedAssertion(() -> instance.check(""));
-        assertThrowsFailedAssertion(() -> instance.check(null));
     }
 
     //==============================
@@ -71,19 +81,19 @@ final class StringAssertionsTest {
     @Test
     @DisplayName("testStringWithLengthGreaterThan: stringWithLengthGreaterThan works correctly")
     void testStringWithLengthGreaterThan() {
+        // Given
         int min = one(integers(2, 10100));
         var instance = stringWithLengthGreaterThan(min);
+        // Then
+        Tests.checkForNullCase(instance);
 
-        assertNotNull(instance);
-        assertThrowsFailedAssertion(() -> instance.check(null));
-
-        // Bad cases: length ≤ min
-        int badLen = one(integers(1, min));
-        assertThrowsFailedAssertion(() -> instance.check(one(alphabeticStrings(badLen))));
-
-        // Good case: length > min
-        int goodLen = min + one(smallPositiveIntegers());
-        instance.check(one(alphabeticStrings(goodLen)));
+        // Given
+        var badLengths = integers(1, min).mapping(x -> one(alphabeticStrings(x)));
+        var goodLengths = AlchemyGenerator.of(
+            () -> min + one(smallPositiveIntegers())
+        ).mapping(x -> one(alphabeticStrings(x)));
+        // Then
+        Tests.runTests(instance, badLengths, goodLengths);
     }
 
     @Test
@@ -100,25 +110,23 @@ final class StringAssertionsTest {
     @Test
     @DisplayName("testStringWithLengthLessThan: stringWithLengthLessThan works correctly")
     void testStringWithLengthLessThan() {
-        int upperBound = one(integers(2, 1000));
+        // Given
+        var upperBound = one(integers(2, 1000));
         var instance = stringWithLengthLessThan(upperBound);
+        // Then
+        Tests.checkForNullCase(instance);
 
-        assertNotNull(instance);
-        assertThrowsFailedAssertion(() -> instance.check(null));
-
-        // Bad case: length ≥ upperBound
-        int badLen = one(integers(upperBound, upperBound + 50));
-        assertThrowsFailedAssertion(() -> instance.check(one(strings(badLen))));
-
-        // Good case: length < upperBound
-        int goodLen = one(integers(1, upperBound - 1));
-        instance.check(one(strings(goodLen)));
+        // Given
+        var badLengths = integers(upperBound, upperBound + 50).mapping(x -> one(strings(x)));
+        var goodLengths = integers(1, upperBound - 1).mapping(x -> one(strings(x)));
+        // Then
+        Tests.runTests(instance, badLengths, goodLengths);
     }
 
     @Test
     @DisplayName("testStringWithLengthLessThanEdgeCases: edge cases for stringWithLengthLessThan")
     void testStringWithLengthLessThanEdgeCases() {
-        int badArg = one(integers(Integer.MIN_VALUE, 1));
+        var badArg = one(integers(Integer.MIN_VALUE, 1));
         assertThrows(() -> stringWithLengthLessThan(badArg))
             .isIllegalArgumentException();
     }
@@ -126,18 +134,19 @@ final class StringAssertionsTest {
     @Test
     @DisplayName("testStringWithLength: stringWithLength works correctly")
     void testStringWithLength() {
+        // Given
         var expectedLength = one(integers(5, 25));
         var instance = stringWithLength(expectedLength);
+        // Then
+        Tests.checkForNullCase(instance);
 
-        assertNotNull(instance);
-        assertThrowsFailedAssertion(() -> instance.check(null));
-
-        // Good case
-        instance.check(one(alphabeticStrings(expectedLength)));
-
-        // Bad cases: too short or too long
-        assertThrowsFailedAssertion(() -> instance.check(one(alphabeticStrings(expectedLength - 1))));
-        assertThrowsFailedAssertion(() -> instance.check(one(strings(expectedLength + 1))));
+        // Given
+        var goodStrings = alphabeticStrings(expectedLength);
+        var tooShort = alphabeticStrings(expectedLength - 1);
+        var tooLong = alphabeticStrings(expectedLength + 1);
+        // Then
+        Tests.runTests(instance, tooShort, goodStrings);
+        Tests.runTests(instance, tooLong, goodStrings);
     }
 
     @Test
@@ -151,22 +160,22 @@ final class StringAssertionsTest {
     @Test
     @DisplayName("testStringWithLengthGreaterThanOrEqualTo: works correctly")
     void testStringWithLengthGreaterThanOrEqualTo() {
+        // Given
         var expectedSize = one(integers(10, 100));
         var instance = stringWithLengthGreaterThanOrEqualTo(expectedSize);
+        // Then
+        Tests.checkForNullCase(instance);
 
-        assertNotNull(instance);
-        assertThrowsFailedAssertion(() -> instance.check(null));
+        // Given
+        // At-bound cases
+        var goodAtBound = strings(expectedSize);
+        var goodAboveBound = integers(1, 50).mapping(x -> one(strings(x)));
+        var badAboveBound = integers(expectedSize+1, expectedSize+50).mapping(x -> one(strings(x)));
+        var badBelowBound = integers(1, expectedSize).mapping(x -> one(strings(x)));
 
-        // At-bound case
-        instance.check(one(strings(expectedSize)));
-
-        // Above bound
-        int extraLen = one(integers(1, 5));
-        instance.check(one(strings(expectedSize + extraLen)));
-
-        // Below bound
-        int lessLen = one(integers(1, 5));
-        assertThrowsFailedAssertion(() -> instance.check(one(strings(expectedSize - lessLen))));
+        // Then
+        Tests.runTests(instance, badAboveBound, goodAtBound);
+        Tests.runTests(instance, badBelowBound, goodAboveBound);
     }
 
     @Test
@@ -180,22 +189,19 @@ final class StringAssertionsTest {
     @Test
     @DisplayName("testStringWithLengthLessThanOrEqualTo: works correctly")
     void testStringWithLengthLessThanOrEqualTo() {
+        // Given
         var expectedSize = one(integers(5, 100));
         var instance = stringWithLengthLessThanOrEqualTo(expectedSize);
+        // Then
+        Tests.checkForNullCase(instance);
 
-        assertNotNull(instance);
-        assertThrowsFailedAssertion(() -> instance.check(null));
-
-        // At-bound case
-        instance.check(one(strings(expectedSize)));
-
-        // Below bound
-        int lessLen = one(integers(1, 10));
-        instance.check(one(strings(expectedSize - lessLen)));
-
-        // Above bound
-        int extraLen = one(integers(5, 10));
-        assertThrowsFailedAssertion(() -> instance.check(one(strings(expectedSize + extraLen))));
+        // Given
+        var goodAtBound = strings(expectedSize);
+        var goodBelowBound = integers(1, expectedSize).mapping(x -> one(strings(x)));
+        var badBelowBound = integers(1, expectedSize).mapping(x -> one(strings(x)));
+        // Then
+        Tests.runTests(instance, badBelowBound, goodAtBound);
+        Tests.runTests(instance, badBelowBound, goodBelowBound);
     }
 
     @Test
@@ -209,24 +215,23 @@ final class StringAssertionsTest {
     @Test
     @DisplayName("testStringWithLengthBetween: works correctly")
     void testStringWithLengthBetween() {
+        // Given
         var min = one(integers(10, 100));
         var max = one(integers(min + 1, 1000));
-
         var instance = stringWithLengthBetween(min, max);
-        assertNotNull(instance);
-        assertThrowsFailedAssertion(() -> instance.check(null));
+        // Then
+        Tests.checkForNullCase(instance);
 
-        // Within range
-        int goodLen = one(integers(min, max));
-        instance.check(one(strings(goodLen)));
+        // Given
+        var goodArguments = integers(min, max).mapping(x -> one(strings(x)));
+        var tooShortLen = integers(1, min - 1).mapping(x -> one(strings(x)));
+        // Then
+        Tests.runTests(instance, tooShortLen, goodArguments);
 
-        // Too short
-        int tooShortLen = one(integers(1, min - 1));
-        assertThrowsFailedAssertion(() -> instance.check(one(strings(tooShortLen))));
-
-        // Too long
-        int tooLongLen = one(integers(max + 1, max + 50));
-        assertThrowsFailedAssertion(() -> instance.check(one(strings(tooLongLen))));
+        // Given
+        var tooLongLen = integers(max + 1, max + 50).mapping(x -> one(strings(x)));
+        // Then
+        Tests.runTests(instance, tooLongLen, goodArguments);
     }
 
     @Test
@@ -248,14 +253,20 @@ final class StringAssertionsTest {
     @Test
     @DisplayName("testStringWithWhitespace: works correctly")
     void testStringWithWhitespace() {
+        // Given
         var instance = stringWithWhitespace();
+        // Then
+        Tests.checkForNullCase(instance);
 
-        assertNotNull(instance);
-        assertThrowsFailedAssertion(() -> instance.check(null));
         assertThrowsFailedAssertion(() -> instance.check(""));
         assertThrowsFailedAssertion(() -> instance.check(one(alphabeticStrings())));
 
-        // Good cases: strings with whitespace
+        // Given
+        var goodWithWhitespace = strings(1024).mapping(s -> s + " ");
+        var badNoWhitespace = alphabeticStrings();
+        // Then
+        Tests.runTests(instance, badNoWhitespace, goodWithWhitespace);
+        // Then
         instance.check(" \t\n");
         instance.check("hello world");
     }
@@ -263,16 +274,19 @@ final class StringAssertionsTest {
     @Test
     @DisplayName("testStringWithNoWhitespace: works correctly")
     void testStringWithNoWhitespace() {
+        // Given
         var instance = stringWithNoWhitespace();
-
-        assertNotNull(instance);
-        assertThrowsFailedAssertion(() -> instance.check(null));
+        // Then
+        Tests.checkForNullCase(instance);
         assertThrowsFailedAssertion(() -> instance.check(""));
         assertThrowsFailedAssertion(() -> instance.check(one(alphabeticStrings()) + " "));
         assertThrowsFailedAssertion(() -> instance.check("hello\nworld"));
 
-        // Good case: no whitespace
-        instance.check(one(alphabeticStrings()));
+        // Given
+        var goodNoWhitespace = alphanumericStrings();
+        var badWithWhitespace = alphabeticStrings().mapping(s -> " " + s);
+        // Then
+        Tests.runTests(instance, badWithWhitespace, goodNoWhitespace);
     }
 
     //==============================
@@ -282,19 +296,28 @@ final class StringAssertionsTest {
     @Test
     @DisplayName("testStringBeginningWith: works correctly")
     void testStringBeginningWith() {
+        // Given
         var prefix = one(strings(4));
         var instance = stringBeginningWith(prefix);
+        // Then
+        Tests.checkForNullCase(instance);
 
-        assertNotNull(instance);
-        assertThrowsFailedAssertion(() -> instance.check(null));
+        // Given
+        CollectionGenerators.listOf(
+            strings(20),
+            50
+        ).forEach(s -> {
 
-        // Matches
-        var fullString = one(strings(20));
-        instance.check(prefix + fullString);
+        });
+        var sampleString = one(strings(20));
+        // Then
+        instance.check(prefix + sampleString);
         instance.check(prefix);
 
         // Does not match
-        assertThrowsFailedAssertion(() -> instance.check(fullString));
+        assertThrowsFailedAssertion(
+            () -> instance.check(sampleString)
+        );
     }
 
     @Test
