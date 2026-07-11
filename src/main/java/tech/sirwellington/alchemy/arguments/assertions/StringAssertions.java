@@ -431,34 +431,4 @@ public final class StringAssertions {
         };
     }
 
-    /**
-     * Checks that a String represents an Integer, as determined by {@link Integer#parseInt}.
-     *
-     * @return an {@link AlchemyAssertion} for integer-formatted strings (with optional +/- prefix)
-     */
-    public static AlchemyAssertion<String> stringRepresentingInteger() {
-        return s -> {
-            nonEmptyString().check(s);
-
-            var len = s.length();
-            for (int i = 0; i < len; i++) {
-                char c = s.charAt(i);
-                if (i == 0 && isNumericalSign(c)) {
-                    continue;
-                }
-                if (!Character.isDigit(c)) {
-                    failAssertion(
-                        "Expected an Integer String, but '{0}' is not a digit in '{1}'", c, s
-                    );
-                }
-            }
-        };
-    }
-
-    // Helper methods (private)
-
-    private static boolean isNumericalSign(char c) {
-        return c == '-' || c == '+';
-    }
-
 }

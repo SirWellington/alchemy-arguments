@@ -17,14 +17,11 @@ package tech.sirwellington.alchemy.arguments.assertions;
 
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import tech.sirwellington.alchemy.arguments.AlchemyAssertion;
 import tech.sirwellington.alchemy.generator.AlchemyGenerator;
 import tech.sirwellington.alchemy.generator.CollectionGenerators;
 import tech.sirwellington.alchemy.generator.StringGenerators;
 import tech.sirwellington.alchemy.test.AlchemyTest;
 
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.notNullValue;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static tech.sirwellington.alchemy.arguments.TestHelpers.assertThrowsFailedAssertion;
 import static tech.sirwellington.alchemy.arguments.assertions.StringAssertions.*;
@@ -169,12 +166,11 @@ final class StringAssertionsTest {
         // Given
         // At-bound cases
         var goodAtBound = strings(expectedSize);
-        var goodAboveBound = integers(1, 50).mapping(x -> one(strings(x)));
-        var badAboveBound = integers(expectedSize+1, expectedSize+50).mapping(x -> one(strings(x)));
+        var goodAboveBound = integers(expectedSize, 1_024).mapping(x -> one(strings(x)));
         var badBelowBound = integers(1, expectedSize).mapping(x -> one(strings(x)));
 
         // Then
-        Tests.runTests(instance, badAboveBound, goodAtBound);
+        Tests.runTests(instance, badBelowBound, goodAtBound);
         Tests.runTests(instance, badBelowBound, goodAboveBound);
     }
 
@@ -198,10 +194,10 @@ final class StringAssertionsTest {
         // Given
         var goodAtBound = strings(expectedSize);
         var goodBelowBound = integers(1, expectedSize).mapping(x -> one(strings(x)));
-        var badBelowBound = integers(1, expectedSize).mapping(x -> one(strings(x)));
+        var badAboveBound = integers(expectedSize +1, 1_024).mapping(x -> one(strings(x)));
         // Then
-        Tests.runTests(instance, badBelowBound, goodAtBound);
-        Tests.runTests(instance, badBelowBound, goodBelowBound);
+        Tests.runTests(instance, badAboveBound, goodAtBound);
+        Tests.runTests(instance, badAboveBound, goodBelowBound);
     }
 
     @Test
@@ -333,18 +329,17 @@ final class StringAssertionsTest {
     @Test
     @DisplayName("testStringEndingWith: works correctly")
     void testStringEndingWith() {
+        // Given
         var suffix = one(strings(4));
         var instance = stringEndingWith(suffix);
+        // Then
+        Tests.checkForNullCase(instance);
 
-        assertNotNull(instance);
-        assertThrowsFailedAssertion(() -> instance.check(null));
-
-        var fullString = one(strings());
-        // Matches
-        instance.check(fullString + suffix);
-
-        // Does not match
-        assertThrowsFailedAssertion(() -> instance.check(fullString));
+        // Given
+        var goodStrings = strings().mapping(s -> s + suffix);
+        var badStrings = strings();
+        // Then
+        Tests.runTests(instance, badStrings, goodStrings);
     }
 
     @Test
@@ -360,18 +355,19 @@ final class StringAssertionsTest {
     @Test
     @DisplayName("testStringContaining: works correctly")
     void testStringContaining() {
+        // Given
         var substring = one(strings(10));
         var instance = stringContaining(substring);
+        // Then
+        Tests.checkForNullCase(instance);
 
-        assertNotNull(instance);
-        assertThrowsFailedAssertion(() -> instance.check(null));
-
-        var fullString = one(strings());
-        // Matches
-        instance.check(fullString + substring + fullString);
-
-        // Does not match
-        assertThrowsFailedAssertion(() -> instance.check(one(alphabeticStrings())));
+        // Given
+        var goodStrings = AlchemyGenerator.of(
+            () -> one(strings()) + substring + one(strings())
+        );
+        var badStrings = strings();
+        // Then
+        Tests.runTests(instance, badStrings, goodStrings);
     }
 
     @Test
@@ -391,69 +387,89 @@ final class StringAssertionsTest {
     @Test
     @DisplayName("testAllUpperCaseString: works correctly")
     void testAllUpperCaseString() {
+        // Given
         var instance = allUpperCaseString();
+        // Then
+        Tests.checkForNullCase(instance);
+        assertThrowsFailedAssertion(
+            () -> instance.check("")
+        );
+        assertThrowsFailedAssertion(
+            () -> instance.check(one(alphabeticStrings()).toLowerCase())
+        );
 
-        assertNotNull(instance);
-        assertThrowsFailedAssertion(() -> instance.check(null));
-        assertThrowsFailedAssertion(() -> instance.check(""));
-        assertThrowsFailedAssertion(() -> instance.check(one(alphabeticStrings()).toLowerCase()));
-
-        var upper = one(alphabeticStrings(50)).toUpperCase();
-        instance.check(upper);
-
-        // Mix-case fails
-        var idx = one(integers(0, upper.length() - 1));
-        var sb = new StringBuilder(upper);
-        sb.setCharAt(idx, Character.toLowerCase(upper.charAt(idx)));
-        assertThrowsFailedAssertion(() -> instance.check(sb.toString()));
+        var badStrings = alphabeticStrings(50).mapping(this::randomCharToLowercase);
+        var goodStrings = badStrings.mapping(String::toUpperCase);
+        // Then
+        Tests.runTests(instance, badStrings, goodStrings);
     }
 
     @Test
     @DisplayName("testAllLowerCaseString: works correctly")
     void testAllLowerCaseString() {
+        // Given
         var instance = allLowerCaseString();
+        // Then
+        Tests.checkForNullCase(instance);
+        assertThrowsFailedAssertion(
+            () -> instance.check("")
+        );
+        assertThrowsFailedAssertion(
+            () -> instance.check(one(alphabeticStrings()).toUpperCase())
+        );
 
-        assertNotNull(instance);
-        assertThrowsFailedAssertion(() -> instance.check(null));
-        assertThrowsFailedAssertion(() -> instance.check(""));
-        assertThrowsFailedAssertion(() -> instance.check(one(alphabeticStrings()).toUpperCase()));
+        // Given
+        var goodStrings = alphabeticStrings(50).mapping(String::toLowerCase);
+        var badStrings = alphabeticStrings(50).mapping(this::randomCharToUppercase);
+        // Then
+        Tests.runTests(instance, badStrings, goodStrings);
+    }
 
-        var lower = one(alphabeticStrings(50)).toLowerCase();
-        instance.check(lower);
-
-        // Mix-case fails
-        var idx = one(integers(0, lower.length() - 1));
-        StringBuilder sb = new StringBuilder(lower);
-        sb.setCharAt(idx, Character.toUpperCase(lower.charAt(idx)));
-        assertThrowsFailedAssertion(() -> instance.check(sb.toString()));
+    private String randomCharToUppercase(String string) {
+        var index = one(integers(0, string.length()));
+        var character = string.charAt(index);
+        return string.replace(character, Character.toUpperCase(character));
+    }
+    private String randomCharToLowercase(String string) {
+        var index = one(integers(0, string.length()));
+        var character = string.charAt(index);
+        return string.replace(character, Character.toLowerCase(character));
     }
 
     @Test
     @DisplayName("testAlphabeticString: works correctly")
     void testAlphabeticString() {
+        // Given
         var instance = alphabeticString();
+        // Then
+        Tests.checkForNullCase(instance);
 
-        assertNotNull(instance);
-        assertThat(one(alphabeticStrings()), notNullValue());
-
-        var alpha = one(alphabeticStrings());
-        instance.check(alpha);
-
-        assertThrowsFailedAssertion(() -> instance.check(""));
-        assertThrowsFailedAssertion(() -> instance.check(alpha + "1"));
+        // Given
+        var goodStrings = alphabeticStrings();
+        var badStrings = StringGenerators.strings(1024).mapping(s -> s + String.valueOf(5));
+        // Then
+        Tests.runTests(instance, badStrings, goodStrings);
+        assertThrowsFailedAssertion(
+            () -> instance.check("")
+        );
     }
 
     @Test
     @DisplayName("testAlphanumericString: works correctly")
     void testAlphanumericString() {
+        // Given
         var instance = alphanumericString();
+        // Then
+        Tests.checkForNullCase(instance);
 
-        assertNotNull(instance);
-        var alphanum = one(alphanumericStrings());
-        instance.check(alphanum);
-
-        assertThrowsFailedAssertion(() -> instance.check(""));
-        assertThrowsFailedAssertion(() -> instance.check(alphanum + "!"));
+        // Given
+        var goodStrings = alphanumericStrings();
+        var badStrings = strings().mapping(s -> s + "!");
+        // Then
+        Tests.runTests(instance, badStrings, goodStrings);
+        assertThrowsFailedAssertion(
+            () -> instance.check("")
+        );
     }
 
     //==============================
@@ -461,98 +477,50 @@ final class StringAssertionsTest {
     //==============================
 
     @Test
-    @DisplayName("testStringRepresentingInteger: works correctly")
-    void testStringRepresentingInteger() {
-        var instance = stringRepresentingInteger();
-
-        assertNotNull(instance);
-
-        var value = one(positiveIntegers());
-        var intStr = Integer.toString(value);
-        instance.check(intStr);
-
-        // Bad cases
-        double d = one(doubles(-100.0, 100.0));
-        assertThrowsFailedAssertion(() -> instance.check(Double.toString(d)));
-        assertThrowsFailedAssertion(() -> instance.check(one(alphabeticStrings())));
-    }
-
-    @Test
     @DisplayName("testIntegerString: works correctly")
     void testIntegerString() {
+        // Given
         var instance = integerString();
+        // Then
+        Tests.checkForNullCase(instance);
 
-        assertNotNull(instance);
-
-        var value = one(integers(Integer.MIN_VALUE, Integer.MAX_VALUE));
-        var intStr = Integer.toString(value);
-        instance.check(intStr);
-
-        // Bad cases
-        double d = one(doubles(-10.0, 10.0));
-        assertThrowsFailedAssertion(() -> instance.check(Double.toString(d)));
-        assertThrowsFailedAssertion(() -> instance.check(one(alphabeticStrings())));
+        // Given
+        var goodStrings = integers(Integer.MIN_VALUE, Integer.MAX_VALUE).mapping(String::valueOf);
+        var badStrings = alphabeticStrings();
+        var badDecimalStrings = doubles(-Double.MAX_VALUE, Double.MAX_VALUE).mapping(d -> Double.toString(d));
+        // Then
+        Tests.runTests(instance, badStrings, goodStrings);
+        Tests.runTests(instance, badDecimalStrings, goodStrings);
     }
 
     @Test
     @DisplayName("testDecimalString: works correctly")
     void testDecimalString() {
+        // Given
         var instance = decimalString();
+        // Then
+        Tests.checkForNullCase(instance);
 
-        assertNotNull(instance);
-
-        var value = one(doubles(-100.0, 100.0));
-        instance.check(Double.toString(value));
-
-        // Bad cases
-        assertThrowsFailedAssertion(() -> instance.check(one(alphabeticStrings())));
+        // Given
+        var goodStrings = doubles(-1000.0, 1000.0).mapping(String::valueOf);
+        var badStrings = alphabeticStrings();
+        // Then
+        Tests.runTests(instance, badStrings, goodStrings);
     }
 
     @Test
     @DisplayName("testValidUUID: works correctly")
     void testValidUUID() {
+        // Given
         var instance = validUUID();
+        // Then
+        Tests.checkForNullCase(instance);
 
-        assertNotNull(instance);
-
-        var uuid = one(uuids());
-        instance.check(uuid);
-
-        assertThrowsFailedAssertion(() -> instance.check(one(alphabeticStrings(10))));
-    }
-
-    @Test
-    @DisplayName("testIntegerStringWithGoodString: integerString works with valid integer strings")
-    void testIntegerStringWithGoodString() {
-        var value = one(integers(Integer.MIN_VALUE, Integer.MAX_VALUE));
-        var string = Integer.toString(value);
-
-        var assertion = integerString();
-        assertNotNull(assertion);
-
-        assertion.check(string);
-    }
-
-    @Test
-    @DisplayName("testIntegerStringWithBadString: integerString rejects non-integer strings")
-    void testIntegerStringWithBadString() {
-        var assertion = integerString();
-
-        var alphabetic = one(alphabeticStrings());
-        assertThrowsFailedAssertion(() -> assertion.check(alphabetic));
-
-        var value = one(doubles(-Double.MAX_VALUE, Double.MAX_VALUE));
-        var decimalString = Double.toString(value);
-        assertThrowsFailedAssertion(() -> assertion.check(decimalString));
-    }
-
-    @Test
-    @DisplayName("testDecimalStringWithBadString: decimalString rejects non-decimal strings")
-    void testDecimalStringWithBadString() {
-        var assertion = decimalString();
-
-        var alphanumeric = one(alphanumericStrings());
-        assertThrowsFailedAssertion(() -> assertion.check(alphanumeric));
+        // Given
+        var goodStrings = uuids();
+        Tests.runTests(instance, alphabeticStrings(), goodStrings);
+        Tests.runTests(instance, alphanumericStrings(), goodStrings);
+        Tests.runTests(instance, strings(), goodStrings);
     }
 
 }
