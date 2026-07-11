@@ -42,7 +42,7 @@ public final class GeolocationAssertions {
     public static AlchemyAssertion<Double> validLatitude() {
         return latitude -> {
             checkThat(latitude)
-                .usingMessage("latitude cannot be null")
+                .usingMessage("Latitude cannot be null")
                 .is(notNull());
             checkThat(latitude)
                 .usingMessage("Latitude must be between -90 and 90, but was: " + latitude)
@@ -58,6 +58,9 @@ public final class GeolocationAssertions {
      */
     public static AlchemyAssertion<Double> validLongitude() {
         return longitude -> {
+            checkThat(longitude)
+                .usingMessage("Longitude cannot be null")
+                .is(notNull());
             checkThat(longitude)
                 .usingMessage("Longitude must be between -180 and 180, but was " + longitude)
                 .is(greaterThanOrEqualTo(-180.0))

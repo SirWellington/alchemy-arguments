@@ -95,13 +95,16 @@ class CollectionAssertionsTest {
         var element = randomElementFrom(strings);
         var instance = listContaining(element);
         // Then
-        assertThat(instance, notNullValue());
+        Tests.checkForNullCase(instance);
 
         // Then
         instance.check(strings);
         // Then
         assertThrowsFailedAssertion(
             () -> instance.check(Collections.singletonList("xyz"))
+        );
+        assertThrowsFailedAssertion(
+            () -> instance.check(Collections.emptyList())
         );
     }
 

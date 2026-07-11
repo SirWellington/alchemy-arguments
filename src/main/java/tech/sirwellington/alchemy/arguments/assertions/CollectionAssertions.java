@@ -108,21 +108,33 @@ public final class CollectionAssertions {
         };
     }
 
+    /**
+     * Asserts that the {@link List} is empty.
+     */
     public static <E> AlchemyAssertion<List<E>> emptyList() {
         return emptyCollection();
     }
 
+    /**
+     * Asserts that the {@link Set} is empty.
+     */
     public static <E> AlchemyAssertion<Set<E>> emptySet() {
         return emptyCollection();
     }
 
+    /**
+     * Asserts that the {@link Map} is empty.
+     */
     public static <K, V> AlchemyAssertion<Map<K, V>> emptyMap() {
         return map -> {
             if (map == null) {
-                failAssertion("Map is null");
+                failAssertion("Map is null, not empty.");
             }
             if (!map.isEmpty()) {
-                failAssertion("Expected an empty map, but instead [{0}]", map);
+                failAssertion(
+                    "Expected an empty map, but instead a map with {0} elements",
+                    map.size()
+                );
             }
         };
     }
@@ -136,10 +148,12 @@ public final class CollectionAssertions {
         checkNotNull(element, "Cannot check for null element");
 
         return list -> {
-            checkNotNull(list, "List cannot be null");
+            if (isNullOrEmpty(list)) {
+                failAssertion("List is null and does not contain {0}", element);
+            }
 
             if (!list.contains(element)) {
-                failAssertion(element + " not found in List");
+                failAssertion("Element [{0}] not found in List: [{1}]", element, list);
             }
         };
     }
@@ -151,11 +165,12 @@ public final class CollectionAssertions {
         checkNotNull(element, "Cannot check for null element");
 
         return collection -> {
-            checkNotNull(collection, "Collection cannot be null");
-
-            if (!collection.contains(element)) {
-                failAssertion(element + " not found in Collection");
+            if (isNullOrEmpty(collection)) {
+                failAssertion("Collection is null or empty and does not contain {0}", element);
             }
+
+            if (!collection.contains(element))
+                failAssertion(element + " not found in Collection");
         };
     }
 
@@ -171,7 +186,9 @@ public final class CollectionAssertions {
         }
 
         return collection -> {
-            checkNotNull(collection, "Collection cannot be null");
+            if (isNullOrEmpty(collection)) {
+                failAssertion("Collection is empty or null");
+            }
 
             collectionContaining(first).check(collection);
 
@@ -204,8 +221,7 @@ public final class CollectionAssertions {
         return collection -> {
             checkNotNull(collection, "Collection cannot be null");
 
-            boolean found = collection.contains(first) ||
-                Arrays.stream(others).anyMatch(collection::contains);
+            var found = collection.contains(first) || Arrays.stream(others).anyMatch(collection::contains);
 
             if (!found) {
                 failAssertion(
@@ -223,7 +239,9 @@ public final class CollectionAssertions {
         checkNotNull(key, "Key cannot be null");
 
         return map -> {
-            checkNotNull(map, "Map cannot be null");
+            if (map == null) {
+                failAssertion("Map was null");
+            }
 
             if (!map.containsKey(key)) {
                 failAssertion("Expected key [{0}] in Map", key);
