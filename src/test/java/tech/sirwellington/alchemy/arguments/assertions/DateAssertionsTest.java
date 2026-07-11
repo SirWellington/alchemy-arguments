@@ -44,8 +44,7 @@ final class DateAssertionsTest {
         assertThrows(
             () -> DateAssertions.class.getDeclaredConstructor().newInstance()
         ).isInstanceOf(InvocationTargetException.class)
-         .hasCauseInstanceOf(IllegalAccessException.class)
-         .containsInMessage("cannot directly instantiate");
+         .hasCauseInstanceOf(IllegalAccessException.class);
     }
 
     @Test

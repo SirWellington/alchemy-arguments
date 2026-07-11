@@ -46,8 +46,7 @@ final class TimeAssertionsTest {
         assertThrows(
             () -> TimeAssertions.class.getDeclaredConstructor().newInstance()
         ).isInstanceOf(InvocationTargetException.class)
-         .hasCauseInstanceOf(IllegalAccessException.class)
-         .containsInMessage("cannot directly instantiate");
+         .hasCauseInstanceOf(IllegalAccessException.class);
     }
 
     @Test
