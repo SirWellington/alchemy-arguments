@@ -43,7 +43,7 @@ class AssertionsTest {
         var instance = Assertions.notNull();
         assertThat(instance, notNullValue());
 
-        Object mock = new Object();
+        var mock = new Object();
         instance.check(mock);
     }
 
@@ -127,8 +127,8 @@ class AssertionsTest {
 
     @Test
     void testEqualTo() {
-        String first = string;
-        String second;
+        var first = string;
+        var second = "";
 
         do {
             second = StringGenerators.strings().get();

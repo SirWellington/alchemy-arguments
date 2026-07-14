@@ -201,7 +201,7 @@ public final class NumberAssertions {
         return number -> {
             notNull().check(number);
 
-            if (!(number >0)) {
+            if (!(number > 0)) {
                 failAssertion("Expected positive integer but was {0}", number);
             }
         };
