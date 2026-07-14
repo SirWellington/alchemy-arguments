@@ -120,8 +120,8 @@ class AssertionsTest {
 
     @Test
     void testEqualTo() {
-        String first = string;
-        String second;
+        var first = string;
+        var second = "";
 
         do {
             second = StringGenerators.strings().get();
