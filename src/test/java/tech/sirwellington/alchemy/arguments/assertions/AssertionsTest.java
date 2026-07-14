@@ -14,6 +14,8 @@ import tech.sirwellington.alchemy.test.generation.GenerateString;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.notNullValue;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.*;
 import static tech.sirwellington.alchemy.arguments.TestHelpers.assertThrowsFailedAssertion;
 import static tech.sirwellington.alchemy.arguments.assertions.Assertions.instanceOf;
 import static tech.sirwellington.alchemy.test.ThrowableAssertion.assertThrows;
@@ -98,18 +100,23 @@ class AssertionsTest {
     @Test
     void testNot() {
         // Given
-        AlchemyAssertion<Object> mock = _ -> {
-            throw new FailedAssertionException();
-        };
-        // Then
-        assertThrows(() -> mock.check("")).isInstanceOf(FailedAssertionException.class);
+        AlchemyAssertion<Object> mock = mock();
+        doThrow(FailedAssertionException.class)
+            .when(mock)
+                .check(any());
+
         var instance = Assertions.not(mock);
+
         // When
         instance.check("");
-        // Then, no exception
+        // Then
+        verify(mock).check("");
 
-        AlchemyAssertion<Object> successMock = value -> {};
+        // When, no exception
+        AlchemyAssertion<Object> successMock = mock();
+        // Then, exception
         assertThrowsFailedAssertion(() -> Assertions.not(successMock).check(""));
+        verify(successMock).check("");
     }
 
     @Test
