@@ -41,7 +41,7 @@ class AssertionsTest {
         var instance = Assertions.notNull();
         assertThat(instance, notNullValue());
 
-        Object mock = new Object();
+        var mock = new Object();
         instance.check(mock);
     }
 
