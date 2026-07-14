@@ -50,14 +50,14 @@ final class NumberAssertionsTest {
 
         // Given
         var goodNumbers = integers(min, max);
-        var belowMin = integers(Integer.MIN_VALUE, min);
+        var badBelowMin = integers(Integer.MIN_VALUE, min);
         // Then
-        Tests.runTests(instance, belowMin, goodNumbers);
+        Tests.runTests(instance, badBelowMin, goodNumbers);
 
         // Given
-        var aboveMin = integers(max+1, Integer.MAX_VALUE);
+        var badAboveMin = integers(max+1, Integer.MAX_VALUE);
         // Then
-        Tests.runTests(instance, aboveMin, goodNumbers);
+        Tests.runTests(instance, badAboveMin, goodNumbers);
     }
 
     @Test
@@ -80,10 +80,10 @@ final class NumberAssertionsTest {
         Tests.checkForNullCase(instance);
 
         // Given
-        var badNumbers = integers(0, 100).mapping(x -> upperBound + x);
-        var goodNumbers = smallPositiveIntegers().mapping(x -> upperBound - x);
+        var goodNumbers = integers(Integer.MIN_VALUE, upperBound);
+        var badAboveBound = integers(upperBound, Integer.MAX_VALUE);
         // Then
-        Tests.runTests(instance, badNumbers, goodNumbers);
+        Tests.runTests(instance, badAboveBound, goodNumbers);
     }
 
     @Test
@@ -103,9 +103,9 @@ final class NumberAssertionsTest {
         Tests.checkForNullCase(instance);
 
         // Given
-        var badNumbers = smallPositiveIntegers().mapping(x -> upperBound + x);
-        var goodNumbers = integers(0, 1000).mapping(x -> upperBound - x);
-        Tests.runTests(instance, badNumbers, goodNumbers);
+        var goodNumbers = integers(Integer.MIN_VALUE, upperBound+1);
+        var badAboveBound = integers(upperBound+1, Integer.MAX_VALUE);
+        Tests.runTests(instance, badAboveBound, goodNumbers);
     }
 
     @Test
@@ -140,18 +140,18 @@ final class NumberAssertionsTest {
     @DisplayName("testIntGreaterThanOrEqualTo: greaterThanOrEqualTo assertion works correctly")
     void testIntGreaterThanOrEqualTo() {
         // Given
-        var inclusiveLowerBound = one(integers(-1000, 1000));
-        var instance = greaterThanOrEqualTo(inclusiveLowerBound);
+        var lowerBound = one(integers(-1000, 1000));
+        var instance = greaterThanOrEqualTo(lowerBound);
 
         // Then
         Tests.checkForNullCase(instance);
-        instance.check(inclusiveLowerBound);
+        instance.check(lowerBound);
 
         // Given
-        var goodNumbers = integers(1, 100).mapping(x -> inclusiveLowerBound + x);
-        var badNumbers = integers(25, 1000).mapping(x -> inclusiveLowerBound - x);
+        var goodNumbers = integers(lowerBound, Integer.MAX_VALUE);
+        var badBelowBound = integers(Integer.MIN_VALUE, lowerBound);
         // Then
-        Tests.runTests(instance, badNumbers, goodNumbers);
+        Tests.runTests(instance, badBelowBound, goodNumbers);
     }
 
     @Test
@@ -198,9 +198,9 @@ final class NumberAssertionsTest {
         Tests.checkForNullCase(instance);
 
         // Given
-        var badNumbers = longs(0, 1000L).mapping(x -> lowerBound - x);
-        var goodNumbers = smallPositiveLongs().mapping(x -> lowerBound + x);
-        Tests.runTests(instance, badNumbers, goodNumbers);
+        var goodNumbers = longs(lowerBound, Long.MAX_VALUE);
+        var badBelowBound = longs(Long.MIN_VALUE, lowerBound+1);
+        Tests.runTests(instance, badBelowBound, goodNumbers);
     }
 
     @Test
@@ -214,15 +214,15 @@ final class NumberAssertionsTest {
     @DisplayName("testLongGreaterThanOrEqualTo: greaterThanOrEqualTo assertion works correctly")
     void testLongGreaterThanOrEqualTo() {
         // Given
-        var inclusiveLowerBound = one(longs(-10_000L, 10_000L));
+        var lowerBound = one(longs(-10_000L, 10_000L));
         // When
-        var instance = greaterThanOrEqualTo(inclusiveLowerBound);
+        var instance = greaterThanOrEqualTo(lowerBound);
         // Then
         Tests.checkForNullCase(instance);
-        var badNumbers = longs(Long.MIN_VALUE, inclusiveLowerBound);
-        var goodNumbers = longs(inclusiveLowerBound, Long.MAX_VALUE);
+        var goodNumbers = longs(lowerBound, Long.MAX_VALUE);
+        var badBelowBound = longs(Long.MIN_VALUE, lowerBound);
         // Then
-        Tests.runTests(instance, badNumbers, goodNumbers);
+        Tests.runTests(instance, badBelowBound, goodNumbers);
     }
 
     @Test
@@ -230,15 +230,15 @@ final class NumberAssertionsTest {
     void testLongLessThan() {
         // Given
         var upperBound = one(longs(-10000L, 100000L));
-        // Whne
+        // When
         var instance = lessThan(upperBound);
         // Then
         Tests.checkForNullCase(instance);
         // Given
-        var badNumbers = longs(0, 10000L).mapping(x -> upperBound + x);
-        var goodNumber = smallPositiveLongs().mapping(x -> upperBound - x);
+        var goodNumber = longs(Long.MIN_VALUE, upperBound);
+        var badAboveBound = longs(upperBound, Long.MAX_VALUE);
         // Then
-        Tests.runTests(instance, badNumbers, goodNumber);
+        Tests.runTests(instance, badAboveBound, goodNumber);
     }
 
     @Test
@@ -259,16 +259,16 @@ final class NumberAssertionsTest {
         Tests.checkForNullCase(instance);
 
         // Given
-        var badNumbers = smallPositiveLongs().mapping(x -> lowerBound + x);
-        var goodNumbers = longs(0, 1000L).mapping(x -> lowerBound - x);
-        Tests.runTests(instance, badNumbers, goodNumbers);
+        var goodNumbers = longs(Long.MIN_VALUE, lowerBound+1);
+        var badAboveBound = longs(lowerBound+1, Long.MAX_VALUE);
+        Tests.runTests(instance, badAboveBound, goodNumbers);
     }
 
     @Test
     @DisplayName("testNumberBetweenLongs: numberBetween assertion works correctly for longs")
     void testNumberBetweenLongs() {
         // Given
-        var min = one(longs(Long.MIN_VALUE+1, Long.MAX_VALUE - 10L));
+        var min = one(longs(Long.MIN_VALUE+1, Long.MAX_VALUE - 100L));
         var max = one(longs(min+1, Long.MAX_VALUE));
         var instance = numberBetween(min, max);
         // Then
@@ -276,12 +276,12 @@ final class NumberAssertionsTest {
 
         // Given
         var goodNumbers = longs(min, max);
-        var belowMin = positiveLongs().mapping(x -> min - x);
+        var belowMin = longs(Long.MIN_VALUE, min);
         // Then
         Tests.runTests(instance, belowMin, goodNumbers);
 
         // Given
-        var aboveMax = positiveIntegers().mapping(x -> max + x);
+        var aboveMax = longs(max, Long.MAX_VALUE);
         // Then
         Tests.runTests(instance, aboveMax, goodNumbers);
     }
@@ -339,9 +339,9 @@ final class NumberAssertionsTest {
         Tests.checkForNullCase(instance);
 
         // Given
-        var badNumbers = doubles(0.0, 10000.0).mapping(x -> upperBound + x);
-        var goodNumbers = doubles(1.0, 100.0).mapping(x -> upperBound - x);
-        Tests.runTests(instance, badNumbers, goodNumbers);
+        var goodNumbers = doubles(-Double.MAX_VALUE, upperBound);
+        var badAboveBound = doubles(upperBound, Double.MAX_VALUE);
+        Tests.runTests(instance, badAboveBound, goodNumbers);
     }
 
     @Test
@@ -361,9 +361,9 @@ final class NumberAssertionsTest {
         // Then
         Tests.checkForNullCase(instance);
         // Given
-        var badNumbers = doubles(upperBound, Double.MAX_VALUE);
         var goodNumbers = doubles(-Double.MAX_VALUE, upperBound+delta);
-        Tests.runTests(instance, badNumbers, goodNumbers);
+        var badAboveBound = doubles(upperBound, Double.MAX_VALUE);
+        Tests.runTests(instance, badAboveBound, goodNumbers);
     }
 
     @Test
@@ -376,10 +376,10 @@ final class NumberAssertionsTest {
         Tests.checkForNullCase(instance);
 
         // Given
-        var badNumbers = doubles(upperBound+0.1, Double.MAX_VALUE);
         var goodNumbers = doubles(-Double.MAX_VALUE, upperBound);
+        var badAboveBound = doubles(upperBound+0.1, Double.MAX_VALUE);
         // Then
-        Tests.runTests(instance, badNumbers, goodNumbers);
+        Tests.runTests(instance, badAboveBound, goodNumbers);
     }
 
     @Test
@@ -393,10 +393,11 @@ final class NumberAssertionsTest {
         Tests.checkForNullCase(instance);
 
         // Given
-        var badNumbers = doubles(upperBound+delta+0.1, Double.MAX_VALUE);
         var goodNumbers = doubles(-Double.MAX_VALUE, upperBound);
+        var badAboveBound = doubles(upperBound+delta+0.1, Double.MAX_VALUE);
+
         // Then
-        Tests.runTests(instance, badNumbers, goodNumbers);
+        Tests.runTests(instance, badAboveBound, goodNumbers);
     }
 
     @Test
@@ -410,10 +411,10 @@ final class NumberAssertionsTest {
         Tests.checkForNullCase(instance);
 
         // Given
-        var badNumbers = doubles(-Double.MAX_VALUE, lowerBound);
         var goodNumbers = doubles(lowerBound + 0.1, Double.MAX_VALUE);
+        var badBelowBound = doubles(-Double.MAX_VALUE, lowerBound);
         // Then
-        Tests.runTests(instance, badNumbers, goodNumbers);
+        Tests.runTests(instance, badBelowBound, goodNumbers);
     }
 
     @Test
@@ -434,25 +435,25 @@ final class NumberAssertionsTest {
         Tests.checkForNullCase(instance);
 
         // Given
-        var badNumbers = doubles(-Double.MAX_VALUE, lowerBound - delta);
+        var badBelowBound = doubles(-Double.MAX_VALUE, lowerBound - delta);
         var goodNumbers = doubles(lowerBound, Double.MAX_VALUE);
         // Then
-        Tests.runTests(instance, badNumbers, goodNumbers);
+        Tests.runTests(instance, badBelowBound, goodNumbers);
     }
 
     @Test
     @DisplayName("testDoubleGreaterThanOrEqualTo: greaterThanOrEqualTo assertion works correctly")
     void testDoubleGreaterThanOrEqualTo() {
         // Given
-        var inclusiveLowerBound = one(doubles(-10000.0, 10000.0));
-        var instance = greaterThanOrEqualTo(inclusiveLowerBound);
+        var lowerBound = one(doubles(-10000.0, 10000.0));
+        var instance = greaterThanOrEqualTo(lowerBound);
         // Then
         Tests.checkForNullCase(instance);
 
         // Given
-        var goodNumbers = doubles(inclusiveLowerBound, Double.MAX_VALUE);
-        var badNumbers = doubles(-Double.MAX_VALUE, inclusiveLowerBound);
+        var goodNumbers = doubles(lowerBound, Double.MAX_VALUE);
+        var badBelowBound = doubles(-Double.MAX_VALUE, lowerBound);
         // Then
-        Tests.runTests(instance, badNumbers, goodNumbers);
+        Tests.runTests(instance, badBelowBound, goodNumbers);
     }
 }
