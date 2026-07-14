@@ -22,6 +22,14 @@ import static tech.sirwellington.alchemy.arguments.internal.Checks.failAssertion
 
 /**
  * Assertions when dealing with booleans.
+ * <br>
+ * {@snippet :
+ * var user = getUser(request.userId);
+ * checkThat(user.hasMembership())
+ *   .throwing(UnauthorizedException.class)
+ *   .usingMessage("customer must have a membership to perform this request")
+ *   .isA(trueStatement());
+ * }
  * @author SirWellington
  */
 @NonInstantiable

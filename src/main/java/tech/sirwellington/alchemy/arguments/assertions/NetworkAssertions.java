@@ -24,7 +24,13 @@ import static tech.sirwellington.alchemy.arguments.assertions.StringAssertions.n
 import static tech.sirwellington.alchemy.arguments.internal.Checks.failAssertion;
 
 /**
-
+ * Assertions for data related to Networking.
+ * <br>
+ * Example:
+ * {@snippet :
+ * var imageURLString = request.getImageUrl();
+ * checkThat(imageURLString).isA(validURL());
+ * }
  * @author SirWellington
  */
 @NonInstantiable

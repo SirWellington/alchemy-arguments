@@ -17,6 +17,7 @@ package tech.sirwellington.alchemy.arguments.assertions;
 
 import java.util.*;
 
+import tech.sirwellington.alchemy.annotations.arguments.Required;
 import tech.sirwellington.alchemy.arguments.AlchemyAssertion;
 import tech.sirwellington.alchemy.arguments.internal.Checks;
 
@@ -24,6 +25,12 @@ import static tech.sirwellington.alchemy.arguments.internal.Checks.*;
 
 /**
  * Assertions to {@link Collection Collection types} and {@link Map Maps}.
+ * {@snippet :
+ * var transactions = getTransactions(user);
+ * checkThat(transactions)
+ *   .usingMessage("customer has no transactions")
+ *   .isA(nonEmptyList());
+ * }
  *
  * @author SirWellington
  */
@@ -235,6 +242,10 @@ public final class CollectionAssertions {
 
     // ——— Map Assertions ———
 
+    /**
+     * Assertion on a {@link Map} that the map has the provided key.
+     * @param key Assert that this key is in the map.
+     */
     public static <K, V> AlchemyAssertion<Map<K, V>> mapWithKey(K key) {
         checkNotNull(key, "Key cannot be null");
 
@@ -249,6 +260,11 @@ public final class CollectionAssertions {
         };
     }
 
+    /**
+     * Assert that the map has the provided key-value pair.
+     * @param key The key that must be in the map.
+     * @param value The value that must be associated with the key.
+     */
     public static <K, V> AlchemyAssertion<Map<K, V>> mapWithKeyValue(K key, V value) {
         checkNotNull(key, "Key cannot be null");
 
@@ -266,7 +282,11 @@ public final class CollectionAssertions {
         };
     }
 
-    public static <K, V> AlchemyAssertion<K> keyInMap(Map<K, V> map) {
+    /**
+     * Assertion on a key that must be a key in the {@code map};
+     * @param map The map (non-null) to check against.
+     */
+    public static <K, V> AlchemyAssertion<K> keyInMap(@Required Map<K, V> map) {
         checkNotNull(map, "Map cannot be null");
 
         return key -> {
@@ -276,6 +296,10 @@ public final class CollectionAssertions {
         };
     }
 
+    /**
+     * Assertion that provided value is in the map.
+     * @param map The map (non-null) to check against.
+     */
     public static <K, V> AlchemyAssertion<V> valueInMap(Map<K, V> map) {
         checkNotNull(map, "Map cannot be null");
 
@@ -286,6 +310,10 @@ public final class CollectionAssertions {
         };
     }
 
+    /**
+     * Assertion that the element is in the provided {@link Collection}.
+     * @param collection The collection to check against.
+     */
     public static <E> AlchemyAssertion<E> elementInCollection(Collection<E> collection) {
         checkNotNull(collection, "Collection cannot be null");
 
@@ -298,6 +326,10 @@ public final class CollectionAssertions {
 
     // ——— Size Assertions ———
 
+    /**
+     * Assertion that the specified {@link Collection} has the specified {@code size}.
+     * @param size The size to check against.
+     */
     public static <E, C extends Collection<E>> AlchemyAssertion<C> collectionOfSize(int size) {
         checkThat(size >= 0, "Size must be ≥ 0");
 

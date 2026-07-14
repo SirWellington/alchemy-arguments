@@ -23,6 +23,7 @@ import tech.sirwellington.alchemy.arguments.AlchemyAssertion;
 import tech.sirwellington.alchemy.arguments.Arguments;
 import tech.sirwellington.alchemy.arguments.FailedAssertionException;
 
+import static tech.sirwellington.alchemy.arguments.Arguments.checkThat;
 import static tech.sirwellington.alchemy.arguments.internal.Checks.*;
 
 /**
@@ -431,4 +432,23 @@ public final class StringAssertions {
         };
     }
 
+    /**
+     * Checks that a ZIP code string is:
+     * <ul>
+     *   <li>Not null</li>
+     *   <li>Represents an Integer number (e.g., {@code "90012"})</li>
+     *   <li>Exactly 5 digits long (e.g., {@code "01693"})</li>
+     *   <li>In the valid numeric range [00000, 99999]</li>
+     * </ul>
+     *
+     * @return an {@link AlchemyAssertion} for strict ZIP code strings
+     */
+    public static AlchemyAssertion<String> validZipCode() {
+        return zip -> checkThat(zip)
+                            .usingMessage("zip must consist of 4-5 characters")
+                            .isA(stringWithLengthGreaterThanOrEqualTo(4))
+                            .isA(stringWithLengthLessThanOrEqualTo(5))
+                            .usingMessage("zip must consist of numbers only")
+                            .is(integerString());
+    }
 }

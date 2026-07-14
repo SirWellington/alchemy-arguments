@@ -24,6 +24,15 @@ import static tech.sirwellington.alchemy.arguments.internal.Checks.failAssertion
 
 /**
  * Factory methods for {@link AlchemyAssertion}s on numeric types.
+ * <br>
+ * Example:
+ * {@snippet :
+ * var balance = database.getCustomerBalance(userId);
+ * checkThat(balance)
+ *   .throwing(OverdraftException.class)
+ *   .usingMessage("customer has no money in their account")
+ *   .isA(positiveInteger());
+ * }
  *
  * @author SirWellington
  */

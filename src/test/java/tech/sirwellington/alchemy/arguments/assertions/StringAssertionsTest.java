@@ -15,13 +15,20 @@
 
 package tech.sirwellington.alchemy.arguments.assertions;
 
+import java.util.Random;
+
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.RepeatedTest;
 import org.junit.jupiter.api.Test;
+import tech.sirwellington.alchemy.arguments.FailedAssertionException;
 import tech.sirwellington.alchemy.generator.AlchemyGenerator;
 import tech.sirwellington.alchemy.generator.CollectionGenerators;
 import tech.sirwellington.alchemy.generator.StringGenerators;
 import tech.sirwellington.alchemy.test.AlchemyTest;
 
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.notNullValue;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static tech.sirwellington.alchemy.arguments.TestHelpers.assertThrowsFailedAssertion;
 import static tech.sirwellington.alchemy.arguments.assertions.StringAssertions.*;
@@ -38,6 +45,21 @@ import static tech.sirwellington.alchemy.test.ThrowableAssertion.assertThrows;
 @DisplayName("StringAssertions Tests")
 @AlchemyTest
 final class StringAssertionsTest {
+
+    private static final int ITERATIONS = 100;
+
+    private String zip;
+    private String badZip;
+    private final Random random = new Random();
+
+    @BeforeEach
+    void setUp() {
+        int zipVal = one(integers(0, 99999));
+        zip = String.format("%05d", zipVal);
+
+        int badZipVal = one(integers(100000, Integer.MAX_VALUE));
+        badZip = String.valueOf(badZipVal);
+    }
 
     //==============================
     // EMPTY / NULL CHECKS
@@ -523,4 +545,26 @@ final class StringAssertionsTest {
         Tests.runTests(instance, strings(), goodStrings);
     }
 
+    //==============================
+    // ZIP CODE VALIDATION
+    //==============================
+
+    @RepeatedTest(ITERATIONS)
+    void testValidZipCode() {
+        var assertion = StringAssertions.validZipCode();
+        assertThat(assertion, notNullValue());
+
+        assertion.check(zip);
+    }
+
+    @Test
+    void testInvalidZipCode() {
+        var assertion = StringAssertions.validZipCode();
+        assertThrows(() -> assertion.check(badZip))
+            .isInstanceOf(FailedAssertionException.class);
+        final var nonNumeric = one(alphabeticStrings());
+
+        assertThrows(() -> assertion.check(nonNumeric))
+            .isInstanceOf(FailedAssertionException.class);
+    }
 }
