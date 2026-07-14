@@ -15,15 +15,15 @@
 
 package tech.sirwellington.alchemy.arguments;
 
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
+
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import tech.sirwellington.alchemy.test.AlchemyTest;
 import tech.sirwellington.alchemy.test.generation.GenerateString;
-
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.mockito.ArgumentMatchers.any;

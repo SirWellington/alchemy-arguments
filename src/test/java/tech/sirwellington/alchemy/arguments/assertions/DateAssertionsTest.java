@@ -15,18 +15,17 @@
 
 package tech.sirwellington.alchemy.arguments.assertions;
 
+import java.util.Date;
+
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import tech.sirwellington.alchemy.generator.DateGenerators;
 import tech.sirwellington.alchemy.test.AlchemyTest;
 
-import java.lang.reflect.InvocationTargetException;
-import java.util.Date;
-
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static tech.sirwellington.alchemy.arguments.TestHelpers.assertThrowsFailedAssertion;
 import static tech.sirwellington.alchemy.arguments.assertions.DateAssertions.*;
-import static tech.sirwellington.alchemy.generator.AlchemyGenerator.Get.one;
+import static tech.sirwellington.alchemy.generator.AlchemyGenerator.one;
 import static tech.sirwellington.alchemy.test.ThrowableAssertion.assertThrows;
 
 /**

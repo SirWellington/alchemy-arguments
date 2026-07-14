@@ -15,15 +15,15 @@
 
 package tech.sirwellington.alchemy.arguments;
 
+import java.util.Collections;
+import java.util.List;
+import java.util.Set;
+
 import org.junit.jupiter.api.Test;
 import tech.sirwellington.alchemy.arguments.assertions.Assertions;
 import tech.sirwellington.alchemy.test.AlchemyTest;
 import tech.sirwellington.alchemy.test.generation.GenerateInteger;
 import tech.sirwellington.alchemy.test.generation.GenerateString;
-
-import java.util.Collections;
-import java.util.List;
-import java.util.Set;
 
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;

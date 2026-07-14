@@ -15,13 +15,13 @@
 
 package tech.sirwellington.alchemy.arguments.assertions;
 
+import java.util.stream.IntStream;
+
 import org.junit.jupiter.api.Assertions;
 import tech.sirwellington.alchemy.annotations.access.Internal;
 import tech.sirwellington.alchemy.annotations.access.NonInstantiable;
 import tech.sirwellington.alchemy.arguments.AlchemyAssertion;
 import tech.sirwellington.alchemy.generator.AlchemyGenerator;
-
-import java.util.stream.IntStream;
 
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static tech.sirwellington.alchemy.arguments.TestHelpers.assertThrowsFailedAssertion;

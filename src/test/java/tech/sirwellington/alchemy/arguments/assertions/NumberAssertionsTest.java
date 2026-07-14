@@ -17,14 +17,10 @@ package tech.sirwellington.alchemy.arguments.assertions;
 
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import tech.sirwellington.alchemy.arguments.AlchemyAssertion;
-import tech.sirwellington.alchemy.generator.AlchemyGenerator;
 import tech.sirwellington.alchemy.test.AlchemyTest;
 
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static tech.sirwellington.alchemy.arguments.TestHelpers.assertThrowsFailedAssertion;
 import static tech.sirwellington.alchemy.arguments.assertions.NumberAssertions.*;
-import static tech.sirwellington.alchemy.generator.AlchemyGenerator.Get.one;
+import static tech.sirwellington.alchemy.generator.AlchemyGenerator.one;
 import static tech.sirwellington.alchemy.generator.NumberGenerators.*;
 import static tech.sirwellington.alchemy.test.ThrowableAssertion.assertThrows;
 

@@ -15,17 +15,16 @@
 
 package tech.sirwellington.alchemy.arguments;
 
+import java.lang.reflect.InvocationTargetException;
+import java.util.List;
+
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.junit.jupiter.MockitoExtension;
 import tech.sirwellington.alchemy.test.AlchemyTest;
-import tech.sirwellington.alchemy.test.ThrowableAssertion;
 import tech.sirwellington.alchemy.test.generation.GenerateList;
 import tech.sirwellington.alchemy.test.generation.GenerateString;
-
-import java.lang.reflect.InvocationTargetException;
-import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertNotNull;

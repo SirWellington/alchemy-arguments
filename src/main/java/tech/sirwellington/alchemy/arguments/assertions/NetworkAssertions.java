@@ -15,11 +15,10 @@
 
 package tech.sirwellington.alchemy.arguments.assertions;
 
+import java.net.URI;
+
 import tech.sirwellington.alchemy.annotations.access.NonInstantiable;
 import tech.sirwellington.alchemy.arguments.AlchemyAssertion;
-import tech.sirwellington.alchemy.arguments.FailedAssertionException;
-
-import java.net.URI;
 
 import static tech.sirwellington.alchemy.arguments.assertions.StringAssertions.nonEmptyString;
 import static tech.sirwellington.alchemy.arguments.internal.Checks.failAssertion;

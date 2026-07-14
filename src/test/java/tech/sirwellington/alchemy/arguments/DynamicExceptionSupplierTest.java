@@ -24,7 +24,6 @@ import tech.sirwellington.alchemy.test.generation.GenerateString;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.*;
-import static tech.sirwellington.alchemy.test.ThrowableAssertion.assertThrows;
 import static tech.sirwellington.alchemy.test.generation.GenerateString.Type.ALPHABETIC;
 
 /**

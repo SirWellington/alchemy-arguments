@@ -15,13 +15,13 @@
 
 package tech.sirwellington.alchemy.arguments.internal;
 
-import tech.sirwellington.alchemy.annotations.access.Internal;
-import tech.sirwellington.alchemy.annotations.arguments.Optional;
-import tech.sirwellington.alchemy.arguments.FailedAssertionException;
-
 import java.text.MessageFormat;
 import java.util.Collection;
 import java.util.Map;
+
+import tech.sirwellington.alchemy.annotations.access.Internal;
+import tech.sirwellington.alchemy.annotations.arguments.Optional;
+import tech.sirwellington.alchemy.arguments.FailedAssertionException;
 
 import static java.text.MessageFormat.format;
 

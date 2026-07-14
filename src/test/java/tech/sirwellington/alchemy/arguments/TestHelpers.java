@@ -1,13 +1,13 @@
 package tech.sirwellington.alchemy.arguments;
 
+import java.util.List;
+
 import tech.sirwellington.alchemy.annotations.arguments.Required;
 import tech.sirwellington.alchemy.arguments.internal.Checks;
 import tech.sirwellington.alchemy.test.ExceptionOperation;
 import tech.sirwellington.alchemy.test.ThrowableAssertion;
 
-import java.util.List;
-
-import static tech.sirwellington.alchemy.generator.AlchemyGenerator.Get.one;
+import static tech.sirwellington.alchemy.generator.AlchemyGenerator.one;
 import static tech.sirwellington.alchemy.generator.NumberGenerators.integers;
 
 public class TestHelpers {

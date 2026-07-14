@@ -20,11 +20,9 @@ import org.junit.jupiter.api.Test;
 import tech.sirwellington.alchemy.test.AlchemyTest;
 import tech.sirwellington.alchemy.test.generation.GenerateDouble;
 
-import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static tech.sirwellington.alchemy.arguments.TestHelpers.assertThrowsFailedAssertion;
-import static tech.sirwellington.alchemy.arguments.assertions.GeolocationAssertions.*;
-import static tech.sirwellington.alchemy.generator.AlchemyGenerator.Get.one;
-import static tech.sirwellington.alchemy.generator.NumberGenerators.doubles;
+import static tech.sirwellington.alchemy.arguments.assertions.GeolocationAssertions.validLatitude;
+import static tech.sirwellington.alchemy.arguments.assertions.GeolocationAssertions.validLongitude;
 import static tech.sirwellington.alchemy.test.generation.GenerateDouble.Type.RANGE;
 
 /**

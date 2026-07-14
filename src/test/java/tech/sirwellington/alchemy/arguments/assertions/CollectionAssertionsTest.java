@@ -1,13 +1,13 @@
 package tech.sirwellington.alchemy.arguments.assertions;
 
+import java.util.*;
+
 import org.junit.jupiter.api.RepeatedTest;
 import tech.sirwellington.alchemy.arguments.AlchemyAssertion;
 import tech.sirwellington.alchemy.arguments.Arguments;
 import tech.sirwellington.alchemy.test.AlchemyTest;
 import tech.sirwellington.alchemy.test.generation.GenerateList;
 import tech.sirwellington.alchemy.test.generation.GenerateMap;
-
-import java.util.*;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.notNullValue;
