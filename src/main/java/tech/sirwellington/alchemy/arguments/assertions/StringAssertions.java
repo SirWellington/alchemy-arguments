@@ -15,13 +15,13 @@
 
 package tech.sirwellington.alchemy.arguments.assertions;
 
+import java.util.regex.Pattern;
+
 import tech.sirwellington.alchemy.annotations.access.NonInstantiable;
 import tech.sirwellington.alchemy.annotations.arguments.NonEmpty;
 import tech.sirwellington.alchemy.arguments.AlchemyAssertion;
 import tech.sirwellington.alchemy.arguments.Arguments;
 import tech.sirwellington.alchemy.arguments.FailedAssertionException;
-
-import java.util.regex.Pattern;
 
 import static tech.sirwellington.alchemy.arguments.internal.Checks.*;
 

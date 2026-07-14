@@ -16,14 +16,14 @@
 
 package tech.sirwellington.alchemy.arguments.assertions;
 
+import java.util.List;
+import java.util.Objects;
+
 import tech.sirwellington.alchemy.annotations.access.NonInstantiable;
 import tech.sirwellington.alchemy.annotations.arguments.Optional;
 import tech.sirwellington.alchemy.annotations.arguments.Required;
 import tech.sirwellington.alchemy.arguments.AlchemyAssertion;
 import tech.sirwellington.alchemy.arguments.FailedAssertionException;
-
-import java.util.List;
-import java.util.Objects;
 
 import static tech.sirwellington.alchemy.arguments.internal.Checks.*;
 

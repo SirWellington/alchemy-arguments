@@ -15,10 +15,10 @@
 
 package tech.sirwellington.alchemy.arguments.assertions;
 
+import java.util.*;
+
 import tech.sirwellington.alchemy.arguments.AlchemyAssertion;
 import tech.sirwellington.alchemy.arguments.internal.Checks;
-
-import java.util.*;
 
 import static tech.sirwellington.alchemy.arguments.internal.Checks.*;
 

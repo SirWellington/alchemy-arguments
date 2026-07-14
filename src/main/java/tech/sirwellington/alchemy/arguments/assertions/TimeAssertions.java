@@ -15,11 +15,11 @@
 
 package tech.sirwellington.alchemy.arguments.assertions;
 
+import java.time.Instant;
+
 import tech.sirwellington.alchemy.annotations.access.NonInstantiable;
 import tech.sirwellington.alchemy.annotations.arguments.Required;
 import tech.sirwellington.alchemy.arguments.AlchemyAssertion;
-
-import java.time.Instant;
 
 import static tech.sirwellington.alchemy.arguments.assertions.Assertions.notNull;
 import static tech.sirwellington.alchemy.arguments.internal.Checks.*;
