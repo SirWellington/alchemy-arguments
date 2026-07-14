@@ -113,7 +113,7 @@ public final class StringAssertions {
 
             if (s.chars().anyMatch(Character::isWhitespace)) {
                 failAssertion(
-                    "Argument should not have whitespace: [{0}]", s
+                    "Argument should not have any whitespace: [{0}]", s
                 );
             }
         };
