@@ -1,5 +1,5 @@
 /*
- * Copyright © 2019. Sir Wellington.
+ * Copyright © 2026. Sir Wellington.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  *
@@ -15,9 +15,12 @@
 package tech.sirwellington.alchemy.arguments;
 
 import tech.sirwellington.alchemy.annotations.arguments.Optional;
+import tech.sirwellington.alchemy.annotations.arguments.Required;
 import tech.sirwellington.alchemy.annotations.designs.patterns.StrategyPattern;
+import tech.sirwellington.alchemy.arguments.assertions.Assertions;
 
 import static tech.sirwellington.alchemy.annotations.designs.patterns.StrategyPattern.Role.INTERFACE;
+import static tech.sirwellington.alchemy.arguments.internal.Checks.checkNotNull;
 
 /**
  * {@linkplain AlchemyAssertion Alchemy Assertions} analyze arguments for validity.
@@ -39,8 +42,7 @@ import static tech.sirwellington.alchemy.annotations.designs.patterns.StrategyPa
  * @author SirWellington
  */
 @StrategyPattern(role = INTERFACE)
-public interface AlchemyAssertion<Argument>
-{
+public interface AlchemyAssertion<Argument> {
 
     /**
      * Asserts the validity of the argument.
@@ -53,4 +55,38 @@ public interface AlchemyAssertion<Argument>
      */
     void check(@Optional Argument argument) throws FailedAssertionException;
 
+    /**
+     * Chains two {@link AlchemyAssertion Assertions together}.
+     * For example, a {@code validAge} assertion could be constructed dynamically using:
+     * {@snippet :
+     * import static tech.sirwellington.alchemy.arguments.assertions.NumberAssertions.positiveInteger;
+     * import static tech.sirwellington.alchemy.arguments.assertions.NumberAssertions.greaterThanOrEqualTo;
+     * import static tech.sirwellington.alchemy.arguments.assertions.NumberAssertions.lessThanOrEqualTo;
+     *
+     * var validAge = positiveInteger()
+     *                     .and(greaterThanOrEualTo(10))
+     *                     .and(lessThanOrEqualTo(140));
+     *
+     * var age = user.getAge();
+     * checkThat(age).isA(validAge);
+     *}
+     *
+     * Note that de to limitations of the type-inference in the Java Compiler, the first
+     * {@link AlchemyAssertion assertion} that you make must match the type of the argument.
+     * For example:
+     * {@snippet :
+     * notNull().and(positiveInteger()).checkAge(age); // Does not compile
+     * }
+     * This does not work because {@link Assertions#notNull} reference a vanilla {@link Object}.
+     * @param other The other assertion to check against.
+     * @return A chainable assertion.
+     */
+    default AlchemyAssertion<Argument> and(@Required AlchemyAssertion<Argument> other) {
+        checkNotNull(other, "other assertion cannot be null");
+
+        return arg -> {
+            this.check(arg);
+            other.check(arg);
+        };
+    }
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright © 2019. Sir Wellington.
+ * Copyright © 2026. Sir Wellington.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  *
@@ -22,41 +22,34 @@ import tech.sirwellington.alchemy.annotations.access.Internal;
  *
  * @author SirWellington
  */
-public class FailedAssertionException extends IllegalArgumentException
-{
+public class FailedAssertionException extends IllegalArgumentException {
 
     private String message = "";
 
-    public FailedAssertionException()
-    {
+    public FailedAssertionException() {
     }
 
-    public FailedAssertionException(String message)
-    {
+    public FailedAssertionException(String message) {
         super(message);
         this.message = message;
     }
 
-    public FailedAssertionException(String message, Throwable cause)
-    {
+    public FailedAssertionException(String message, Throwable cause) {
         super(message, cause);
         this.message = message;
     }
 
-    public FailedAssertionException(Throwable cause)
-    {
+    public FailedAssertionException(Throwable cause) {
         super(cause);
     }
 
     @Override
-    public String getMessage()
-    {
+    public String getMessage() {
         return message;
     }
 
     @Internal
-    void changeMessage(String message)
-    {
+    void changeMessage(String message) {
         this.message = message;
     }
 

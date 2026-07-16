@@ -1,5 +1,5 @@
 /*
- * Copyright © 2019. Sir Wellington.
+ * Copyright © 2026. Sir Wellington.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  *
@@ -15,7 +15,9 @@
 
 package tech.sirwellington.alchemy.arguments;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
 
 import tech.sirwellington.alchemy.annotations.access.NonInstantiable;
 import tech.sirwellington.alchemy.annotations.arguments.Optional;
@@ -23,43 +25,41 @@ import tech.sirwellington.alchemy.annotations.designs.FluidAPIDesign;
 
 /**
  * This is the main entry-point for the Library.
- * <br></br>
+ * <br>
  * From here you can do:
- * <pre>
- *
- * `checkThat(zipCode)
+ *{@snippet :
+ * checkThat(zipCode)
  * .throwing(ex -> new InvalidZipCodeException(zipCode))
  * .is(notNull())
  * .is(positiveInteger())
  * .is(greaterThanOrEqualTo(10000))
  * .is(lessThan(99999));
- *
- * </pre>
- *
+ *}
  * @author SirWellington
  */
 @NonInstantiable
 @FluidAPIDesign
-public final class Arguments
-{
+public final class Arguments {
 
-    Arguments() throws IllegalAccessException
-    {
+    Arguments() throws IllegalAccessException {
         throw new IllegalAccessException("cannot instantiate");
     }
 
-    public static <Argument> AssertionBuilder<Argument, FailedAssertionException> checkThat(@Optional Argument argument)
-    {
+    public static <Argument> AssertionBuilder<Argument, FailedAssertionException> checkThat(
+        @Optional Argument argument
+    ) {
         return AssertionBuilderImpl.checkThat(Collections.singletonList(argument));
     }
 
-    public static <Argument> AssertionBuilder<Argument, FailedAssertionException> checkThat(@Optional Argument argument, @Optional Argument... others)
-    {
-        List<Argument> listOfArguments = new ArrayList<>();
+    @SafeVarargs
+    public static <Argument> AssertionBuilder<Argument, FailedAssertionException> checkThat(
+        @Optional Argument argument,
+        @Optional Argument... others
+    ) {
+        var listOfArguments = new ArrayList<Argument>();
         listOfArguments.add(argument);
 
-        if (others.length > 0)
-        {
+        if (others.length > 0) {
             listOfArguments.addAll(Arrays.asList(others));
         }
 
