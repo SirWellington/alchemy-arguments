@@ -17,16 +17,15 @@ package tech.sirwellington.alchemy.arguments.assertions;
 
 
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.RepeatedTest;
 import org.junit.jupiter.api.Test;
 import tech.sirwellington.alchemy.generator.PeopleGenerators;
 import tech.sirwellington.alchemy.test.AlchemyTest;
 import tech.sirwellington.alchemy.test.generation.GenerateString;
 
-import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static tech.sirwellington.alchemy.arguments.TestHelpers.assertThrowsFailedAssertion;
 import static tech.sirwellington.alchemy.arguments.assertions.PeopleAssertions.validEmailAddress;
 import static tech.sirwellington.alchemy.generator.AlchemyGenerator.one;
+import static tech.sirwellington.alchemy.generator.StringGenerators.strings;
 import static tech.sirwellington.alchemy.test.generation.GenerateString.Type.ALPHABETIC;
 
 /**
@@ -45,22 +44,18 @@ final class PeopleAssertionsTest {
         email = one(PeopleGenerators.emailAddresses());
     }
 
-    @RepeatedTest(100)
+    @Test
     void testValidEmailAddress() {
         // Given
         var instance = validEmailAddress();
         // Then
         Tests.checkForNullCase(instance);
 
+        // Given
+        var badEmails = strings();
+        var goodEmails = PeopleGenerators.emailAddresses();
         // Then
-        assertDoesNotThrow(
-            () -> instance.check(email)
-        );
-
-        // Then
-        assertThrowsFailedAssertion(
-            () -> instance.check(badEmail)
-        );
+        Tests.runTests(instance, badEmails, goodEmails);
     }
 
     @Test
