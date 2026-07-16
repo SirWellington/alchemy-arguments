@@ -15,34 +15,19 @@
 
 package tech.sirwellington.alchemy.arguments.assertions;
 
-
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import tech.sirwellington.alchemy.generator.PeopleGenerators;
 import tech.sirwellington.alchemy.test.AlchemyTest;
-import tech.sirwellington.alchemy.test.generation.GenerateString;
 
 import static tech.sirwellington.alchemy.arguments.TestHelpers.assertThrowsFailedAssertion;
 import static tech.sirwellington.alchemy.arguments.assertions.PeopleAssertions.validEmailAddress;
-import static tech.sirwellington.alchemy.generator.AlchemyGenerator.one;
 import static tech.sirwellington.alchemy.generator.StringGenerators.strings;
-import static tech.sirwellington.alchemy.test.generation.GenerateString.Type.ALPHABETIC;
 
 /**
  * @author SirWellington
  */
 @AlchemyTest
 final class PeopleAssertionsTest {
-
-    @GenerateString(ALPHABETIC)
-    private String badEmail;
-
-    private String email;
-
-    @BeforeEach
-    void setUp() {
-        email = one(PeopleGenerators.emailAddresses());
-    }
 
     @Test
     void testValidEmailAddress() {
@@ -62,8 +47,8 @@ final class PeopleAssertionsTest {
     void testValidEmailAddressWithEmptyArgs() {
         var instance = validEmailAddress();
 
-        assertThrowsFailedAssertion(() ->instance.check(null));
-        assertThrowsFailedAssertion(() ->instance.check(""));
+        assertThrowsFailedAssertion(() -> instance.check(null));
+        assertThrowsFailedAssertion(() -> instance.check(""));
     }
 
 }
