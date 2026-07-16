@@ -25,7 +25,7 @@ import tech.sirwellington.alchemy.annotations.designs.FluidAPIDesign;
 
 /**
  * This is the main entry-point for the Library.
- * <br></br>
+ * <br>
  * From here you can do:
  *{@snippet :
  * checkThat(zipCode)

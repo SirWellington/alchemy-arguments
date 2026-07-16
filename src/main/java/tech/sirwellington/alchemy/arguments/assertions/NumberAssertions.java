@@ -208,14 +208,14 @@ public final class NumberAssertions {
     }
 
     /**
-     * Asserts that an integer is negative (< 0).
+     * Asserts that an integer is negative {@code (< 0)}.
      */
     public static AlchemyAssertion<Integer> negativeInteger() {
         return lessThan(0);
     }
 
     /**
-     * Asserts that a long is positive (> 0).
+     * Asserts that a long is positive {@code (> 0)}.
      */
     public static AlchemyAssertion<Long> positiveLong() {
         return number -> {
@@ -228,7 +228,7 @@ public final class NumberAssertions {
     }
 
     /**
-     * Asserts that a long is negative (< 0).
+     * Asserts that a long is negative {@code (< 0)}.
      */
     public static AlchemyAssertion<Long> negativeLong() {
         return lessThan(0L);

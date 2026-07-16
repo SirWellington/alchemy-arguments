@@ -202,7 +202,7 @@ public final class StringAssertions {
     /**
      * Asserts that the argument string has a length `> minimumLength`.
      *
-     * @param minimumLength The exclusive lower bound (must be > 0 and < Integer.MAX_VALUE)
+     * @param minimumLength The exclusive lower bound (must be {@code > 0 and < Integer.MAX_VALUE})
      * @return an {@link AlchemyAssertion} enforcing strict lower-bound
      */
     public static AlchemyAssertion<String> stringWithLengthGreaterThan(int minimumLength) {

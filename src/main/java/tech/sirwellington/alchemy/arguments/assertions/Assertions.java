@@ -69,7 +69,7 @@ public final class Assertions {
     }
 
     /**
-     * Asserts that the argument is the same instance as {@link other}. This assertion uses {@code ==}.
+     * Asserts that the argument is the same instance as {@code other}. This assertion uses {@code ==}.
      *
      * @param other The object to compare against.
      * @param <A>   The type of the object to check.
@@ -114,7 +114,7 @@ public final class Assertions {
     }
 
     /**
-     * Asserts that the argument is {@link Objects#equals(Object, Object)}  equal to} {@link other}.
+     * Asserts that the argument is {@link Objects#equals(Object, Object)  equal to} {@code other}.
      *
      * @param other The object to compare against.
      * @param <A>   Type of the argument.
