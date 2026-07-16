@@ -35,7 +35,7 @@ import static tech.sirwellington.alchemy.arguments.internal.Checks.isNullOrEmpty
 @NonInstantiable
 public final class PeopleAssertions {
 
-    private static Pattern PATTERN = Pattern.compile("^.+@.+\\..+$");
+    private static final Pattern PATTERN = Pattern.compile("^.+@.+\\..+$");
 
     private PeopleAssertions() throws IllegalAccessException {
         throw new IllegalAccessException("cannot directly instantiate");
@@ -59,7 +59,7 @@ public final class PeopleAssertions {
             }
 
             if (!PATTERN.matcher(email).matches()) {
-                failAssertion("Invalid Email Address: " + PATTERN);
+                failAssertion("Invalid Email Address: " + email);
             }
         };
     }
