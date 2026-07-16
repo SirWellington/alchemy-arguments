@@ -23,8 +23,7 @@ import tech.sirwellington.alchemy.generator.PeopleGenerators;
 import tech.sirwellington.alchemy.test.AlchemyTest;
 import tech.sirwellington.alchemy.test.generation.GenerateString;
 
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.notNullValue;
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static tech.sirwellington.alchemy.arguments.TestHelpers.assertThrowsFailedAssertion;
 import static tech.sirwellington.alchemy.arguments.assertions.PeopleAssertions.validEmailAddress;
 import static tech.sirwellington.alchemy.generator.AlchemyGenerator.one;
@@ -48,12 +47,20 @@ final class PeopleAssertionsTest {
 
     @RepeatedTest(100)
     void testValidEmailAddress() {
+        // Given
         var instance = validEmailAddress();
-        assertThat(instance, notNullValue());
+        // Then
+        Tests.checkForNullCase(instance);
 
-        instance.check(email);
+        // Then
+        assertDoesNotThrow(
+            () -> instance.check(email)
+        );
 
-        assertThrowsFailedAssertion(() -> instance.check(badEmail));
+        // Then
+        assertThrowsFailedAssertion(
+            () -> instance.check(badEmail)
+        );
     }
 
     @Test
