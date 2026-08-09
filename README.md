@@ -52,13 +52,11 @@ but with the additional ability to apply multiple conditions on a single argumen
 Instead of
 
 ``` java
-if (zipCode < 0)
-{
+if (zipCode < 0) {
 	throw new IllegalArgumentException("Zip Code must be positive");
 }
 
-if (zipCode > 99999)
-{
+if (zipCode > 99999) {
 	throw new IllegalArgumentException("Zip Code cannot exceed 99999");
 }
 
