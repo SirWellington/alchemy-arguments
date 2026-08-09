@@ -5,7 +5,7 @@ Alchemy Arguments
 
 ## "Check Yo'self!"
 
-[![Build Status](https://travis-ci.org/SirWellington/alchemy-arguments.svg)](https://travis-ci.org/SirWellington/alchemy-arguments)
+![Maven Build](https://github.com/SirWellington/alchemy-arguments/actions/workflows/maven-build.yml/badge.svg)
 ![Maven Central Version](http://img.shields.io/maven-central/v/tech.sirwellington.alchemy/alchemy-arguments.svg)
 
 # Purpose
@@ -99,8 +99,7 @@ Sometimes an `IllegalArgumentException` is not the Exception you want to throw.
 For example,
 ```java
 @GET
-public Response getCoffee(String nameField)
-{
+public Response getCoffee(String nameField) {
 	String nameField;
 
 	checkThat(nameField)
@@ -126,8 +125,7 @@ In the example above, if the password fails the checks, a `BadPasswordException`
 ``` java
 if (Strings.isNullOrEmpty(password) &&
 	password.length() < MIN_LENGTH &&
-	password.length() > MAX_LENGTH)
-{
+	password.length() > MAX_LENGTH) {
 	throw new BadPasswordException("missing password");
 }
 ```
@@ -153,10 +151,8 @@ You can create your own library of custom assertions and reuse them. In fact, **
 Thanks to the new Java 8 lambdas, it is much easier to create inline assertions in your code.
 
 ```java
-AlchemyAssertion<Car> sedan = car ->
-{
-	if (!(car instanceof Sedan))
-	{
+AlchemyAssertion<Car> sedan = car -> {
+	if (!(car instanceof Sedan)) {
 		throw new FailedAssertionException("Expecting a Sedan");
 	}
 };
@@ -167,10 +163,8 @@ checkThat(car)
 ```
 
 ```java
-AlchemyAssertion<Vehicle> truck = v ->
-{
-	if (!(v instanceof Truck))
-	{
+AlchemyAssertion<Vehicle> truck = v -> {
+	if (!(v instanceof Truck)) {
 		throw new FailedAssertionException("Expecting a Truck but got " + v);
 	}
 };
@@ -186,10 +180,8 @@ Building on Existing assertions can make for powerful checks.
 
 ```java
 
-public static AlchemyAssertion<Person> validPerson()
-{
-	return person ->
-	{
+public static AlchemyAssertion<Person> validPerson() {
+	return person -> {
 		checkThat(person).is(notNull);
 
 		checkThat(person.firstName, person.lastName)
@@ -202,8 +194,7 @@ public static AlchemyAssertion<Person> validPerson()
 }
 
 // Reuse the argument checks
-public String findUsername(Person person)
-{
+public String findUsername(Person person) {
 	checkThat(person)
 		.is(validPerson());
 
